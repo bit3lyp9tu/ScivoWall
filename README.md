@@ -7,6 +7,10 @@ Currently, the data is saved into a directory outside of docker, that means befo
 first run it, you have to compile the image, and then you have to run:
 
 ```console
+bash docker.sh --local-port 1112
+```
+
+```console
 docker exec -it poster_generator_poster_generator_1 bash
 ```
 
