@@ -1,0 +1,123 @@
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/showdown@1.9.1/dist/showdown.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-gap: 10px;
+        padding: 10px;
+      }
+      .box {
+        background-color: lightblue;
+        padding: 10px;
+      }
+      .content {
+        white-space: pre-wrap;
+      }
+      textarea {
+        width: 100%;
+        height: 100%;
+        resize: none;
+        background-color: lightblue;
+        border: none;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="addBtn">Add New Box</button>
+    <div class="grid">
+      <div class="box">
+        <div class="content">default text</div>
+      </div>
+    </div>
+    <script>
+      let activeBox;
+      let converter = new showdown.Converter();
+      document.querySelector("#addBtn").addEventListener("click", function () {
+        let grid = document.querySelector(".container");
+        let newBox = document.createElement("div");
+        newBox.classList.add("box");
+        newBox.innerHTML = `
+          <div class="content">default text</div>
+        `;
+        grid.appendChild(newBox);
+        setupBox(newBox);
+      });
+      document.querySelectorAll(".box").forEach(function (box) {
+        setupBox(box);
+      });
+      function setupBox(box) {
+        box.addEventListener("click", function () {
+          if (activeBox) {
+            activeBox.querySelector(".content").style.display = "block";
+            activeBox.querySelector("textarea").style.display = "none";
+            let markdown = activeBox.querySelector("textarea").value;
+            activeBox.querySelector(".content").innerHTML = converter.makeHtml(markdown);
+            MathJax.typeset([activeBox.querySelector(".content")]);
+          }
+          if (activeBox === this) {
+            activeBox = null;
+            return;
+          }
+          activeBox = this;
+          activeBox.querySelector(".content").style.display = "none";
+          let textarea = document.createElement("textarea");
+          textarea.value = activeBox.querySelector(".content").innerText;
+          textarea.style.display = "block";
+          activeBox.appendChild(textarea);
+        });
+        box.addEventListener("dragover", function (e) {
+          e.preventDefault();
+        });
+      box.addEventListener("drop", function (e) {
+        e.preventDefault();
+        var file = e.dataTransfer.files[0];
+        var formData = new FormData();
+        formData.append("file", file);
+        fetch("upload.php", {
+          method: "POST",
+          body: formData
+        })
+          .then(function (response) {
+            return response.text();
+          })
+          .then(function (filename) {
+            var markdown = `![${filename}](${filename})`;
+            var textarea = box.querySelector("textarea");
+            textarea.value = textarea.value + markdown;
+            MathJax.typeset();
+            var content = box.querySelector(".content");
+            content.innerHTML = marked(textarea.value);
+            textarea.style.display = "none";
+            content.style.display = "block";
+          });
+      });
+      box.addEventListener("click", function (e) {
+        var textarea = box.querySelector("textarea");
+        var content = box.querySelector(".content");
+        if (textarea.style.display === "block") {
+          MathJax.typeset();
+          content.innerHTML = marked(textarea.value);
+          textarea.style.display = "none";
+          content.style.display = "block";
+        } else {
+          document.querySelectorAll(".box textarea").forEach(function (textarea) {
+            textarea.style.display = "none";
+          });
+          document.querySelectorAll(".box .content").forEach(function (content) {
+            content.style.display = "none";
+          });
+          textarea.value = content.innerHTML;
+          textarea.style.display = "block";
+          textarea.focus();
+        }
+      });
+    });
+  }
+});
+</script>
+</body>
+</html>
+

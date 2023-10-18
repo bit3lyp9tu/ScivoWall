@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-gap: 10px;
+      }
+
+      .grid-item {
+        background-color: lightgray;
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+        cursor: pointer;
+      }
+
+      .editable-text {
+        padding: 10px;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        border: none;
+        resize: none;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="add-box-btn">Add New Box</button>
+    <div class="grid">
+    </div>
+
+    <!-- Load the Showdown library from a CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/showdown@1.9.1/dist/showdown.min.js"></script>
+
+    <script>
+      const grid = document.querySelector(".grid");
+      const addBoxBtn = document.querySelector("#add-box-btn");
+      const defaultText = "Click to edit";
+
+      let activeBox = null;
+
+      addBoxBtn.addEventListener("click", () => {
+        if (activeBox) {
+          activeBox.innerHTML = activeBox.querySelector(".editable-text").value;
+          activeBox = null;
+        }
+
+        const newBox = document.createElement("div");
+        newBox.classList.add("grid-item");
+        newBox.innerHTML = defaultText;
+        newBox.addEventListener("click", () => {
+          if (activeBox) {
+            activeBox.innerHTML = activeBox.querySelector(".editable-text").value;
+          }
+          activeBox = newBox;
+
+          const markdown = newBox.getAttribute("data-markdown") || defaultText;
+          newBox.innerHTML = `<textarea class="editable-text">${markdown}</textarea>`;
+          const editableText = newBox.querySelector(".editable-text");
+          editableText.focus();
+          editableText.addEventListener("blur", () => {
+            const markdown = editableText.value;
+            newBox.setAttribute("data-markdown", markdown);
+            convertMarkdownToHtml(markdown).then((html) => {
+              newBox.innerHTML = html;
+              activeBox = null;
+            });
+          });
+        });
+        grid.appendChild(newBox);
+      });
+
+      const convertMarkdownToHtml = (markdown) => {
+        const converter = new showdown.Converter();
+        return Promise.resolve(converter.makeHtml(markdown));
+      };
+    </script>
+  </body>
+</html>
+

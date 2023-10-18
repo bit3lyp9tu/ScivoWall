@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+		<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+		<style>
+.box {
+	display: inline-block;
+	width: 200px;
+	height: 200px;
+	margin: 10px;
+	border: 2px solid red;
+	vertical-align: top;
+	position: relative;
+}
+    .box label {
+	    font-size: 20px;
+	    color: red;
+	    padding: 10px;
+    }
+    .box textarea {
+	    width: 100%;
+	    height: calc(100% - 40px);
+	    resize: none;
+	    margin-top: 10px;
+	    display: none;
+	    position: absolute;
+	    top: 0;
+	    left: 0;
+    }
+    .box .output {
+	    width: 100%;
+	    height: calc(100% - 40px);
+	    margin-top: 10px;
+	    overflow: auto;
+	    cursor: pointer;
+    }
+		</style>
+	</head>
+	<body>
+		<div id="boxContainer">
+			<div class="box">
+				<label>Box 1</label>
+				<textarea></textarea>
+				<div class="output"></div>
+			</div>
+		</div>
+		<button id="addBoxBtn">Add Another Box</button>
+		<script>
+			let boxes = [];
+			let boxContainer = document.getElementById("boxContainer");
+			let addBoxBtn = document.getElementById("addBoxBtn");
+			let boxCount = 1;
+
+			boxes.push({ text: "", output: "" });
+
+			addBoxBtn.addEventListener("click", function() {
+				let box = document.createElement("div");
+				box.classList.add("box");
+				box.innerHTML = `
+					<label>Box ${++boxCount}</label>
+					<textarea>hallo welt</textarea>
+					<div class="output"></div>
+				`;
+				boxContainer.appendChild(box);
+				boxes.push({ text: "", output: "" });
+				addListeners(box, boxes.length - 1);
+
+			});
+
+			function addListeners(box, index) {
+				let textarea = box.querySelector("textarea");
+				let output = box.querySelector(".output");
+
+				textarea.addEventListener("input", function() {
+					boxes[index].text = textarea.value;
+					output.innerHTML = "";
+					//MathJax.Hub.Queue(["Typeset", MathJax.Hub, output]);
+				});
+
+				output.addEventListener("click", function() {
+					textarea.style.display = "block";
+					output.style.display = "none";
+				});
+
+				document.addEventListener("click", function(event) {
+					if (event.target !== textarea) {
+						textarea.style.display = "none";
+						output.style.display = "block";
+						boxes[index].output = output.innerHTML;
+						output.innerHTML = marked.marked(boxes[index].text);
+						//MathJax.Hub.Queue(["Typeset", MathJax.Hub, output]);
+						textarea.style.display = "none";
+						output.style.display = "block";
+					}
+				});
+
+				output.addEventListener("click", function() {
+					output.style.display = "none";
+					textarea.style.display = "block";
+					textarea.focus();
+				});
+
+				output.style.display = "block";
+				textarea.style.display = "none";
+				output.innerHTML = marked.marked(boxes[index].text);
+				//MathJax.Hub.Queue(["Typeset", MathJax.Hub, output]);
+
+			}
+
+			addListeners(boxContainer.querySelector(".box"), 0);
+		</script>
+	</body>
+</html>
