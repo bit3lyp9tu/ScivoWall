@@ -3,155 +3,10 @@
 ?>
 <!DOCTYPE html>
 <html>
-       <head>
+	<head>
 		<title>v2 Poster-Generator</title>
-		<style>
-			#titles {
-				margin: 20px;
-			}
 
-			.grid-container {
-				display: grid;
-				grid-template-columns: repeat(7, auto);
-				grid-template-rows: auto auto;
-				padding-top: 10px;
-				position: fixed;
-				bottom: 0px;
-				background-color: white;
-				max-height: 250px;
-			}
-
-			.large-div {
-				grid-column: 1 / span 1;
-				grid-row: 1 / span 2;
-			}
-
-			.small-div {
-				justify-content: center;
-				align-items: center;
-			}
-
-			.bottom-div {
-				grid-column: 1 / span 7;
-			}
-
-			.small_logo {
-				width: 10vw
-			}
-
-			.large_logo {
-				max-width: 10vw;
-			}
-			.container {
-				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-				grid-gap: 10px;
-				margin: 20px;
-				padding: 0;
-			}
-
-			.box {
-				padding: 0px;
-				flex-direction: column;
-				justify-content: center;
-				align-items: center;
-				overflow-wrap: anywhere;
-				border-bottom: 1px solid #83d252;
-				margin: 0px;
-			}
-
-			.box img {
-				max-width: 100%;
-				max-height: 100%;
-				object-fit: contain;
-			}
-
-			.box h2 {
-				display: inline-block;
-				width: 100%;
-				border-bottom: 1px solid;
-			}
-
-			h1 {
-				font-family: "Barlow", sans-serif;
-				margin: 0;
-				color: #0e496a;
-			}
-
-			h2 {
-				font-family: "Barlow", sans-serif;
-				margin: 0;
-				color: #83d252;
-				font-weight: lighter;
-			}
-
-			.bottomtable {
-				background-color: white;
-				margin: -5px;
-				position: absolute;
-				left: 0px;
-				margin-top: 50px;
-			}
-
-			body {
-				font-family: "Open Sans", sans-serif;
-				background-color: #d4d4d4;
-				margin: 0px;
-
-				display: block;
-				overflow: auto;
-				height: 100%;
-				min-height: 100%;
-				max-height: 100%;
-				font-size: calc(14px + 0.1vw);
-
-				margin-left: auto;
-				margin-right: auto;
-				position: relative;
-				background-color: white;
-				width: 100%;
-				height: 100%;
-			}
-
-			#bgpattern {
-				padding: 1vw;
-				width: 30%;
-				top: 0px;
-				right: 0px;
-				position: absolute;
-			}
-
-			.sponsors_logo_large {
-				width: calc(80px + 0.1vw);
-			}
-
-			.sponsors_logo {
-				width: 5vw;
-			}
-
-			#scadslogo {
-				padding: 1vw;
-				width: 10vw;
-				min-width: 200px;
-			}
-
-			h3 {
-				font-family: "Barlow", sans-serif;
-				margin: 0;
-				color: #0e496a;
-			}
-
-			h4 {
-				font-family: "Barlow", sans-serif;
-				margin: 0;
-				color: #0e496a;
-				font-weight: lighter;
-			}
-
-			#bottom_video {
-				width: 100%;
-			}
-		</style>
+		<link rel="stylesheet" href="style.css">
 
 		<script src="marked.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/to-markdown/dist/to-markdown.js"></script>
@@ -159,67 +14,25 @@
 		<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
 
-		<script type="text/x-mathjax-config">
-			MathJax.Hub.Config({
-				tex2jax: {
-					inlineMath: [['\\(', '\\)']],
-					displayMath: [['$$', '$$]']],
-					processEscapes: true,
-					skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-					processEnvironments: true,
-					processRefs: true
-				},
-				jax: ["input/TeX", "output/SVG"],
-			});
+		<script type="text/x-mathjax-config" src="myscripts.js"></script>
+	</head>
 
-			MathJax.Hub.Queue(function() {
-				var all = MathJax.Hub.getAllJax(), i;
-				//log(all);
-				for(i = 0; i < all.length; i += 1) {
-					all[i].SourceElement().parentNode.className += ' has-jax';
-				}
-			});
-		</script>
-       </head>
-       <body>
+	<body>
 		<div id="logo_headline">
-			<img class="nomargin" id='scadslogo' src="scadslogo.png" />
+			<img class="nomargin" id='scadslogo' src="img/scadslogo.png" />
 			<div style="float: right;">
-				<!--<img id='bgpattern' src="bgpattern.jpeg" />-->
-<?php
-if(!get_get("disable_video")) {
-?>
+				<!--<img id='bgpattern' src="img/bgpattern.jpeg" />-->
+				<?php if(!get_get("disable_video")) {?>
 					<video autoplay="true" loop="true" muted="muted" [muted]="'muted'" id="bgpattern" src="scads-graphic_edited.mov"></video>
-<?php
-}
-?>
+				<?php }?>
 			</div>
 		</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 		<div id="titles">
 			<h1 id="maintitle">Heading 1</h1>
 			<h2 id="mainsubtitle">Heading 2</h2>
 			<button id="add-box-btn">Add Box</button>
 		</div>
-
 
 		<div class="container">
 			<div class="box">
@@ -230,56 +43,52 @@ if(!get_get("disable_video")) {
 
 		<div class="grid-container">
 			<div class="large-div">
-				<img src="qrcode.png" class="large_logo" alt="logo">
+				<img src="img/qrcode.png" class="large_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="tudlogo.png" class="small_logo" alt="logo">
+				<img src="img/tudlogo.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="leipzig.png" class="small_logo" alt="logo">
+				<img src="img/leipzig.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="cbg.png" class="small_logo" alt="logo">
+				<img src="img/cbg.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="leibnitz.png" class="small_logo" alt="logo">
+				<img src="img/leibnitz.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="helmholtz.png" class="small_logo" alt="logo">
+				<img src="img/helmholtz.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="hzdr.png" class="small_logo" alt="logo">
+				<img src="img/hzdr.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="infai.png" class="small_logo" alt="logo">
+				<img src="img/infai.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="maxplanck2.png" class="small_logo" alt="logo">
+				<img src="img/maxplanck2.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="fraunhofer1.jpg" class="small_logo" alt="logo">
+				<img src="img/fraunhofer1.jpg" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="fraunhofer2.jpg" class="small_logo" alt="logo">
+				<img src="img/fraunhofer2.jpg" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="dlr.png" class="small_logo" alt="logo">
+				<img src="img/dlr.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="maxplanck3.jpeg" class="small_logo" alt="logo">
+				<img src="img/maxplanck3.jpeg" class="small_logo" alt="logo">
 			</div>
 			<div class="bottom-div">
-<?php
-				if(!get_get("disable_video")) {
-?>
-					<video id="bottom_video" autoplay="true" loop="true" muted="muted" [muted]="'muted'" class="bottompattern" src="footer.mp4"></video>
-<?php
-				}
-?>
+				<?php if(!get_get("disable_video")) {?>
+					<video id="bottom_video" autoplay="true" loop="true" muted="muted" [muted]="'muted'" class="bottompattern" src="img/footer.mp4"></video>
+				<?php }?>
 			</div>
 		</div>
-		<script>
 
+		<script>
 			function mdToHtml(md) {
 				//log("md", md);
 				var html = marked.marked(md);
@@ -575,53 +384,49 @@ if(!get_get("disable_video")) {
 			setInterval(adjust_video_height_depending_on_logo_height,1000);
 			setInterval(resize_free_space_according_to_bottom_table,1000);
 
-<?php
-			$json_dir = "json";
+			<?php
+				$json_dir = "json";
 
-			if(isDocker()) {
-				$json_dir = "/poster_generator_json";
-			}
+				if(isDocker()) {
+					$json_dir = "/poster_generator_json";
+				}
 
-			if(isset($_GET["id"]) && preg_match("/^[a-zA-Z0-9]+$/", $_GET["id"]) && file_exists("$json_dir/".$_GET["id"].".json")) {
-?>
+				if(isset($_GET["id"]) && preg_match("/^[a-zA-Z0-9]+$/", $_GET["id"]) && file_exists("$json_dir/".$_GET["id"].".json")) {
+			?>
 				var load_from_here = <?php print file_get_contents("$json_dir/".$_GET["id"].".json") ?>;
 
 				//log(load_from_here);
 
 				load_from_json(load_from_here);
-<?php
-			} else {
-?>
+			<?php } else {?>
 				var load_from_here =
 
 				{
 					"maintitle": "Name of the project",
 					"mainsubtitle": "Author(s)",
 					"boxes":[
-`## Example Box<br>
-Write inline math: \\\\( \\sum^10_{i = 0} i \\\\)<br>
+						`## Example Box<br>
+						Write inline math: \\\\( \\sum^10_{i = 0} i \\\\)<br>
 
-Or write \\displaystyle math:<br>
+						Or write \\displaystyle math:<br>
 
-$$ \\sum_{[\\mathrm{bla}]}^{i} a^i $$<br>
+						$$ \\sum_{[\\mathrm{bla}]}^{i} a^i $$<br>
 
-You can also write text or lists:<br>
-- Element 1<br>
-- Element 2<br>
-- Element 3<br>
-<br>
-Or insert images (simply click in a field and drop an image here).<br>
-`,
-`## How to delete a box<br>
+						You can also write text or lists:<br>
+						- Element 1<br>
+						- Element 2<br>
+						- Element 3<br>
+						<br>
+						Or insert images (simply click in a field and drop an image here).<br>
+						`,
+						`## How to delete a box<br>
 
-Just click in it and delete all text. Then click outside again. It will delete the box.<br>`
+						Just click in it and delete all text. Then click outside again. It will delete the box.<br>`
 					]
 				}
 
 				load_from_json(load_from_here);
-<?php
-			}
-?>
+			<?php }?>
 		</script>
-       </body>
+	</body>
 </html>
