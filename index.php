@@ -156,7 +156,6 @@
 		<script src="marked.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/to-markdown/dist/to-markdown.js"></script>
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/to-markdown/dist/to-markdown.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
 
@@ -593,10 +592,10 @@ if(!get_get("disable_video")) {
 <?php
 			} else {
 ?>
-				var load_from_here = 
+				var load_from_here =
 
 				{
-					"maintitle": "Name of the project", 
+					"maintitle": "Name of the project",
 					"mainsubtitle": "Author(s)",
 					"boxes":[
 `## Example Box<br>
