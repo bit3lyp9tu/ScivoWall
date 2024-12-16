@@ -49,31 +49,10 @@ is_package_installed() {
 
 UPDATED_PACKAGES=0
 
-# Check if Docker is installed
-if ! command -v docker &>/dev/null; then
-	echo "Docker not found. Installing Docker..."
-	# Enable non-free repository
-	sed -i 's/main$/main contrib non-free/g' /etc/apt/sources.list
-
-	# Update package lists
-	if [[ $UPDATED_PACKAGES == 0 ]]; then
-		sudo apt update || {
-			echo "apt-get update failed. Are you online?"
-			exit 2
-		}
-
-		UPDATED_PACKAGES=1
+if ! command -v curl &>/dev/null; then
+	if ! command -v apt &>/dev/null; then
+		echo "curl is not installed and the system is not debian-based. Can only auto-install on debian-based systems with apt available."
 	fi
-
-
-	# Install Docker
-	sudo apt install -y docker.io || {
-		echo "sudo apt install -y docker.io failed"
-		exit 3
-	}
-fi
-
-if ! command -v wget &>/dev/null; then
 	# Update package lists
 	if [[ $UPDATED_PACKAGES == 0 ]]; then
 		sudo apt update || {
@@ -84,11 +63,20 @@ if ! command -v wget &>/dev/null; then
 		UPDATED_PACKAGES=1
 	fi
 
-	sudo apt-get install -y wget || {
-		echo "sudo apt install -y wget failed"
+	sudo apt-get install -y curl || {
+		echo "sudo apt install -y curl failed"
 		exit 3
 	}
 fi
+
+# Check if Docker is installed
+if ! command -v docker &>/dev/null; then
+	echo "Docker not found. Installing Docker..."
+
+	curl -fsSL https://get.docker.com | bash
+fi
+
+
 
 export LOCAL_PORT
 
@@ -107,23 +95,30 @@ function die {
 	exit 1
 }
 
-SYNTAX_ERRORS=0
-for i in $(ls *.php); do
-	if ! php -l $i 2>&1; then
-		SYNTAX_ERRORS=1; 
-	fi ; 
-done 
+if command -v php 2>/dev/null >/dev/null; then
+	SYNTAX_ERRORS=0
+	for i in $(ls *.php); do
+		if ! php -l $i 2>&1; then
+			SYNTAX_ERRORS=1; 
+		fi ; 
+	done 
 
-if [[ "$SYNTAX_ERRORS" -ne "0" ]]; then
-	echo "Tests failed";
-	exit 1
+	if [[ "$SYNTAX_ERRORS" -ne "0" ]]; then
+		echo "Tests failed";
+		exit 1
+	fi
+
+	if [[ "$run_tests" -eq "1" ]]; then
+		php testing.php && echo "Syntax checks for PHP Ok" || die "Syntax Checks for PHP failed"
+	fi
 fi
 
+#sudo mkdir -p /poster_generator_json/
 
-if [[ "$run_tests" -eq "1" ]]; then
-	php testing.php && echo "Syntax checks for PHP Ok" || die "Syntax Checks for PHP failed"
+CURRENT_USER=$(whoami)
+
+if groups "$CURRENT_USER" | grep -q "\bdocker\b"; then
+	docker-compose build && docker-compose up -d || echo "Failed to build container"
+else
+	sudo docker-compose build && sudo docker-compose up -d || echo "Failed to build container"
 fi
-
-sudo mkdir -p /poster_generator_json/
-
-sudo docker-compose build && sudo docker-compose up -d || echo "Failed to build container"
