@@ -18,7 +18,7 @@
 ?>
 <!DOCTYPE html>
 <html>
-       <head>
+	<head>
 		<title>v2 Poster-Generator</title>
 
 		<script src="marked.min.js"></script>
@@ -29,22 +29,65 @@
 
 		<link rel="stylesheet" href="style.css">
 
-		<script type="text/x-mathjax-config" src="mathjax_config.js">
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Config({
+				tex2jax: {
+					inlineMath: [['\\(', '\\)']],
+					displayMath: [['$$', '$$]']],
+					processEscapes: true,
+					skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+					processEnvironments: true,
+					processRefs: true
+				},
+				jax: ["input/TeX", "output/SVG"],
+			});
 
+			MathJax.Hub.Queue(function() {
+				var all = MathJax.Hub.getAllJax(), i;
+				//log(all);
+				for(i = 0; i < all.length; i += 1) {
+					all[i].SourceElement().parentNode.className += ' has-jax';
+				}
+			});
 		</script>
-       </head>
-       <body>
+
+		<!-- <script type="text/x-mathjax-config" >
+			// src="mathjax_config.js"
+			MathJax.Hub.Config({
+				tex2jax: {
+					inlineMath: [['\\(', '\\)']],
+					displayMath: [['$$', '$$]']],
+					processEscapes: true,
+					skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+					processEnvironments: true,
+					processRefs: true
+				},
+				jax: ["input/TeX", "output/SVG"],
+			});
+
+			MathJax.Hub.Queue(function () {
+				var all = MathJax.Hub.getAllJax(), i;
+				//log(all);
+				for (i = 0; i < all.length; i += 1) {
+					all[i].SourceElement().parentNode.className += ' has-jax';
+				}
+			});
+
+		</script> -->
+	</head>
+	<body>
 		<div id="logo_headline">
-			<img class="nomargin" id='scadslogo' src="scadslogo.png" />
+			<img class="nomargin" id='scadslogo' src="img/scadslogo.png" />
 			<div style="float: right;">
 				<!--<img id='bgpattern' src="bgpattern.jpeg" />-->
-<?php
-if(!get_get("disable_video")) {
-?>
-					<video autoplay="true" loop="true" muted="muted" [muted]="'muted'" id="bgpattern" src="scads-graphic_edited.mov"></video>
-<?php
-}
-?>
+				<?php
+					if(!get_get("disable_video")) {
+				?>
+				<video autoplay="true" loop="true" muted="muted" [muted]="'muted'" id="bgpattern" src="img/scads-graphic_edited.mov"></video>
+
+				<?php
+					}
+				?>
 			</div>
 		</div>
 
@@ -64,56 +107,57 @@ if(!get_get("disable_video")) {
 
 		<div class="grid-container">
 			<div class="large-div">
-				<img src="qrcode.png" class="large_logo" alt="logo">
+				<img src="img/qrcode.png" class="large_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="tudlogo.png" class="small_logo" alt="logo">
+				<img src="img/tudlogo.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="leipzig.png" class="small_logo" alt="logo">
+				<img src="img/leipzig.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="cbg.png" class="small_logo" alt="logo">
+				<img src="img/cbg.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="leibnitz.png" class="small_logo" alt="logo">
+				<img src="img/leibnitz.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="helmholtz.png" class="small_logo" alt="logo">
+				<img src="img/helmholtz.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="hzdr.png" class="small_logo" alt="logo">
+				<img src="img/hzdr.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="infai.png" class="small_logo" alt="logo">
+				<img src="img/infai.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="maxplanck2.png" class="small_logo" alt="logo">
+				<img src="img/maxplanck2.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="fraunhofer1.jpg" class="small_logo" alt="logo">
+				<img src="img/fraunhofer1.jpg" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="fraunhofer2.jpg" class="small_logo" alt="logo">
+				<img src="img/fraunhofer2.jpg" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="dlr.png" class="small_logo" alt="logo">
+				<img src="img/dlr.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="maxplanck3.jpeg" class="small_logo" alt="logo">
+				<img src="img/maxplanck3.jpeg" class="small_logo" alt="logo">
 			</div>
 			<div class="bottom-div">
-<?php
-				if(!get_get("disable_video")) {
-?>
-					<video id="bottom_video" autoplay="true" loop="true" muted="muted" [muted]="'muted'" class="bottompattern" src="footer.mp4"></video>
-<?php
-				}
-?>
+				<?php
+					if(!get_get("disable_video")) {
+				?>
+					<video id="bottom_video" autoplay="true" loop="true" muted="muted" [muted]="'muted'" class="bottompattern" src="img/footer.mp4"></video>
+
+				<?php
+					}
+				?>
 			</div>
 		</div>
-		<script>
 
+		<script>
 			function mdToHtml(md) {
 				//log("md", md);
 				var html = marked.marked(md);
@@ -409,53 +453,51 @@ if(!get_get("disable_video")) {
 			setInterval(adjust_video_height_depending_on_logo_height,1000);
 			setInterval(resize_free_space_according_to_bottom_table,1000);
 
-<?php
-			$json_dir = "json";
+			<?php
+				$json_dir = "json";
 
-			if(isDocker()) {
-				$json_dir = "/poster_generator_json";
-			}
+				if(isDocker()) {
+					$json_dir = "/poster_generator_json";
+				}
 
-			if(isset($_GET["id"]) && preg_match("/^[a-zA-Z0-9]+$/", $_GET["id"]) && file_exists("$json_dir/".$_GET["id"].".json")) {
-?>
+				if(isset($_GET["id"]) && preg_match("/^[a-zA-Z0-9]+$/", $_GET["id"]) && file_exists("$json_dir/".$_GET["id"].".json")) {
+			?>
 				var load_from_here = <?php print file_get_contents("$json_dir/".$_GET["id"].".json") ?>;
 
 				//log(load_from_here);
 
 				load_from_json(load_from_here);
-<?php
-			} else {
-?>
-				var load_from_here =
-
-				{
+			<?php
+				} else {
+			?>
+				var load_from_here = {
 					"maintitle": "Name of the project",
 					"mainsubtitle": "Author(s)",
 					"boxes":[
-`## Example Box<br>
-Write inline math: \\\\( \\sum^10_{i = 0} i \\\\)<br>
+							`## Example Box<br>
+							Write inline math: \\\\( \\sum^10_{i = 0} i \\\\)<br>
 
-Or write \\displaystyle math:<br>
+							Or write \\displaystyle math:<br>
 
-$$ \\sum_{[\\mathrm{bla}]}^{i} a^i $$<br>
+							$$ \\sum_{[\\mathrm{bla}]}^{i} a^i $$<br>
 
-You can also write text or lists:<br>
-- Element 1<br>
-- Element 2<br>
-- Element 3<br>
-<br>
-Or insert images (simply click in a field and drop an image here).<br>
-`,
-`## How to delete a box<br>
+							You can also write text or lists:<br>
+							- Element 1<br>
+							- Element 2<br>
+							- Element 3<br>
+							<br>
+							Or insert images (simply click in a field and drop an image here).<br>
+							`,
+							`## How to delete a box<br>
 
-Just click in it and delete all text. Then click outside again. It will delete the box.<br>`
+							Just click in it and delete all text. Then click outside again. It will delete the box.<br>`
 					]
 				}
 
 				load_from_json(load_from_here);
-<?php
-			}
-?>
+			<?php
+				}
+			?>
 		</script>
-       </body>
+	</body>
 </html>
