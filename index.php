@@ -12,6 +12,7 @@
 <!-- TODO: scads-graphic-edited.mov does not have a clean transition after replay
  	 TODO: video sequence .mov does not play-->
 <!-- TODO: error in address-link is constantly produced-->
+<!-- TODO: remove content redundancy in .box elements -->
 
 <?php
 	include_once("functions.php");
@@ -143,7 +144,7 @@
 
 			//???
 			function filter_html(data) {
-				//TODO: prevent possible code injection
+				//TODO: prevent possible code injectionadd-box-button
 
 				data = data.split("<div>").join("\n\n").split("</div>").join("\n\n").split("<br>").join("\n\n").split("<span>").join("").split("</span>").join("");
 
@@ -174,16 +175,16 @@
 
 			const make_editable_simple = (element) => {
 				element.setAttribute('data-original', element.innerText);
-				element.contentEditable = false;
+				element.contentEditable = false;	//why???
 
 				element.addEventListener('click',( ) => {
-					element.contentEditable = true;
+					element.contentEditable = true;	//?
 					element.focus();
 				});
 
 				document.addEventListener('click', (event) => {
 					if( !element.contains(event.target)) {
-						element.contentEditable = false;
+						element.contentEditable = false;	//?
 						save_current_json();
 					}
 				});
@@ -193,11 +194,114 @@
 				});
 			};
 
+			async function make_editable(div, text) {
+				let currently_edited_element = null;
+				div.contentEditable = true;		//???
+
+				div.addEventListener("focus", function () {
+					log("FOCUS");
+					if (!this.getAttribute("data-original")) {
+						this.setAttribute("data-original", toMarkdown(this.innerHTML));
+						this.innerText = toMarkdown(this.innerHTML);
+					} else {
+						this.innerHTML = this.getAttribute("data-original");
+					}
+					currently_edited_element = div;
+				});
+
+				div.addEventListener("drop", function (event) {
+					log("DROP");
+					event.preventDefault();
+					var file = event.dataTransfer.files[0];
+					uploadImage(file, function (response) {
+						var filename = response.filePath;
+						div.innerText += `![](${filename})`;
+						div.setAttribute("data-original", div.innerHTML);
+					});
+				});
+
+				div.addEventListener("dragover", function (event) {
+					event.preventDefault();
+				});
+
+				document.addEventListener("click", async function (event) {
+					if (currently_edited_element && !div.contains(event.target)) {
+						log("CLICK");
+						div.setAttribute("data-original", div.innerHTML);
+						if (!div.innerText.match(/^\s*$/)) {
+							var innerText = filter_html(div.innerText);
+							var html = mdToHtml(innerText);
+							div.innerHTML = html;
+							await typeset(currently_edited_element);
+							currently_edited_element = null;
+							$(".MathJax").css("pointer-events", "none");
+						} else {
+							$(div).remove();
+						}
+						save_current_json();
+					}
+				});
+
+				div.setAttribute("data-original", text);
+
+				//log("Sample text:", text);
+				text = filter_html(text);
+				var html = mdToHtml(text);
+				html = html.split("<span>").join("").split("</span>").join("");
+				//log("HTML:", html);
+				div.innerHTML = html;
+				//await typeset(div);
+				currently_edited_element = null;
+				$(".MathJax").css("pointer-events", "none");
+			}
+
 			make_editable_simple($("#maintitle")[0]);
 			make_editable_simple($("#mainsubtitle")[0]);
 
-			//var div = $(".box")[0];
-			//make_editable(div, sample_text);
+			// var div = $(".box")[0];
+			// make_editable(div, sample_text);
+
+			// document.addEventListener('keypress', (event) => {
+			// 	log("--------------------");
+			// 	for (var div of $('.box')) {
+			// 		console.log(div);
+
+			// 		// div.innerHTML = div.getAttribute("data-original");
+
+			// 		// div.addEventListener("focus", function () {
+			// 		// 	log("FOCUS");
+			// 		// 	if (!this.getAttribute("data-original")) {
+			// 		// 		this.setAttribute("data-original", toMarkdown(this.innerHTML));
+			// 		// 		this.innerText = toMarkdown(this.innerHTML);
+			// 		// 	} else {
+			// 		// 		this.innerHTML = this.getAttribute("data-original");
+			// 		// 	}
+			// 		// });
+			// 		currently_edited_element = div;
+
+			// 		if (currently_edited_element && !div.contains(event.target)) {
+			// 			log("CLICK");
+			// 			div.setAttribute("data-original", div.innerHTML);
+			// 			if (!div.innerText.match(/^\s*$/)) {
+			// 				var innerText = filter_html(div.innerText);
+			// 				var html = mdToHtml(innerText);
+			// 				div.innerHTML = html;
+			// 				await typeset(currently_edited_element);
+			// 				currently_edited_element = null;
+			// 				$(".MathJax").css("pointer-events", "none");
+			// 			} else {
+			// 				$(div).remove();
+			// 			}
+			// 			// save_current_json();
+			// 		}
+			// 	}
+			// });
+
+			window.addEventListener("load", (event) => {
+				log("PAGE LOAD");
+				// console.log(document.getElementsByTagName('.container').length);
+
+			});
 
 			async function add_box( text, save_json = 1) {
 				const box = document.createElement("div");
