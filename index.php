@@ -1,18 +1,18 @@
 <?php
-//TODO: box height changes between selected and unselected state
-//TODO: if cursor releases click outside of box, deleted text will return
-//TODO: storing project - might need a version id in json
-//TODO: img bgpattern has strange border
-//TODO: footer too big
-//TODO: after page load latex/md view does not activate
-//TODO: reorganizing html format
-//TODO: footer animation sometimes slightly misplaced (not to right border; moves out of window)
-//TODO: if img pasted in box, only visible if box selected
-//                        - not visible in latex/md view mode except if other box with image is selected
-//TODO: scads-graphic-edited.mov does not have a clean transition after replay
-//         TODO: video sequence .mov does not play
-//TODO: error in address-link is constantly produced
-//TODO: remove content redundancy in .box elements
+	//TODO: box height changes between selected and unselected state
+	//TODO: if cursor releases click outside of box, deleted text will return
+	//TODO: storing project - might need a version id in json
+	//TODO: img bgpattern has strange border
+	//TODO: footer too big
+	//TODO: after page load latex/md view does not activate
+	//TODO: reorganizing html format
+	//TODO: footer animation sometimes slightly misplaced (not to right border; moves out of window)
+	//TODO: if img pasted in box, only visible if box selected
+	//                        - not visible in latex/md view mode except if other box with image is selected
+	//TODO: scads-graphic-edited.mov does not have a clean transition after replay
+	//         TODO: video sequence .mov does not play
+	//TODO: error in address-link is constantly produced
+	//TODO: remove content redundancy in .box elements
 
 	include_once("functions.php");
 ?>
@@ -20,153 +20,6 @@
 <html>
        <head>
 		<title>v2 Poster-Generator</title>
-		<style>
-			#titles {
-				margin: 20px;
-			}
-
-			.grid-container {
-				display: grid;
-				grid-template-columns: repeat(7, auto);
-				grid-template-rows: auto auto;
-				padding-top: 10px;
-				position: fixed;
-				bottom: 0px;
-				background-color: white;
-				max-height: 250px;
-			}
-
-			.large-div {
-				grid-column: 1 / span 1;
-				grid-row: 1 / span 2;
-			}
-
-			.small-div {
-				justify-content: center;
-				align-items: center;
-			}
-
-			.bottom-div {
-				grid-column: 1 / span 7;
-			}
-
-			.small_logo {
-				width: 10vw
-			}
-
-			.large_logo {
-				max-width: 10vw;
-			}
-			.container {
-				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-				grid-gap: 10px;
-				margin: 20px;
-				padding: 0;
-			}
-
-			.box {
-				padding: 0px;
-				flex-direction: column;
-				justify-content: center;
-				align-items: center;
-				overflow-wrap: anywhere;
-				border-bottom: 1px solid #83d252;
-				margin: 0px;
-			}
-
-			.box img {
-				max-width: 100%;
-				max-height: 100%;
-				object-fit: contain;
-			}
-
-			.box h2 {
-				display: inline-block;
-				width: 100%;
-				border-bottom: 1px solid;
-			}
-
-			h1 {
-				font-family: "Barlow", sans-serif;
-				margin: 0;
-				color: #0e496a;
-			}
-
-			h2 {
-				font-family: "Barlow", sans-serif;
-				margin: 0;
-				color: #83d252;
-				font-weight: lighter;
-			}
-
-			.bottomtable {
-				background-color: white;
-				margin: -5px;
-				position: absolute;
-				left: 0px;
-				margin-top: 50px;
-			}
-
-			body {
-				font-family: "Open Sans", sans-serif;
-				background-color: #d4d4d4;
-				margin: 0px;
-
-				display: block;
-				overflow: auto;
-				height: 100%;
-				min-height: 100%;
-				max-height: 100%;
-				font-size: calc(14px + 0.1vw);
-
-				margin-left: auto;
-				margin-right: auto;
-				position: relative;
-				background-color: white;
-				width: 100%;
-				height: 100%;
-			}
-
-			#bgpattern {
-				padding: 1vw;
-				width: 30%;
-				top: 0px;
-				right: 0px;
-				position: absolute;
-			}
-
-			.sponsors_logo_large {
-				width: calc(80px + 0.1vw);
-			}
-
-			.sponsors_logo {
-				width: 5vw;
-			}
-
-			#scadslogo {
-				padding: 1vw;
-				width: 10vw;
-				min-width: 200px;
-			}
-
-			h3 {
-				font-family: "Barlow", sans-serif;
-				margin: 0;
-				color: #0e496a;
-			}
-
-			h4 {
-				font-family: "Barlow", sans-serif;
-				margin: 0;
-				color: #0e496a;
-				font-weight: lighter;
-			}
-
-			#bottom_video {
-				width: 100%;
-			}
-		</style>
 
 		<script src="marked.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/to-markdown/dist/to-markdown.js"></script>
@@ -174,26 +27,10 @@
 		<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
 
-		<script type="text/x-mathjax-config">
-			MathJax.Hub.Config({
-				tex2jax: {
-					inlineMath: [['\\(', '\\)']],
-					displayMath: [['$$', '$$]']],
-					processEscapes: true,
-					skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-					processEnvironments: true,
-					processRefs: true
-				},
-				jax: ["input/TeX", "output/SVG"],
-			});
+		<link rel="stylesheet" href="style.css">
 
-			MathJax.Hub.Queue(function() {
-				var all = MathJax.Hub.getAllJax(), i;
-				//log(all);
-				for(i = 0; i < all.length; i += 1) {
-					all[i].SourceElement().parentNode.className += ' has-jax';
-				}
-			});
+		<script type="text/x-mathjax-config" src="mathjax_config.js">
+
 		</script>
        </head>
        <body>
@@ -210,24 +47,6 @@ if(!get_get("disable_video")) {
 ?>
 			</div>
 		</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 		<div id="titles">
 			<h1 id="maintitle">Heading 1</h1>
