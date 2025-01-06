@@ -9,14 +9,7 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html
 
 # Install necessary dependencies
 RUN apt-get update
-RUN apt-get install -y libssl-dev
-RUN apt-get install -y iproute2 
-RUN apt-get install -y iputils-ping 
-#RUN apt-get install -y python3
-#RUN apt-get install -y python3-pip 
-#RUN apt-get install -y zip
-#RUN docker-php-ext-install mysqli
-#RUN docker-php-ext-install pdo pdo_mysql
+RUN apt-get install -y iproute2 iputils-ping libssl-dev
 RUN rm -rf /var/lib/apt/lists/*
 
 # Copy the PHP files to the container
@@ -29,11 +22,12 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 
 RUN rm .env
 
-
 # Expose the Apache port
 EXPOSE $APACHE_PORT
 
 RUN chmod 777 -R /tmp && chmod o+t -R /tmp
+
+RUN mkdir -p /poster_generator_json/
 
 RUN chown -R www-data:www-data /poster_generator_json
 
