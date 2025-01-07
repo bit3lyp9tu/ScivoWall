@@ -38,13 +38,13 @@
 			<img class="nomargin" id='scadslogo' src="img/scadslogo.png" />
 			<div style="float: right;">
 				<!--<img id='bgpattern' src="bgpattern.jpeg" />-->
-			<?php
-			if(!get_get("disable_video")) {
-			?>
-							<video autoplay="true" loop="true" muted="muted" [muted]="'muted'" id="bgpattern" src="img/scads-graphic_edited.mov"></video>
-			<?php
-			}
-			?>
+				<?php
+					if(!get_get("disable_video")) {
+				?>
+					<video autoplay="true" loop="true" muted="muted" [muted]="'muted'" id="bgpattern" src="img/scads-graphic_edited.mov"></video>
+				<?php
+					}
+				?>
 			</div>
 		</div>
 
@@ -67,59 +67,6 @@
 			</div>
 		</div>
 
-		<div id="resize_me_according_to_bottom_table"></div>
-
-		<div class="grid-container">
-			<div class="large-div">
-				<img src="img/qrcode.png" class="large_logo" alt="logo">
-			</div>
-			<div class="small-div">
-				<img src="img/tudlogo.png" class="small_logo" alt="logo">
-			</div>
-			<div class="small-div">
-				<img src="img/leipzig.png" class="small_logo" alt="logo">
-			</div>
-			<div class="small-div">
-				<img src="img/cbg.png" class="small_logo" alt="logo">
-			</div>
-			<div class="small-div">
-				<img src="img/leibnitz.png" class="small_logo" alt="logo">
-			</div>
-			<div class="small-div">
-				<img src="img/helmholtz.png" class="small_logo" alt="logo">
-			</div>
-			<div class="small-div">
-				<img src="img/hzdr.png" class="small_logo" alt="logo">
-			</div>
-			<div class="small-div">
-				<img src="img/infai.png" class="small_logo" alt="logo">
-			</div>
-			<div class="small-div">
-				<img src="img/maxplanck2.png" class="small_logo" alt="logo">
-			</div>
-			<div class="small-div">
-				<img src="img/fraunhofer1.jpg" class="small_logo" alt="logo">
-			</div>
-			<div class="small-div">
-				<img src="img/fraunhofer2.jpg" class="small_logo" alt="logo">
-			</div>
-			<div class="small-div">
-				<img src="img/dlr.png" class="small_logo" alt="logo">
-			</div>
-			<div class="small-div">
-				<img src="img/maxplanck3.jpeg" class="small_logo" alt="logo">
-			</div>
-
-			<div class="bottom-div">
-				<?php
-					if(!get_get("disable_video")) {
-				?>
-					<video id="bottom_video" autoplay="true" loop="true" muted="muted" [muted]="'muted'" class="bottompattern" src="img/footer.mp4"></video>
-				<?php
-					}
-				?>
-			</div>
-		</div>
 		<script>
 
 			function mdToHtml(md) {
@@ -471,4 +418,60 @@ Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit ame
 			?>
 		</script>
 	</body>
+
+	<footer>
+		<!-- <div id="resize_me_according_to_bottom_table"></div> -->
+
+		<div class="grid-container">
+			<div class="large-div">
+				<img src="img/qrcode.png" class="large_logo" alt="logo">
+			</div>
+			<div class="small-div">
+				<img src="img/tudlogo.png" class="small_logo" alt="logo">
+			</div>
+			<div class="small-div">
+				<img src="img/leipzig.png" class="small_logo" alt="logo">
+			</div>
+			<div class="small-div">
+				<img src="img/cbg.png" class="small_logo" alt="logo">
+			</div>
+			<div class="small-div">
+				<img src="img/leibnitz.png" class="small_logo" alt="logo">
+			</div>
+			<div class="small-div">
+				<img src="img/helmholtz.png" class="small_logo" alt="logo">
+			</div>
+			<div class="small-div">
+				<img src="img/hzdr.png" class="small_logo" alt="logo">
+			</div>
+			<div class="small-div">
+				<img src="img/infai.png" class="small_logo" alt="logo">
+			</div>
+			<div class="small-div">
+				<img src="img/maxplanck2.png" class="small_logo" alt="logo">
+			</div>
+			<div class="small-div">
+				<img src="img/fraunhofer1.jpg" class="small_logo" alt="logo">
+			</div>
+			<div class="small-div">
+				<img src="img/fraunhofer2.jpg" class="small_logo" alt="logo">
+			</div>
+			<div class="small-div">
+				<img src="img/dlr.png" class="small_logo" alt="logo">
+			</div>
+			<div class="small-div">
+				<img src="img/maxplanck3.jpeg" class="small_logo" alt="logo">
+			</div>
+
+			<div class="bottom-div">
+				<?php
+					if(!get_get("disable_video")) {
+				?>
+					<video id="bottom_video" autoplay="true" loop="true" muted="muted" [muted]="'muted'" class="bottompattern" src="img/footer.mp4"></video>
+				<?php
+					}
+				?>
+			</div>
+		</div>
+	</footer>
 </html>

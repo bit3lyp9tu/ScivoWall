@@ -144,3 +144,38 @@ h4 {
 #bottom_video {
     width: 100%;
 }
+
+@media print {
+
+    button {
+        display: none;
+    }
+
+    @page {
+        margin: 0cm;
+    }
+
+    body {
+        /* margin: 1.6cm; */
+    }
+
+    #bottom_video {
+        /* margin-top: 5px; */
+        margin-bottom: -10px;
+    }
+
+    .grid-container {
+        position: revert !important;
+    }
+
+    footer {
+        page-break-before: verso;
+    }
+}
+
+
+@media only screen {
+    .container {
+        margin-bottom: 300px !important;
+    }
+}
