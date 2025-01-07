@@ -54,12 +54,13 @@ if(!get_get("disable_video")) {
 			<button id="add-box-btn">Add Box</button>
 		</div>
 
-		<div>
-			<?php
-				test_write_json();
-				// test_read_json('json/my_data.json')
-			?>
-		</div>
+		<!-- <div>
+			<form action="upload2.php" method="post" enctype="multipart/form-data">
+				<label for="image">Choose image to upload:</label>
+				<input type="file" name="image" id="image">
+				<input type="submit" value="Upload Image" name="submit">
+			</form>
+		</div> -->
 
 		<div class="container">
 			<div class="box">
