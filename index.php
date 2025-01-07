@@ -54,6 +54,12 @@ if(!get_get("disable_video")) {
 			<button id="add-box-btn">Add Box</button>
 		</div>
 
+		<div>
+			<?php
+				test_write_json();
+				// test_read_json('json/my_data.json')
+			?>
+		</div>
 
 		<div class="container">
 			<div class="box">
