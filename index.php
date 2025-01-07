@@ -35,13 +35,13 @@
        </head>
        <body>
 		<div id="logo_headline">
-			<img class="nomargin" id='scadslogo' src="scadslogo.png" />
+			<img class="nomargin" id='scadslogo' src="img/scadslogo.png" />
 			<div style="float: right;">
 				<!--<img id='bgpattern' src="bgpattern.jpeg" />-->
 <?php
 if(!get_get("disable_video")) {
 ?>
-					<video autoplay="true" loop="true" muted="muted" [muted]="'muted'" id="bgpattern" src="scads-graphic_edited.mov"></video>
+					<video autoplay="true" loop="true" muted="muted" [muted]="'muted'" id="bgpattern" src="img/scads-graphic_edited.mov"></video>
 <?php
 }
 ?>
@@ -64,49 +64,49 @@ if(!get_get("disable_video")) {
 
 		<div class="grid-container">
 			<div class="large-div">
-				<img src="qrcode.png" class="large_logo" alt="logo">
+				<img src="img/qrcode.png" class="large_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="tudlogo.png" class="small_logo" alt="logo">
+				<img src="img/tudlogo.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="leipzig.png" class="small_logo" alt="logo">
+				<img src="img/leipzig.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="cbg.png" class="small_logo" alt="logo">
+				<img src="img/cbg.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="leibnitz.png" class="small_logo" alt="logo">
+				<img src="img/leibnitz.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="helmholtz.png" class="small_logo" alt="logo">
+				<img src="img/helmholtz.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="hzdr.png" class="small_logo" alt="logo">
+				<img src="img/hzdr.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="infai.png" class="small_logo" alt="logo">
+				<img src="img/infai.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="maxplanck2.png" class="small_logo" alt="logo">
+				<img src="img/maxplanck2.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="fraunhofer1.jpg" class="small_logo" alt="logo">
+				<img src="img/fraunhofer1.jpg" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="fraunhofer2.jpg" class="small_logo" alt="logo">
+				<img src="img/fraunhofer2.jpg" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="dlr.png" class="small_logo" alt="logo">
+				<img src="img/dlr.png" class="small_logo" alt="logo">
 			</div>
 			<div class="small-div">
-				<img src="maxplanck3.jpeg" class="small_logo" alt="logo">
+				<img src="img/maxplanck3.jpeg" class="small_logo" alt="logo">
 			</div>
 			<div class="bottom-div">
 <?php
 				if(!get_get("disable_video")) {
 ?>
-					<video id="bottom_video" autoplay="true" loop="true" muted="muted" [muted]="'muted'" class="bottompattern" src="footer.mp4"></video>
+					<video id="bottom_video" autoplay="true" loop="true" muted="muted" [muted]="'muted'" class="bottompattern" src="img/footer.mp4"></video>
 <?php
 				}
 ?>
