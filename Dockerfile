@@ -31,5 +31,7 @@ RUN mkdir -p /poster_generator_json/
 
 RUN chown -R www-data:www-data /poster_generator_json
 
+# RUN chown www-data:www-data ./json/*      ???
+
 # Start Apache server
 CMD ["apache2-foreground"]
