@@ -18,7 +18,7 @@
 ?>
 <!DOCTYPE html>
 <html>
-       <head>
+	<head>
 		<title>v2 Poster-Generator</title>
 
 		<script src="marked.min.js"></script>
@@ -32,19 +32,19 @@
 		<script type="text/x-mathjax-config" src="mathjax_config.js">
 
 		</script>
-       </head>
-       <body>
+	</head>
+	<body>
 		<div id="logo_headline">
 			<img class="nomargin" id='scadslogo' src="img/scadslogo.png" />
 			<div style="float: right;">
 				<!--<img id='bgpattern' src="bgpattern.jpeg" />-->
-<?php
-if(!get_get("disable_video")) {
-?>
-					<video autoplay="true" loop="true" muted="muted" [muted]="'muted'" id="bgpattern" src="img/scads-graphic_edited.mov"></video>
-<?php
-}
-?>
+			<?php
+			if(!get_get("disable_video")) {
+			?>
+							<video autoplay="true" loop="true" muted="muted" [muted]="'muted'" id="bgpattern" src="img/scads-graphic_edited.mov"></video>
+			<?php
+			}
+			?>
 			</div>
 		</div>
 
@@ -109,14 +109,15 @@ if(!get_get("disable_video")) {
 			<div class="small-div">
 				<img src="img/maxplanck3.jpeg" class="small_logo" alt="logo">
 			</div>
+
 			<div class="bottom-div">
-<?php
-				if(!get_get("disable_video")) {
-?>
+				<?php
+					if(!get_get("disable_video")) {
+				?>
 					<video id="bottom_video" autoplay="true" loop="true" muted="muted" [muted]="'muted'" class="bottompattern" src="img/footer.mp4"></video>
-<?php
-				}
-?>
+				<?php
+					}
+				?>
 			</div>
 		</div>
 		<script>
@@ -416,26 +417,24 @@ if(!get_get("disable_video")) {
 			setInterval(adjust_video_height_depending_on_logo_height,1000);
 			setInterval(resize_free_space_according_to_bottom_table,1000);
 
-<?php
-			$json_dir = "json";
+			<?php
+				$json_dir = "json";
 
-			if(isDocker()) {
-				$json_dir = "/poster_generator_json";
-			}
+				if(isDocker()) {
+					$json_dir = "/poster_generator_json";
+				}
 
-			if(isset($_GET["id"]) && preg_match("/^[a-zA-Z0-9]+$/", $_GET["id"]) && file_exists("$json_dir/".$_GET["id"].".json")) {
-?>
+				if(isset($_GET["id"]) && preg_match("/^[a-zA-Z0-9]+$/", $_GET["id"]) && file_exists("$json_dir/".$_GET["id"].".json")) {
+			?>
 				var load_from_here = <?php print file_get_contents("$json_dir/".$_GET["id"].".json") ?>;
 
 				//log(load_from_here);
 
 				load_from_json(load_from_here);
-<?php
-			} else {
-?>
-				var load_from_here =
-
-				{
+			<?php
+				} else {
+			?>
+				var load_from_here = {
 					"maintitle": "Name of the project",
 					"mainsubtitle": "Author(s)",
 					"boxes":[
@@ -456,13 +455,20 @@ Or insert images (simply click in a field and drop an image here).<br>
 `## How to delete a box<br>
 
 Just click in it and delete all text. Then click outside again. It will delete the box.<br>`
+,
+`## Lorem Ipsum<br>
+
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
+sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.`
 					]
 				}
 
-				load_from_json(load_from_here);
-<?php
-			}
-?>
+			load_from_json(load_from_here);
+			<?php
+				}
+			?>
 		</script>
-       </body>
+	</body>
 </html>
