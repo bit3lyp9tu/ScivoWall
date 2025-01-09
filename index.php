@@ -15,6 +15,9 @@
 	//TODO: remove content redundancy in .box elements
 
 	include_once("functions.php");
+
+	include("install.php");
+	include("queries.php");
 ?>
 <!DOCTYPE html>
 <html>
@@ -30,7 +33,7 @@
 		<link rel="stylesheet" href="style.css">
 
 		<script src="mathjax_config.js" type="text/x-mathjax-config"></script>
-		<script src="encryption.js"></script>
+		<script src="cryptography.js"></script>
 	</head>
 
 	<body>
@@ -49,7 +52,8 @@
 		</div>
 
 		<div id="titles">
-			<h1 id="maintitle">Heading 1</h1>
+			<h1 id="maintitle"></h1>
+			<h1><?php echo getTitle(57); ?></h1>
 			<h2 id="mainsubtitle">Heading 2</h2>
 			<button id="add-box-btn">Add Box</button>
 		</div>

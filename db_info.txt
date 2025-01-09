@@ -13,27 +13,39 @@ create table boxes (id int primary key auto_increment, poster_id, content)
 create table author (id int primary key auto_increment, name varchar(100) not null ) //////////////
 
 
-
 GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%';
 
 ///////////////////////////////////////////////////////
 
 create database poster_generator;
 create table user (
-
+    user_id int primary key auto_increment,
+    name varchar(255) not null,
+    pass_sha varchar(100) not null,
+    salt varchar(255) not null,
+    pepper varchar(255) not null
 );
-create table image (
+create table author (
+    id int primary key auto_increment,
+    name varchar(255) not null
+);
+create table poster (
+    poster_id int primary key auto_increment,
+    title varchar(255) not null,
+    user_id int references user(user_id) on delete cascade,
 
 );
 create table author_to_poster (
-
+    author_id int references author(author_id) on delete cascade,
+    poster_id int references poster(poster_id) on delete cascade,
 );
-create table poster (
-
+create table image (
+    image_id int primary key auto_increment,
+    file_name varchar(255) not null,
+    content blob not null
 );
-create table boxes (
-
-);
-create table author (
-
+create table box (
+    box_id int primary key auto_increment,
+    poster_id int references poster(poster_id) on delete cascade,
+    content blob not null
 );
