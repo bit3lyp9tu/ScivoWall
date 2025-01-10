@@ -52,19 +52,14 @@
 		</div>
 
 		<div id="titles">
+			<a href="login.php">Login</a>
 			<h1 id="maintitle"></h1>
-			<h1><?php echo getTitle(57); ?></h1>
+			<h1 id="maintitle"><?php echo getTitle(1); ?></h1>
 			<h2 id="mainsubtitle">Heading 2</h2>
 			<button id="add-box-btn">Add Box</button>
-		</div>
 
-		<!-- <div>
-			<form action="upload2.php" method="post" enctype="multipart/form-data">
-				<label for="image">Choose image to upload:</label>
-				<input type="file" name="image" id="image">
-				<input type="submit" value="Upload Image" name="submit">
-			</form>
-		</div> -->
+			<div><?php echo getTitle(1); ?></div>
+		</div>
 
 		<div class="container">
 			<div class="box">
@@ -251,7 +246,7 @@
 			}
 
 
-			make_editable_simple($("#maintitle")[0]);
+			// make_editable_simple($("#maintitle")[0]);
 			make_editable_simple($("#mainsubtitle")[0]);
 
 			//var div = $(".box")[0];

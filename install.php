@@ -23,7 +23,7 @@
 		}
 
 		if(file_exists("/etc/debug_queries")) {
-			print_query_table();
+			print_query_table();//TODO:
 		}
 
 		return $result;
@@ -74,9 +74,7 @@
 		"insert into box (poster_id, content) value (
 			1,
 			'das ist ein text'
-		)",
-
-		"select name from author where author.id=1;"
+		)"
 	];
 
 	foreach ($create_queries as $query) {
