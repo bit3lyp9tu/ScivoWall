@@ -27,6 +27,38 @@
 		return "success";
     }
 
+    function getterQuery($sql, $target_values, $types, ...$param) {
+        $stmt = $GLOBALS["conn"]->prepare($sql);
+        $stmt->bind_param($types, ...$param);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        $output = "";
+
+        if ($result->num_rows > 0) {
+
+            while ($row = $result->fetch_assoc()) {
+                try {
+                    for ($i=0; $i < count($target_values); $i++) {
+
+                        $output .= $row[$target_values[$i]] . " ";
+                    }
+                    $output .= "<br>";
+
+                } catch (mysqli_sql_exception $th) {
+                    return "Error: " . $th->getMessage();
+                }
+            }
+            return $output;
+
+        } else {
+            return "No results found";
+        }
+        $stmt->close();
+    }
+
+    // Old
     function runSingleQuery ($sql) {
         $result = $GLOBALS["conn"]->query($sql);
         $substr = explode(" ",$sql);
