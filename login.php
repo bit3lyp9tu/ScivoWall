@@ -69,9 +69,7 @@
             data: {
                 action: 'register',
                 name: username.value,
-                salt: salt,
-                pepper: pepper,
-                hash: hash
+                pw: password.value
             },
             success: function(response) {
                 $('#response').html(response);

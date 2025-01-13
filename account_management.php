@@ -1,17 +1,43 @@
 <?php
     include_once("queries.php");
 
+    function generate_salt($len=32) {
+        $pr_bits = '';
+        $fp = @fopen('/dev/urandom','rb');
+        if ($fp !== FALSE) {
+            $pr_bits .= @fread($fp, $len);
+            @fclose($fp);
+        }
+        $pr_bits = unpack("C*", $pr_bits);
+        $str = "";
+
+        foreach ($pr_bits as $entry) {
+            $str .= chr(33 + ($entry % 94));
+        }
+        return substr($str, 0, $len);
+    }
+
     if(isset($_POST['action'])) {
+
         if ($_POST['action'] == 'register') {
             $name = isset($_POST['name']) ? $_POST['name'] : '';
-            $salt = isset($_POST['salt']) ? $_POST['salt'] : '';
-            $pepper = isset($_POST['pepper']) ? $_POST['pepper'] : '';
+            $pw = isset($_POST['pw']) ? $_POST['pw'] : '';
 
-            $hash = isset($_POST['hash']) ? $_POST['hash'] : '';
+            $salt = generate_salt();
+            $pepper = "a2d47c981889513c5e2ddbca71f414"; //TODO: use pepper dependency
+            $hash = md5($pw . ":" . $salt . ":" . $pepper);
 
-            echo insertQuery("INSERT INTO poster_generator.user (`name`, `pass_sha`, `salt`, `pepper`)
-                VALUES (?, ?, ?, ?)",
-                "ssss", $name, $hash, $salt, $pepper);
+            // echo $pw . ":" . $salt . ":" . $pepper . "----" . $hash;
+            try {
+                echo insertQuery("INSERT INTO poster_generator.user (`name`, `pass_sha`, `salt`, `pepper`)
+                    VALUES (?, ?, ?, ?)",
+                    "ssss", $name, $hash, $salt, $pepper);
+
+            } catch (mysqli_sql_exception $th) {
+                if ($th->getCode() == 1062) {
+                    echo "The user " . $name . " already exists.";
+                }
+            }
         }
     }
 ?>

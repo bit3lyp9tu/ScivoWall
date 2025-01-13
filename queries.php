@@ -19,15 +19,10 @@
     }
 
     function insertQuery($sql, $types, ...$param) {
-        try {
-            $stmt = $GLOBALS["conn"]->prepare($sql);
-            $stmt->bind_param($types, ...$param);
-            $stmt->execute();
-            $stmt->close();
-
-        } catch (Exception $th) {
-            return $th;
-        }
+        $stmt = $GLOBALS["conn"]->prepare($sql);
+        $stmt->bind_param($types, ...$param);
+        $stmt->execute();
+        $stmt->close();
 
 		return "success";
     }

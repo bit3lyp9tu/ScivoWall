@@ -36,7 +36,7 @@
 
 		"create table if not exists user (
 			user_id int primary key auto_increment,
-			name varchar(255) not null,
+			name varchar(255) not null unique,
 			pass_sha varchar(255) not null,
 			salt varchar(255) not null,
 			pepper varchar(255) not null
@@ -66,7 +66,7 @@
 			content blob not null
 		)",
 
-		"insert into user (name, pass_sha, salt, pepper) value ('Max K', 'trhtgxjzjk', 'ututgfzt', 'test');",
+		//"insert into user (name, pass_sha, salt, pepper) value ('Max K', 'trhtgxjzjk', 'ututgfzt', 'test');",
 		"insert into author (name) value ('max');",
 		"insert into poster (title, user_id) value ('Poster Titel', 2);",
 
@@ -76,6 +76,13 @@
 			'das ist ein text'
 		)"
 	];
+
+	/*
+	if(select count(*) from user == 0)
+	{
+		insert("insert into user (name, pass_sha, salt, pepper) value ('Max K', 'trhtgxjzjk', 'ututgfzt', 'test');",)
+	}
+	*/
 
 	foreach ($create_queries as $query) {
 		$result = run_query("$query\n");
