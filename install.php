@@ -36,18 +36,18 @@
 
 		"create table if not exists user (
 			user_id int primary key auto_increment,
-			name varchar(255) not null unique,
-			pass_sha varchar(255) not null,
-			salt varchar(255) not null,
-			pepper varchar(255) not null
+			name varchar(256) not null unique,
+			pass_sha varchar(256) not null,
+			salt varchar(256) not null,
+			pepper varchar(256) not null
 		)",
 		"create table if not exists author (
 			id int primary key auto_increment,
-			name varchar(255) not null
+			name varchar(256) not null
 		)",
 		"create table if not exists poster (
 		    poster_id int primary key auto_increment,
-		    title varchar(255) not null,
+		    title varchar(256) not null,
 		    user_id int references user(user_id) on delete cascade
 		)",
 		"create table if not exists author_to_poster (
@@ -57,13 +57,19 @@
 		)",
 		"create table if not exists image (
 			image_id int primary key auto_increment,
-			file_name varchar(255) not null,
+			file_name varchar(256) not null,
 			content blob not null
 		)",
 		"create table if not exists box (
 			box_id int primary key auto_increment,
 			poster_id int references poster(poster_id) on delete cascade,
 			content blob not null
+		)",
+		"create table if not exists session (
+			id int primary key auto_increment,
+			user_id int references user(user_id) on delete cascade,
+			sessionID varchar(256) not null,
+			expiration_date DATETIME not null
 		)",
 
 		//"insert into user (name, pass_sha, salt, pepper) value ('Max K', 'trhtgxjzjk', 'ututgfzt', 'test');",
@@ -74,7 +80,8 @@
 		"insert into box (poster_id, content) value (
 			1,
 			'das ist ein text'
-		)"
+		)",
+		"insert into session (user_id, sessionID, expiration_date) value (1, '1234', '2025-12-31')"
 	];
 
 	/*
