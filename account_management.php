@@ -60,5 +60,22 @@
                 echo "Wrong Password";
             }
         }
+
+        if ($_POST['action'] == 'fetch_all_projects') {
+            $name = isset($_POST['name']) ? $_POST['name'] : '';
+
+            $user_id = getterQuery(
+                "SELECT user_id FROM poster_generator.user WHERE user.name=?",
+                ["user_id"],
+                "s", $name
+            );
+            $result = getterQuery(
+                "SELECT title FROM poster_generator.poster WHERE poster.user_id=?",
+                ["title"],
+                "s", $user_id
+            );
+
+            echo $result;
+        }
     }
 ?>
