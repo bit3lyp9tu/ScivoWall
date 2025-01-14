@@ -27,6 +27,15 @@
 		return "success";
     }
 
+    function deleteQuery($sql, $types, ...$param) {
+        $stmt = $GLOBALS["conn"]->prepare($sql);
+        $stmt->bind_param($types, ...$param);
+        $stmt->execute();
+        $stmt->close();
+
+		return "successfully deleted";
+    }
+
     function getterQuery($sql, $target_values, $types, ...$param) {
         $stmt = $GLOBALS["conn"]->prepare($sql);
         $stmt->bind_param($types, ...$param);

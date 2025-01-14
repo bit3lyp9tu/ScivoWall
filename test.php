@@ -2,25 +2,38 @@
     include("queries.php");
 
 
-    // $result = getterQuery(
-    //     "SELECT pass_sha, salt, pepper FROM poster_generator.user WHERE user.name=?",
-    //     ["pass_sha", "salt", "pepper"],
-    //     "s", "max9oujpij");
 
-    // if ($result != "No results found") {
+    // error_reporting(E_ALL);
+    // set_error_handler(
+    //     function ($severity, $message, $file, $line) {
+    //         throw new \ErrorException($message, $severity, $severity, $file, $line);
+    //     }
+    // );
 
-    //     $res_dec = json_decode($result, true);
+    // ini_set('display_errors', 1);
 
-    //     // print_r($res_dec["pass_sha"][0]);
+    // $array = [1, 2, 3];
+    // echo $array[10];
 
-    //     $hash = $res_dec["pass_sha"][0];
-    //     $salt = $res_dec["salt"][0];
-    //     $pepper = $res_dec["pepper"][0];
+    // echo "done";
 
-    //     echo $hash . " " . $salt . " " . $pepper;
+    $result = getterQuery(
+        "SELECT poster_id
+        FROM (
+            SELECT ROW_NUMBER() OVER (ORDER BY poster_id) AS local_id, poster_id
+            FROM poster_generator.poster
+            WHERE poster.user_id = 2
+        ) AS ranked_posters
+        WHERE local_id = ?",
+        ["poster_id"],
+        "i", 17
+    );
 
-    // }else {
-    //     echo $result;
-    // }
+    // $res = deleteQuery(
+    //     "DELETE FROM poster_generator.poster WHERE poster.poster_id = ?",
+    //     "i", json_decode($result, true)[0]
+    // );
+
+    print_r(json_decode($result, true)["poster_id"][0]);
 
 ?>

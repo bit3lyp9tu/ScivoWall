@@ -80,12 +80,50 @@
                 echo "No results found";
             }else{
                 $result = getterQuery(
-                    "SELECT title, user_id FROM poster_generator.poster WHERE poster.user_id=?",
-                    ["title", "user_id"],
+                    "SELECT title FROM poster_generator.poster WHERE poster.user_id=?",
+                    ["title"],
                     "s", json_decode($user_id, true)["user_id"][0]
                 );
                 echo $result;
             }
+        }
+
+        if ($_POST['action'] == 'delete_project') {
+            $local_id = isset($_POST['local_id']) ? $_POST['local_id'] : '';
+            $session_id = isset($_POST['session_id']) ? $_POST['session_id'] : '';  //currently unused
+            //TODO: include session_id in deletion process for increased security
+
+            $result = getterQuery(
+                "SELECT poster_id
+                FROM (
+                    SELECT ROW_NUMBER() OVER (ORDER BY poster_id) AS local_id, poster_id
+                    FROM poster_generator.poster
+                    WHERE poster.user_id = 2
+                ) AS ranked_posters
+                WHERE local_id = ?",
+                ["poster_id"],
+                "i", $local_id
+            );
+
+            $res = deleteQuery(
+                "DELETE FROM poster_generator.poster WHERE poster.poster_id = ?",
+                "i", json_decode($result, true)["poster_id"][0]
+            );
+
+            echo $res;
+        }
+
+        if ($_POST['action'] == 'create_project') {
+            $name = isset($_POST['name']) ? $_POST['name'] : '';
+            $user_id = isset($_POST['user_id']) ? $_POST['user_id'] : '';
+            //TODO: include user_id (currently static value of user_id=19)
+
+            $res = insertQuery(
+                "INSERT into poster_generator.poster (title, user_id) VALUE (?, ?)",
+                "si", $name, $user_id
+            );
+
+            echo $res;
         }
     }
 ?>
