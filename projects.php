@@ -21,9 +21,8 @@
             <button type="submit">Submit</button>
         </form>
     </div>
-    <div id="table-container">
-
-    </div>
+    <br>
+    <div id="table-container"></div>
 </body>
 </html>
 
@@ -44,44 +43,34 @@
                     name: username.value
                 },
                 success: function(response) {
-                    $('#table-container').html(response);
+                    var data = JSON.parse(response);
 
-                    var data = [
-                        ['Alice', 30, 'New York'],
-                        ['Bob', 25, 'Los Angeles'],
-                        ['Charlie', 35, 'Chicago']
-                    ];
+                    const table = document.createElement("table");
+                    table.setAttribute("border", "1");
 
-                    const lines = response.split("<br>");
+                    const headerRow = document.createElement("tr");
+                    const headers = Object.keys(data);
 
-                    for (let i = 0; i < lines.length; i++) {
-                        const cells = lines.split(" ");
+                    headers.forEach(header => {
+                        const th = document.createElement("th");
+                        th.innerText = header;
+                        headerRow.appendChild(th);
+                    });
+                    table.appendChild(headerRow);
 
-                        for (let j = 0; j < cells.length; j++) {
-                            const element = cells[j];
-                            dat[i][j] = cells[j];
-                        }
+                    const numRows = data[headers[0]].length;
+
+                    for (let i = 0; i < numRows; i++) {
+                            const row = document.createElement("tr");
+                            headers.forEach(header => {
+                                const td = document.createElement("td");
+                                td.innerText = data[header][i];
+                                row.appendChild(td);
+                        });
+                        table.appendChild(row);
                     }
-
-                    var table = document.createElement('table');
-
-                    var headerRow = table.insertRow();
-
-                    var headers = ['Name', 'Age', 'City'];
-                    for (var i = 0; i < headers.length; i++) {
-                        var cell = headerRow.insertCell();
-                        cell.textContent = headers[i];
-                    }
-
-                    for (var i = 0; i < data.length; i++) {
-                        var row = table.insertRow();
-
-                        for (var j = 0; j < data[i].length; j++) {
-                            var cell = row.insertCell();
-                            cell.textContent = data[i][j];
-                        }
-                    }
-                    document.getElementById('table-container').appendChild(table);
+                    $('#table-container').empty();
+                    document.getElementById("table-container").appendChild(table);
                 },
                 error: function() {
                     alert("An error occurred");

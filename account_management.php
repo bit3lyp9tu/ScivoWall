@@ -48,16 +48,22 @@
                 "SELECT pass_sha, salt, pepper FROM poster_generator.user WHERE user.name=?",
                 ["pass_sha", "salt", "pepper"],
                 "s", $name);
-            $substr = explode(" ", $result);
 
-            $hash = $substr[0];
-            $salt = $substr[1];
-            $pepper = $substr[2];
-
-            if (md5($pw . ":" . $salt . ":" . $pepper) == $hash) {
-                echo "Correct Password";
-            }else {
+            if ($result == "No results found") {
                 echo "Wrong Password";
+            }else {
+
+                $res_dec = json_decode($result, true);
+
+                $hash = $res_dec["pass_sha"][0];
+                $salt = $res_dec["salt"][0];
+                $pepper = $res_dec["pepper"][0];
+
+                if (md5($pw . ":" . $salt . ":" . $pepper) == $hash) {
+                    echo "Correct Password";
+                }else {
+                    echo "Wrong Password";
+                }
             }
         }
 
@@ -69,13 +75,17 @@
                 ["user_id"],
                 "s", $name
             );
-            $result = getterQuery(
-                "SELECT title FROM poster_generator.poster WHERE poster.user_id=?",
-                ["title"],
-                "s", $user_id
-            );
 
-            echo $result;
+            if ($user_id == "No results found") {
+                echo "No results found";
+            }else{
+                $result = getterQuery(
+                    "SELECT title, user_id FROM poster_generator.poster WHERE poster.user_id=?",
+                    ["title", "user_id"],
+                    "s", json_decode($user_id, true)["user_id"][0]
+                );
+                echo $result;
+            }
         }
     }
 ?>

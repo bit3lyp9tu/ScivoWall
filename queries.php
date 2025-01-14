@@ -37,20 +37,23 @@
         $output = "";
 
         if ($result->num_rows > 0) {
+            $out = array();
+
+            for ($i=0; $i < count($target_values); $i++) {
+                $out[$target_values[$i]] = array();
+            }
 
             while ($row = $result->fetch_assoc()) {
                 try {
                     for ($i=0; $i < count($target_values); $i++) {
 
-                        $output .= $row[$target_values[$i]] . " ";
+                        $out[$target_values[$i]][] = $row[$target_values[$i]];
                     }
-                    $output .= "<br>";
-
                 } catch (mysqli_sql_exception $th) {
                     return "Error: " . $th->getMessage();
                 }
             }
-            return $output;
+            return json_encode($out);
 
         } else {
             return "No results found";
