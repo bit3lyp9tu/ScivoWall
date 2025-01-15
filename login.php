@@ -1,9 +1,9 @@
 <?php
     include("account_management.php");
 
-    session_start();
-    echo "Die Session-ID ist :" . session_id();
-    $sid=session_id(); //erstellt eine Variable mit der Session-ID
+    // session_start();
+    // echo "Die Session-ID ist :" . session_id();
+    // $sid=session_id(); //erstellt eine Variable mit der Session-ID
 ?>
 <!DOCTYPE html>
 <html lang='en'>

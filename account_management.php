@@ -17,6 +17,27 @@
         echo substr($str, 0, $len);
     }
 
+    /*
+    Validates current session
+    if session not valid, returns null
+    if session valid, returns the corresponding user_id
+    */
+    function getValidUserFromSession() {
+        $sessionID = $_COOKIE["sessionID"];
+        if ($sessionID == null) {
+            return null;
+        }
+
+        $session = getterQuery(
+            "SELECT user_id
+            FROM poster_generator.session
+            WHERE session.sessionID = ?",
+            ["user_id"],
+            "s", $sessionID
+        );
+        return json_decode($session, true)["user_id"][0];
+    }
+
     if(isset($_POST['action'])) {
 
         if ($_POST['action'] == 'register') {
@@ -45,8 +66,8 @@
             $pw = isset($_POST['pw']) ? $_POST['pw'] : '';
 
             $result = getterQuery(
-                "SELECT pass_sha, salt, pepper FROM poster_generator.user WHERE user.name=?",
-                ["pass_sha", "salt", "pepper"],
+                "SELECT user_id, pass_sha, salt, pepper FROM poster_generator.user WHERE user.name=?",
+                ["user_id", "pass_sha", "salt", "pepper"],
                 "s", $name);
 
             if ($result == "No results found") {
@@ -60,7 +81,28 @@
                 $pepper = $res_dec["pepper"][0];
 
                 if (md5($pw . ":" . $salt . ":" . $pepper) == $hash) {
-                    echo "Correct Password";
+
+                    //Create new Session
+                    $user_id = $res_dec["user_id"][0];
+                    $sid = session_create_id();
+                    $exp_date = new DateTime('now', new DateTimeZone('Europe/Berlin'));
+                    // $exp_date->add(new DateInterval("P1D"));
+                    $exp_date->add(new DateInterval("PT5M"));
+
+                    $insertion = insertQuery(
+                        "INSERT INTO poster_generator.session (user_id, sessionID, expiration_date)
+                        VALUE (?, ?, ?)",
+                        "iss", $user_id, $sid, $exp_date->format("Y-m-d H:i:s"));
+
+                    if ($insertion == "success") {
+                        setcookie("sessionID", $sid, time() + 300, "/", "", false, true);
+                        //TODO: do the cookie settings need a rework? Update to PHP 7.3 and later might be required
+                        //PHP 7.3 and later has additional parameter SameSide=Strict and SameSide=Lax
+
+                        echo "Correct Password: " . $user_id . " " . $sid . " " . $exp_date->format("Y-m-d H:i:s");
+                    }else {
+                        echo $insertion;
+                    }
                 }else {
                     echo "Wrong Password";
                 }
@@ -68,87 +110,94 @@
         }
 
         if ($_POST['action'] == 'fetch_all_projects') {
-            $name = isset($_POST['name']) ? $_POST['name'] : '';
+            // $name = isset($_POST['name']) ? $_POST['name'] : '';
 
-            $user_id = getterQuery(
-                "SELECT user_id FROM poster_generator.user WHERE user.name=?",
-                ["user_id"],
-                "s", $name
-            );
+            // $user_id = getterQuery(
+            //     "SELECT user_id FROM poster_generator.user WHERE user.name=?",
+            //     ["user_id"],
+            //     "s", $name
+            // );
 
-            if ($user_id == "No results found") {
-                echo "No results found";
+            $user_id = getValidUserFromSession();
+            if ($user_id != null) {
+
+                if ($user_id == "No results found") {
+                    echo "No results found";
+                }else{
+                    $result = getterQuery(
+                        "SELECT title FROM poster_generator.poster WHERE poster.user_id=?",
+                        ["title"],
+                        "s", $user_id//json_decode($user_id, true)["user_id"][0]
+                    );
+                    echo $result;
+                }
+
             }else{
-                $result = getterQuery(
-                    "SELECT title FROM poster_generator.poster WHERE poster.user_id=?",
-                    ["title"],
-                    "s", json_decode($user_id, true)["user_id"][0]
-                );
-                echo $result;
+                echo "No or invalid session";
             }
         }
 
         if ($_POST['action'] == 'delete_project') {
             $local_id = isset($_POST['local_id']) ? $_POST['local_id'] : '';
-            $session_id = isset($_POST['session_id']) ? $_POST['session_id'] : '';  //currently unused
-            //TODO: include session_id in deletion process for increased security
 
-            $user_id = 2;
+            $user_id = getValidUserFromSession();
+            if ($user_id != null) {
 
-            $result = getterQuery(
-                "SELECT poster_id
-                FROM (
-                    SELECT ROW_NUMBER() OVER (ORDER BY poster_id) AS local_id, poster_id
-                    FROM poster_generator.poster
-                    WHERE poster.user_id = ?
-                ) AS ranked_posters
-                WHERE local_id = ?",
-                ["poster_id"],
-                "ii", $user_id, $local_id
-            );
+                $result = getterQuery(
+                    "SELECT poster_id
+                    FROM (
+                        SELECT ROW_NUMBER() OVER (ORDER BY poster_id) AS local_id, poster_id
+                        FROM poster_generator.poster
+                        WHERE poster.user_id = ?
+                    ) AS ranked_posters
+                    WHERE local_id = ?",
+                    ["poster_id"],
+                    "ii", $user_id, $local_id
+                );
 
-            $res = deleteQuery(
-                "DELETE FROM poster_generator.poster WHERE poster.poster_id = ?",
-                "i", json_decode($result, true)["poster_id"][0]
-            );
-
-            //refresh list
-            $data = getterQuery(
-                "SELECT title FROM poster_generator.poster WHERE poster.user_id=?",
-                ["title"],
-                "s", $user_id
-            );
-            echo $data;
-        }
-
-        if ($_POST['action'] == 'create_project') {
-            $name = isset($_POST['name']) ? $_POST['name'] : '';
-            $user_name = isset($_POST['user_name']) ? $_POST['user_name'] : '';
-            //TODO: include session_id in creation process for increased security
-
-            $user_id = json_decode(getterQuery(
-                "SELECT user_id FROM poster_generator.user WHERE user.name=?",
-                ["user_id"],
-                "s", $user_name
-            ), true);
-
-            if ($user_id != "") {
-                $res = insertQuery(
-                    "INSERT into poster_generator.poster (title, user_id) VALUE (?, ?)",
-                    "si", $name, $user_id["user_id"][0]
+                $res = deleteQuery(
+                    "DELETE FROM poster_generator.poster WHERE poster.poster_id = ?",
+                    "i", json_decode($result, true)["poster_id"][0]
                 );
 
                 //refresh list
                 $data = getterQuery(
                     "SELECT title FROM poster_generator.poster WHERE poster.user_id=?",
                     ["title"],
-                    "s", $user_id["user_id"][0]
+                    "s", $user_id
                 );
                 echo $data;
-            }else {
-                echo "ERROR";
+            }else{
+                echo "No or invalid session";
             }
+        }
 
+        if ($_POST['action'] == 'create_project') {
+            $name = isset($_POST['name']) ? $_POST['name'] : '';
+
+            $user_id = getValidUserFromSession();
+            if ($user_id != null) {
+
+                if ($user_id != "") {
+                    $res = insertQuery(
+                        "INSERT into poster_generator.poster (title, user_id) VALUE (?, ?)",
+                        "si", $name, $user_id//["user_id"][0]
+                    );
+
+                    //refresh list
+                    $data = getterQuery(
+                        "SELECT title FROM poster_generator.poster WHERE poster.user_id=?",
+                        ["title"],
+                        "s", $user_id//["user_id"][0]
+                    );
+                    echo $data;
+                }else {
+                    echo "ERROR";
+                }
+
+            }else{
+                echo "No or invalid session";
+            }
         }
     }
 ?>

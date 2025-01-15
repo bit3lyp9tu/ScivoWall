@@ -17,9 +17,9 @@
     <div>
         <form action="" id="form">
             <h1>My Projects</h1>
-            <p>From User: </p>
-            <input type="text" id="name" class="form-control" placeholder="Enter your Username...">
-            <button type="submit">Submit</button>
+            <!-- <p>From User: </p>
+            <input type="text" id="name" class="form-control" placeholder="Enter your Username..."> -->
+            <button type="submit">Load my Projects</button>
         </form>
     </div>
     <div>
@@ -39,32 +39,28 @@
 
         const username = document.getElementById("name");
 
-        if (username.value != "") {
-            $.ajax({
-                type: "POST",
-                url: "account_management.php",
-                data: {
-                    action: 'fetch_all_projects',
-                    name: username.value
-                },
-                success: function(response) {
-                    loadTable(response);
-                },
-                error: function() {
-                    alert("An error occurred");
-                }
-            });
-        }
+        $.ajax({
+            type: "POST",
+            url: "account_management.php",
+            data: {
+                action: 'fetch_all_projects'
+            },
+            success: function(response) {
+                loadTable(response);
+            },
+            error: function() {
+                alert("An error occurred");
+            }
+        });
     });
 
-    function deleteRow(local_id, session_id) {
+    function deleteRow(local_id) {
         $.ajax({
             type: "POST",
             url: "account_management.php",
             data: {
                 action: 'delete_project',
-                local_id: local_id,
-                session_id: session_id
+                local_id: local_id
             },
             success: function (response) {
                 // console.log((response));
@@ -78,7 +74,6 @@
 
     function createProject() {
         const project_name = document.getElementById("project-name");
-        const user_name = document.getElementById("name");
 
         // console.log(project_name.value);
 
@@ -88,8 +83,7 @@
                 url: "account_management.php",
                 data: {
                     action: 'create_project',
-                    name: project_name.value,
-                    user_name: user_name.value
+                    name: project_name.value
                 },
                 success: function(response) {
                     // console.log(response);
@@ -163,7 +157,7 @@
                 btn.className = "btn";
                 btn.value = "Delete";
                 btn.onclick = function() {
-                    deleteRow(this.closest('tr').id.split("-")[1], "-");
+                    deleteRow(this.closest('tr').id.split("-")[1]);
                 }
                 td.appendChild(btn);
                 return td;
