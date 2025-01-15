@@ -4,6 +4,21 @@
     // session_start();
     // echo "Die Session-ID ist :" . session_id();
     // $sid=session_id(); //erstellt eine Variable mit der Session-ID
+//
+// boilerplate code: <!DOCTYPE html> ... auslagern in ne eigene datei, kann auch .html sein und
+// dann include("header.html")
+//
+// jquery in lokale datei statt über code.jquery.com
+//
+// script in eigene datei, außerdem den ganzen script-block in $(document).ready(function () { ... hier den ganzen alten kram ... })
+//
+// https://codeseven.github.io/toastr/ statt alert
+//
+// serverseitig: pw komplexität checken
+//
+// weiterleitung per action an liste eigener projekte
+//
+// toastr statt alert -> https://codeseven.github.io/toastr/
 ?>
 <!DOCTYPE html>
 <html lang='en'>
@@ -50,6 +65,7 @@
                     pw: password.value
                 },
                 success: function(response) {
+			// todo: alle error messages durchgehen und mit toastr anzeigen
                     $('#login-response').html(response);
                 },
                 error: function() {

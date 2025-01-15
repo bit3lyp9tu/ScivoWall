@@ -1,6 +1,8 @@
 <?php
     // include_once("index.php");
     include("account_management.php");
+
+	// automatisch die projekte laden
 ?>
 <!DOCTYPE html>
 <html lang='en'>
@@ -147,7 +149,7 @@
 
             const editColumn = (index) => {
                 const td = document.createElement("td");
-                td.innerText = "Edit";
+                td.innerText = "Edit"; // link zum editierbaren poster
                 return td;
             };
             const deleteColumn = (index) => {

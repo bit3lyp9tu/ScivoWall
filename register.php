@@ -27,6 +27,7 @@
 </html>
 
 <script>
+// todo: toastr
     let registerForm = document.getElementById("form");
 
     registerForm.addEventListener("submit", (e) => {

@@ -1,4 +1,8 @@
 <?php
+// getterQuery: $stmt->close in exception damit nie offene statements bleiben, auch wenns fehlschlägt
+
+// getterQuery: nicht per default als json sondern als php datenstruktur zurückgeben; json when needed machen, meist ist es einfacher im code wenn man es als php datenstruktur hat
+
     $db_path = "/etc/dbpw";
 
     $password = null;
@@ -27,6 +31,7 @@
 		return "success";
     }
 
+    # todo: true/false zurückgeben
     function deleteQuery($sql, $types, ...$param) {
         $stmt = $GLOBALS["conn"]->prepare($sql);
         $stmt->bind_param($types, ...$param);
@@ -48,23 +53,26 @@
         if ($result->num_rows > 0) {
             $out = array();
 
-            for ($i=0; $i < count($target_values); $i++) {
+            for ($i = 0; $i < count($target_values); $i++) {
                 $out[$target_values[$i]] = array();
             }
 
             while ($row = $result->fetch_assoc()) {
                 try {
-                    for ($i=0; $i < count($target_values); $i++) {
+                    for ($i = 0; $i < count($target_values); $i++) {
 
                         $out[$target_values[$i]][] = $row[$target_values[$i]];
                     }
                 } catch (mysqli_sql_exception $th) {
+		    #$stmt->close();
                     return "Error: " . $th->getMessage();
                 }
             }
+	    #$stmt->close();
             return json_encode($out);
 
         } else {
+	    #$stmt->close();
             return "No results found";
         }
         $stmt->close();
@@ -97,6 +105,7 @@
 
 
     function getTitle($id) {
+	    # prepared statement oder mysqli_real_escape_string
         return runSingleQuery("SELECT title FROM poster_generator.poster WHERE poster.poster_id=" . $id);
     }
 ?>

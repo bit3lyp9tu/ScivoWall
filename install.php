@@ -81,7 +81,9 @@
 			1,
 			'das ist ein text'
 		)",
-		"insert into session (user_id, sessionID, expiration_date) value (1, '1234', '2025-12-31')"
+		"insert into session (user_id, sessionID, expiration_date) value (1, '1234', '2025-12-31')",
+
+		"create view if not exists ranked_posters AS SELECT ROW_NUMBER() OVER (ORDER BY poster_id) AS local_id, poster_id, user_id FROM poster_generator.poster"
 	];
 
 	/*

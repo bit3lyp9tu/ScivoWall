@@ -23,6 +23,10 @@
     if session valid, returns the corresponding user_id
     */
     function getValidUserFromSession() {
+	if (!array_key_exists("sessionID", $_COOKIE)) {
+		return null;
+	}
+
         $sessionID = $_COOKIE["sessionID"];
         if ($sessionID == null) {
             return null;
@@ -38,8 +42,15 @@
         return json_decode($session, true)["user_id"][0];
     }
 
-    if(isset($_POST['action'])) {
+    $msgs = array(
+	"error" => [],
+	"success" => [],
+	"warning" => []
+    );
 
+    if(isset($_POST['action'])) {
+	# evtl noch checken dass der name mindestens 3 zeichen hat (oder so)
+	# pw komplexität checken!
         if ($_POST['action'] == 'register') {
             $name = isset($_POST['name']) ? $_POST['name'] : '';
             $pw = isset($_POST['pw']) ? $_POST['pw'] : '';
@@ -59,11 +70,11 @@
                     echo "The user " . $name . " already exists.";
                 }
             }
-        }
-
-        if ($_POST['action'] == 'login') {
+        } else if ($_POST['action'] == 'login') {
             $name = isset($_POST['name']) ? $_POST['name'] : '';
             $pw = isset($_POST['pw']) ? $_POST['pw'] : '';
+
+	    # TODO: select user_id from poster_generator.user where username = ? and passwort = sha(?);
 
             $result = getterQuery(
                 "SELECT user_id, pass_sha, salt, pepper FROM poster_generator.user WHERE user.name=?",
@@ -71,8 +82,8 @@
                 "s", $name);
 
             if ($result == "No results found") {
-                echo "Wrong Password";
-            }else {
+                echo "Wrong Password or Username";
+            } else {
 
                 $res_dec = json_decode($result, true);
 
@@ -80,11 +91,13 @@
                 $salt = $res_dec["salt"][0];
                 $pepper = $res_dec["pepper"][0];
 
+		# NICHT md5, sondern sha überall
                 if (md5($pw . ":" . $salt . ":" . $pepper) == $hash) {
 
                     //Create new Session
                     $user_id = $res_dec["user_id"][0];
                     $sid = session_create_id();
+		    # evtl umstellen auf unix-zeit
                     $exp_date = new DateTime('now', new DateTimeZone('Europe/Berlin'));
                     // $exp_date->add(new DateInterval("P1D"));
                     $exp_date->add(new DateInterval("PT5M"));
@@ -104,7 +117,7 @@
                         echo $insertion;
                     }
                 }else {
-                    echo "Wrong Password";
+                    echo "Wrong Username or Password";
                 }
             }
         }
@@ -143,6 +156,7 @@
             $user_id = getValidUserFromSession();
             if ($user_id != null) {
 
+		    # evtl aus der ranked_posters view herausholen statt aus der subquery
                 $result = getterQuery(
                     "SELECT poster_id
                     FROM (
@@ -160,6 +174,15 @@
                     "i", json_decode($result, true)["poster_id"][0]
                 );
 
+		/*
+			if(!$res) {
+				$msgs["error"][] = "deleteQuery failed...";
+			}
+
+		 */
+
+		// res  checken: wenn deleteQuery true/false (boolean) zurückgibt chekcen, also fehlerbehandlung
+
                 //refresh list
                 $data = getterQuery(
                     "SELECT title FROM poster_generator.poster WHERE poster.user_id=?",
@@ -167,6 +190,8 @@
                     "s", $user_id
                 );
                 echo $data;
+		# todo: nach jedem ausgeben von json exit 0, damit nicht ausversehen 2 oder mehr jsons konkatiniert werden
+		# exit(0);
             }else{
                 echo "No or invalid session";
             }
@@ -197,7 +222,10 @@
 
             }else{
                 echo "No or invalid session";
+		#$msgs["errors"][] = "No or invalid session";
             }
         }
+
+	#print(json_encode($msgs));
     }
 ?>
