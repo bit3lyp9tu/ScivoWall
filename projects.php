@@ -67,8 +67,8 @@
                 session_id: session_id
             },
             success: function (response) {
-                console.log((response));
-                // loadTable();
+                // console.log((response));
+                loadTable(response);
             },
             error: function() {
                 alert("An error occurred");
@@ -78,8 +78,9 @@
 
     function createProject() {
         const project_name = document.getElementById("project-name");
+        const user_name = document.getElementById("name");
 
-        console.log(project_name.value);
+        // console.log(project_name.value);
 
         if (project_name.value != "") {
             $.ajax({
@@ -88,10 +89,16 @@
                 data: {
                     action: 'create_project',
                     name: project_name.value,
-                    user_id: 19
+                    user_name: user_name.value
                 },
                 success: function(response) {
-                    console.log(response);
+                    // console.log(response);
+
+                    if (response=="ERROR") {
+                        $('#table-container').html("User does not exist");
+                    } else {
+                        loadTable(response);
+                    }
                 },
                 error: function() {
                     alert("An error occurred");

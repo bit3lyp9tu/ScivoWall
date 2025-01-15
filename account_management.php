@@ -93,16 +93,18 @@
             $session_id = isset($_POST['session_id']) ? $_POST['session_id'] : '';  //currently unused
             //TODO: include session_id in deletion process for increased security
 
+            $user_id = 2;
+
             $result = getterQuery(
                 "SELECT poster_id
                 FROM (
                     SELECT ROW_NUMBER() OVER (ORDER BY poster_id) AS local_id, poster_id
                     FROM poster_generator.poster
-                    WHERE poster.user_id = 2
+                    WHERE poster.user_id = ?
                 ) AS ranked_posters
                 WHERE local_id = ?",
                 ["poster_id"],
-                "i", $local_id
+                "ii", $user_id, $local_id
             );
 
             $res = deleteQuery(
@@ -110,20 +112,43 @@
                 "i", json_decode($result, true)["poster_id"][0]
             );
 
-            echo $res;
+            //refresh list
+            $data = getterQuery(
+                "SELECT title FROM poster_generator.poster WHERE poster.user_id=?",
+                ["title"],
+                "s", $user_id
+            );
+            echo $data;
         }
 
         if ($_POST['action'] == 'create_project') {
             $name = isset($_POST['name']) ? $_POST['name'] : '';
-            $user_id = isset($_POST['user_id']) ? $_POST['user_id'] : '';
-            //TODO: include user_id (currently static value of user_id=19)
+            $user_name = isset($_POST['user_name']) ? $_POST['user_name'] : '';
+            //TODO: include session_id in creation process for increased security
 
-            $res = insertQuery(
-                "INSERT into poster_generator.poster (title, user_id) VALUE (?, ?)",
-                "si", $name, $user_id
-            );
+            $user_id = json_decode(getterQuery(
+                "SELECT user_id FROM poster_generator.user WHERE user.name=?",
+                ["user_id"],
+                "s", $user_name
+            ), true);
 
-            echo $res;
+            if ($user_id != "") {
+                $res = insertQuery(
+                    "INSERT into poster_generator.poster (title, user_id) VALUE (?, ?)",
+                    "si", $name, $user_id["user_id"][0]
+                );
+
+                //refresh list
+                $data = getterQuery(
+                    "SELECT title FROM poster_generator.poster WHERE poster.user_id=?",
+                    ["title"],
+                    "s", $user_id["user_id"][0]
+                );
+                echo $data;
+            }else {
+                echo "ERROR";
+            }
+
         }
     }
 ?>
