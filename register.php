@@ -1,17 +1,9 @@
 <?php
     include("account_management.php");
+    include("header.html");
 ?>
 <!DOCTYPE html>
 <html lang='en'>
-
-<head>
-    <title>Login</title>
-    <meta charset='utf-8'>
-    <link rel='stylesheet' type='text/css' href=style.css>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-
 <body>
     <div>
         <form action="" id="form">

@@ -1,7 +1,6 @@
 <?php
-// getterQuery: $stmt->close in exception damit nie offene statements bleiben, auch wenns fehlschlägt
-
-// getterQuery: nicht per default als json sondern als php datenstruktur zurückgeben; json when needed machen, meist ist es einfacher im code wenn man es als php datenstruktur hat
+    // getterQuery: $stmt->close in exception damit nie offene statements bleiben, auch wenns fehlschlägt
+    // getterQuery: nicht per default als json sondern als php datenstruktur zurückgeben; json when needed machen, meist ist es einfacher im code wenn man es als php datenstruktur hat
 
     $db_path = "/etc/dbpw";
 

@@ -49,8 +49,8 @@
     );
 
     if(isset($_POST['action'])) {
-	# evtl noch checken dass der name mindestens 3 zeichen hat (oder so)
-	# pw komplexität checken!
+        # evtl noch checken dass der name mindestens 3 zeichen hat (oder so)
+        # pw komplexität checken!
         if ($_POST['action'] == 'register') {
             $name = isset($_POST['name']) ? $_POST['name'] : '';
             $pw = isset($_POST['pw']) ? $_POST['pw'] : '';
