@@ -5,8 +5,12 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- if php-file -->
-    <script src='<?php echo $site_script; ?>' defer></script>
+    <script src='
+        <?php
+            if(isset($site_script)) {
+                echo $site_script;
+            }
+        ?>' defer></script>
     <!-- <script src="login.js" defer></script> -->
     <!-- <script src="projects.js" defer></script> -->
 </head>

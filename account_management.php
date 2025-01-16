@@ -14,7 +14,7 @@
         foreach ($pr_bits as $entry) {
             $str .= chr(33 + ($entry % 94));
         }
-        echo substr($str, 0, $len);
+        return substr($str, 0, $len);
     }
 
     /*
@@ -23,10 +23,10 @@
     if session valid, returns the corresponding user_id
     */
     function getValidUserFromSession() {
-	if (!array_key_exists("sessionID", $_COOKIE)) {
-		return null;
-	}
 
+        if (!array_key_exists("sessionID", $_COOKIE)) {
+            return null;
+        }
         $sessionID = $_COOKIE["sessionID"];
         if ($sessionID == null) {
             return null;
@@ -43,10 +43,12 @@
     }
 
     $msgs = array(
-	"error" => [],
-	"success" => [],
-	"warning" => []
+        "error" => [],
+        "success" => [],
+        "warning" => []
     );
+
+    //echo generate_salt();
 
     if(isset($_POST['action'])) {
         # evtl noch checken dass der name mindestens 3 zeichen hat (oder so)
@@ -55,11 +57,14 @@
             $name = isset($_POST['name']) ? $_POST['name'] : '';
             $pw = isset($_POST['pw']) ? $_POST['pw'] : '';
 
-            $salt = generate_salt();
+            $salt = generate_salt();//"a2d47c981889513c5e2ddbca71f414";//
+
+            echo "SALT:$salt:SALT";
+
             $pepper = "a2d47c981889513c5e2ddbca71f414"; //TODO: use pepper dependency
             $hash = md5($pw . ":" . $salt . ":" . $pepper);
 
-            // echo $pw . ":" . $salt . ":" . $pepper . "----" . $hash;
+            echo $pw . ":" . $salt . ":" . $pepper . "----" . $hash;
             try {
                 echo insertQuery("INSERT INTO poster_generator.user (`name`, `pass_sha`, `salt`, `pepper`)
                     VALUES (?, ?, ?, ?)",
@@ -68,13 +73,17 @@
             } catch (mysqli_sql_exception $th) {
                 if ($th->getCode() == 1062) {
                     echo "The user " . $name . " already exists.";
+                }else{
+                    echo $th->getMessage();
                 }
             }
-        } else if ($_POST['action'] == 'login') {
+        }
+
+        if ($_POST['action'] == 'login') {
             $name = isset($_POST['name']) ? $_POST['name'] : '';
             $pw = isset($_POST['pw']) ? $_POST['pw'] : '';
 
-	    # TODO: select user_id from poster_generator.user where username = ? and passwort = sha(?);
+	        # TODO: select user_id from poster_generator.user where username = ? and passwort = sha(?);
 
             $result = getterQuery(
                 "SELECT user_id, pass_sha, salt, pepper FROM poster_generator.user WHERE user.name=?",
@@ -91,13 +100,13 @@
                 $salt = $res_dec["salt"][0];
                 $pepper = $res_dec["pepper"][0];
 
-		# NICHT md5, sondern sha überall
+		        # NICHT md5, sondern sha überall
                 if (md5($pw . ":" . $salt . ":" . $pepper) == $hash) {
 
                     //Create new Session
                     $user_id = $res_dec["user_id"][0];
                     $sid = session_create_id();
-		    # evtl umstellen auf unix-zeit
+		            # evtl umstellen auf unix-zeit
                     $exp_date = new DateTime('now', new DateTimeZone('Europe/Berlin'));
                     // $exp_date->add(new DateInterval("P1D"));
                     $exp_date->add(new DateInterval("PT5M"));
@@ -174,14 +183,14 @@
                     "i", json_decode($result, true)["poster_id"][0]
                 );
 
-		/*
-			if(!$res) {
-				$msgs["error"][] = "deleteQuery failed...";
-			}
+                /*
+                    if(!$res) {
+                        $msgs["error"][] = "deleteQuery failed...";
+                    }
 
-		 */
+                */
 
-		// res  checken: wenn deleteQuery true/false (boolean) zurückgibt chekcen, also fehlerbehandlung
+                // res  checken: wenn deleteQuery true/false (boolean) zurückgibt chekcen, also fehlerbehandlung
 
                 //refresh list
                 $data = getterQuery(
@@ -190,8 +199,8 @@
                     "s", $user_id
                 );
                 echo $data;
-		# todo: nach jedem ausgeben von json exit 0, damit nicht ausversehen 2 oder mehr jsons konkatiniert werden
-		# exit(0);
+                # todo: nach jedem ausgeben von json exit 0, damit nicht ausversehen 2 oder mehr jsons konkatiniert werden
+                # exit(0);
             }else{
                 echo "No or invalid session";
             }
@@ -222,10 +231,10 @@
 
             }else{
                 echo "No or invalid session";
-		#$msgs["errors"][] = "No or invalid session";
+		    #$msgs["errors"][] = "No or invalid session";
             }
         }
 
-	#print(json_encode($msgs));
+	    #print(json_encode($msgs));
     }
 ?>
