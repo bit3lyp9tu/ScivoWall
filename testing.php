@@ -4,6 +4,7 @@ $GLOBALS["tests_failed"] = 0;
 $GLOBALS["dbname"] = "poster_generator_test";
 
 include("queries.php");
+include_once("functions.php");
 
 function shutdown() {
 	runSingleQuery("set FOREIGN_KEY_CHECKS = 0;", false);
@@ -55,13 +56,25 @@ function test_not_equal($name, $x, $y) {
 function test_equal($name, $x, $y) {
 	if(is_not_equal($x, $y)) {
 		print_red("Test $name failed.");
-		print("Expected:\n$x\n");
-		print("Got:\n$y\n");
+		print("Expected:\n$y\n");
+		print("Got:\n$x\n");
 		$GLOBALS["tests_failed"]++;
 	}
 }
 
 test_equal("default length for generate_salt is 32", strlen(generate_salt()), 32);
 test_equal("generate_salt(10)", strlen(generate_salt(10)), 10);
+
+test_equal("isDocker()", gettype(isDocker()), "boolean");
+
+/*
+$new_id = insertQuery("insert ...");
+test_not_equal("new id", $new_id, null);
+if($new_id !== null) {
+	test_equal("zweite fkt die nur ausgeführt wird wenn erste geht", bla, blubb);
+} else {
+	test_equal("diese fkt failt immer", 0, 1);
+}
+*/
 
 ?>
