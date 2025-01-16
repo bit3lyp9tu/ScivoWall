@@ -30,9 +30,13 @@
 	}
 
 
+	if(!array_key_exists("dbname", $GLOBALS)) {
+		$GLOBALS["dbname"] = "poster_generator";
+	}
+
 	$create_queries = [
-		"create database if not exists poster_generator",
-		"use poster_generator",
+		"create database if not exists ".$GLOBALS["dbname"],
+		"use ".$GLOBALS["dbname"],
 
 		"create table if not exists user (
 			user_id int primary key auto_increment,
@@ -73,6 +77,7 @@
 		)",
 
 		//"insert into user (name, pass_sha, salt, pepper) value ('Max K', 'trhtgxjzjk', 'ututgfzt', 'test');",
+		/*
 		"insert into author (name) value ('max');",
 		"insert into poster (title, user_id) value ('Poster Titel', 2);",
 
@@ -83,7 +88,8 @@
 		)",
 		"insert into session (user_id, sessionID, expiration_date) value (1, '1234', '2025-12-31')",
 
-		"create view if not exists ranked_posters AS SELECT ROW_NUMBER() OVER (ORDER BY poster_id) AS local_id, poster_id, user_id FROM poster_generator.poster"
+		"create view if not exists ranked_posters AS SELECT ROW_NUMBER() OVER (ORDER BY poster_id) AS local_id, poster_id, user_id FROM poster"
+		 */
 	];
 
 	/*

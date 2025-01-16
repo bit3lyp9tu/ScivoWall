@@ -2,19 +2,7 @@
     include_once("queries.php");
 
     function generate_salt($len=32) {
-        $pr_bits = '';
-        $fp = @fopen('/dev/urandom','rb');
-        if ($fp !== FALSE) {
-            $pr_bits .= @fread($fp, $len);
-            @fclose($fp);
-        }
-        $pr_bits = unpack("C*", $pr_bits);
-        $str = "";
-
-        foreach ($pr_bits as $entry) {
-            $str .= chr(33 + ($entry % 94));
-        }
-        return substr($str, 0, $len);
+	    return substr(bin2hex(random_bytes($len)), 0, $len);
     }
 
     /*

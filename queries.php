@@ -78,28 +78,30 @@
     }
 
     // Old
-    function runSingleQuery ($sql) {
-        $result = $GLOBALS["conn"]->query($sql);
-        $substr = explode(" ",$sql);
+    function runSingleQuery ($sql, $allows_num_rows=true) {
+	    $result = $GLOBALS["conn"]->query($sql);
+	    $substr = explode(" ",$sql);
 
-        if (!$result) {
-            return "ERROR";
-        }
+	    if (!$result) {
+		    return "ERROR";
+	    }
 
-        if ($result->num_rows > 0) {
-            // Initialize an empty string to store the result
-            $output = "";//"<ul>";
+	    if($allows_num_rows) {
+		    if ($result->num_rows > 0) {
+			    // Initialize an empty string to store the result
+			    $output = "";//"<ul>";
 
-            // Fetch all rows and generate HTML output
-            while ($row = $result->fetch_assoc()) {
-                $output .= "<div>" . htmlspecialchars($row[$substr[1]]) . "</div>";
-            }
+			    // Fetch all rows and generate HTML output
+			    while ($row = $result->fetch_assoc()) {
+				    $output .= "<div>" . htmlspecialchars($row[$substr[1]]) . "</div>";
+			    }
 
-            $output .= "";//"</ul>";
-            return $output;
-        } else {
-            return "No results found";
-        }
+			    $output .= "";//"</ul>";
+			    return $output;
+		    } else {
+			    return "No results found";
+		    }
+	    }
     }
 
 
