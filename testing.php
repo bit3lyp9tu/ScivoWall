@@ -1,5 +1,12 @@
 <?php
 
+$isCLI = (php_sapi_name() == 'cli');
+
+if(!$isCLI) {
+	echo "Can only be run in CLI";
+	exit(0);
+}
+
 $GLOBALS["tests_failed"] = 0;
 $GLOBALS["dbname"] = "poster_generator_test";
 
