@@ -1,5 +1,4 @@
 <?php
-    $site_script="projects.js";
     // include_once("index.php");
     include("account_management.php");
     include("header.html");

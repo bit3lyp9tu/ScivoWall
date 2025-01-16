@@ -1,6 +1,4 @@
 <?php
-    $site_script = "register.js";
-
     include("account_management.php");
     include("header.html");
 ?>

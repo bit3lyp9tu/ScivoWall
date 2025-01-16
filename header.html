@@ -5,12 +5,15 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script src='
-        <?php
-            if(isset($site_script)) {
-                echo $site_script;
-            }
-        ?>' defer></script>
+    <?php
+        $script_path = $_SERVER["SCRIPT_FILENAME"];
+        $script_path = preg_replace("/.*\//", "", $script_path);
+        $script_path = preg_replace("/\.php$/", ".js", $script_path);
+
+        if (file_exists($script_path)) {
+            print "<script src='$script_path' defer></script>";
+        }
+    ?>
     <!-- <script src="login.js" defer></script> -->
     <!-- <script src="projects.js" defer></script> -->
 </head>
