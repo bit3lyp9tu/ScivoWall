@@ -1,3 +1,4 @@
+
 function createProject() {
     const project_name = document.getElementById("project-name");
 
@@ -14,14 +15,15 @@ function createProject() {
             success: function (response) {
                 // console.log(response);
 
-                if (response == "ERROR") {
-                    $('#table-container').html("User does not exist");
+                if (response == "ERROR" || response == "No or invalid session") {
+                    toastr["error"]("ERROR");
                 } else {
                     loadTable(response);
+                    toastr["success"]("New Project created");
                 }
             },
             error: function () {
-                alert("An error occurred");
+                toastr["error"]("An error occurred");
             }
         });
     }
@@ -38,9 +40,10 @@ function deleteRow(local_id) {
         success: function (response) {
             // console.log((response));
             loadTable(response);
+            toastr["success"]("Project deleted");
         },
         error: function () {
-            alert("An error occurred");
+            toastr["error"]("An error occurred");
         }
     });
 }
@@ -84,7 +87,8 @@ function loadTable(response) {
     $('#table-container').empty();
 
     if (response == "No results found") {
-        $('#table-container').html(response);
+        // $('#table-container').html(response);
+        toastr["warning"]("No results found");
 
     } else {
         var data = isJSON(response) ? JSON.parse(response) : response;
@@ -136,7 +140,7 @@ $(document).ready(function () {
                 loadTable(response);
             },
             error: function () {
-                alert("An error occurred");
+                toastr["error"]("An error occurred");
             }
         });
     });

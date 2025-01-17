@@ -1,39 +1,27 @@
 <?php
     include("queries.php");
-
-
-
-    // error_reporting(E_ALL);
-    // set_error_handler(
-    //     function ($severity, $message, $file, $line) {
-    //         throw new \ErrorException($message, $severity, $severity, $file, $line);
-    //     }
-    // );
-
-    // ini_set('display_errors', 1);
-
-    // $array = [1, 2, 3];
-    // echo $array[10];
-
-    // echo "done";
-
-    $result = getterQuery(
-        "SELECT poster_id
-        FROM (
-            SELECT ROW_NUMBER() OVER (ORDER BY poster_id) AS local_id, poster_id
-            FROM poster_generator.poster
-            WHERE poster.user_id = 2
-        ) AS ranked_posters
-        WHERE local_id = ?",
-        ["poster_id"],
-        "i", 17
-    );
-
-    // $res = deleteQuery(
-    //     "DELETE FROM poster_generator.poster WHERE poster.poster_id = ?",
-    //     "i", json_decode($result, true)[0]
-    // );
-
-    print_r(json_decode($result, true)["poster_id"][0]);
-
 ?>
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <title>Poster Generator</title>
+    <meta charset='utf-8'>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet">
+    <link rel='stylesheet' type='text/css' href=style.css>
+
+
+</head>
+
+<body>
+    Page
+</body>
+
+<script>
+</script>
+
+</html>

@@ -5,14 +5,8 @@
     include("header.html");
 
     // jquery in lokale datei statt über code.jquery.com
-
-    // https://codeseven.github.io/toastr/ statt alert
-    //
-    // serverseitig: pw komplexität checken
     //
     // weiterleitung per action an liste eigener projekte
-    //
-    // toastr statt alert -> https://codeseven.github.io/toastr/
 ?>
 <!DOCTYPE html>
 <html lang='en'>

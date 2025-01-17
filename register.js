@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    // TODO: toastr
     let registerForm = document.getElementById("form");
 
     registerForm.addEventListener("submit", (e) => {
@@ -21,10 +20,10 @@ $(document).ready(function () {
                     pw: password.value
                 },
                 success: function (response) {
-                    $('#register-response').html(response);
+                    toastr["warning"](response);
                 },
                 error: function () {
-                    alert("An error occurred");
+                    toastr["error"]("An error occurred");
                 }
             });
         }

@@ -1,9 +1,12 @@
 <head>
     <title>Poster Generator</title>
     <meta charset='utf-8'>
-    <link rel='stylesheet' type='text/css' href=style.css>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet">
+    <link rel='stylesheet' type='text/css' href=style.css>
 
     <?php
         $script_path = $_SERVER["SCRIPT_FILENAME"];
@@ -14,6 +17,4 @@
             print "<script src='$script_path' defer></script>";
         }
     ?>
-    <!-- <script src="login.js" defer></script> -->
-    <!-- <script src="projects.js" defer></script> -->
 </head>

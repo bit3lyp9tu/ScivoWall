@@ -1,5 +1,4 @@
 $(document).ready(function () {
-
     let registerForm = document.getElementById("login-form");
 
     registerForm.addEventListener("submit", (e) => {
@@ -9,7 +8,7 @@ $(document).ready(function () {
         let password = document.getElementById("pw");
 
         if (username.value == "" || password.value == "") {
-            alert("Ensure you input a value in both fields!");
+            toastr["warning"]("Ensure you input a value in both fields!");
         } else {
             $.ajax({
                 type: "POST",
@@ -20,11 +19,10 @@ $(document).ready(function () {
                     pw: password.value
                 },
                 success: function (response) {
-                    // TODO: alle error messages durchgehen und mit toastr anzeigen
-                    $('#login-response').html(response);
+                    toastr["warning"](response);
                 },
                 error: function () {
-                    alert("An error occurred");
+                    toastr["error"]("An error occurred");
                 }
             });
         }
