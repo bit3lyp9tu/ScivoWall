@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    // todo: toastr
+    // TODO: toastr
     let registerForm = document.getElementById("form");
 
     registerForm.addEventListener("submit", (e) => {

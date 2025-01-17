@@ -5,9 +5,7 @@
     include("header.html");
 
     // jquery in lokale datei statt über code.jquery.com
-    //
-    // script in eigene datei, außerdem den ganzen script-block in $(document).ready(function () { ... hier den ganzen alten kram ... })
-    //
+
     // https://codeseven.github.io/toastr/ statt alert
     //
     // serverseitig: pw komplexität checken

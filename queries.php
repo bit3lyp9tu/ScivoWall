@@ -30,7 +30,7 @@
 		return "success";
     }
 
-    # todo: true/false zurückgeben
+    # TODO: true/false zurückgeben
     function deleteQuery($sql, $types, ...$param) {
         $stmt = $GLOBALS["conn"]->prepare($sql);
         $stmt->bind_param($types, ...$param);
@@ -42,12 +42,12 @@
 
     function getterQuery($sql, $target_values, $types, ...$param) {
         $stmt = $GLOBALS["conn"]->prepare($sql);
-        $stmt->bind_param($types, ...$param);
+        if ($types != "") {
+            $stmt->bind_param($types, ...$param);
+        }
         $stmt->execute();
 
         $result = $stmt->get_result();
-
-        $output = "";
 
         if ($result->num_rows > 0) {
             $out = array();
@@ -63,15 +63,15 @@
                         $out[$target_values[$i]][] = $row[$target_values[$i]];
                     }
                 } catch (mysqli_sql_exception $th) {
-		    #$stmt->close();
+		            #$stmt->close();
                     return "Error: " . $th->getMessage();
                 }
             }
-	    #$stmt->close();
+	        #$stmt->close();
             return json_encode($out);
 
         } else {
-	    #$stmt->close();
+	        #$stmt->close();
             return "No results found";
         }
         $stmt->close();
@@ -107,6 +107,6 @@
 
     function getTitle($id) {
 	    # prepared statement oder mysqli_real_escape_string
-        return runSingleQuery("SELECT title FROM poster_generator.poster WHERE poster.poster_id=" . $id);
+        return runSingleQuery("SELECT title FROM poster WHERE poster.poster_id=" . $id);
     }
 ?>

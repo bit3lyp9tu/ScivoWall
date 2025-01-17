@@ -24,7 +24,7 @@
 
 	$user = $_GET["id"];
 
-	$sql = "SELECT id, name FROM poster_generator.user where id = '".$conn->real_escape_string($user)."'";
+	$sql = "SELECT id, name FROM user where id = '".$conn->real_escape_string($user)."'";
 
 	$result = $conn->query($sql);
 

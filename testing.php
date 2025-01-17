@@ -45,7 +45,6 @@ function is_equal ($x, $y) {
 	if($x === $y) {
 		return true;
 	}
-
 	return false;
 }
 
@@ -55,14 +54,14 @@ function is_not_equal($x, $y) {
 
 function test_not_equal($name, $x, $y) {
 	if(is_equal($x, $y)) {
-		print_red("Test $name failed");
+		print_red("Test [$name] failed");
 		$GLOBALS["tests_failed"]++;
 	}
 }
 
 function test_equal($name, $x, $y) {
 	if(is_not_equal($x, $y)) {
-		print_red("Test $name failed.");
+		print_red("Test [$name] failed.");
 		print("Expected:\n$y\n");
 		print("Got:\n$x\n");
 		$GLOBALS["tests_failed"]++;
@@ -83,5 +82,44 @@ if($new_id !== null) {
 	test_equal("diese fkt failt immer", 0, 1);
 }
 */
+
+//SQL Queries
+test_equal("select query no result", runSingleQuery("SELECT * FROM session"), "No results found");
+
+test_equal("insert query", insertQuery("INSERT INTO poster (title, user_id) VALUE (?, ?)", "si", 'Testing Title', null), "success");
+
+test_equal("select query get single result", runSingleQuery("SELECT poster_id FROM poster"), "<div>1</div>");
+
+$result = getterQuery("SELECT * FROM poster WHERE poster.title = ?", ["poster_id", "title", "user_id"], "s", "Testing Title");
+test_equal("select query get json result", $result, '{"poster_id":[1],"title":["Testing Title"],"user_id":[null]}');
+$result = getterQuery("SELECT * FROM poster WHERE poster.title = ?", ["poster_id", "title", "user_id"], "s", "---");
+test_equal("select query getter", $result, "No results found");
+
+test_equal("delete query", deleteQuery("DELETE FROM poster WHERE poster.title = ?", "s", "Testing Title"), "successfully deleted");
+test_equal("delete query check if removed", runSingleQuery("SELECT title FROM poster"), "No results found");
+
+
+//Account Management
+// test_equal("delete user", deleteQuery("DELETE FROM user WHERE user.name = ?", "s", "testing"), "successfully deleted");
+// $result = getterQuery("SELECT user_id, name FROM user WHERE user.User_id > ?", ["user_id", "name"], "s", 0);
+// echo $result;
+
+test_equal("register new user", register("testing", "123"), "success");
+test_equal("register with same username twice", register("testing", "123"), "The user testing already exists.");
+test_equal("register with number as username", register(123, "123"), "success");
+
+test_equal("login unknown username", login("---", "---"), "Wrong Username or Password");
+test_equal("login with wrong password", login("testing", "---"), "Wrong Username or Password");
+test_equal("login successfully", login("testing", "123"), "Correct Password");
+//TODO: check after correct session during login
+
+test_equal("create new project", create_project("new Project", 1), '{"title":["new Project"]}');
+test_equal("fetch all projects db check", getterQuery("SELECT poster_id, title, user_id FROM poster", ["poster_id", "title", "user_id"], "", null), '{"poster_id":[2],"title":["new Project"],"user_id":[1]}');
+
+test_equal("fetch all projects", fetch_projects(1), '{"title":["new Project"]}');
+
+test_equal("delete project", delete_project(1, 1), "No results found");
+test_equal("delete project db check", getterQuery("SELECT poster_id, title FROM poster", ["poster_id", "title"], "", null), "No results found");
+
 
 ?>
