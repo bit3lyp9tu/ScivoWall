@@ -2,8 +2,6 @@
 function createProject() {
     const project_name = document.getElementById("project-name");
 
-    // console.log(project_name.value);
-
     if (project_name.value != "") {
         $.ajax({
             type: "POST",
@@ -13,7 +11,6 @@ function createProject() {
                 name: project_name.value
             },
             success: function (response) {
-                // console.log(response);
 
                 if (response == "ERROR" || response == "No or invalid session") {
                     toastr["warning"]("Not logged in");
@@ -38,7 +35,6 @@ function deleteRow(local_id) {
             local_id: local_id
         },
         success: function (response) {
-            // console.log((response));
             loadTable(response);
 
             if (response != "No results found") {
@@ -93,7 +89,7 @@ function loadTable(response) {
 
     if (response == "No results found") {
         // $('#table-container').html(response);
-        toastr["warning"]("No results found");
+        toastr["warning"]("No results found");  //TODO: bug? execute msg twice?
 
     } else {
         var data = isJSON(response) ? JSON.parse(response) : response;

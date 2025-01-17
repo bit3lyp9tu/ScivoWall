@@ -69,7 +69,7 @@
             return "Password not complex enough";
         }
 
-        $salt = generate_salt();//"a2d47c981889513c5e2ddbca71f414";//
+        $salt = generate_salt();
         $pepper = "a2d47c981889513c5e2ddbca71f414"; //TODO: use pepper dependency
         $hash = md5($pw . ":" . $salt . ":" . $pepper);
 
@@ -106,8 +106,7 @@
             $salt = $res_dec["salt"][0];
             $pepper = $res_dec["pepper"][0];
 
-            # NICHT md5, sondern sha überall
-            if (md5($pw . ":" . $salt . ":" . $pepper) == $hash) {
+            if (md5($pw . ":" . $salt . ":" . $pepper) == $hash || sha1($pw . ":" . $salt . ":" . $pepper) == $hash) {  //TODO: remove md5 when test-phase finished
 
                 //Create new Session
                 $user_id = $res_dec["user_id"][0];
@@ -127,7 +126,7 @@
                     //TODO: do the cookie settings need a rework? Update to PHP 7.3 and later might be required
                     //PHP 7.3 and later has additional parameter SameSide=Strict and SameSide=Lax
 
-                    return "Correct Password";// . $user_id . " " . $sid . " " . $exp_date->format("Y-m-d H:i:s");
+                    return "Correct Password";
                 }else {
                     return $insertion;
                 }
@@ -148,7 +147,7 @@
                 $result = getterQuery(
                     "SELECT title FROM poster WHERE poster.user_id=?",
                     ["title"],
-                    "s", $user_id//json_decode($user_id, true)["user_id"][0]
+                    "s", $user_id
                 );
                 return $result;
             }
@@ -165,14 +164,14 @@
             if ($user_id != "") {
                 $res = insertQuery(
                     "INSERT into poster (title, user_id) VALUE (?, ?)",
-                    "si", $name, $user_id//["user_id"][0]
+                    "si", $name, $user_id
                 );
 
                 //refresh list
                 $data = getterQuery(
                     "SELECT title FROM poster WHERE poster.user_id=?",
                     ["title"],
-                    "s", $user_id//["user_id"][0]
+                    "s", $user_id
                 );
                 return $data;
             }else {
@@ -189,7 +188,7 @@
 
         if ($user_id != null) {
 
-        # evtl aus der ranked_posters view herausholen statt aus der subquery
+            # evtl aus der ranked_posters view herausholen statt aus der subquery
             $result = getterQuery(
                 "SELECT poster_id
                 FROM (
@@ -227,7 +226,6 @@
 
     if(isset($_POST['action'])) {
         # evtl noch checken dass der name mindestens 3 zeichen hat (oder so)
-        # pw komplexität checken!
         if ($_POST['action'] == 'register') {
             $name = isset($_POST['name']) ? $_POST['name'] : '';
             $pw = isset($_POST['pw']) ? $_POST['pw'] : '';

@@ -21,6 +21,7 @@ $(document).ready(function () {
                 success: function (response) {
                     if (response == "Correct Password") {
                         toastr["success"]("Logged in");
+                        window.location.href = "projects.php";
                     } else {
                         toastr["warning"](response);
                     }

@@ -5,8 +5,6 @@
     include("header.html");
 
     // jquery in lokale datei statt über code.jquery.com
-    //
-    // weiterleitung per action an liste eigener projekte
 ?>
 <!DOCTYPE html>
 <html lang='en'>

@@ -131,6 +131,8 @@ test_equal("Password complexity contains special char", getPwComplexityLevel("1A
 
 
 /*
+name:	bug
+pw:
 A+a2d47c981889513c5e2ddbca71f414
 */
 ?>

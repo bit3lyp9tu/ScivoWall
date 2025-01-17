@@ -89,14 +89,14 @@
 	    if($allows_num_rows) {
 		    if ($result->num_rows > 0) {
 			    // Initialize an empty string to store the result
-			    $output = "";//"<ul>";
+			    $output = "";
 
 			    // Fetch all rows and generate HTML output
 			    while ($row = $result->fetch_assoc()) {
 				    $output .= "<div>" . htmlspecialchars($row[$substr[1]]) . "</div>";
 			    }
 
-			    $output .= "";//"</ul>";
+			    $output .= "";
 			    return $output;
 		    } else {
 			    return "No results found";

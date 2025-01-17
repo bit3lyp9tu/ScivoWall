@@ -21,6 +21,7 @@ $(document).ready(function () {
                 },
                 success: function (response) {
                     toastr["warning"](response);
+                    window.location.href = "login.php";
                 },
                 error: function () {
                     toastr["error"]("An error occurred");
