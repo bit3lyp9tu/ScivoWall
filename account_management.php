@@ -1,5 +1,12 @@
 <?php
     include_once("queries.php");
+    include_once("install.php");
+
+    $msgs = array(
+        "success" => [],
+        "warning" => [],
+        "error" => []
+    );
 
     function generate_salt($len=32) {
         return substr(bin2hex(random_bytes($len)), 0, $len);
@@ -55,11 +62,6 @@
         return json_decode($session, true)["user_id"][0];
     }
 
-    $msgs = array(
-        "error" => [],
-        "success" => [],
-        "warning" => []
-    );
 
     function register($name, $pw) {
 
@@ -121,7 +123,7 @@
                     "iss", $user_id, $sid, $exp_date->format("Y-m-d H:i:s"));
 
                 if ($insertion == "success") {
-                    setcookie("sessionID", $sid, time() + 300, "/", "", false, true);
+                    setcookie("sessionID", $sid, time() + 300, "/", "", false, true);   //TODO: placing additional time in variable
                     //TODO: do the cookie settings need a rework? Update to PHP 7.3 and later might be required
                     //PHP 7.3 and later has additional parameter SameSide=Strict and SameSide=Lax
 
@@ -174,7 +176,7 @@
                 );
                 return $data;
             }else {
-                return "ERROR";
+                return "ERRORhvjjghgc";
             }
 
         }else{
@@ -237,7 +239,7 @@
             $name = isset($_POST['name']) ? $_POST['name'] : '';
             $pw = isset($_POST['pw']) ? $_POST['pw'] : '';
 
-	        echo login($name, pw);
+            echo login($name, $pw);
         }
 
         if ($_POST['action'] == 'fetch_all_projects') {

@@ -129,4 +129,8 @@ test_equal("Password complexity contains number", getPwComplexityLevel("1aaaaaaa
 test_equal("Password complexity contains upper letter", getPwComplexityLevel("1Aaaaaaaaaaaa"), 3);
 test_equal("Password complexity contains special char", getPwComplexityLevel("1A_aaaaaaaaaa"), 4);
 
+
+/*
+A+a2d47c981889513c5e2ddbca71f414
+*/
 ?>

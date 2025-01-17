@@ -19,10 +19,14 @@ $(document).ready(function () {
                     pw: password.value
                 },
                 success: function (response) {
-                    toastr["warning"](response);
+                    if (response == "Correct Password") {
+                        toastr["success"]("Logged in");
+                    } else {
+                        toastr["warning"](response);
+                    }
                 },
                 error: function () {
-                    toastr["error"]("An error occurred");
+                    toastr["error"]("An error occurred...");
                 }
             });
         }

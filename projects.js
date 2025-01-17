@@ -16,7 +16,7 @@ function createProject() {
                 // console.log(response);
 
                 if (response == "ERROR" || response == "No or invalid session") {
-                    toastr["error"]("ERROR");
+                    toastr["warning"]("Not logged in");
                 } else {
                     loadTable(response);
                     toastr["success"]("New Project created");
@@ -40,7 +40,12 @@ function deleteRow(local_id) {
         success: function (response) {
             // console.log((response));
             loadTable(response);
-            toastr["success"]("Project deleted");
+
+            if (response != "No results found") {
+                toastr["success"]("No Projects available");
+            } else {
+                toastr["success"]("Project deleted");
+            }
         },
         error: function () {
             toastr["error"]("An error occurred");
@@ -137,7 +142,16 @@ $(document).ready(function () {
                 action: 'fetch_all_projects'
             },
             success: function (response) {
-                loadTable(response);
+                if (response != "No or invalid session") {
+                    if (response != "No results found") {
+                        loadTable(response);
+                        toastr["success"]("Loading Projects");
+                    } else {
+                        toastr["warning"]("No results found");
+                    }
+                } else {
+                    toastr["warning"]("Not logged in");
+                }
             },
             error: function () {
                 toastr["error"]("An error occurred");

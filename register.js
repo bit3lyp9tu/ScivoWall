@@ -9,7 +9,7 @@ $(document).ready(function () {
         let password2 = document.getElementById("password2");
 
         if (username.value == "" || password.value == "" || password2.value == "" || password.value != password2.value) {
-            alert("Ensure you input a value in all fields!");
+            toastr["warning"]("Ensure you input a value in all fields!");
         } else {
             $.ajax({
                 type: "POST",
