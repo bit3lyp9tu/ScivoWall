@@ -2,7 +2,32 @@
     include_once("queries.php");
 
     function generate_salt($len=32) {
-	    return substr(bin2hex(random_bytes($len)), 0, $len);
+        return substr(bin2hex(random_bytes($len)), 0, $len);
+    }
+
+    function getPwComplexityLevel($pw) {
+        $complexity_points = 0;
+
+        $numbers = str_split("0123456789");
+        $letters = "abcdefghijklmnopqrstuvwxyz";
+        $lower_letters = str_split($letters);
+        $upper_letters = str_split(strtoupper($letters));
+        $special_char = str_split("_=!#$%&()*+-.:/\?@[]*$");
+
+        if (strlen($pw) >= 8) {
+            $complexity_points++;
+        }
+        if (!empty(array_intersect($numbers, str_split($pw)))) {
+            $complexity_points++;
+        }
+        if (!empty(array_intersect($upper_letters, str_split($pw)))) {
+            $complexity_points++;
+        }
+        if (!empty(array_intersect($special_char, str_split($pw)))) {
+            $complexity_points++;
+        }
+
+        return $complexity_points;
     }
 
     /*
@@ -38,7 +63,9 @@
 
     function register($name, $pw) {
 
-        //TODO: check password complexity
+        if (getPwComplexityLevel($pw) != 4) {
+            return "Password not complex enough";
+        }
 
         $salt = generate_salt();//"a2d47c981889513c5e2ddbca71f414";//
         $pepper = "a2d47c981889513c5e2ddbca71f414"; //TODO: use pepper dependency

@@ -78,8 +78,8 @@ $new_id = insertQuery("insert ...");
 test_not_equal("new id", $new_id, null);
 if($new_id !== null) {
 	test_equal("zweite fkt die nur ausgeführt wird wenn erste geht", bla, blubb);
-} else {
-	test_equal("diese fkt failt immer", 0, 1);
+	} else {
+		test_equal("diese fkt failt immer", 0, 1);
 }
 */
 
@@ -104,13 +104,14 @@ test_equal("delete query check if removed", runSingleQuery("SELECT title FROM po
 // $result = getterQuery("SELECT user_id, name FROM user WHERE user.User_id > ?", ["user_id", "name"], "s", 0);
 // echo $result;
 
-test_equal("register new user", register("testing", "123"), "success");
-test_equal("register with same username twice", register("testing", "123"), "The user testing already exists.");
-test_equal("register with number as username", register(123, "123"), "success");
+test_equal("register new user", register("testing", "1A_aaaaaaaaaa"), "success");
+test_equal("register with same username twice", register("testing", "1A_aaaaaaaaaa"), "The user testing already exists.");
+test_equal("register with number as username", register(123, "1A_aaaaaaaaaa"), "success");
+test_equal("register bad password msg", register("testing2", "123"), "Password not complex enough");
 
 test_equal("login unknown username", login("---", "---"), "Wrong Username or Password");
 test_equal("login with wrong password", login("testing", "---"), "Wrong Username or Password");
-test_equal("login successfully", login("testing", "123"), "Correct Password");
+test_equal("login successfully", login("testing", "1A_aaaaaaaaaa"), "Correct Password");
 //TODO: check after correct session during login
 
 test_equal("create new project", create_project("new Project", 1), '{"title":["new Project"]}');
@@ -121,5 +122,11 @@ test_equal("fetch all projects", fetch_projects(1), '{"title":["new Project"]}')
 test_equal("delete project", delete_project(1, 1), "No results found");
 test_equal("delete project db check", getterQuery("SELECT poster_id, title FROM poster", ["poster_id", "title"], "", null), "No results found");
 
+
+test_equal("Password complexity empty", getPwComplexityLevel(""), 0);
+test_equal("Password complexity length", getPwComplexityLevel("aaaaaaaaaaaaa"), 1);
+test_equal("Password complexity contains number", getPwComplexityLevel("1aaaaaaaaaaaa"), 2);
+test_equal("Password complexity contains upper letter", getPwComplexityLevel("1Aaaaaaaaaaaa"), 3);
+test_equal("Password complexity contains special char", getPwComplexityLevel("1A_aaaaaaaaaa"), 4);
 
 ?>
