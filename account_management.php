@@ -71,7 +71,7 @@
 
         $salt = generate_salt();
         $pepper = "a2d47c981889513c5e2ddbca71f414"; //TODO: use pepper dependency
-        $hash = md5($pw . ":" . $salt . ":" . $pepper);
+        $hash = sha1($pw . ":" . $salt . ":" . $pepper);
 
         try {
             return insertQuery("INSERT INTO user (`name`, `pass_sha`, `salt`, `pepper`)
