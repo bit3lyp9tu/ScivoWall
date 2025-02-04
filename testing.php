@@ -98,6 +98,11 @@ test_equal("select query getter", $result, "No results found");
 test_equal("delete query", deleteQuery("DELETE FROM poster WHERE poster.title = ?", "s", "Testing Title"), "successfully deleted");
 test_equal("delete query check if removed", runSingleQuery("SELECT title FROM poster"), "No results found");
 
+//TODO: why does it cause problems?
+// test_equal("update query new entry", insertQuery("INSERT INTO poster (title, user_id) VALUE (?, ?)", "si", 'TestingTitle', null), "success");
+// test_equal("update query edit", editQuery("UPDATE poster SET poster.title=? WHERE poster.title=? AND poster.user_id is ?", "sss", 'TestingTitle2', 'TestingTitle', null), "successfully updated");
+// test_equal("update query check status", getterQuery("SELECT title, user_id FROM poster WHERE poster.title=?", ["title", "user_id"], "s", "TestingTitle2"), '{"title":["TestingTitle2"],"user_id":[null]}');
+// test_equal("update query cleanup", deleteQuery("DELETE FROM poster WHERE poster.title = ?", "s", "TestingTitle"), "successfully deleted");
 
 //Account Management
 // test_equal("delete user", deleteQuery("DELETE FROM user WHERE user.name = ?", "s", "testing"), "successfully deleted");
@@ -128,6 +133,10 @@ test_equal("Password complexity length", getPwComplexityLevel("aaaaaaaaaaaaa"), 
 test_equal("Password complexity contains number", getPwComplexityLevel("1aaaaaaaaaaaa"), 2);
 test_equal("Password complexity contains upper letter", getPwComplexityLevel("1Aaaaaaaaaaaa"), 3);
 test_equal("Password complexity contains special char", getPwComplexityLevel("1A_aaaaaaaaaa"), 4);
+
+
+include_once("poster_edit.php");
+// test_equal("poster edit get title", getTitle(1), "");
 
 
 /*

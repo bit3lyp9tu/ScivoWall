@@ -34,6 +34,9 @@
 		$GLOBALS["dbname"] = "poster_generator";
 	}
 
+	//TODO: add columns in user: last logged-in date/ date of registration
+	//TODO: add columns in poster: date of creation/ last edit date/ last edited by user_id
+
 	$create_queries = [
 		"create database if not exists ".$GLOBALS["dbname"],
 		"use ".$GLOBALS["dbname"],
@@ -73,7 +76,7 @@
 			id int primary key auto_increment,
 			user_id int references user(user_id) on delete cascade,
 			sessionID varchar(256) not null,
-			expiration_date DATETIME not null
+			expiration_date int not null
 		)",
 
 		//"insert into user (name, pass_sha, salt, pepper) value ('Max K', 'trhtgxjzjk', 'ututgfzt', 'test');",

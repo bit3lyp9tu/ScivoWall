@@ -30,6 +30,15 @@
 		return "success";
     }
 
+    function editQuery($sql, $types, ...$param) {   //TODO: ??????????????????
+        $stmt = $GLOBALS["conn"]->prepare($sql);
+        $stmt->bind_param($types, ...$param);
+        $stmt->execute();
+        $stmt->close();
+
+		return "successfully updated";
+    }
+
     # TODO: true/false zurückgeben
     function deleteQuery($sql, $types, ...$param) {
         $stmt = $GLOBALS["conn"]->prepare($sql);
@@ -105,8 +114,8 @@
     }
 
 
-    function getTitle($id) {
-	    # prepared statement oder mysqli_real_escape_string
-        return runSingleQuery("SELECT title FROM poster WHERE poster.poster_id=" . $id);
-    }
+    // function getTitle($id) {
+	//     # prepared statement oder mysqli_real_escape_string
+    //     return runSingleQuery("SELECT title FROM poster WHERE poster.poster_id=" . $id);
+    // }
 ?>

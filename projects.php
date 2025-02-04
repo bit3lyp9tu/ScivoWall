@@ -8,6 +8,10 @@
 <!DOCTYPE html>
 <html lang='en'>
 <body>
+
+    <div>
+        <button id="logout">Logout</button>
+    </div>
     <div>
         <form action="" id="load-form">
             <h1>My Projects</h1>

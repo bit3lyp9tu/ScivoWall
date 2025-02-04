@@ -38,9 +38,9 @@
     }
 
     /*
-    Validates current session
-    if session not valid, returns null
-    if session valid, returns the corresponding user_id
+    *    Validates current session
+    *    if session not valid, returns null
+    *    if session valid, returns the corresponding user_id
     */
     function getValidUserFromSession() {
 
@@ -111,18 +111,16 @@
                 //Create new Session
                 $user_id = $res_dec["user_id"][0];
                 $sid = session_create_id();
-                # evtl umstellen auf unix-zeit
-                $exp_date = new DateTime('now', new DateTimeZone('Europe/Berlin'));
-                // $exp_date->add(new DateInterval("P1D"));
-                $exp_date->add(new DateInterval("PT5M"));
 
                 $insertion = insertQuery(
-                    "INSERT INTO session (user_id, sessionID, expiration_date)
-                    VALUE (?, ?, ?)",
-                    "iss", $user_id, $sid, $exp_date->format("Y-m-d H:i:s"));
+                        "INSERT INTO session (user_id, sessionID, expiration_date)
+                        VALUE (?, ?, UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL 5 MINUTE)))",
+                        "is", $user_id, $sid);
+
+                // TODO: is expiration_date for sql and cookie async??? Bug?
 
                 if ($insertion == "success") {
-                    setcookie("sessionID", $sid, time() + 300, "/", "", false, true);   //TODO: placing additional time in variable
+                    setcookie("sessionID", $sid, time() + 5 * 60, "/", "", false, true);   //TODO: placing additional time in variable
                     //TODO: do the cookie settings need a rework? Update to PHP 7.3 and later might be required
                     //PHP 7.3 and later has additional parameter SameSide=Strict and SameSide=Lax
 
@@ -135,6 +133,31 @@
             }
         }
 
+    }
+
+    function logout($user_id) {
+
+        $sid = getterQuery(
+            "SELECT sessionID FROM session WHERE session.user_id=?",
+            ["sessionID"],
+            "s", $user_id
+        );
+
+        //set browser-session to expired
+        setcookie("sessionID", $sid, time() - 1, "/", "", false, true);   //TODO: placing additional time in variable
+
+        //set database-session to expired
+        //get list of all currently valid sessions (from user)
+        //update list and replace expiration_date with an expired one
+        $edit = editQuery(
+            "UPDATE session
+            SET session.expiration_date=UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 1 MINUTE))
+            WHERE session.expiration_date>UNIX_TIMESTAMP() AND session.user_id=?",
+            "i", $user_id
+        );
+
+        //return if logout successfully
+        return $edit;
     }
 
     function fetch_projects($user_id) {
@@ -217,7 +240,7 @@
                 "s", $user_id
             );
             return $data;
-            # todo: nach jedem ausgeben von json exit 0, damit nicht ausversehen 2 oder mehr jsons konkatiniert werden
+            # TODO: nach jedem ausgeben von json exit 0, damit nicht ausversehen 2 oder mehr jsons konkatiniert werden
             # exit(0);
         }else{
             return "No or invalid session";
@@ -258,6 +281,43 @@
 
             $user_id = getValidUserFromSession();
             echo create_project($name, $user_id);
+        }
+
+        if ($_POST['action'] == 'logout') {
+
+            $user_id = getValidUserFromSession();
+
+            if($user_id != null) {
+
+                echo logout($user_id);
+            }else{
+
+                echo "logout error";
+            }
+        }
+
+        if ($_POST['action'] == 'edit-translation') {
+            $local_id = isset($_POST['local_id']) ? $_POST['local_id'] : '';
+            $user_id = getValidUserFromSession();
+
+            if ($user_id != null) {
+                $poster_id = json_decode(getterQuery(
+                        "SELECT poster_id
+                    FROM (
+                        SELECT ROW_NUMBER() OVER (ORDER BY poster_id) AS local_id, poster_id
+                        FROM poster
+                        WHERE poster.user_id = ?
+                    ) AS ranked_posters
+                    WHERE local_id = ?",
+                    ["poster_id"],
+                    "ii", $user_id, $local_id
+                ), true)["poster_id"][0];
+
+                echo $poster_id;    //"success: local_id: " . $local_id . " poster_id: " . $poster_id . " user_id: " . $user_id;
+            }else {
+                echo "ERROR";
+            }
+
         }
 
 	    #print(json_encode($msgs));
