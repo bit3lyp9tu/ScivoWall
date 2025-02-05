@@ -9,35 +9,6 @@
         return $data;
     }
 
-    function validation($poster_id) {
-        //validate user
-        $user_id = getterQuery(
-            "SELECT user_id
-            FROM poster
-            WHERE poster.poster_id=?",
-            ["user_id"],
-            "s", $poster_id
-        );
-
-        $res = json_decode($user_id, true)["user_id"][0];
-
-        // if ($user_id != "No results found" && $res != null) {
-        //     //validate session
-        //     $session_time = getterQuery(
-        //         "SELECT expiration_date
-        //         FROM session
-        //         WHERE session.user_id = ?",
-        //         ["expiration_date"],
-        //         "s", $res
-        //     );
-        //     return $session_time;
-        // }
-
-
-        return $user_id;
-    }
-
-
     function getTitle($poster_id) {
         $title = getterQuery(
             "SELECT title
@@ -51,27 +22,20 @@
     }
 
     function getAuthors($poster_id) {
-        $ids = getterQuery(
-            "SELECT author_id
-            FROM author_to_poster
-            WHERE author_to_poster.poster_id=?",
-            ["author_id"],
-            "s", $poster_id
-        );
-        $id_list = json_decode($ids, true)["author_id"];
-
-        $names = getterQuery(
+        $author_names = getterQuery(
             "SELECT name
-            FROM author
-            WHERE author.id IN (?)",
+            FROM
+                author, (
+                    SELECT author_id
+                    FROM author_to_poster
+                    WHERE author_to_poster.poster_id=?
+                ) AS sub
+            WHERE sub.author_id=author.id",
             ["name"],
-            "s", $id_list
+            "i", $poster_id
         );
-        $result = json_decode($names, true)["name"];
-        // if (in_array($user_name, $result)) {
-        //     array_unshift($result, $user_name);
-        // }
-        return $result;
+
+        return json_decode($author_names, true)["name"];
     }
 
     function getBoxes($poster_id) {
@@ -86,23 +50,96 @@
         return json_decode($content, true)["content"];
     }
 
-    function load_content_head($poster_id) {
+    function addBox($poster_id, $content="") {
+
+        $result = insertQuery(
+            "INSERT INTO box (poster_id, content) VALUE (?, ?)",
+            "is", $poster_id, $content
+        );
+
+        return $result;
+    }
+    function editBox($poster_id, $content="") {
+
+        $result = editQuery(
+            "UPDATE box SET box.content=? WHERE box.poster_id=?",
+            "si", $content, $poster_id
+        );
+
+        return $result;
+    }
+
+    function addAuthor() {
+
+        return "";
+    }
+
+    function getLastInsertID() {
+        return json_decode(getterQuery(
+            "SELECT LAST_INSERT_ID()",
+            ["LAST_INSERT_ID()"], "", null
+        ), true)["LAST_INSERT_ID()"][0];
+    }
+
+    function addProject($user_id, $title) {
+        //new poster
+        $resultA = insertQuery(
+            "INSERT INTO poster (title, user_id) VALUE (?, ?)",
+            "si", $title, $user_id
+        );
+        $poster_id = getLastInsertID();
+
+        //new author (user)
+        $resultB = insertQuery(
+            "INSERT INTO author (name)
+            SELECT (
+                SELECT name FROM user WHERE user.user_id=?
+            )
+            WHERE NOT EXISTS (
+                SELECT name
+                FROM author
+                WHERE author.name=(
+                    SELECT name FROM user WHERE user.user_id=?
+                )
+            )",
+            "ii", $user_id, $user_id
+        );
+        $author_id = getLastInsertID();
+
+        //new author_to_poster
+        $resultC = insertQuery(
+            "INSERT INTO author_to_poster (author_id, poster_id) VALUE (?, ?)",
+            "ii", $author_id, $poster_id
+        );
+
+        //new box
+        return $resultA . " " . $resultB . " " . $resultC;
+    }
+
+    function load_content($poster_id) {
+        $content = new stdClass();
+
         $content->title = getTitle($poster_id);
         $content->authors = getAuthors($poster_id);
+        $content->boxes = getBoxes($poster_id);
 
         return json_encode($content);
     }
 
-    if (isset($_GET['id'])) {
-        $poster_id = $_GET['id'];
-        $user_id = getValidUserFromSession();
+    if(isset($_POST['action'])) {
+        if ($_POST['action'] == 'get-content') {
 
-        if ($user_id != null) {
+            $poster_id = (isset($_POST['key']) && $_POST['key']=='id' && isset($_POST['value'])) ? $_POST['value'] : '';
+            $user_id = getValidUserFromSession();
 
-            echo load_content_head($poster_id);
-        }else{
+            if ($user_id != null) {
 
-            echo "ERROR";
+                echo load_content($poster_id);
+            }else{
+
+                echo json_encode(array('status' => 'error', 'message' => 'Invalid user'));
+            }
         }
     }
+
 ?>

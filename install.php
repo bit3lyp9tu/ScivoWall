@@ -55,12 +55,12 @@
 		"create table if not exists poster (
 		    poster_id int primary key auto_increment,
 		    title varchar(256) not null,
-		    user_id int references user(user_id) on delete cascade
+		    user_id int not null references user(user_id) on delete cascade
 		)",
 		"create table if not exists author_to_poster (
 			id int primary key auto_increment,
 			author_id int references author(id) on delete cascade,
-			poster_id int references poster(poster_id) on delete cascade
+			poster_id int not null references poster(poster_id) on delete cascade
 		)",
 		"create table if not exists image (
 			image_id int primary key auto_increment,
@@ -69,12 +69,12 @@
 		)",
 		"create table if not exists box (
 			box_id int primary key auto_increment,
-			poster_id int references poster(poster_id) on delete cascade,
+			poster_id int not null references poster(poster_id) on delete cascade,
 			content blob not null
 		)",
 		"create table if not exists session (
 			id int primary key auto_increment,
-			user_id int references user(user_id) on delete cascade,
+			user_id int not null references user(user_id) on delete cascade,
 			sessionID varchar(256) not null,
 			expiration_date int not null
 		)",

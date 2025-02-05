@@ -10,17 +10,13 @@
 <html lang='en'>
 <body>
     <div>
-        <p><?php //echo validation($_GET['id']); ?></p>
-
-        <h1>Poster: <?php echo getTitle($_GET['id']); ?></h1>
-        <h2>Authors: <?php foreach(getAuthors($_GET['id']) as $value) {echo $value . " ";}?></h2>
-        <br>
-        <?php
-            $content = getBoxes($_GET['id']);
-            foreach ($content as $value) {
-                echo $value . "<br>";
-            }
-        ?>
+        <div id="content-head">
+            <h1 id="title">Title</h1>
+            <h2 id="authors">Authors</h2>
+        </div>
+        <div id="boxes">
+            <!-- <p>Content</p> -->
+        </div>
     </div>
 </body>
 </html>

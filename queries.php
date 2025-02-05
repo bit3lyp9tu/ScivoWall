@@ -86,6 +86,14 @@
         $stmt->close();
     }
 
+    function simpleQuery($sql) {
+        // $stmt = $GLOBALS["conn"]->prepare($sql);
+        // $stmt->execute();
+        // $stmt->close();
+
+        return "";
+    }
+
     // Old
     function runSingleQuery ($sql, $allows_num_rows=true) {
 	    $result = $GLOBALS["conn"]->query($sql);
