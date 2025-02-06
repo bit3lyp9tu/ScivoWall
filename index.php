@@ -64,11 +64,11 @@
 		<div id="titles">
 			<a href="login.php">Login</a>
 			<h1 id="maintitle"></h1>
-			<h1 id="maintitle"><?php echo getTitle(1); ?></h1>
+			<h1 id="maintitle"><?php // echo getTitle(1); ?></h1>
 			<h2 id="mainsubtitle">Heading 2</h2>
 			<button id="add-box-btn">Add Box</button>
 
-			<div><?php echo getTitle(1); ?></div>
+			<div><?php //echo getTitle(1); ?></div>
 		</div>
 
 		<div class="container">
