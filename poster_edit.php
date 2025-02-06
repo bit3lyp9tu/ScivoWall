@@ -10,6 +10,8 @@
     }
 
     function getTitle($poster_id) {
+        //TODO: add test if id doesnt exists
+
         $title = getterQuery(
             "SELECT title
             FROM poster
@@ -46,7 +48,6 @@
             ["content"],
             "i", $poster_id
         );
-
         return json_decode($content, true)["content"];
     }
 
@@ -56,22 +57,75 @@
             "INSERT INTO box (poster_id, content) VALUE (?, ?)",
             "is", $poster_id, $content
         );
-
         return $result;
     }
-    function editBox($poster_id, $content="") {
+    function editBox($index, $poster_id, $content="") {
 
         $result = editQuery(
-            "UPDATE box SET box.content=? WHERE box.poster_id=?",
-            "si", $content, $poster_id
+            "UPDATE box SET box.content=?
+            WHERE box.box_id=(
+                SELECT box_id
+                FROM (
+                    SELECT ROW_NUMBER() OVER(ORDER BY box_id) AS row_nr, box_id
+                    FROM box
+                    WHERE box.poster_id=?
+                ) AS ranked_boxes
+                WHERE row_nr=?
+            )",
+            "sii", $content, $poster_id, $index
         );
+        return $result;
+    }
+    function deleteBox($local_id, $poster_id) {
 
+        $result = deleteQuery(
+            "DELETE FROM box
+            WHERE box.box_id=(
+                SELECT box_id
+                FROM (
+                    SELECT ROW_NUMBER() OVER(ORDER BY box_id) AS row_nr, box_id
+                    FROM box
+                    WHERE box.poster_id=?
+                ) AS ranked_boxes
+                WHERE row_nr=?
+            )",
+            "ii", $poster_id, $local_id
+        );
         return $result;
     }
 
-    function addAuthor() {
+    function addAuthor($name) {
 
-        return "";
+        $result = insertQuery(
+            "INSERT INTO author (name) VALUE (?)",
+            "s", $name
+        );
+        return $result;
+    }
+    function connectAuthorToPoster($author_id, $poster_id) {
+
+        $result = insertQuery(
+            "INSERT INTO author_to_poster (author_id, poster_id) VALUE (?, ?)",
+            "ii", $author_id, $poster_id
+        );
+        return $result;
+    }
+    function removeAuthor($index, $poster_id) {
+
+        $result = deleteQuery(
+            "DELETE FROM author_to_poster
+            WHERE author_to_poster.id=(
+                SELECT id
+                FROM (
+                    SELECT ROW_NUMBER() OVER(ORDER BY id) AS row_nr, id
+                    FROM author_to_poster
+                    WHERE author_to_poster.poster_id=?
+                ) AS ranked_authors
+                WHERE row_nr=?
+            )",
+            "ii", $poster_id, $index
+        );
+        return $result;
     }
 
     function getLastInsertID() {

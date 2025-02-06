@@ -137,7 +137,6 @@ test_equal("Password complexity contains special char", getPwComplexityLevel("1A
 
 
 include_once("poster_edit.php");
-// test_equal("poster edit get title", getTitle(1), "");
 
 
 $new_proj = addProject(1, "First Project");
@@ -152,10 +151,32 @@ test_equal("new project heck author", $check_author, '{"id":[1],"name":["Test-Na
 $check_a_to_p = getterQuery("SELECT id, author_id, poster_id FROM author_to_poster", ["id", "author_id", "poster_id"], "", null);
 test_equal("new project heck author_to_poster", $check_a_to_p, '{"id":[1],"author_id":[1],"poster_id":[3]}');
 
-// addBox(1, "Text Content");
-// echo getterQuery("SELECT * FROM box", ["box_id", "poster_id", "content"], "", null);
-// test_equal("edit box fill content check", getBoxes(1), "");
+addBox(3, "Text Content");
+addBox(3, "Text Content 2");
+$check_box = getterQuery("SELECT * FROM box", ["box_id", "poster_id", "content"], "", null);
+test_equal("add box fill content check", $check_box, '{"box_id":[1,2],"poster_id":[3,3],"content":["Text Content","Text Content 2"]}');
 
+editBox(1, 3, "New Text");
+$check_box = getterQuery("SELECT * FROM box", ["box_id", "poster_id", "content"], "", null);
+test_equal("edit box", $check_box, '{"box_id":[1,2],"poster_id":[3,3],"content":["New Text","Text Content 2"]}');
+
+addAuthor("Other Author");
+$check_author = getterQuery("SELECT * FROM author", ["id", "name"], "", null);
+test_equal("add author", $check_author, '{"id":[1,2],"name":["Test-Name","Other Author"]}');
+
+connectAuthorToPoster(2,3);
+$check_a_t_p = getterQuery("SELECT * FROM author_to_poster", ["id", "author_id", "poster_id"], "", null);
+test_equal("add author to poster", $check_a_t_p, '{"id":[1,2],"author_id":[1,2],"poster_id":[3,3]}');
+
+test_equal("title getter", getTitle(3), 'First Project');
+test_equal("author getter", implode(",", getAuthors(3)), 'Test-Name,Other Author');
+test_equal("boxes getter", implode(",", getBoxes(3)), 'New Text,Text Content 2');
+
+deleteBox(2, 3);
+test_equal("delete box", implode(",", getBoxes(3)), 'New Text');
+
+removeAuthor(2, 3);
+test_equal("remove author", implode(",", getAuthors(3)), 'Test-Name');
 
 /*
 name:	bug
