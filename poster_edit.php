@@ -76,6 +76,37 @@
         );
         return $result;
     }
+    function overwriteBoxes($poster_id, $new_content) {
+
+        $old_size = sizeof(getBoxes($poster_id));
+        $new_size = sizeof($new_content);
+
+        if ($new_size != 0) {
+
+            for ($i=0; $i < $new_size; $i++) {
+                editBox($i+1, $poster_id, $new_content[$i]);
+            }
+
+            if($old_size < $new_size) {
+
+                for ($i = $old_size; $i < $new_size; $i++) {
+                    addBox($poster_id, $new_content[$i]);
+                }
+            }else if ($old_size > $new_size) {
+
+                for ($i = $new_size; $i < $old_size; $i++) {
+                    deleteBox($i+1, $poster_id);
+                }
+            }
+        }else{
+            for ($i=$old_size; $i > 1; $i--) {
+                // print_r($i . "\n");
+                deleteBox($i, $poster_id);
+            }
+            // deleteBox(1, $poster_id);
+        }
+    }
+
     function deleteBox($local_id, $poster_id) {
 
         $result = deleteQuery(
@@ -193,7 +224,20 @@
 
                 echo json_encode(array('status' => 'error', 'message' => 'Invalid user'));
             }
+        }
+        if ($_POST['action'] == 'content-upload') {
+            $data = json_decode((isset($_POST['data']) ? $_POST['data'] : ''), true);
 
+            $poster_id = 133;
+            $user_id = getValidUserFromSession();
+
+            $title = $data["title"];
+            $authors = $data["authors"];
+            $content = $data["content"];
+
+            overwriteBoxes($poster_id, $content);
+
+            echo "success?";
         }
     }
 

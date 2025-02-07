@@ -178,6 +178,23 @@ test_equal("delete box", implode(",", getBoxes(3)), 'New Text');
 removeAuthor(2, 3);
 test_equal("remove author", implode(",", getAuthors(3)), 'Test-Name');
 
+
+overwriteBoxes(3, array("Content A"));
+test_equal("overwrite boxes equal size edit", implode(",", getBoxes(3)), 'Content A');
+
+overwriteBoxes(3, array("Content A", "Content B", "Content C", "Content D", "Content E", "Content F"));
+test_equal("overwrite boxes addition", implode(",", getBoxes(3)), 'Content A,Content B,Content C,Content D,Content E,Content F');
+
+// print_r(getBoxes(3));
+
+//TODO removal of Boxes
+// overwriteBoxes(3, array("Content C"));
+// test_equal("overwrite boxes removal", implode(",", getBoxes(3)), 'Content C');
+// overwriteBoxes(3, array());
+// test_equal("overwrite boxes empty-removal", implode(",", getBoxes(3)), '');
+
+
+
 /*
 name:	bug
 pw:

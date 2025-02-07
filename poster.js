@@ -64,21 +64,69 @@ function show(response) {
     const boxes = document.getElementById("boxes");
 
     for (const key in response.boxes) {
-        const obj = document.createElement("div");
-        obj.classList.add("box");
-        if (0) {
-            obj.innerHTML = response.boxes[key];
-        } else {
-            typeset(obj, () => response.boxes[key]);
+        if (response.boxes[key]) {
+            const obj = document.createElement("div");
+            obj.classList.add("box");
+            obj.id = "editBox-" + key;
+            if (0) {
+                obj.innerHTML = response.boxes[key];
+            } else {
+                // obj.setAttribute("data-original", toMarkdown(response.boxes[key]));
+                // obj.innerText = toMarkdown(response.boxes[key]);
+                typeset(obj, () => response.boxes[key]);
+            }
+
+            boxes.appendChild(obj);
+        }
+    }
+}
+
+var selected = null;
+document.addEventListener("click", function (event) {
+    if (event.target.tagName === "DIV" && event.target.id.startsWith("editBox")) {
+        if (selected && selected !== event.target) {
+            const originalDiv = document.createElement("div");
+            originalDiv.id = selected.id;
+            originalDiv.classList.add("box");
+
+            if (selected.tagName === "TEXTAREA") {
+                originalDiv.innerText = selected.value; // Preserve the edited text
+            } else {
+                originalDiv.innerText = selected.innerText; // Preserve original text for div
+            }
+
+            selected.parentNode.replaceChild(originalDiv, selected);
+            selected = null;
         }
 
-        boxes.appendChild(obj);
+        const textarea = document.createElement("textarea");
+        textarea.id = event.target.id;
+        textarea.value = event.target.innerText;
+        textarea.rows = Math.round((event.target.innerText.match(/(<br>|\n)/g) || []).length * 1.5) + 1;
+        textarea.style.resize = "none"; //"vertical";
+
+        event.target.parentNode.replaceChild(textarea, event.target);
+        selected = textarea;
+    } else if (selected && !event.target.isEqualNode(selected)) {
+        const originalDiv = document.createElement("div");
+        originalDiv.id = selected.id;
+        originalDiv.classList.add("box");
+
+        if (selected.tagName === "TEXTAREA") {
+            originalDiv.innerText = selected.value;
+
+            // const value = selected.value;
+            // typeset(originalDiv, () => value);
+            // typeset(originalDiv, () => value)
+            //     .then(() => {
+            //         selected.parentNode.replaceChild(originalDiv, selected);
+            //     });
+        }
+
+        selected.parentNode.replaceChild(originalDiv, selected);
+        selected = null;
     }
-
-    // const container = document.getElementById('math-container');
-
-
-}
+});
 
 window.onload = async function () {
     const data = url_to_json();
@@ -101,7 +149,52 @@ window.onload = async function () {
 
 };
 
-document.getElementById("save-content").onclick = function () {
-    console.log("save");
-
+function prepareJSON(title, authors, content) {
+    return result = {
+        "title": title,
+        "authors": authors,
+        "content": content
+    };
 }
+
+document.getElementById("add-box").onclick = function () {
+    const container = document.getElementById("boxes");
+
+    const box = document.createElement("div");
+    box.classList.add("box");
+    box.id = "editBox-" + (container.children.length);
+    box.innerHTML = "Content";
+
+    container.appendChild(box);
+};
+
+document.getElementById("save-content").onclick = function () {
+
+    const content = [];
+    const title = document.getElementById("title").innerText;
+    const authors = document.getElementById("authors").innerText.split(",");
+
+    const container = document.getElementById("boxes");
+    for (let i = 0; i < container.children.length; i++) {
+        const element = container.children[i];
+
+        // console.log(i + 1, element.innerHTML);
+        content[i] = element.innerHTML;
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "poster_edit.php",
+        data: {
+            action: "content-upload",
+            data: JSON.stringify(prepareJSON(title, authors, content))
+        },
+        success: function (response) {
+
+            console.log(response);
+        },
+        error: function (err) {
+            console.err(err);
+        }
+    });
+};
