@@ -24,25 +24,20 @@
     </div>
 
     <div id="titles">
-        <a href="login.php">Login</a>
-        <h1 id="title">Title</h1>   <!-- change ids -->
-        <h2 id="authors">Heading 2</h2>
-        <button id="add-box">Add Box</button>
-        <button id="save-content">Save</button>
+        <div id="title" data-content="The Poster Title">Title</div>   <!-- change ids -->
+        <div>
+            <h2 id="authors">Heading 2</h2>
+        </div>
+        <div>
+            <a href="login.php">Login</a>
+            <button id="add-box">Add Box</button>
+            <button id="save-content">Save</button>
+        </div>
     </div>
 
     <div class="container" id="boxes">
         <!-- <div class="box"></div> -->
     </div>
-    <!-- <div id="to-markdown">
-        ## Test<br>
-        - test2<br>
-        - test3<br>
-    </div>
-    <script>
-        var toMarkdown = require('to-markdown');
-        toMarkdown('<h1>Test</h1>');
-    </script> -->
 </body>
 <footer>
     <!-- <div id="resize_me_according_to_bottom_table"></div> -->

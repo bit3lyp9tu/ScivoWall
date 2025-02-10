@@ -16,6 +16,18 @@ function url_to_json() {
     return result;
 }
 
+function createArea(type, id, class_name, value) {
+
+    const element = document.createElement(type);
+    element.id = id;
+    if (class_name != "") {
+        //element.classList.add(class_name);
+    }
+    element.setAttribute("data-content", value);
+
+    return element;
+}
+
 async function request(data) {
     return new Promise((resolve, reject) => {
         const key = data.hasOwnProperty('id') ? 'id' : '';
@@ -47,33 +59,38 @@ async function request(data) {
 //     return MathJax.startup.promise;
 // }
 
-function typeset(container, code) {
-    MathJax.startup.promise = MathJax.startup.promise
-        .then(() => {
-            container.innerHTML = code();
-            return MathJax.typesetPromise([container]);
-        })
-        .catch((err) => console.log('Typeset failed: ' + err.message));
-    return MathJax.startup.promise;
+async function typeset(container, code) {
+    // MathJax.startup.promise = MathJax.startup.promise
+    //     .then(() => {
+    //         container.innerHTML = code();
+    //         return MathJax.typesetPromise([container]);
+    //     })
+    //     .catch((err) => console.log('Typeset failed: ' + err.message));
+    // return MathJax.startup.promise;
+
+    container.innerHTML = code();
+    await MathJax.typesetPromise([container]);
 }
 
-function show(response) {
-    document.getElementById("title").innerText = response.title;
+async function show(response) {
+    // document.getElementById("title").innerHTML = /*marked.marked*/(response.title);
+    await typeset(document.getElementById("title"), () => marked.marked(response.title));
+    document.getElementById("title").setAttribute("data-content", response.title);
+
     document.getElementById("authors").innerText = response.authors.toString(", ");
 
     const boxes = document.getElementById("boxes");
 
     for (const key in response.boxes) {
         if (response.boxes[key]) {
-            const obj = document.createElement("div");
-            obj.classList.add("box");
-            obj.id = "editBox-" + key;
+            const obj = createArea("div", "editBox-" + key, "box", response.boxes[key]);
+
             if (0) {
                 obj.innerHTML = response.boxes[key];
             } else {
                 // obj.setAttribute("data-original", toMarkdown(response.boxes[key]));
                 // obj.innerText = toMarkdown(response.boxes[key]);
-                typeset(obj, () => response.boxes[key]);
+                await typeset(obj, () => marked.marked(response.boxes[key]));
             }
 
             boxes.appendChild(obj);
@@ -81,50 +98,68 @@ function show(response) {
     }
 }
 
-var selected = null;
-document.addEventListener("click", function (event) {
-    if (event.target.tagName === "DIV" && event.target.id.startsWith("editBox")) {
-        if (selected && selected !== event.target) {
-            const originalDiv = document.createElement("div");
-            originalDiv.id = selected.id;
-            originalDiv.classList.add("box");
+function selectElement(target_id, pointer) {
+    const element = document.getElementById(target_id);
 
-            if (selected.tagName === "TEXTAREA") {
-                originalDiv.innerText = selected.value; // Preserve the edited text
-            } else {
-                originalDiv.innerText = selected.innerText; // Preserve original text for div
-            }
+    if (pointer.children[0].id == target_id) {
+        return pointer.children[0];
+    }
 
-            selected.parentNode.replaceChild(originalDiv, selected);
-            selected = null;
-        }
+    return null;
+}
 
-        const textarea = document.createElement("textarea");
-        textarea.id = event.target.id;
-        textarea.value = event.target.innerText;
-        textarea.rows = Math.round((event.target.innerText.match(/(<br>|\n)/g) || []).length * 1.5) + 1;
-        textarea.style.resize = "none"; //"vertical";
+var selected_box = null;
+var selected_title = null;
+document.addEventListener("click", async function (event) {
+    // event.stopPropagation();
+    // event.preventDefault();
 
-        event.target.parentNode.replaceChild(textarea, event.target);
-        selected = textarea;
-    } else if (selected && !event.target.isEqualNode(selected)) {
-        const originalDiv = document.createElement("div");
-        originalDiv.id = selected.id;
-        originalDiv.classList.add("box");
+    console.log(event.target.tagName, event.target.id, event.target.children[0]);
 
-        if (selected.tagName === "TEXTAREA") {
-            originalDiv.innerText = selected.value;
+    // Edit Title
+    // if (document.getElementById("title").contains(event.target) && selected_title === null) {
+    //     console.log("edit title");
 
-            // const value = selected.value;
-            // typeset(originalDiv, () => value);
-            // typeset(originalDiv, () => value)
-            //     .then(() => {
-            //         selected.parentNode.replaceChild(originalDiv, selected);
-            //     });
-        }
+    //     const element = createArea("textarea", "title", "", document.getElementById("title").getAttribute("data-content"));
 
-        selected.parentNode.replaceChild(originalDiv, selected);
-        selected = null;
+    //     element.value = document.getElementById("title").getAttribute("data-content");
+    //     document.getElementById("title").parentNode.replaceChild(element, document.getElementById("title"));
+
+    //     selected_title = element;
+
+    // } else if (selected_title && document.getElementById("title") !== selected_title) {
+
+    //     console.log("un-edit title");
+
+    //     const element = createArea("div", "title", "box", selected_title.value);
+    //     await typeset(element, () => marked.marked(selected_title.value));
+    //     selected_title.parentNode.replaceChild(element, selected_title);
+
+    //     selected_title = null;
+    // }
+
+    // Edit Boxes
+    if (event.target.tagName === "DIV" && event.target.id.startsWith("editBox") && selected_box === null) { // if new editBox gets selected
+
+        // change box to editable
+        const element = createArea("textarea", event.target.id, "", event.target.getAttribute("data-content"));
+        element.rows = Math.round((event.target.innerText.match(/(<br>|\n)/g) || []).length * 1.5) + 1;
+        element.style.resize = "none"; //"vertical";
+        element.value = event.target.getAttribute("data-content");
+        event.target.parentNode.replaceChild(element, event.target);
+
+        //  remember box as previously selected
+        selected_box = element;
+
+    } else if (selected_box && event.target !== selected_box) {// if there was something once selected and if the new selected is different from the old
+
+        // change old back to non-editable and save old edits
+        const element = createArea("div", selected_box.id, "box", selected_box.value);
+        await typeset(element, () => marked.marked(selected_box.value));
+        selected_box.parentNode.replaceChild(element, selected_box);
+
+        // forget old selected
+        selected_box = null;
     }
 });
 
@@ -160,10 +195,10 @@ function prepareJSON(title, authors, content) {
 document.getElementById("add-box").onclick = function () {
     const container = document.getElementById("boxes");
 
-    const box = document.createElement("div");
-    box.classList.add("box");
-    box.id = "editBox-" + (container.children.length);
-    box.innerHTML = "Content";
+    const content = "Content";
+
+    const box = createArea("div", "editBox-" + (container.children.length), "box", content);
+    box.innerHTML = content;
 
     container.appendChild(box);
 };
@@ -171,7 +206,7 @@ document.getElementById("add-box").onclick = function () {
 document.getElementById("save-content").onclick = function () {
 
     const content = [];
-    const title = document.getElementById("title").innerText;
+    const title = document.getElementById("title").getAttribute("data-content");//innerText;
     const authors = document.getElementById("authors").innerText.split(",");
 
     const container = document.getElementById("boxes");
@@ -179,7 +214,7 @@ document.getElementById("save-content").onclick = function () {
         const element = container.children[i];
 
         // console.log(i + 1, element.innerHTML);
-        content[i] = element.innerHTML;
+        content[i] = element.getAttribute("data-content");
     }
 
     $.ajax({
