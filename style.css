@@ -184,6 +184,7 @@ table {
     }
 }
 
-mjx-container {
+mjx-container,
+#title {
     pointer-events: none;
 }

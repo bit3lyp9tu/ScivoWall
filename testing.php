@@ -169,6 +169,9 @@ $check_a_t_p = getterQuery("SELECT * FROM author_to_poster", ["id", "author_id",
 test_equal("add author to poster", $check_a_t_p, '{"id":[1,2],"author_id":[1,2],"poster_id":[3,3]}');
 
 test_equal("title getter", getTitle(3), 'First Project');
+test_equal("title setter A", setTitle(3, 'Changed Title'), "successfully updated");
+test_equal("title setter B", getTitle(3), "Changed Title");
+
 test_equal("author getter", implode(",", getAuthors(3)), 'Test-Name,Other Author');
 test_equal("boxes getter", implode(",", getBoxes(3)), 'New Text,Text Content 2');
 

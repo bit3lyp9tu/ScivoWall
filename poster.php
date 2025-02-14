@@ -24,7 +24,7 @@
     </div>
 
     <div id="titles">
-        <div id="title" data-content="The Poster Title">Title</div>   <!-- change ids -->
+        <div id="title">Title</div>   <!-- change ids -->
         <div>
             <h2 id="authors">Heading 2</h2>
         </div>

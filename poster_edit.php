@@ -22,6 +22,14 @@
 
         return json_decode($title, true)["title"][0];
     }
+    function setTitle($poster_id, $title) {
+        $result = editQuery(
+            "UPDATE poster SET poster.title=?
+            WHERE poster.poster_id=?",
+            "si", $title, $poster_id
+        );
+        return $result;
+    }
 
     function getAuthors($poster_id) {
         $author_names = getterQuery(
@@ -228,13 +236,15 @@
         if ($_POST['action'] == 'content-upload') {
             $data = json_decode((isset($_POST['data']) ? $_POST['data'] : ''), true);
 
-            $poster_id = 133;
+            $poster_id = 133;   //TODO: make dynamic
             $user_id = getValidUserFromSession();
 
             $title = $data["title"];
             $authors = $data["authors"];
             $content = $data["content"];
 
+            setTitle($poster_id, $title);
+            //TODO: setAuthors()
             overwriteBoxes($poster_id, $content);
 
             echo "success?";

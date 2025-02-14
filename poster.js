@@ -111,32 +111,31 @@ function selectElement(target_id, pointer) {
 var selected_box = null;
 var selected_title = null;
 document.addEventListener("click", async function (event) {
-    // event.stopPropagation();
-    // event.preventDefault();
-
-    console.log(event.target.tagName, event.target.id, event.target.children[0]);
 
     // Edit Title
-    // if (document.getElementById("title").contains(event.target) && selected_title === null) {
-    //     console.log("edit title");
+    if (event.target.tagName === "DIV" && event.target.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
 
-    //     const element = createArea("textarea", "title", "", document.getElementById("title").getAttribute("data-content"));
+        // change box to editable
+        const element = createArea("textarea", event.target.children[0].id, "", event.target.children[0].getAttribute("data-content"));
+        element.style.resize = "none"; //"vertical";
+        element.value = event.target.children[0].getAttribute("data-content");
+        event.target.children[0].parentNode.replaceChild(element, event.target.children[0]);
+        element.style['pointer-events'] = 'auto';
 
-    //     element.value = document.getElementById("title").getAttribute("data-content");
-    //     document.getElementById("title").parentNode.replaceChild(element, document.getElementById("title"));
+        // remember box as previously selected
+        selected_title = element;
 
-    //     selected_title = element;
+    } else if (selected_title && event.target !== selected_title) {// if there was something once selected and if the new selected is different from the old
 
-    // } else if (selected_title && document.getElementById("title") !== selected_title) {
+        // change old back to non-editable and save old edits
+        const element = createArea("div", selected_title.id, "", selected_title.value);
+        await typeset(element, () => marked.marked(selected_title.value));
+        selected_title.parentNode.replaceChild(element, selected_title);
+        element.style['pointer-events'] = 'none';
 
-    //     console.log("un-edit title");
-
-    //     const element = createArea("div", "title", "box", selected_title.value);
-    //     await typeset(element, () => marked.marked(selected_title.value));
-    //     selected_title.parentNode.replaceChild(element, selected_title);
-
-    //     selected_title = null;
-    // }
+        // forget old selected
+        selected_title = null;
+    }
 
     // Edit Boxes
     if (event.target.tagName === "DIV" && event.target.id.startsWith("editBox") && selected_box === null) { // if new editBox gets selected
