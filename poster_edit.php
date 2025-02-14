@@ -209,12 +209,38 @@
         return $resultA . " " . $resultB . " " . $resultC;
     }
 
+    function getVisibilityOptions() {
+        $result = getterQuery(
+            "SELECT name FROM view_modes", ["name"], "", null
+        );
+        return json_decode($result, true)["name"];
+    }
+    function getVisibility($poster_id) {
+
+        $result = getterQuery(
+            "SELECT fk_view_mode
+            FROM poster
+            WHERE poster_id=?", ["fk_view_mode"], "i", $poster_id
+        );
+        return json_decode($result, true)[0];
+    }
+    function setVisibility($poster_id, $value) {
+
+        $result = editQuery(
+            "UPDATE poster SET poster.fk_view_mode = ?
+            WHERE poster.poster_id = ?", "ii", $value+1, $poster_id
+        );
+        return $result;
+    }
+
     function load_content($poster_id) {
         $content = new stdClass();
 
         $content->title = getTitle($poster_id);
         $content->authors = getAuthors($poster_id);
         $content->boxes = getBoxes($poster_id);
+        $content->visibility = getVisibility($poster_id);
+        $content->vis_options = getVisibilityOptions();
 
         return json_encode($content);
     }
@@ -242,10 +268,12 @@
             $title = $data["title"];
             $authors = $data["authors"];
             $content = $data["content"];
+            $visibility = $data["visibility"];
 
             setTitle($poster_id, $title);
             //TODO: setAuthors()
             overwriteBoxes($poster_id, $content);
+            setVisibility($poster_id, $visibility);
 
             echo "success?";
         }

@@ -96,8 +96,21 @@ async function show(response) {
             boxes.appendChild(obj);
         }
     }
+
+    var select = document.getElementById('view-mode');
+
+    for (const key in response.vis_options) {
+        var opt = document.createElement('option');
+        opt.value = key;
+        opt.innerHTML = response.vis_options[key];
+        select.appendChild(opt);
+    }
+    select.value = response.visibility + 1; //TODO bug value doest get changed
+    console.log(response.visibility + 1);
+
 }
 
+//???????????
 function selectElement(target_id, pointer) {
     const element = document.getElementById(target_id);
 
@@ -216,12 +229,14 @@ document.getElementById("save-content").onclick = function () {
         content[i] = element.getAttribute("data-content");
     }
 
+    const visibility = document.getElementById("view-mode").value;
+
     $.ajax({
         type: "POST",
         url: "poster_edit.php",
         data: {
             action: "content-upload",
-            data: JSON.stringify(prepareJSON(title, authors, content))
+            data: JSON.stringify(prepareJSON(title, authors, content, visibility))
         },
         success: function (response) {
 

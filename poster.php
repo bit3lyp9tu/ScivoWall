@@ -33,6 +33,9 @@
             <button id="add-box">Add Box</button>
             <button id="save-content">Save</button>
         </div>
+        <select name="" id="view-mode">
+            <!-- <option value="null">please choose option</option> -->
+        </select>
     </div>
 
     <div class="container" id="boxes">
