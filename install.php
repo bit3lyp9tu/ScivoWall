@@ -46,16 +46,42 @@
 			name varchar(256) not null unique,
 			pass_sha varchar(256) not null,
 			salt varchar(256) not null,
-			pepper varchar(256) not null
+			pepper varchar(256) not null,
+			registration_date INT NOT NULL DEFAULT UNIX_TIMESTAMP(),
+			last_login_date INT NOT NULL DEFAULT UNIX_TIMESTAMP(),
+			access_level INT NOT NULL DEFAULT 1
 		)",
 		"create table if not exists author (
 			id int primary key auto_increment,
 			name varchar(256) not null
 		)",
+		"CREATE TABLE IF NOT EXISTS view_modes (
+			ID INT PRIMARY KEY AUTO_INCREMENT,
+			name VARCHAR(64) NOT NULL
+		)",
+		"INSERT INTO view_modes (ID, name)
+		SELECT 1, 'public'
+		WHERE NOT EXISTS (
+			SELECT 1
+			FROM view_modes
+			LIMIT 1
+		)",
+		"INSERT INTO view_modes (ID, name)
+		SELECT 2, 'private'
+		WHERE NOT EXISTS (
+			SELECT 1
+			FROM view_modes
+			WHERE ID = 2
+			LIMIT 1
+		)",
 		"create table if not exists poster (
 		    poster_id int primary key auto_increment,
 		    title varchar(256) not null,
-		    user_id int not null references user(user_id) on delete cascade
+		    user_id int not null references user(user_id) on delete cascade,
+			creation_date INT NOT NULL DEFAULT UNIX_TIMESTAMP(),
+			last_edit_date INT NOT NULL DEFAULT UNIX_TIMESTAMP(),
+			fk_view_mode INT NOT NULL DEFAULT 2,
+			CONSTRAINT fk_view_mode FOREIGN KEY (fk_view_mode) REFERENCES view_modes(ID)
 		)",
 		"create table if not exists author_to_poster (
 			id int primary key auto_increment,
@@ -65,7 +91,9 @@
 		"create table if not exists image (
 			image_id int primary key auto_increment,
 			file_name varchar(256) not null,
-			content blob not null
+			content blob not null,
+			upload_date INT NOT NULL DEFAULT UNIX_TIMESTAMP(),
+			last_edit_date INT NOT NULL DEFAULT UNIX_TIMESTAMP()
 		)",
 		"create table if not exists box (
 			box_id int primary key auto_increment,

@@ -37,10 +37,12 @@
         return $complexity_points;
     }
 
+    //TODO: move queries to own functions + tests
+    //      make queries more compact
     /*
-    *    Validates current session
-    *    if session not valid, returns null
-    *    if session valid, returns the corresponding user_id
+        *    Validates current session
+        *    if session not valid, returns null
+        *    if session valid, returns the corresponding user_id
     */
     function getValidUserFromSession() {
 

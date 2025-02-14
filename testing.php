@@ -89,11 +89,11 @@ test_equal("select query no result", runSingleQuery("SELECT * FROM session"), "N
 test_equal("insert query", insertQuery("INSERT INTO user (name, pass_sha, salt, pepper) VALUE (?, ?, ?, ?)", "ssss", 'Test-Name', '0bf301312acc91474e96e1a07422a791', 'vAfcB"$2NE[C}Rpw)9vhI/-4YPS<}?@F', 'a2d47c981889513c5e2ddbca71f414'), "success");
 test_equal("select query get single result", runSingleQuery("SELECT user_id FROM user"), "<div>1</div>");
 
-$result = getterQuery("SELECT * FROM user WHERE user.name = ?", ["user_id", "name", "pass_sha", "salt", "pepper"], "s", "Test-Name");
+$result = getterQuery("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", ["user_id", "name", "pass_sha", "salt", "pepper", "access_level"], "s", "Test-Name");
 test_equal("select query get json result", $result,
-	'{"user_id":[1],"name":["Test-Name"],"pass_sha":["0bf301312acc91474e96e1a07422a791"],"salt":["vAfcB\"$2NE[C}Rpw)9vhI\/-4YPS<}?@F"],"pepper":["a2d47c981889513c5e2ddbca71f414"]}'
+	'{"user_id":[1],"name":["Test-Name"],"pass_sha":["0bf301312acc91474e96e1a07422a791"],"salt":["vAfcB\"$2NE[C}Rpw)9vhI\/-4YPS<}?@F"],"pepper":["a2d47c981889513c5e2ddbca71f414"],"access_level":[1]}'
 );
-$result = getterQuery("SELECT * FROM user WHERE user.name = ?", ["user_id", "name", "pass_sha", "salt", "pepper"], "s", "---");
+$result = getterQuery("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", ["user_id", "name", "pass_sha", "salt", "pepper", "registration_date", "last_login_date", "access_level"], "s", "---");
 test_equal("select query getter", $result, "No results found");
 
 // Empty Delete???
@@ -137,6 +137,9 @@ test_equal("Password complexity contains special char", getPwComplexityLevel("1A
 
 
 include_once("poster_edit.php");
+
+
+test_equal("check View Modes", getterQuery("SELECT name FROM view_modes", ["name"], "", null), '{"name":["public","private"]}');
 
 
 $new_proj = addProject(1, "First Project");
