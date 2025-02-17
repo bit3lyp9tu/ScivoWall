@@ -199,8 +199,8 @@ test_equal("overwrite boxes addition", implode(",", getBoxes(3)), 'Content A,Con
 // overwriteBoxes(3, array());
 // test_equal("overwrite boxes empty-removal", implode(",", getBoxes(3)), '');
 
-//TODO test getVisibility()
-//TODO test getVisibilityOptions()
+test_equal("get visibility options", implode(",", getVisibilityOptions()), 'public,private');
+test_equal("get poster visibility", getVisibility(2), 2);
 
 
 /*

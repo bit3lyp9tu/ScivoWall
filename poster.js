@@ -105,9 +105,7 @@ async function show(response) {
         opt.innerHTML = response.vis_options[key];
         select.appendChild(opt);
     }
-    select.value = response.visibility + 1; //TODO bug value doest get changed
-    console.log(response.visibility + 1);
-
+    select.value = response.visibility - 1;
 }
 
 //???????????
@@ -196,11 +194,12 @@ window.onload = async function () {
 
 };
 
-function prepareJSON(title, authors, content) {
+function prepareJSON(title, authors, content, visibility) {
     return result = {
         "title": title,
         "authors": authors,
-        "content": content
+        "content": content,
+        "visibility": visibility
     };
 }
 

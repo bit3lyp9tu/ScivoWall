@@ -222,7 +222,7 @@
             FROM poster
             WHERE poster_id=?", ["fk_view_mode"], "i", $poster_id
         );
-        return json_decode($result, true)[0];
+        return json_decode($result, true)["fk_view_mode"][0];
     }
     function setVisibility($poster_id, $value) {
 
@@ -232,6 +232,8 @@
         );
         return $result;
     }
+
+    //TODO: function to change last_edit_date
 
     function load_content($poster_id) {
         $content = new stdClass();
