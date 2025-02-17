@@ -177,6 +177,8 @@ test_equal("title setter B", getTitle(3), "Changed Title");
 
 test_equal("author getter", implode(",", getAuthors(3)), 'Test-Name,Other Author');
 test_equal("boxes getter", implode(",", getBoxes(3)), 'New Text,Text Content 2');
+test_equal("boxes getter empty", sizeof(getBoxes(100)), 0);
+
 
 deleteBox(2, 3);
 test_equal("delete box", implode(",", getBoxes(3)), 'New Text');

@@ -56,7 +56,13 @@
             ["content"],
             "i", $poster_id
         );
-        return json_decode($content, true)["content"];
+        if ($content != "No results found") {
+
+            return json_decode($content, true)["content"];
+        }else{
+
+            return [];
+        }
     }
 
     function addBox($poster_id, $content="") {
@@ -285,7 +291,7 @@
         if ($_POST['action'] == 'content-upload') {
             $data = json_decode((isset($_POST['data']) ? $_POST['data'] : ''), true);
 
-            $poster_id = isset($_POST['id']) ? $_POST['id'] : '';
+            $poster_id = 134;//isset($_POST['id']) ? $_POST['id'] : '';
             $user_id = getValidUserFromSession();
 
             if ($user_id != null) {

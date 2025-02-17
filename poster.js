@@ -77,7 +77,7 @@ async function show(response) {
     await typeset(document.getElementById("title"), () => marked.marked(response.title));
     document.getElementById("title").setAttribute("data-content", response.title);
 
-    document.getElementById("authors").innerText = response.authors != null ? response.authors.toString(", ") : "";
+    document.getElementById("authors").value = response.authors != null ? response.authors.toString(", ") : "";
 
     const boxes = document.getElementById("boxes");
 
@@ -124,7 +124,7 @@ var selected_title = null;
 document.addEventListener("click", async function (event) {
 
     // Edit Title
-    if (event.target.tagName === "DIV" && event.target.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
+    if (event.target.tagName === "DIV" && !event.target.id.startsWith("editBox") && event.target.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
 
         // change box to editable
         const element = createArea("textarea", event.target.children[0].id, "", event.target.children[0].getAttribute("data-content"));
@@ -232,7 +232,7 @@ document.getElementById("save-content").onclick = function () {
 
     const visibility = document.getElementById("view-mode").value;
 
-    console.log("id", header.id);
+    console.log(header.id, title, authors, content, visibility);
 
 
     $.ajax({
@@ -252,7 +252,7 @@ document.getElementById("save-content").onclick = function () {
             }
         },
         error: function (err) {
-            console.err(err);
+            console.error(err);
         }
     });
 };

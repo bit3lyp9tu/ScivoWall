@@ -26,7 +26,8 @@
     <div id="titles">
         <div id="title">Title</div>   <!-- change ids -->
         <div>
-            <h2 id="authors">Heading 2</h2>
+            <!-- <h2 id="authors">Heading 2</h2> -->
+            <input type="text" id="authors" values=""></input>
         </div>
         <div>
             <a href="login.php">Login</a>
