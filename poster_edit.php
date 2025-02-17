@@ -234,6 +234,25 @@
     }
 
     //TODO: function to change last_edit_date
+    function updateEditDate($table, $id) {
+        $attribute = array(
+            "poster" => "last_edit_date",
+            "user" => "last_login_date",
+            "image" => "upload_date"
+        );
+        $query = "UPDATE " . $table . " SET " . $table . "." . $attribute[$table] . "=UNIX_TIMESTAMP() WHERE " . $table . "." . $table . "_id=?";
+
+        if ($table="user" || $table="poster" || $table="image") {
+
+            $result = editQuery(
+                $query,
+                "i", $id
+            );
+            return $result;
+        }else{
+            return null;
+        }
+    }
 
     function load_content($poster_id) {
         $content = new stdClass();
@@ -273,6 +292,7 @@
             $visibility = $data["visibility"];
 
             setTitle($poster_id, $title);
+            updateEditDate("poster", $poster_id);
             //TODO: setAuthors()
             overwriteBoxes($poster_id, $content);
             setVisibility($poster_id, $visibility);

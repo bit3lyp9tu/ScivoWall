@@ -170,8 +170,8 @@
                 return "No results found";
             }else{
                 $result = getterQuery(
-                    "SELECT title FROM poster WHERE poster.user_id=?",
-                    ["title"],
+                    "SELECT title, from_unixtime(last_edit_date) AS 'last edit' FROM poster WHERE poster.user_id=?",
+                    ["title", "last edit"],
                     "s", $user_id
                 );
                 return $result;

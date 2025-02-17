@@ -123,7 +123,7 @@ test_equal("login successfully", login("testing", "1A_aaaaaaaaaa"), "Correct Pas
 test_equal("create new project", create_project("new Project", 1), '{"title":["TestingTitle2","new Project"]}');
 test_equal("fetch all projects db check", getterQuery("SELECT poster_id, title, user_id FROM poster", ["poster_id", "title", "user_id"], "", null), '{"poster_id":[1,2],"title":["TestingTitle2","new Project"],"user_id":[1,1]}');
 
-test_equal("fetch all projects", fetch_projects(1), '{"title":["TestingTitle2","new Project"]}');
+test_equal("fetch all projects", implode(",", json_decode(fetch_projects(1), true)["title"]), 'TestingTitle2,new Project');
 
 test_equal("delete project", delete_project(1, 1), '{"title":["new Project"]}');
 test_equal("delete project db check", getterQuery("SELECT poster_id, title FROM poster", ["poster_id", "title"], "", null), '{"poster_id":[2],"title":["new Project"]}');
@@ -201,6 +201,32 @@ test_equal("overwrite boxes addition", implode(",", getBoxes(3)), 'Content A,Con
 
 test_equal("get visibility options", implode(",", getVisibilityOptions()), 'public,private');
 test_equal("get poster visibility", getVisibility(2), 2);
+
+//update last edit date
+$sleep_time = 1;
+//poster
+test_equal("update last edit date poster 1", updateEditDate("poster", 2), 'successfully updated');
+$t1 = json_decode(getterQuery("SELECT last_edit_date FROM poster WHERE poster.poster_id=?", ["last_edit_date"], "i", 2), true)["last_edit_date"][0];
+sleep($sleep_time);
+updateEditDate("poster", 2);
+$t2 = json_decode(getterQuery("SELECT last_edit_date FROM poster WHERE poster.poster_id=?", ["last_edit_date"], "i", 2), true)["last_edit_date"][0];
+test_equal("update last edit date poster 2", ($t1 + $sleep_time == $t2) ? 1 : 0, 1);
+//user
+$user_id = 2;
+test_equal("update last edit date user 1", updateEditDate("user", $user_id), 'successfully updated');
+$t1 = json_decode(getterQuery("SELECT last_login_date FROM user WHERE user.user_id=?", ["last_login_date"], "i", $user_id), true)["last_login_date"][0];
+sleep($sleep_time);
+updateEditDate("user", $user_id);
+$t2 = json_decode(getterQuery("SELECT last_login_date FROM user WHERE user.user_id=?", ["last_login_date"], "i", $user_id), true)["last_login_date"][0];
+test_equal("update last edit date user 2", ($t1 + $sleep_time == $t2) ? 1 : 0, 1);
+//image //TODO
+// $image_id = 1;
+// test_equal("update last edit date image 1", updateEditDate("image", $image_id), 'successfully updated');
+// $t1 = json_decode(getterQuery("SELECT last_login_date FROM image WHERE image.image_id=?", ["last_login_date"], "i", $image_id), true)["last_login_date"][0];
+// sleep($sleep_time);
+// updateEditDate("image", $image_id);
+// $t2 = json_decode(getterQuery("SELECT last_login_date FROM image WHERE image.image_id=?", ["last_login_date"], "i", $image_id), true)["last_login_date"][0];
+// test_equal("update last edit date image 2", ($t1 + $sleep_time == $t2) ? 1 : 0, 1);
 
 
 /*
