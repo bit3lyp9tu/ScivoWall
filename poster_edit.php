@@ -206,6 +206,8 @@
         );
 
         //new box
+        // addBox($poster_id, "$$ Content $$");
+
         return $resultA . " " . $resultB . " " . $resultC;
     }
 
@@ -283,21 +285,27 @@
         if ($_POST['action'] == 'content-upload') {
             $data = json_decode((isset($_POST['data']) ? $_POST['data'] : ''), true);
 
-            $poster_id = 133;   //TODO: make dynamic
+            $poster_id = isset($_POST['id']) ? $_POST['id'] : '';
             $user_id = getValidUserFromSession();
 
-            $title = $data["title"];
-            $authors = $data["authors"];
-            $content = $data["content"];
-            $visibility = $data["visibility"];
+            if ($user_id != null) {
 
-            setTitle($poster_id, $title);
-            updateEditDate("poster", $poster_id);
-            //TODO: setAuthors()
-            overwriteBoxes($poster_id, $content);
-            setVisibility($poster_id, $visibility);
+                $title = $data["title"];
+                $authors = $data["authors"];
+                $content = $data["content"];
+                $visibility = $data["visibility"];
 
-            echo "success?";
+                setTitle($poster_id, $title);
+                updateEditDate("poster", $poster_id);
+                //TODO: setAuthors()
+                overwriteBoxes($poster_id, $content);
+                setVisibility($poster_id, $visibility);
+
+                echo "success?" . implode($authors);
+
+            }else{
+                echo "ERROR";
+            }
         }
     }
 

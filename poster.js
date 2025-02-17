@@ -77,7 +77,7 @@ async function show(response) {
     await typeset(document.getElementById("title"), () => marked.marked(response.title));
     document.getElementById("title").setAttribute("data-content", response.title);
 
-    document.getElementById("authors").innerText = response.authors.toString(", ");
+    document.getElementById("authors").innerText = response.authors != null ? response.authors.toString(", ") : "";
 
     const boxes = document.getElementById("boxes");
 
@@ -216,6 +216,8 @@ document.getElementById("add-box").onclick = function () {
 
 document.getElementById("save-content").onclick = function () {
 
+    const header = url_to_json();
+
     const content = [];
     const title = document.getElementById("title").getAttribute("data-content");//innerText;
     const authors = document.getElementById("authors").innerText.split(",");
@@ -230,16 +232,24 @@ document.getElementById("save-content").onclick = function () {
 
     const visibility = document.getElementById("view-mode").value;
 
+    console.log("id", header.id);
+
+
     $.ajax({
         type: "POST",
         url: "poster_edit.php",
         data: {
             action: "content-upload",
+            id: header.id,
             data: JSON.stringify(prepareJSON(title, authors, content, visibility))
         },
         success: function (response) {
 
-            console.log(response);
+            if (response != "ERROR") {
+                console.log(response);
+            } else {
+                toastr["error"]("An error occurred");
+            }
         },
         error: function (err) {
             console.err(err);
