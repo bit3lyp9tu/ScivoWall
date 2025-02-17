@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <title>mab.bootstrap.taginput Demo</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"
+        integrity="sha256-MsxKR7Nw4ngHKmRAJJhy5oHvodmSYAQgwDqWMdqIXXA=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/demo.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <span class="navbar-brand" href="/">MAB.Bootstrap.TagInput Demo</span>
+
+            <a href="https://github.com/markashleybell/MAB.Bootstrap.TagInput" class="btn btn-success btn-sm">Github Project</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <form action="" method="post" role="form">
+                    <div class="form-group">
+                        <label for="tags0">Empty (no new tags allowed)</label>
+                        <input type="text" class="form-control tag-input" name="tags0" id="tags0" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="tags1">Empty with placeholder</label>
+                        <input type="text" class="form-control tag-input" name="tags1" id="tags1"
+                            placeholder="Enter tags" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="tags2">Pre-populated</label>
+                        <input type="text" class="form-control tag-input" name="tags2" id="tags2"
+                            placeholder="Enter tags" value="100|200|300|400">
+                    </div>
+                    <div class="form-group">
+                        <label for="tags3">Multi-line</label>
+                        <input type="text" class="form-control tag-input narrow" name="tags3" id="tags3"
+                            placeholder="Enter tags" value="bat|cat|catfish|dog|dogfish|fish">
+                    </div>
+                    <div class="form-group">
+                        <label for="tags4">No typeahead</label>
+                        <input type="text" class="form-control tag-input-basic" name="tags4" id="tags4"
+                            placeholder="Enter tags" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="tags5">Custom templates</label>
+                        <input type="text" class="form-control tag-input-basic" name="tags5" id="tags5"
+                            placeholder="Enter tags" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="tags6">Allow upper case</label>
+                        <input type="text" class="form-control tag-input" name="tags6" id="tags6"
+                            placeholder="Enter tags" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="tags7">Limit suggestions (item-)</label>
+                        <input type="text" class="form-control tag-input" name="tags7" id="tags7"
+                            placeholder="Enter tags" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="tags8">Search test</label>
+                        <input type="text" class="form-control tag-input" name="tags8" id="tags8"
+                            placeholder="Enter tags" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="tags9">Pre-populated, special characters in data</label>
+                        <input type="text" class="form-control tag-input" name="tags9" id="tags9"
+                            placeholder="Enter tags" value="100|200|300|400">
+                    </div>
+                    <div class="form-group">
+                        <label>Copy/paste test data</label>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <input type="text" class="form-control copy-test" value="dog cat catfish" readonly>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control copy-test" value="dog, cat, catfish" readonly>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control copy-test" value="dog|cat|catfish" readonly>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control copy-test" value="dog  , cat|  catfish fish" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Input value</label>
+                        <pre class="console" id="value-console"></pre>
+                    </div>
+                    <div class="form-group">
+                        <label>Event data</label>
+                        <pre class="console" id="event-console"></pre>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="x-tmpl-mustache" id="custom-html">
+        <div class="{{globalCssClassPrefix}}{{#containerClasses}} {{containerClasses}}{{/containerClasses}}">
+        {{#tags}}{{> item}}{{/tags}}
+        <input class="{{globalCssClassPrefix}}-data" type="hidden" name="{{hiddenInput.name}}" id="{{hiddenInput.id}}" value="{{hiddenInput.value}}">
+        <div class="{{globalCssClassPrefix}}-input-container">
+            <input class="{{globalCssClassPrefix}}-input" type="text"{{#placeholder}} placeholder="{{placeholder}}"{{/placeholder}}>
+            <div class="{{globalCssClassPrefix}}-suggestions {{globalCssClassPrefix}}-suggestions-hidden"></div>
+        </div>
+        </div>
+    </script>
+
+    <script type="x-tmpl-mustache" id="custom-tag">
+        <div class="{{globalCssClassPrefix}}-tag" data-id="{{id}}" data-label="{{label}}">{{label}} <i class="{{globalCssClassPrefix}}-removetag bi bi-x"></i></div>
+    </script>
+
+    <script type="x-tmpl-mustache" id="custom-suggestion">
+        <div class="{{globalCssClassPrefix}}-suggestion" data-id="{{id}}" data-label="{{label}}">{{label}}</div>
+    </script>
+
+    <script type="text/javascript" src="js/bundle/demo.js"></script>
+
+</body>
+
+</html>

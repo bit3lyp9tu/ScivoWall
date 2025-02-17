@@ -1,0 +1,24 @@
+{
+    "name": "mab-bootstrap-taginput-demo",
+    "private": true,
+    "version": "1.0.0",
+    "description": "Demo for mab-bootstrap-taginput.",
+    "author": "Mark Ashley Bell",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/mustache": "^4.2.5",
+        "clean-webpack-plugin": "^4.0.0",
+        "css-loader": "^7.1.2",
+        "source-map-loader": "^5.0.0",
+        "style-loader": "^4.0.0",
+        "ts-loader": "^9.5.1",
+        "ts-node": "^10.9.2",
+        "tslint": "^6.1.3",
+        "typescript": "^5.7.2",
+        "webpack": "^5.97.1",
+        "webpack-cli": "^6.0.1"
+    },
+    "scripts": {
+        "build": "webpack --mode=production"
+    }
+}
