@@ -81,7 +81,8 @@
 			creation_date INT NOT NULL DEFAULT UNIX_TIMESTAMP(),
 			last_edit_date INT NOT NULL DEFAULT UNIX_TIMESTAMP(),
 			fk_view_mode INT NOT NULL DEFAULT 2,
-			CONSTRAINT fk_view_mode FOREIGN KEY (fk_view_mode) REFERENCES view_modes(ID)
+			CONSTRAINT fk_view_mode FOREIGN KEY (fk_view_mode) REFERENCES view_modes(ID),
+			visible TINYINT(1) NOT NULL DEFAULT 0
 		)",
 		"create table if not exists author_to_poster (
 			id int primary key auto_increment,

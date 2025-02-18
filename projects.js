@@ -49,6 +49,24 @@ function deleteRow(local_id) {
     });
 }
 
+function updateVisibility(id, value) {
+    $.ajax({
+        type: "POST",
+        url: "account_management.php",
+        data: {
+            action: "update-visibility",
+            id: id,
+            value: value
+        },
+        success: function (response) {
+            console.log(response);
+        },
+        error: function (err) {
+            console.error(err);
+        }
+    });
+}
+
 function createTableFromJSON(id, data, ...additional_columns) {
     const table = document.createElement("table");
     table.setAttribute("border", "1");
@@ -69,7 +87,18 @@ function createTableFromJSON(id, data, ...additional_columns) {
 
         headers.forEach(header => {
             const td = document.createElement("td");
-            td.innerText = data[header][i];
+
+            if (header == "visible") {
+                const elem = document.createElement("INPUT");
+                elem.setAttribute("type", "checkbox");
+                elem.checked = data[header][i];
+                elem.onclick = function () {
+                    updateVisibility(this.closest('tr').id.split("-")[1], this.checked ? 1 : 0);
+                }
+                td.appendChild(elem);
+            } else {
+                td.innerText = data[header][i];
+            }
             row.appendChild(td);
         });
 
@@ -98,6 +127,23 @@ async function edit_translation(local_id) {
         },
         error: function () {
             return "[ERROR]";
+        }
+    });
+    return result;
+}
+
+async function isAdmin() {
+    const result = await $.ajax({
+        type: "POST",
+        url: "account_management.php",
+        data: {
+            action: "is-admin"
+        },
+        success: function (response) {
+            return response;
+        },
+        error: function () {
+            return false;
         }
     });
     return result;

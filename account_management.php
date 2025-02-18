@@ -64,6 +64,16 @@
         return json_decode($session, true)["user_id"][0];
     }
 
+    //TODO: make id not required
+    function isAdmin($user_id) {
+        // if ($user_id == null) {
+        //     $user_id = getValidUserFromSession();
+        // }
+        $result = getterQuery(
+            "SELECT access_level FROM user WHERE user_id=?", ["access_level"], "i", $user_id
+        );
+        return json_decode($result, true)["access_level"][0] >= 2;
+    }
 
     function register($name, $pw) {
 
@@ -162,19 +172,31 @@
         return $edit;
     }
 
-    function fetch_projects($user_id) {
+    function fetchAsAdmin($user_id) {
+
+    }
+
+    function fetch_projects($user_id, $priv_acc=true) {
 
         if ($user_id != null) {
 
             if ($user_id == "No results found") {
                 return "No results found";
             }else{
-                $result = getterQuery(
-                    "SELECT title, from_unixtime(last_edit_date) AS 'last edit' FROM poster WHERE poster.user_id=?",
-                    ["title", "last edit"],
-                    "s", $user_id
-                );
-                return $result;
+                if (!$priv_acc && isAdmin($user_id)) {
+                    $result = getterQuery(
+                        "SELECT title, from_unixtime(last_edit_date) AS 'last edit', visible FROM poster WHERE fk_view_mode=?",
+                        ["title", "last edit", "visible"], "i", 1
+                    );
+                    return $result;
+                }else{
+                    $result = getterQuery(
+                        "SELECT title, from_unixtime(last_edit_date) AS 'last edit' FROM poster WHERE poster.user_id=?",
+                        ["title", "last edit"],
+                        "s", $user_id
+                    );
+                    return $result;
+                }
             }
 
         }else{
@@ -249,6 +271,19 @@
         }
     }
 
+    function updateVisibility($id, $value) {
+        $result = editQuery(
+            "UPDATE poster SET visible=?
+            WHERE poster_id=(
+                SELECT poster_id FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY poster_id) AS local_id
+                FROM poster
+                WHERE fk_view_mode = ?
+            ) AS inner_query
+            WHERE local_id = ?)", "iii", $value, 1, $id
+        );
+        return $result;
+    }
+
     if(isset($_POST['action'])) {
         # evtl noch checken dass der name mindestens 3 zeichen hat (oder so)
         if ($_POST['action'] == 'register') {
@@ -268,7 +303,7 @@
         if ($_POST['action'] == 'fetch_all_projects') {
 
             $user_id = getValidUserFromSession();
-            echo fetch_projects($user_id);
+            echo fetch_projects($user_id, false);
         }
 
         if ($_POST['action'] == 'delete_project') {
@@ -293,7 +328,6 @@
 
                 echo logout($user_id);
             }else{
-
                 echo "logout error";
             }
         }
@@ -320,6 +354,33 @@
                 echo "ERROR";
             }
 
+        }
+
+        if ($_POST['action'] == 'is-admin') {
+            $user_id = getValidUserFromSession();
+
+            if ($user_id != null) {
+
+                echo isAdmin($user_id);
+            }else{
+                echo false;
+            }
+        }
+
+        if ($_POST['action'] == 'update-visibility') {
+            $local_id = isset($_POST['id']) ? $_POST['id'] : '';
+            $value = isset($_POST['value']) ? $_POST['value'] : '';
+
+            $user_id = getValidUserFromSession();
+
+            // echo "test";//$local_id . " " . $value . " " . $user_id;
+
+            if ($user_id != null && isAdmin($user_id)) {
+
+                echo $value . " " . updateVisibility($local_id, $value);
+            }else{
+                echo "ERROR";
+            }
         }
 
 	    #print(json_encode($msgs));

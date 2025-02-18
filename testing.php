@@ -120,6 +120,16 @@ test_equal("login with wrong password", login("testing", "---"), "Wrong Username
 test_equal("login successfully", login("testing", "1A_aaaaaaaaaa"), "Correct Password");
 //TODO: check after correct session during login
 
+test_equal("is user non-admin", isAdmin(1), false);
+$result = editQuery("UPDATE user SET user.access_level=? WHERE user.user_id=?", "ii", 3, 1);
+test_equal("is user admin", isAdmin(1), true);
+
+editQuery("UPDATE poster SET fk_view_mode=?", "i", 1);
+updateVisibility(1, true);
+test_equal("update visibility", getterQuery("SELECT visible FROM poster", ["visible"], "", null), '{"visible":[1]}');
+updateVisibility(1, false);
+test_equal("update visibility", getterQuery("SELECT visible FROM poster", ["visible"], "", null), '{"visible":[0]}');
+
 test_equal("create new project", create_project("new Project", 1), '{"title":["TestingTitle2","new Project"]}');
 test_equal("fetch all projects db check", getterQuery("SELECT poster_id, title, user_id FROM poster", ["poster_id", "title", "user_id"], "", null), '{"poster_id":[1,2],"title":["TestingTitle2","new Project"],"user_id":[1,1]}');
 
@@ -235,5 +245,8 @@ test_equal("update last edit date user 2", ($t1 + $sleep_time == $t2) ? 1 : 0, 1
 name:	bug
 pw:
 A+a2d47c981889513c5e2ddbca71f414
+
+Admin
+PwScaDS-2025
 */
 ?>
