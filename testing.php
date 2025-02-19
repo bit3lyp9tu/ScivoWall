@@ -33,6 +33,8 @@ include("install.php");
 
 include("account_management.php");
 
+include_once("poster_edit.php");
+
 function print_green($text) {
 	echo "\033[32m$text\033[0m\n";
 }
@@ -130,6 +132,10 @@ test_equal("update visibility", getterQuery("SELECT visible FROM poster", ["visi
 updateVisibility(1, false);
 test_equal("update visibility", getterQuery("SELECT visible FROM poster", ["visible"], "", null), '{"visible":[0]}');
 
+test_equal("is public false", isPublic(1), false);
+editQuery("UPDATE poster SET visible=?", "i", 1);
+test_equal("is public true", isPublic(1), true);
+
 test_equal("create new project", create_project("new Project", 1), '{"title":["TestingTitle2","new Project"]}');
 test_equal("fetch all projects db check", getterQuery("SELECT poster_id, title, user_id FROM poster", ["poster_id", "title", "user_id"], "", null), '{"poster_id":[1,2],"title":["TestingTitle2","new Project"],"user_id":[1,1]}');
 
@@ -145,8 +151,6 @@ test_equal("Password complexity contains number", getPwComplexityLevel("1aaaaaaa
 test_equal("Password complexity contains upper letter", getPwComplexityLevel("1Aaaaaaaaaaaa"), 3);
 test_equal("Password complexity contains special char", getPwComplexityLevel("1A_aaaaaaaaaa"), 4);
 
-
-include_once("poster_edit.php");
 
 
 test_equal("check View Modes", getterQuery("SELECT name FROM view_modes", ["name"], "", null), '{"name":["public","private"]}');

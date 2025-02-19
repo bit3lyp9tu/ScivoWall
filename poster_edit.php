@@ -262,6 +262,23 @@
         }
     }
 
+    function fetchPublicPosters() {
+        $result = getterQuery(
+            "SELECT poster_id, title
+            FROM poster
+            WHERE fk_view_mode=? AND visible=?", ["poster_id", "title"], "ii", 1, 1
+        );
+        return $result;
+    }
+
+    function isPublic($poster_id) {
+        $result = getterQuery(
+            "SELECT 1 AS 'is_public' FROM poster WHERE poster_id=? AND fk_view_mode=? AND visible=?",
+            ["is_public"], "iii", $poster_id, 1, 1
+        );
+        return $result != "No results found" ? true : false;
+    }
+
     function load_content($poster_id) {
         $content = new stdClass();
 
@@ -289,12 +306,16 @@
             }
         }
         if ($_POST['action'] == 'content-upload') {
+            //TODO: check if mode=private + session-id correct
+
             $data = json_decode((isset($_POST['data']) ? $_POST['data'] : ''), true);
 
-            $poster_id = 134;//isset($_POST['id']) ? $_POST['id'] : '';
+            $poster_id = isset($_POST['id']) ? $_POST['id'] : '';
             $user_id = getValidUserFromSession();
 
-            if ($user_id != null) {
+            $mode = isset($_POST['mode']) ? $_POST['mode'] : '';
+
+            if ($user_id != null && $mode == 'edit') {
 
                 $title = $data["title"];
                 $authors = $data["authors"];
@@ -307,11 +328,15 @@
                 overwriteBoxes($poster_id, $content);
                 setVisibility($poster_id, $visibility);
 
-                echo "success?" . implode($authors);
+                echo "success?" . $public;
 
             }else{
                 echo "ERROR";
             }
+        }
+        if($_POST['action'] == 'fetch-available-posters') {
+
+            echo fetchPublicPosters();
         }
     }
 

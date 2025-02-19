@@ -188,3 +188,8 @@ mjx-container,
 #title {
     pointer-events: none;
 }
+
+.poster-slide {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}

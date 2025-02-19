@@ -73,6 +73,9 @@ async function typeset(container, code) {
 }
 
 async function show(response) {
+
+    //TODO: load interactive elements only if mode=private + session-id correct
+
     // document.getElementById("title").innerHTML = /*marked.marked*/(response.title);
     await typeset(document.getElementById("title"), () => marked.marked(response.title));
     document.getElementById("title").setAttribute("data-content", response.title);
@@ -123,53 +126,56 @@ var selected_box = null;
 var selected_title = null;
 document.addEventListener("click", async function (event) {
 
-    // Edit Title
-    if (event.target.tagName === "DIV" && !event.target.id.startsWith("editBox") && event.target.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
+    //TODO: check if mode=private + session-id correct
+    if (true) {
+        // Edit Title
+        if (event.target.tagName === "DIV" && !event.target.id.startsWith("editBox") && event.target.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
 
-        // change box to editable
-        const element = createArea("textarea", event.target.children[0].id, "", event.target.children[0].getAttribute("data-content"));
-        element.style.resize = "none"; //"vertical";
-        element.value = event.target.children[0].getAttribute("data-content");
-        event.target.children[0].parentNode.replaceChild(element, event.target.children[0]);
-        element.style['pointer-events'] = 'auto';
+            // change box to editable
+            const element = createArea("textarea", event.target.children[0].id, "", event.target.children[0].getAttribute("data-content"));
+            element.style.resize = "none"; //"vertical";
+            element.value = event.target.children[0].getAttribute("data-content");
+            event.target.children[0].parentNode.replaceChild(element, event.target.children[0]);
+            element.style['pointer-events'] = 'auto';
 
-        // remember box as previously selected
-        selected_title = element;
+            // remember box as previously selected
+            selected_title = element;
 
-    } else if (selected_title && event.target !== selected_title) {// if there was something once selected and if the new selected is different from the old
+        } else if (selected_title && event.target !== selected_title) {// if there was something once selected and if the new selected is different from the old
 
-        // change old back to non-editable and save old edits
-        const element = createArea("div", selected_title.id, "", selected_title.value);
-        await typeset(element, () => marked.marked(selected_title.value));
-        selected_title.parentNode.replaceChild(element, selected_title);
-        element.style['pointer-events'] = 'none';
+            // change old back to non-editable and save old edits
+            const element = createArea("div", selected_title.id, "", selected_title.value);
+            await typeset(element, () => marked.marked(selected_title.value));
+            selected_title.parentNode.replaceChild(element, selected_title);
+            element.style['pointer-events'] = 'none';
 
-        // forget old selected
-        selected_title = null;
-    }
+            // forget old selected
+            selected_title = null;
+        }
 
-    // Edit Boxes
-    if (event.target.tagName === "DIV" && event.target.id.startsWith("editBox") && selected_box === null) { // if new editBox gets selected
+        // Edit Boxes
+        if (event.target.tagName === "DIV" && event.target.id.startsWith("editBox") && selected_box === null) { // if new editBox gets selected
 
-        // change box to editable
-        const element = createArea("textarea", event.target.id, "", event.target.getAttribute("data-content"));
-        element.rows = Math.round((event.target.innerText.match(/(<br>|\n)/g) || []).length * 1.5) + 1;
-        element.style.resize = "none"; //"vertical";
-        element.value = event.target.getAttribute("data-content");
-        event.target.parentNode.replaceChild(element, event.target);
+            // change box to editable
+            const element = createArea("textarea", event.target.id, "", event.target.getAttribute("data-content"));
+            element.rows = Math.round((event.target.innerText.match(/(<br>|\n)/g) || []).length * 1.5) + 1;
+            element.style.resize = "none"; //"vertical";
+            element.value = event.target.getAttribute("data-content");
+            event.target.parentNode.replaceChild(element, event.target);
 
-        //  remember box as previously selected
-        selected_box = element;
+            //  remember box as previously selected
+            selected_box = element;
 
-    } else if (selected_box && event.target !== selected_box) {// if there was something once selected and if the new selected is different from the old
+        } else if (selected_box && event.target !== selected_box) {// if there was something once selected and if the new selected is different from the old
 
-        // change old back to non-editable and save old edits
-        const element = createArea("div", selected_box.id, "box", selected_box.value);
-        await typeset(element, () => marked.marked(selected_box.value));
-        selected_box.parentNode.replaceChild(element, selected_box);
+            // change old back to non-editable and save old edits
+            const element = createArea("div", selected_box.id, "box", selected_box.value);
+            await typeset(element, () => marked.marked(selected_box.value));
+            selected_box.parentNode.replaceChild(element, selected_box);
 
-        // forget old selected
-        selected_box = null;
+            // forget old selected
+            selected_box = null;
+        }
     }
 });
 

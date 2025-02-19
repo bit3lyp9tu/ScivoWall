@@ -26,5 +26,7 @@
     </div>
     <br>
     <div id="table-container"></div>
+
+    <!-- List Authors the User worked with + add new Authors -->
 </body>
 </html>

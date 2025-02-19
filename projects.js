@@ -170,7 +170,7 @@ function loadTable(response) {
             link.onclick = async function () {
                 var local_id = this.closest('tr').id.split("-")[1];
                 const poster_id = await edit_translation(local_id);
-                window.location.href = "poster.php?id=" + poster_id;
+                window.location.href = "poster.php?id=" + poster_id + "&mode=private";
             }
 
             td.appendChild(link);

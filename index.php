@@ -38,7 +38,17 @@
         </div>
     </div>
 
+    <div id="posters" class="poster-slide">
+        <!-- <iframe
+            src="poster.php?id=133&mode=public"
+            name="targetframe"
+            allowTransparency="true"
+            scrolling="yes"
 
+            width=300
+            height=600
+        ></iframe> -->
+    </div>
 
 
 </body>
