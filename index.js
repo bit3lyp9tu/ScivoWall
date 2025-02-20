@@ -17,6 +17,10 @@ async function fetchAvailablePosters() {
 
 window.onload = async function () {
 
+    //TODO: [BUG]   accessing index-view works,
+    //              but going to poster after and back to index
+    //              resets the session validation and public content is deactivated???
+
     const content = await JSON.parse(await fetchAvailablePosters());
 
     const cont = document.getElementById("posters");
@@ -25,7 +29,7 @@ window.onload = async function () {
         const b = document.createElement("IFRAME");
 
         b.setAttribute("src", "poster.php?id=" + content.poster_id[elem] + "&mode=public");
-        b.setAttribute("with", 300);
+        b.setAttribute("with", 200);
         b.setAttribute("height", 600);
 
         a.appendChild(b);

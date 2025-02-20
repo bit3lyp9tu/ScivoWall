@@ -23,20 +23,31 @@
         </div>
     </div>
 
+    <div id="drop-zone" style="width: 300px; height: 300px; border: 2px dashed #ccc; text-align: center; line-height: 300px;">
+        Drop your image here
+    </div>
+
+    <div id="preview">
+        <img id="preview-img" src="" alt="Preview" style="max-width: 100%; max-height: 100%; display: none;">
+    </div>
+
+    <button id="img-load">Img Data Load</button>
+
     <div id="titles">
-        <div id="title">Title</div>   <!-- change ids -->
         <div>
+            <div id="title">Title</div>   <!-- change ids -->
+            <br>
             <!-- <h2 id="authors">Heading 2</h2> -->
             <input type="text" id="authors" values=""></input>
         </div>
-        <div>
-            <a href="login.php">Login</a>
-            <button id="add-box">Add Box</button>
-            <button id="save-content">Save</button>
+        <div id="edit-options">
+            <!-- <a href="login.php">Login</a> -->
+            <!-- <button id="add-box">Add Box</button> -->
+            <!-- <button id="save-content">Save</button> -->
+            <!-- <select name="" id="view-mode"> -->
+                <!-- <option value="2">---/option> -->
+            <!-- </select> -->
         </div>
-        <select name="" id="view-mode">
-            <!-- <option value="null">please choose option</option> -->
-        </select>
     </div>
 
     <div class="container" id="boxes">

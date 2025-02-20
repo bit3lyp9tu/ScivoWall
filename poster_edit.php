@@ -120,6 +120,22 @@
             // deleteBox(1, $poster_id);
         }
     }
+    function getImage($image_id) {
+        $result = getterQuery(
+            "SELECT data FROM image WHERE image_id=?",
+            ["data"], "i", $image_id
+        );
+        return $result;//json_decode($result, true)["data"][0];
+    }
+    function addImage($json_data) {
+        $result = insertQuery(
+            "INSERT INTO image (file_name, type, size, last_modified, webkit_relative_path, data)
+            VALUE (?, ?, ?, ?, ?, ?)", "ssiisb",
+            $json_data["name"], $json_data["type"], $json_data["size"],
+            $json_data["last_modified"], $json_data["webkit_relative_path"], $json_data["data"]
+        );
+        return $result;
+    }
 
     function deleteBox($local_id, $poster_id) {
 
@@ -337,6 +353,16 @@
         if($_POST['action'] == 'fetch-available-posters') {
 
             echo fetchPublicPosters();
+        }
+        if ($_POST['action'] == 'image-upload') {
+            $data = isset($_POST['data']) ? $_POST['data'] : '';
+
+            echo "test" . $data["name"] . addImage($data);
+        }
+        if($_POST['action'] == 'get-image') {
+            $image_id = isset($_POST['id']) ? $_POST['id'] : '';
+
+            echo getImage($image_id);
         }
     }
 

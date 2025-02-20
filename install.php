@@ -92,9 +92,13 @@
 		"create table if not exists image (
 			image_id int primary key auto_increment,
 			file_name varchar(256) not null,
-			content blob not null,
 			upload_date INT NOT NULL DEFAULT UNIX_TIMESTAMP(),
-			last_edit_date INT NOT NULL DEFAULT UNIX_TIMESTAMP()
+			last_edit_date INT NOT NULL DEFAULT UNIX_TIMESTAMP(),
+			type varchar(256) NOT NULL,
+			size INT NOT NULL,
+			last_modified INT NOT NULL,
+			webkit_relative_path varchar(256) NOT NULL,
+			data blob not null
 		)",
 		"create table if not exists box (
 			box_id int primary key auto_increment,

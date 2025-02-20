@@ -16,6 +16,32 @@ function url_to_json() {
     return result;
 }
 
+async function hasValidUserSession() {
+    return await $.ajax({
+        type: "POST",
+        url: "account_management.php",
+        data: {
+            action: "has-valid-user-session"
+        },
+        success: function (response) {
+            return response;
+        },
+        error: function (err) {
+            console.error(err);
+            return false;
+        }
+    });
+}
+
+async function isEditView() {
+    const data = url_to_json();
+    const isValid = await hasValidUserSession();
+
+    console.log(data["mode"], isValid);
+
+    return (data["mode"] != null && data["mode"] == 'private' && isValid == 1);
+}
+
 function createArea(type, id, class_name, value) {
 
     const element = document.createElement(type);
@@ -52,29 +78,31 @@ async function request(data) {
     });
 }
 
-// function typeset(code) {
-//     MathJax.startup.promise = MathJax.startup.promise
-//         .then(() => MathJax.typesetPromise(code()))
-//         .catch((err) => console.log('Typeset failed: ' + err.message));
-//     return MathJax.startup.promise;
-// }
-
 async function typeset(container, code) {
-    // MathJax.startup.promise = MathJax.startup.promise
-    //     .then(() => {
-    //         container.innerHTML = code();
-    //         return MathJax.typesetPromise([container]);
-    //     })
-    //     .catch((err) => console.log('Typeset failed: ' + err.message));
-    // return MathJax.startup.promise;
-
     container.innerHTML = code();
     await MathJax.typesetPromise([container]);
 }
 
+async function imageUpload(data) {
+    await $.ajax({
+        type: "POST",
+        url: "poster_edit.php",
+        data: {
+            action: "image-upload",
+            data: data
+        },
+        success: function (response) {
+            console.log(response);
+        },
+        error: function (error) {
+            console.error("fehler", error);
+        }
+    });
+}
+
 async function show(response) {
 
-    //TODO: load interactive elements only if mode=private + session-id correct
+    //TODO: load interactive elements only if mode=private + session-id valid
 
     // document.getElementById("title").innerHTML = /*marked.marked*/(response.title);
     await typeset(document.getElementById("title"), () => marked.marked(response.title));
@@ -101,14 +129,16 @@ async function show(response) {
     }
 
     var select = document.getElementById('view-mode');
+    if (select != null) {
 
-    for (const key in response.vis_options) {
-        var opt = document.createElement('option');
-        opt.value = key;
-        opt.innerHTML = response.vis_options[key];
-        select.appendChild(opt);
+        for (const key in response.vis_options) {
+            var opt = document.createElement('option');
+            opt.value = key;
+            opt.innerHTML = response.vis_options[key];
+            select.appendChild(opt);
+        }
+        select.value = response.visibility - 1;
     }
-    select.value = response.visibility - 1;
 }
 
 //???????????
@@ -126,8 +156,10 @@ var selected_box = null;
 var selected_title = null;
 document.addEventListener("click", async function (event) {
 
-    //TODO: check if mode=private + session-id correct
-    if (true) {
+    const url = url_to_json();
+
+    //TODO: check if session-id valid
+    if (url["mode"] != null && url["mode"] == 'private') {
         // Edit Title
         if (event.target.tagName === "DIV" && !event.target.id.startsWith("editBox") && event.target.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
 
@@ -179,25 +211,58 @@ document.addEventListener("click", async function (event) {
     }
 });
 
+function createEditMenu() {
+    const parent = document.getElementById("edit-options");
+
+    const link_container = document.createElement("dic");
+    const link = document.createElement("a");
+    link.href = "login.php";
+    link_container.appendChild(link);
+
+    const add_btn = document.createElement("button");
+    add_btn.id = "add-box";
+    add_btn.innerText = "Add Box";
+
+    const save_btn = document.createElement("button");
+    save_btn.id = "save-content";
+    save_btn.innerText = "Save";
+
+    const select_view_mode = document.createElement("select");
+    select_view_mode.id = "view-mode";
+    select_view_mode.name = "";
+
+    parent.appendChild(link_container);
+    parent.appendChild(add_btn);
+    parent.appendChild(save_btn);
+    parent.appendChild(select_view_mode);
+}
+
 window.onload = async function () {
     const data = url_to_json();
-
     let response = {};
+
+    const state = await isEditView();
+    if (state) {
+        console.log("logged in");
+        createEditMenu();
+    } else {
+        console.log("logged out");
+    }
+
     try {
         response = await request(data);
+
         console.log(response);
     } catch (error) {
         console.error("content head request failed " + error);
     }
 
     if (response.status != 'error') {
-
         show(response);
 
     } else {
         toastr["warning"]("Not Logged in");
     }
-
 };
 
 function prepareJSON(title, authors, content, visibility) {
@@ -209,56 +274,128 @@ function prepareJSON(title, authors, content, visibility) {
     };
 }
 
-document.getElementById("add-box").onclick = function () {
-    const container = document.getElementById("boxes");
+if (document.getElementById("add-box")) {
+    console.log("save exists");
 
-    const content = "Content";
+    document.getElementById("add-box").onclick = function () {
+        console.log("save");
 
-    const box = createArea("div", "editBox-" + (container.children.length), "box", content);
-    box.innerHTML = content;
+        const container = document.getElementById("boxes");
 
-    container.appendChild(box);
-};
+        const content = "Content";
 
-document.getElementById("save-content").onclick = function () {
+        const box = createArea("div", "editBox-" + (container.children.length), "box", content);
+        box.innerHTML = content;
 
-    const header = url_to_json();
+        container.appendChild(box);
+    };
+}
+if (document.getElementById("save-content") != null) {
+    document.getElementById("save-content").onclick = function () {
+        const header = url_to_json();
 
-    const content = [];
-    const title = document.getElementById("title").getAttribute("data-content");//innerText;
-    const authors = document.getElementById("authors").innerText.split(",");
+        const content = [];
+        const title = document.getElementById("title").getAttribute("data-content");//innerText;
+        const authors = document.getElementById("authors").innerText.split(",");
 
-    const container = document.getElementById("boxes");
-    for (let i = 0; i < container.children.length; i++) {
-        const element = container.children[i];
+        const container = document.getElementById("boxes");
+        for (let i = 0; i < container.children.length; i++) {
+            const element = container.children[i];
 
-        // console.log(i + 1, element.innerHTML);
-        content[i] = element.getAttribute("data-content");
+            // console.log(i + 1, element.innerHTML);
+            content[i] = element.getAttribute("data-content");
+        }
+
+        const visibility = document.getElementById("view-mode").value;
+
+        $.ajax({
+            type: "POST",
+            url: "poster_edit.php",
+            data: {
+                action: "content-upload",
+                id: header.id,
+                data: JSON.stringify(prepareJSON(title, authors, content, visibility))
+            },
+            success: function (response) {
+
+                if (response != "ERROR") {
+                    console.log(response);
+                } else {
+                    toastr["error"]("An error occurred");
+                }
+            },
+            error: function (err) {
+                console.error(err);
+            }
+        });
+    };
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const dropZone = document.getElementById('drop-zone');
+const previewImg = document.getElementById('preview-img');
+
+dropZone.addEventListener('dragover', function (event) {
+    event.preventDefault();
+});
+
+dropZone.addEventListener('dragleave', function () {
+    dropZone.style.backgroundColor = '';
+});
+
+dropZone.addEventListener('drop', async function (event) {
+    event.preventDefault();
+    dropZone.style.backgroundColor = '';
+
+    const files = event.dataTransfer.files;
+    // console.log(files[0]);
+
+    if (files.length > 0) {
+        const file = files[0];
+        const reader = new FileReader();
+
+        reader.onload = async function (e) {
+            const imageContent = e.target.result;
+
+            console.log("Save Image...");
+            const data = {
+                "name": file.name,
+                "type": file.type,
+                "size": file.size,
+                "last_modified": 0,//file.lastModified,
+                "webkit_relative_path": file.webkitRelativePath,
+                "data": e.target.result
+            };
+            console.log(data);
+
+            await imageUpload(data);
+
+            previewImg.src = imageContent;
+            previewImg.style.display = 'block';
+        };
+
+        reader.readAsDataURL(file); // Read the file as base64
     }
+});
 
-    const visibility = document.getElementById("view-mode").value;
-
-    console.log(header.id, title, authors, content, visibility);
-
-
-    $.ajax({
+document.getElementById("img-load").onclick = async function () {
+    console.log("click");
+    console.log(await $.ajax({
         type: "POST",
         url: "poster_edit.php",
         data: {
-            action: "content-upload",
-            id: header.id,
-            data: JSON.stringify(prepareJSON(title, authors, content, visibility))
+            action: "get-image",
+            id: 36
         },
         success: function (response) {
-
-            if (response != "ERROR") {
-                console.log(response);
-            } else {
-                toastr["error"]("An error occurred");
-            }
+            return response;
         },
-        error: function (err) {
-            console.error(err);
+        error: function (error) {
+            return error;
         }
-    });
-};
+
+    }));
+
+}

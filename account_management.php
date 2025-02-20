@@ -147,6 +147,7 @@
 
     }
 
+    //TODO: editing after logout bug
     function logout($user_id) {
 
         $sid = getterQuery(
@@ -381,6 +382,11 @@
             }else{
                 echo "ERROR";
             }
+        }
+
+        if($_POST['action'] == 'has-valid-user-session') {
+
+            echo getValidUserFromSession() != null;
         }
 
 	    #print(json_encode($msgs));
