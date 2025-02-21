@@ -23,6 +23,7 @@
 
     function insertQuery($sql, $types, ...$param) {
         $stmt = $GLOBALS["conn"]->prepare($sql);
+        // $stmt->set_charset('utf8mb4');
         $stmt->bind_param($types, ...$param);
         $stmt->execute();
         $stmt->close();

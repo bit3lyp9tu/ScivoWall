@@ -122,23 +122,32 @@
     }
     function getImage($image_id) {
         $result = getterQuery(
-            "SELECT data FROM image WHERE image_id=?",
-            ["data"], "i", $image_id
+            "SELECT file_name, type, size, last_modified, data FROM image WHERE image_id=?",
+            ["file_name", "type", "size", "last_modified", "data"], "i", $image_id
         );
         return $result;//json_decode($result, true)["data"][0];
     }
+
+    function str2bin($str) {
+        $binary = '';
+        for ($i = 0; $i < strlen($str); $i++) {
+            $binary .= sprintf("%08b", ord($str[$i]));  // Converts each character to 8-bit binary
+        }
+        return  b'' . $binary;
+    }
+
     function addImage($json_data) {
+
         $result = insertQuery(
             "INSERT INTO image (file_name, type, size, last_modified, webkit_relative_path, data)
-            VALUE (?, ?, ?, ?, ?, ?)", "ssiisb",
+            VALUE (?, ?, ?, ?, ?, ?)", "ssiiss",
             $json_data["name"], $json_data["type"], $json_data["size"],
-            $json_data["last_modified"], $json_data["webkit_relative_path"], $json_data["data"]
+            $json_data["last_modified"], $json_data["webkit_relative_path"], ($json_data["data"])
         );
-        return $result;
+        return $result . " " . var_dump($json_data["data"]);;
     }
 
     function deleteBox($local_id, $poster_id) {
-
         $result = deleteQuery(
             "DELETE FROM box
             WHERE box.box_id=(
@@ -156,7 +165,6 @@
     }
 
     function addAuthor($name) {
-
         $result = insertQuery(
             "INSERT INTO author (name) VALUE (?)",
             "s", $name
@@ -164,7 +172,6 @@
         return $result;
     }
     function connectAuthorToPoster($author_id, $poster_id) {
-
         $result = insertQuery(
             "INSERT INTO author_to_poster (author_id, poster_id) VALUE (?, ?)",
             "ii", $author_id, $poster_id
@@ -172,7 +179,6 @@
         return $result;
     }
     function removeAuthor($index, $poster_id) {
-
         $result = deleteQuery(
             "DELETE FROM author_to_poster
             WHERE author_to_poster.id=(
@@ -357,7 +363,7 @@
         if ($_POST['action'] == 'image-upload') {
             $data = isset($_POST['data']) ? $_POST['data'] : '';
 
-            echo "test" . $data["name"] . addImage($data);
+            echo addImage($data);
         }
         if($_POST['action'] == 'get-image') {
             $image_id = isset($_POST['id']) ? $_POST['id'] : '';

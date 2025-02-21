@@ -334,6 +334,20 @@ if (document.getElementById("save-content") != null) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+function text2Binary(text) {
+    return text.split('').map((char) => char.charCodeAt(0).toString(2)).join(' ');
+}
+function binary2Text(bin) {
+    result = "";
+
+    for (let i = 0; i < bin.length; i++) {
+        const element = bin[i];
+        result += String.fromCharCode(parseInt(bin[i], 2).toString(10));
+    }
+
+    return "";
+}
+
 const dropZone = document.getElementById('drop-zone');
 const previewImg = document.getElementById('preview-img');
 
@@ -359,6 +373,8 @@ dropZone.addEventListener('drop', async function (event) {
         reader.onload = async function (e) {
             const imageContent = e.target.result;
 
+            console.log(typeof imageContent);
+
             console.log("Save Image...");
             const data = {
                 "name": file.name,
@@ -382,12 +398,12 @@ dropZone.addEventListener('drop', async function (event) {
 
 document.getElementById("img-load").onclick = async function () {
     console.log("click");
-    console.log(await $.ajax({
+    const resp = await $.ajax({
         type: "POST",
         url: "poster_edit.php",
         data: {
             action: "get-image",
-            id: 36
+            id: 74
         },
         success: function (response) {
             return response;
@@ -395,7 +411,43 @@ document.getElementById("img-load").onclick = async function () {
         error: function (error) {
             return error;
         }
+    });
+    console.log("got: ", resp);
 
-    }));
+    // const elem = document.getElementById("img-load");
+    // const img = document.createElement("img");
+
+    // elem.appendChild(img);
+
+    function hexToRGBA(hex) {
+        const rgbaArray = [];
+        for (let i = 0; i < hex.length; i += 8) {
+            const r = parseInt(hex.slice(i, i + 2), 16);
+            const g = parseInt(hex.slice(i + 2, i + 4), 16);
+            const b = parseInt(hex.slice(i + 4, i + 6), 16);
+            const a = parseInt(hex.slice(i + 6, i + 8), 16); // if alpha is included
+            rgbaArray.push(r, g, b, a);
+        }
+        return rgbaArray;
+    }
+
+    const pixelData = await hexToRGBA(resp);
+    const width = 2;//640; // 2x2 image
+    const height = 2;//427;
+
+    // Create ImageData from RGBA values
+    const imageData = await new ImageData(new Uint8ClampedArray(pixelData), width, height);
+
+    // Create and configure canvas
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = width;
+    canvas.height = height;
+
+    // Draw ImageData to the canvas
+    ctx.putImageData(imageData, 0, 0);
+
+    // Append canvas to the body (or any other element)
+    document.body.appendChild(canvas);
 
 }

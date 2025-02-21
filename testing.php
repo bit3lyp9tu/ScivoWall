@@ -244,6 +244,21 @@ test_equal("update last edit date user 2", ($t1 + $sleep_time == $t2) ? 1 : 0, 1
 // $t2 = json_decode(getterQuery("SELECT last_login_date FROM image WHERE image.image_id=?", ["last_login_date"], "i", $image_id), true)["last_login_date"][0];
 // test_equal("update last edit date image 2", ($t1 + $sleep_time == $t2) ? 1 : 0, 1);
 
+// print_r(unpack('H*', 'AB101')[1]);
+// print_r(str2bin('AB101'));
+
+
+$content = new stdClass();
+
+$content->name = "test";
+$content->type = "image/jpeg";
+$content->size = 0;
+$content->last_modified = 0;
+$content->webkit_relative_path = "";
+$content->data = $_FILES['img']['bgpattern.jpeg'];
+
+addImage(json_encode($content));
+print_r(1);
 
 /*
 name:	bug

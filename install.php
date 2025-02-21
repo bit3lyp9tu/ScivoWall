@@ -98,7 +98,7 @@
 			size INT NOT NULL,
 			last_modified INT NOT NULL,
 			webkit_relative_path varchar(256) NOT NULL,
-			data blob not null
+			data longblob not null
 		)",
 		"create table if not exists box (
 			box_id int primary key auto_increment,

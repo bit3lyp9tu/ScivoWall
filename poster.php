@@ -32,6 +32,9 @@
     </div>
 
     <button id="img-load">Img Data Load</button>
+    <div id="img-load">
+
+    </div>
 
     <div id="titles">
         <div>
