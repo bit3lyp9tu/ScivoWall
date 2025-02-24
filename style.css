@@ -193,3 +193,8 @@ mjx-container,
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
 }
+
+/* #boxes>div {
+    border-style: dashed;
+    border-color: rgb(40, 176, 255);
+} */

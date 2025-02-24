@@ -83,13 +83,14 @@ async function typeset(container, code) {
     await MathJax.typesetPromise([container]);
 }
 
-async function imageUpload(data) {
+async function imageUpload(data, poster_id) {
     await $.ajax({
         type: "POST",
         url: "poster_edit.php",
         data: {
             action: "image-upload",
-            data: data
+            data: data,
+            id: poster_id
         },
         success: function (response) {
             console.log(response);
@@ -211,6 +212,96 @@ document.addEventListener("click", async function (event) {
     }
 });
 
+//TODO: check for invalid names during image upload
+function imgDragDrop() {
+    const url = url_to_json();
+
+    // const dropZone = document.getElementById('drop-zone');
+    const boxes = document.getElementById('boxes');
+
+    if (boxes.length == 0) {
+        console.error("No boxes-div found");
+        return;
+    }
+    if (boxes.children.length == 0) {
+        console.error("boxes has no children");
+        return;
+    }
+
+    for (let i = 0; i < boxes.children.length; i++) {
+        if (boxes.children[i].id.startsWith("editBox-" + i)) {
+
+            const zone = boxes.children[i];
+
+            zone.addEventListener('dragover', function (event) {
+                event.preventDefault();
+                colorBoxes('dashed');
+            });
+
+            zone.addEventListener('dragend', function (event) {
+                colorBoxes('none');
+            });
+
+            zone.addEventListener('drop', async function (event) {
+                event.preventDefault();
+
+                colorBoxes('none');
+
+                console.log("id", event.target.id);
+
+                if (event.dataTransfer.files.length > 0) {
+                    const file = event.dataTransfer.files[0];
+                    const reader = new FileReader();
+
+                    reader.onload = async function (e) {
+                        console.log("Save Image...");
+                        const data = {
+                            "name": file.name,
+                            "type": file.type,
+                            "size": file.size,
+                            "last_modified": 0,//file.lastModified,
+                            "webkit_relative_path": file.webkitRelativePath,
+                            "data": e.target.result
+                        };
+                        // console.log(data);
+
+                        await imageUpload(data, url["id"]);
+                    };
+
+                    reader.readAsDataURL(file); // Read the file as base64
+
+                    //TODO: modify editBox and insert \includegraphics{name}
+                    insertImageMark(file.name, i);
+                }
+            });
+        }
+    }
+}
+
+function insertImageMark(name, index) {
+    const imgMark = '<p placeholder="image">\includegraphics{' + name + "}</p>";
+
+    const elem = document.getElementById("editBox-" + index);
+    elem.innerHTML += imgMark;
+    elem.setAttribute("data-content", elem.getAttribute("data-content") + imgMark);
+}
+
+function colorBoxes(type) {
+    const boxes = document.getElementById("boxes");
+    for (let i = 0; i < boxes.children.length; i++) {
+        boxes.children[i].style.border = type;  //dashed or none
+        boxes.children[i].style.borderColor = 'rgb(40, 176, 255)';
+    }
+}
+
+// document.addEventListener("drop", function (event) {
+//     event.preventDefault();
+
+//     console.log("drop", event.target.id);
+
+//     // imgDragDrop();
+// });
+
 function createEditMenu() {
     const parent = document.getElementById("edit-options");
 
@@ -258,7 +349,9 @@ window.onload = async function () {
     }
 
     if (response.status != 'error') {
-        show(response);
+        await show(response);
+        imgDragDrop();
+        // colorBoxes();
 
     } else {
         toastr["warning"]("Not Logged in");
@@ -330,80 +423,17 @@ if (document.getElementById("save-content") != null) {
         });
     };
 }
+//imgDragDrop();
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-function text2Binary(text) {
-    return text.split('').map((char) => char.charCodeAt(0).toString(2)).join(' ');
-}
-function binary2Text(bin) {
-    result = "";
-
-    for (let i = 0; i < bin.length; i++) {
-        const element = bin[i];
-        result += String.fromCharCode(parseInt(bin[i], 2).toString(10));
-    }
-
-    return "";
-}
-
-const dropZone = document.getElementById('drop-zone');
-const previewImg = document.getElementById('preview-img');
-
-dropZone.addEventListener('dragover', function (event) {
-    event.preventDefault();
-});
-
-dropZone.addEventListener('dragleave', function () {
-    dropZone.style.backgroundColor = '';
-});
-
-dropZone.addEventListener('drop', async function (event) {
-    event.preventDefault();
-    dropZone.style.backgroundColor = '';
-
-    const files = event.dataTransfer.files;
-    // console.log(files[0]);
-
-    if (files.length > 0) {
-        const file = files[0];
-        const reader = new FileReader();
-
-        reader.onload = async function (e) {
-            const imageContent = e.target.result;
-
-            console.log(typeof imageContent);
-
-            console.log("Save Image...");
-            const data = {
-                "name": file.name,
-                "type": file.type,
-                "size": file.size,
-                "last_modified": 0,//file.lastModified,
-                "webkit_relative_path": file.webkitRelativePath,
-                "data": e.target.result
-            };
-            console.log(data);
-
-            await imageUpload(data);
-
-            previewImg.src = imageContent;
-            previewImg.style.display = 'block';
-        };
-
-        reader.readAsDataURL(file); // Read the file as base64
-    }
-});
-
-document.getElementById("img-load").onclick = async function () {
-    console.log("click");
+async function getLoadedImg(poster_id, img_name, style = null) {
     const resp = await $.ajax({
         type: "POST",
         url: "poster_edit.php",
         data: {
             action: "get-image",
-            id: 74
+            //id: pk_id,
+            poster_id: poster_id,
+            name: img_name
         },
         success: function (response) {
             return response;
@@ -412,42 +442,44 @@ document.getElementById("img-load").onclick = async function () {
             return error;
         }
     });
-    console.log("got: ", resp);
+    // console.log("data: ", JSON.parse(resp).data);
 
-    // const elem = document.getElementById("img-load");
-    // const img = document.createElement("img");
+    const container = document.createElement("div");
+    const img = document.createElement("img");
+    img.src = JSON.parse(resp).data;
+    img.style.width = '100%';
+    img.style.objectFit = 'cover';
 
-    // elem.appendChild(img);
+    container.appendChild(img);
+    return container;
+}
 
-    function hexToRGBA(hex) {
-        const rgbaArray = [];
-        for (let i = 0; i < hex.length; i += 8) {
-            const r = parseInt(hex.slice(i, i + 2), 16);
-            const g = parseInt(hex.slice(i + 2, i + 4), 16);
-            const b = parseInt(hex.slice(i + 4, i + 6), 16);
-            const a = parseInt(hex.slice(i + 6, i + 8), 16); // if alpha is included
-            rgbaArray.push(r, g, b, a);
+//TODO make load on page reload
+document.getElementById("img-load").onclick = async function () {
+    const url = url_to_json();
+
+    const boxes = document.getElementById("boxes");
+
+    for (let i = 0; i < boxes.children.length; i++) {
+        //TODO: check for invalid names during image upload
+
+        const word = boxes.children[i].innerHTML.match(/\<p placeholder\=\"image\"\>includegraphics(\[.*\])?\{(\w|\s|-)+\.(png|jpg|gif)\}\<\/p\>/);
+        if (word) {
+            const name = word[0].slice(word[0].indexOf('{') + 1, word[0].indexOf('}'));
+            const settings = word[0].slice(word[0].indexOf('[') + 1, word[0].indexOf(']'));
+
+            console.log(boxes.children[i].id, name, settings);
+
+            const box_images = boxes.children[i].querySelectorAll("p[placeholder]");
+            for (let j = 0; j < box_images.length; j++) {
+                if (box_images[j].getAttribute("placeholder") == "image") {
+
+                    boxes.children[i].replaceChild(await getLoadedImg(url["id"], name), box_images[j]);
+                    console.log("replace", box_images[j], j, "in", boxes.children[i].id, name);
+                }
+            }
         }
-        return rgbaArray;
+
     }
-
-    const pixelData = await hexToRGBA(resp);
-    const width = 2;//640; // 2x2 image
-    const height = 2;//427;
-
-    // Create ImageData from RGBA values
-    const imageData = await new ImageData(new Uint8ClampedArray(pixelData), width, height);
-
-    // Create and configure canvas
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = width;
-    canvas.height = height;
-
-    // Draw ImageData to the canvas
-    ctx.putImageData(imageData, 0, 0);
-
-    // Append canvas to the body (or any other element)
-    document.body.appendChild(canvas);
-
+    // await loadImg("img", 77);    mountains-near-water-b
 }

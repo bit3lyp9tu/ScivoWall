@@ -122,10 +122,17 @@
     }
     function getImage($image_id) {
         $result = getterQuery(
-            "SELECT file_name, type, size, last_modified, data FROM image WHERE image_id=?",
-            ["file_name", "type", "size", "last_modified", "data"], "i", $image_id
+            "SELECT file_name, type, size, last_modified, data, fk_poster FROM image WHERE image_id=?",
+            ["file_name", "type", "size", "last_modified", "data", "fk_poster"], "i", $image_id
         );
         return $result;//json_decode($result, true)["data"][0];
+    }
+    function getFullImage($name, $poster_id) {
+        $result = getterQuery(
+            "SELECT file_name, type, size, last_modified, data FROM image WHERE fk_poster=? AND file_name=? LIMIT 1",
+            ["file_name", "type", "size", "last_modified", "data"], "is", $poster_id, $name
+        );
+        return $result;
     }
 
     function str2bin($str) {
@@ -136,15 +143,15 @@
         return  b'' . $binary;
     }
 
-    function addImage($json_data) {
+    function addImage($json_data, $poster_id) {
 
         $result = insertQuery(
-            "INSERT INTO image (file_name, type, size, last_modified, webkit_relative_path, data)
-            VALUE (?, ?, ?, ?, ?, ?)", "ssiiss",
+            "INSERT INTO image (file_name, type, size, last_modified, webkit_relative_path, data, fk_poster)
+            VALUE (?, ?, ?, ?, ?, ?, ?)", "ssiissi",
             $json_data["name"], $json_data["type"], $json_data["size"],
-            $json_data["last_modified"], $json_data["webkit_relative_path"], ($json_data["data"])
+            $json_data["last_modified"], $json_data["webkit_relative_path"], $json_data["data"], $poster_id
         );
-        return $result . " " . var_dump($json_data["data"]);;
+        return $result;
     }
 
     function deleteBox($local_id, $poster_id) {
@@ -363,12 +370,18 @@
         if ($_POST['action'] == 'image-upload') {
             $data = isset($_POST['data']) ? $_POST['data'] : '';
 
-            echo addImage($data);
+            //TODO: check if user has edit permissions for poster
+            $poster_id = isset($_POST['id']) ? $_POST['id'] : '';
+
+            echo addImage($data, $poster_id);
         }
         if($_POST['action'] == 'get-image') {
-            $image_id = isset($_POST['id']) ? $_POST['id'] : '';
+            // $image_id = isset($_POST['id']) ? $_POST['id'] : '';
+            $name = isset($_POST['name']) ? $_POST['name'] : '';
+            $poster_id = isset($_POST['poster_id']) ? $_POST['poster_id'] : '';
 
-            echo getImage($image_id);
+            // echo getImage(169);
+            echo getFullImage($name, $poster_id);
         }
     }
 

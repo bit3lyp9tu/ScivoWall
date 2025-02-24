@@ -3,6 +3,12 @@
 
 	$GLOBALS["queries"] = [];
 
+	//TODO: try {
+					// ... connecte zur db...
+			// } except {
+					//     dier("Cannot connect to database");
+			// }
+
 	function print_table_query() {
 		if(count($GLOBALS["queries"])) {
 			print "<table>";
@@ -98,7 +104,9 @@
 			size INT NOT NULL,
 			last_modified INT NOT NULL,
 			webkit_relative_path varchar(256) NOT NULL,
-			data longblob not null
+			data longblob not null,
+			fk_poster INT NOT NULL,
+			CONSTRAINT fk_poster FOREIGN KEY (fk_poster) REFERENCES poster(poster_id)
 		)",
 		"create table if not exists box (
 			box_id int primary key auto_increment,

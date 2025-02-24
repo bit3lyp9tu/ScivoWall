@@ -23,18 +23,16 @@
         </div>
     </div>
 
+<!--
     <div id="drop-zone" style="width: 300px; height: 300px; border: 2px dashed #ccc; text-align: center; line-height: 300px;">
         Drop your image here
     </div>
-
     <div id="preview">
         <img id="preview-img" src="" alt="Preview" style="max-width: 100%; max-height: 100%; display: none;">
-    </div>
+    </div>-->
+    <div id="img"></div>
+    <button id="img-load">Load Image</button>
 
-    <button id="img-load">Img Data Load</button>
-    <div id="img-load">
-
-    </div>
 
     <div id="titles">
         <div>
