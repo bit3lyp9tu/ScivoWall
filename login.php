@@ -14,7 +14,7 @@
             <h1>Login</h1>
             <input type="text" id="name" class="form-control" placeholder="Enter your Username...">
             <input type="password" id="pw" class="form-control" placeholder="Enter your Password...">
-            <button type="submit">Submit</button>
+            <button id="login" type="submit">Submit</button>
         </form>
         <p id="login-response"></p>
     </div>
