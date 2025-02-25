@@ -344,7 +344,7 @@
 
             $mode = isset($_POST['mode']) ? $_POST['mode'] : '';
 
-            if ($user_id != null && $mode == 'edit') {
+            if ($user_id != null/* && $mode == 'edit'*/) {
 
                 $title = $data["title"];
                 $authors = $data["authors"];

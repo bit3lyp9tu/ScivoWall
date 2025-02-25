@@ -16,42 +16,13 @@ function url_to_json() {
     return result;
 }
 
-async function hasValidUserSession() {
-    return await $.ajax({
-        type: "POST",
-        url: "account_management.php",
-        data: {
-            action: "has-valid-user-session"
-        },
-        success: function (response) {
-            return response;
-        },
-        error: function (err) {
-            console.error(err);
-            return false;
-        }
-    });
-}
-
-async function isEditView() {
-    const data = url_to_json();
-    const isValid = await hasValidUserSession();
-
-    console.log(data["mode"], isValid);
-
-    return (data["mode"] != null && data["mode"] == 'private' && isValid == 1);
-}
-
-function createArea(type, id, class_name, value) {
-
-    const element = document.createElement(type);
-    element.id = id;
-    if (class_name != "") {
-        //element.classList.add(class_name);
-    }
-    element.setAttribute("data-content", value);
-
-    return element;
+function prepareJSON(title, authors, content, visibility) {
+    return result = {
+        "title": title,
+        "authors": authors,
+        "content": content,
+        "visibility": visibility
+    };
 }
 
 async function request(data) {
@@ -78,11 +49,22 @@ async function request(data) {
     });
 }
 
-async function typeset(container, code) {
-    container.innerHTML = code();
-    await MathJax.typesetPromise([container]);
+async function hasValidUserSession() {
+    return await $.ajax({
+        type: "POST",
+        url: "account_management.php",
+        data: {
+            action: "has-valid-user-session"
+        },
+        success: function (response) {
+            return response;
+        },
+        error: function (err) {
+            console.error(err);
+            return false;
+        }
+    });
 }
-
 async function imageUpload(data, poster_id) {
     await $.ajax({
         type: "POST",
@@ -99,6 +81,106 @@ async function imageUpload(data, poster_id) {
             console.error("fehler", error);
         }
     });
+}
+
+function converter(element, attribute, value) {
+    switch (prefix) {
+        case 'width':
+            element.style.width = value;
+            break;
+        case 'height':
+            element.style.height = value;
+            break;
+        case 'scale':
+
+            break;
+        default:
+            console.error("Attribute [" + attribute + "] not found!\n");
+            break;
+    }
+}
+function style_parser(element, style) {
+    const styles = style.replace(" ", "").split(",");
+
+    for (let i = 0; i < styles.length; i++) {
+        const elem = styles[i];
+        console.log(elem);
+        // converter(element, elem.split("=")[0], elem.split("=")[1]);
+    }
+}
+
+async function getLoadedImg(poster_id, img_name, style) {
+    const resp = await $.ajax({
+        type: "POST",
+        url: "poster_edit.php",
+        data: {
+            action: "get-image",
+            //id: pk_id,
+            poster_id: poster_id,
+            name: img_name
+        },
+        success: function (response) {
+            return response;
+        },
+        error: function (error) {
+            return error;
+        }
+    });
+    // console.log("data: ", JSON.parse(resp).data);
+
+    const container = document.createElement("div");
+    const img = document.createElement("img");
+    img.src = JSON.parse(resp).data;
+    img.style.width = '100%';
+    img.style.objectFit = 'cover';
+
+    container.appendChild(img);
+    return container;
+}
+
+async function upload(id, data) {
+    return await $.ajax({
+        type: "POST",
+        url: "poster_edit.php",
+        data: {
+            action: "content-upload",
+            id: id,
+            data: data
+        },
+        success: function (response) {
+            return response;
+        },
+        error: function (err) {
+            console.error(err);
+            return err;
+        }
+    });
+}
+
+async function isEditView() {
+    const data = url_to_json();
+    const isValid = await hasValidUserSession();
+
+    console.log(data["mode"], isValid);
+
+    return (data["mode"] != null && data["mode"] == 'private' && isValid == 1);
+}
+
+function createArea(type, id, class_name, value) {
+
+    const element = document.createElement(type);
+    element.id = id;
+    if (class_name != "") {
+        //element.classList.add(class_name);
+    }
+    element.setAttribute("data-content", value);
+
+    return element;
+}
+
+async function typeset(container, code) {
+    container.innerHTML = code();
+    await MathJax.typesetPromise([container]);
 }
 
 async function show(response) {
@@ -140,17 +222,6 @@ async function show(response) {
         }
         select.value = response.visibility - 1;
     }
-}
-
-//???????????
-function selectElement(target_id, pointer) {
-    const element = document.getElementById(target_id);
-
-    if (pointer.children[0].id == target_id) {
-        return pointer.children[0];
-    }
-
-    return null;
 }
 
 var selected_box = null;
@@ -205,6 +276,8 @@ document.addEventListener("click", async function (event) {
             const element = createArea("div", selected_box.id, "box", selected_box.value);
             await typeset(element, () => marked.marked(selected_box.value));
             selected_box.parentNode.replaceChild(element, selected_box);
+
+            loadImages();
 
             // forget old selected
             selected_box = null;
@@ -294,14 +367,6 @@ function colorBoxes(type) {
     }
 }
 
-// document.addEventListener("drop", function (event) {
-//     event.preventDefault();
-
-//     console.log("drop", event.target.id);
-
-//     // imgDragDrop();
-// });
-
 function createEditMenu() {
     const parent = document.getElementById("edit-options");
 
@@ -350,41 +415,23 @@ window.onload = async function () {
 
     if (response.status != 'error') {
         await show(response);
+        loadImages();
         imgDragDrop();
-        // colorBoxes();
+        buttonEvents();
 
     } else {
         toastr["warning"]("Not Logged in");
     }
 };
 
-function prepareJSON(title, authors, content, visibility) {
-    return result = {
-        "title": title,
-        "authors": authors,
-        "content": content,
-        "visibility": visibility
-    };
-}
+function buttonEvents() {
 
-if (document.getElementById("add-box")) {
-    console.log("save exists");
-
-    document.getElementById("add-box").onclick = function () {
+    if (!document.getElementById("save-content")) {
+        return;
+    }
+    document.getElementById("save-content").onclick = async function () {
         console.log("save");
 
-        const container = document.getElementById("boxes");
-
-        const content = "Content";
-
-        const box = createArea("div", "editBox-" + (container.children.length), "box", content);
-        box.innerHTML = content;
-
-        container.appendChild(box);
-    };
-}
-if (document.getElementById("save-content") != null) {
-    document.getElementById("save-content").onclick = function () {
         const header = url_to_json();
 
         const content = [];
@@ -395,67 +442,44 @@ if (document.getElementById("save-content") != null) {
         for (let i = 0; i < container.children.length; i++) {
             const element = container.children[i];
 
-            // console.log(i + 1, element.innerHTML);
             content[i] = element.getAttribute("data-content");
         }
-
         const visibility = document.getElementById("view-mode").value;
+        const response = await upload(header.id, JSON.stringify(prepareJSON(title, authors, content, visibility)));
 
-        $.ajax({
-            type: "POST",
-            url: "poster_edit.php",
-            data: {
-                action: "content-upload",
-                id: header.id,
-                data: JSON.stringify(prepareJSON(title, authors, content, visibility))
-            },
-            success: function (response) {
+        if (response == -1) {
 
-                if (response != "ERROR") {
-                    console.log(response);
-                } else {
-                    toastr["error"]("An error occurred");
-                }
-            },
-            error: function (err) {
-                console.error(err);
-            }
-        });
-    };
-}
-//imgDragDrop();
-
-async function getLoadedImg(poster_id, img_name, style = null) {
-    const resp = await $.ajax({
-        type: "POST",
-        url: "poster_edit.php",
-        data: {
-            action: "get-image",
-            //id: pk_id,
-            poster_id: poster_id,
-            name: img_name
-        },
-        success: function (response) {
-            return response;
-        },
-        error: function (error) {
-            return error;
+        } else if (response != "ERROR") {
+            console.log(response);
+        } else {
+            console.error(response);
+            toastr["error"]("An error occurred");
         }
-    });
-    // console.log("data: ", JSON.parse(resp).data);
+    };
+    if (!document.getElementById("add-box")) {
+        return;
+    }
+    document.getElementById("add-box").onclick = function () {
 
-    const container = document.createElement("div");
-    const img = document.createElement("img");
-    img.src = JSON.parse(resp).data;
-    img.style.width = '100%';
-    img.style.objectFit = 'cover';
+        const container = document.getElementById("boxes");
 
-    container.appendChild(img);
-    return container;
+        const content = "Content";
+
+        const box = createArea("div", "editBox-" + (container.children.length), "box", content);
+        box.innerHTML = content;
+
+        container.appendChild(box);
+    };
+    if (!document.getElementById("img-load")) {
+        return;
+    }
+    document.getElementById("img-load").onclick = async function () {
+        loadImages();
+    }
 }
 
 //TODO make load on page reload
-document.getElementById("img-load").onclick = async function () {
+async function loadImages() {
     const url = url_to_json();
 
     const boxes = document.getElementById("boxes");
@@ -463,23 +487,21 @@ document.getElementById("img-load").onclick = async function () {
     for (let i = 0; i < boxes.children.length; i++) {
         //TODO: check for invalid names during image upload
 
-        const word = boxes.children[i].innerHTML.match(/\<p placeholder\=\"image\"\>includegraphics(\[.*\])?\{(\w|\s|-)+\.(png|jpg|gif)\}\<\/p\>/);
+        const word = boxes.children[i].innerHTML.match(/\<p placeholder\=\"image\"\>includegraphics(\[.*\])?\{(\w|\s|-|_)+\.(png|jpg|gif)\}\<\/p\>/);
         if (word) {
             const name = word[0].slice(word[0].indexOf('{') + 1, word[0].indexOf('}'));
-            const settings = word[0].slice(word[0].indexOf('[') + 1, word[0].indexOf(']'));
+            const settings = word[0].includes('[') && word[0].includes(']') ? word[0].slice(word[0].indexOf('[') + 1, word[0].indexOf(']')) : "";
 
-            console.log(boxes.children[i].id, name, settings);
+            // console.log(settings);
+            style_parser(null, settings);
 
             const box_images = boxes.children[i].querySelectorAll("p[placeholder]");
             for (let j = 0; j < box_images.length; j++) {
                 if (box_images[j].getAttribute("placeholder") == "image") {
 
-                    boxes.children[i].replaceChild(await getLoadedImg(url["id"], name), box_images[j]);
-                    console.log("replace", box_images[j], j, "in", boxes.children[i].id, name);
+                    boxes.children[i].replaceChild(await getLoadedImg(url["id"], name), box_images[j], settings);
                 }
             }
         }
-
     }
-    // await loadImg("img", 77);    mountains-near-water-b
 }
