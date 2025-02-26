@@ -51,9 +51,7 @@
         </div>
     </div>
 
-    <div class="container" id="boxes">
-        <!-- <div class="box"></div> -->
-    </div>
+    <div class="container" id="boxes"></div>
 </body>
 <footer>
     <!-- <div id="resize_me_according_to_bottom_table"></div> -->

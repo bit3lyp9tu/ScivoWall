@@ -26,6 +26,7 @@ function createProject() {
     }
 }
 
+//TODO: reloaded data after delete should include last edit time
 function deleteRow(local_id) {
     $.ajax({
         type: "POST",

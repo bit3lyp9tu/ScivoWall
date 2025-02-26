@@ -20,7 +20,7 @@
             <button type="submit">Load my Projects</button>
         </form>
     </div>
-    <div>
+    <div id="create-project">
         <input type="text" id="project-name">
         <button onclick="createProject()" >Create New Project</button>
     </div>
