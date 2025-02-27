@@ -12,7 +12,6 @@ class PythonOrgSearch(unittest.TestCase):
 
     def setUp(self):
         options = Options()
-        # options.add_argument("--headless")
 
         self.driver = webdriver.Firefox(options=options)
 
@@ -28,10 +27,10 @@ class PythonOrgSearch(unittest.TestCase):
 
         # self.logout(self.driver)
 
-        # self.admin(self.driver)
+        self.admin(self.driver)
 
-    def tearDown(self):
-        self.driver.close()
+    # def tearDown(self):
+    #     self.driver.close()
 
     def login(self, driver, name: str, pw: str):
 
@@ -168,18 +167,21 @@ class PythonOrgSearch(unittest.TestCase):
         # click save
         driver.find_element(By.ID, "save-content").click()
         # reload
-        driver.get(url)
+        driver.refresh()
         # check if saved
-        content = driver.find_element(By.ID, "boxes").get_attribute("innerHTML")
-        # print(driver.get_log("browser"))
-        # self.assertEqual(
-        #     '<div id="editBox-0" data-content="ContentTest Text">ContentTest Text</div>',
-        #     content,
-        # )
+        driver.implicitly_wait(1)
+        content = driver.find_element(By.CSS_SELECTOR, "#boxes>*").get_attribute(
+            "outerHTML"
+        )
+        self.assertEqual(
+            '<div id="editBox-0" data-content="ContentTest Text\n"><p>ContentTest Text</p>\n</div>',
+            content,
+        )
 
         # md render test
         # LaTeX render test
 
+    # TODO: why does logout not work?
     def logout(self, driver):
         driver.get("http://localhost/scientific_poster_generator/projects.php")
 
@@ -196,16 +198,88 @@ class PythonOrgSearch(unittest.TestCase):
         # test admin mode
         driver.get("http://localhost/scientific_poster_generator/login.php")
 
-        self.login("Admin", "PwScaDS-2025")
+        self.login(driver, "Admin", "PwScaDS-2025")
         # check if successful
 
         # check if visibility attribute gets loaded
+        driver.find_element(By.CSS_SELECTOR, "#load-form>button").click()
+        container = driver.find_element(
+            By.CSS_SELECTOR, "#table-container>table>*"
+        ).get_attribute("outerHTML")
+        self.assertNotEqual("", container)
 
         # toggle visibility checkbox
+        index = 1
+        driver.find_element(
+            By.CSS_SELECTOR, f"#nr-{index} input[type='checkbox']"
+        ).click()
+        toggleA = driver.find_element(
+            By.CSS_SELECTOR, f"#nr-{index} input[type='checkbox']"
+        ).get_attribute("value")
 
         # reload page and check if toggle is saved
+        driver.refresh()
+        driver.find_element(By.CSS_SELECTOR, "#load-form>button").click()
+        toggleB = driver.find_element(
+            By.CSS_SELECTOR, f"#nr-{index} input[type='checkbox']"
+        ).get_attribute("value")
+        self.assertEqual(toggleA, toggleB)
 
         # check if activated poster is visible on index
+        toggle = driver.find_element(
+            By.CSS_SELECTOR, f"#nr-{index} input[type='checkbox']"
+        ).get_attribute("checked")
+
+        if toggle != "true":
+            driver.find_element(
+                By.CSS_SELECTOR, f"#nr-{index} input[type='checkbox']"
+            ).click()
+
+        toggle = driver.find_element(
+            By.CSS_SELECTOR, f"#nr-{index} input[type='checkbox']"
+        ).get_attribute("checked")
+
+        driver.get("http://localhost/scientific_poster_generator/index.php")
+
+        # check if iframe exist
+        iframes = driver.find_element(By.CSS_SELECTOR, "#posters > *").get_attribute(
+            "innerHTML"
+        )
+        self.assertNotEqual("", iframes)
+
+        # access iframe
+        iframes = driver.find_element(By.CSS_SELECTOR, "#posters").get_attribute(
+            "children"
+        )
+        # for i in re.findall("<div.*><iframe.*>.*</iframe></div>", iframes):
+        #     print(i.getAttributes("innerHTML"))
+        # print(re.findall("<div.*><iframe.*>.*</iframe></div>", iframes))
+
+        # Get all child elements inside #posters
+
+        children = driver.find_elements(By.CSS_SELECTOR, "#posters > *")
+        for child in children:
+            print(child.get_attribute("outerHTML"))
+
+        # check if iframe is correctly loaded
+        driver.switch_to.frame(
+            driver.find_element(By.CSS_SELECTOR, "#posters > div > iframe")
+        )
+
+        title = (
+            driver.find_element(By.CSS_SELECTOR, "#title > p")
+            .get_attribute("innerHTML")
+            .split("<mjx-container")[0]
+        )
+        # re.search(
+        # "\b[[:word:]]\b (?=.?<mjx-container)",
+        # )
+        self.assertEqual("Test Title ", title)
+
+        driver.implicitly_wait(6)
+
+        # switch back
+        # driver.switch_to.default_content()
 
 
 if __name__ == "__main__":

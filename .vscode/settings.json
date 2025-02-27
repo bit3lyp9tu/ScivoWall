@@ -1,0 +1,9 @@
+{
+    // "python.analysis.diagnosticSeverityOverrides": {
+    //     "reportMissingImports": "none",
+    // },
+    "problems.visibility": false,
+    // "venvFolders": [
+    //     "./tests"
+    // ]
+}
