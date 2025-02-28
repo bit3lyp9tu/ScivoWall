@@ -39,7 +39,13 @@
             <div id="title">Title</div>   <!-- change ids -->
             <br>
             <!-- <h2 id="authors">Heading 2</h2> -->
-            <input type="text" id="authors" values=""></input>
+            <div id="typeahead-container" style="display: flex;">
+                <!-- <div style="display: flex;">
+                    <input type="search" id="typeahead" autocomplete="on" placeholder="...">
+                    <button id="remove-element">X</button>
+                </div> -->
+                <input type="text" id="typeahead" values=""></input>
+            </div>
         </div>
         <div id="edit-options">
             <!-- <a href="login.php">Login</a> -->

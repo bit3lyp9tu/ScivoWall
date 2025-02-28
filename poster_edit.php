@@ -312,7 +312,8 @@
         $content = new stdClass();
 
         $content->title = getTitle($poster_id);
-        $content->authors = getAuthors($poster_id);
+        $content->authors = getAuthors($poster_id); //direct from project
+        // $content->all_authors = ...      //other authors the user once wrote in a project// TODO: request list of all authors the user has a connection with
         $content->boxes = getBoxes($poster_id);
         $content->visibility = getVisibility($poster_id);
         $content->vis_options = getVisibilityOptions();

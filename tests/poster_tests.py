@@ -23,6 +23,9 @@ class PythonOrgSearch(unittest.TestCase):
         self.login(self.driver, "max5", "abc")
         self.projects(self.driver)
         self.poster(self.driver)
+
+        self.author(self.driver)
+
         self.delete_last_poster(self.driver)
 
         # self.logout(self.driver)
@@ -146,6 +149,9 @@ class PythonOrgSearch(unittest.TestCase):
         content = driver.find_element(By.ID, "boxes").get_attribute("innerHTML")
         self.assertEqual("", content)
         driver.find_element(By.ID, "add-box").click()
+
+        # check title edit
+
         # check add Box
         content = driver.find_element(By.ID, "boxes").get_attribute("innerHTML")
         self.assertEqual(
@@ -178,8 +184,15 @@ class PythonOrgSearch(unittest.TestCase):
             content,
         )
 
+        # check visibility test
+
+        # check box delete
+
         # md render test
         # LaTeX render test
+
+        # image upload test
+        # imgae download test
 
     # TODO: why does logout not work?
     def logout(self, driver):
@@ -280,6 +293,14 @@ class PythonOrgSearch(unittest.TestCase):
 
         # switch back
         # driver.switch_to.default_content()
+
+    def author(self, driver):
+        pass
+        # add new author + save
+        # refresh page
+        # check if correctly loaded
+
+        # delete author
 
 
 if __name__ == "__main__":

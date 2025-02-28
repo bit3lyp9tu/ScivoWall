@@ -1,4 +1,6 @@
 
+var author_names = [];
+
 function url_to_json() {
     const result = {};
 
@@ -191,7 +193,8 @@ async function show(response) {
     await typeset(document.getElementById("title"), () => marked.marked(response.title));
     document.getElementById("title").setAttribute("data-content", response.title);
 
-    document.getElementById("authors").value = response.authors != null ? response.authors.toString(", ") : "";
+    // document.getElementById("authors").value = response.authors != null ? response.authors.toString(", ") : "";
+    filloutAuthors(response.authors);
 
     const boxes = document.getElementById("boxes");
 
@@ -422,7 +425,147 @@ window.onload = async function () {
     } else {
         toastr["warning"]("Not Logged in");
     }
+
+    // start with single textfield
+    // once filed with content,
+    //      insert new button field
+    //      should button pressed - field gets removed
+
+    // if (document.getElementById("typeahead").value) {
+    //     console.log("content");
+
+    //     const input = document.createElement("input");
+    //     input.type = "search";
+    //     input.id = "typeahead";
+    //     // input.class = "tt-input";
+    //     input.autocomplete = "on";
+    //     input.placeholder = "...";
+
+    //     const btn = document.createElement("button");
+    //     btn.id = "remove-element";
+    //     // btn.onclick = remove();
+    //     btn.innerText = "X";
+
+    //     const container = document.createElement("div");
+    //     container.style.display = "flex";
+    //     container.appendChild(input);
+    //     container.appendChild(btn);
+
+    //     document.getElementById("typeahead-container").appendChild(container);
+    // }
+
+    // function remove() {
+    //     console.log("remove item", this.closest("div"));
+    //     this.closest("div").remove();
+    // }
+
+    const inputElement = document.getElementById("typeahead");
+
+    const instance = typeahead({
+        input: inputElement,
+        source: {
+            local: author_names,
+        }
+    });
 };
+
+function author_item(value) {
+    const p = document.createElement("p");
+    p.innerText = value
+
+    const btn = document.createElement("button");
+    btn.id = "remove-element";
+    btn.classList.add("author-item-btn");
+    btn.innerText = "X";
+    btn.onclick = function () {
+        this.closest("div").remove();
+    };
+
+    const item = document.createElement("div");
+    item.classList.add("author-item");
+    item.appendChild(p);
+    item.appendChild(btn);
+
+    return item;
+}
+
+document.addEventListener("focusin", function (event) {
+    // const inputElement = document.getElementById("typeahead");
+
+    // const instance = typeahead({
+    //     input: inputElement,
+    //     source: {
+    //         local: author_names,
+    //     }
+    // });
+})
+
+document.addEventListener("focusout", function (event) {
+    if (event.target.value != "") {
+        // convert target into item
+
+        // document.getElementById("typeahead-container").appendChild(author_item(event.target.value));
+
+        const field = event.target;
+        // console.log(document.getElementById("typeahead-container").children[0]);
+
+        author_names.push(event.target.value);
+
+        // addElementBeforeLast("typeahead-container", author_item(event.target.value), event.target);
+        insertElementAtIndex(document.getElementById("typeahead-container"), author_item(event.target.value), -1);
+        event.target.value = "";
+
+        // TODO: prevent the title from getting added to authors
+
+        // document.getElementById("typeahead-container").appendChild(field);
+    }
+});
+
+function addElementBeforeLast(parent_id, newElement, suffix) {
+    const container = document.getElementById(parent_id);
+
+    container.insertBefore(newElement, container.firstChild);
+    // container.appendChild(suffix);
+}
+
+function insertElementAtIndex(container, newElement, index) {
+    const children = Array.from(container.children);
+
+    if (index <= children.length) {
+
+        var i = 0;
+
+        if (index < 0) {
+            i = children.lenght + index - 1;
+        } else {
+            i = index;
+        }
+
+        const referenceNode = children[i] || null;
+        container.insertBefore(newElement, referenceNode);
+    } else {
+        console.error('Invalid index');
+    }
+}
+
+function filloutAuthors(list) {
+    for (let i = 0; i < list.length; i++) {
+        author_names.push(list[i]);
+        insertElementAtIndex(document.getElementById("typeahead-container"), author_item(list[i]), i);
+    }
+}
+
+function getAuthorItems() {
+    var list = [];
+    const parent = document.getElementById("typeahead-container");
+
+    for (let i = 0; i < parent.children.length; i++) {
+        if (!parent.children[i].classList.contains("typeahead-standalone")) {
+            list.push(parent.children[i].querySelector('p').innerText);
+        }
+    }
+    return list;
+}
 
 function buttonEvents() {
 
@@ -436,7 +579,7 @@ function buttonEvents() {
 
         const content = [];
         const title = document.getElementById("title").getAttribute("data-content");//innerText;
-        const authors = document.getElementById("authors").innerText.split(",");
+        const authors = getAuthorItems();
 
         const container = document.getElementById("boxes");
         for (let i = 0; i < container.children.length; i++) {

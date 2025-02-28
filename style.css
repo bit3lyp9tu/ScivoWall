@@ -198,3 +198,9 @@ mjx-container,
     border-style: dashed;
     border-color: rgb(40, 176, 255);
 } */
+
+.author-item {
+    display: flex;
+}
+
+.author-remove {}
