@@ -501,23 +501,22 @@ document.addEventListener("focusin", function (event) {
 })
 
 document.addEventListener("focusout", function (event) {
-    if (event.target.value != "") {
-        // convert target into item
+    if (event.target.id == "typeahead") {
+        if (event.target.value != "") {
+            // convert target into item
 
-        // document.getElementById("typeahead-container").appendChild(author_item(event.target.value));
+            const field = event.target;
 
-        const field = event.target;
-        // console.log(document.getElementById("typeahead-container").children[0]);
+            author_names.push(event.target.value);
 
-        author_names.push(event.target.value);
+            const new_elem = author_item(event.target.value)
 
-        // addElementBeforeLast("typeahead-container", author_item(event.target.value), event.target);
-        insertElementAtIndex(document.getElementById("typeahead-container"), author_item(event.target.value), -1);
-        event.target.value = "";
+            insertElementAtIndex(document.getElementById("typeahead-container"), new_elem, -1);
+            event.target.value = "";
 
-        // TODO: prevent the title from getting added to authors
-
-        // document.getElementById("typeahead-container").appendChild(field);
+            // const input = document.getElementsByClassName("typeahead-standalone")
+            // input.after(new_elem);
+        }
     }
 });
 
@@ -536,10 +535,12 @@ function insertElementAtIndex(container, newElement, index) {
         var i = 0;
 
         if (index < 0) {
-            i = children.lenght + index - 1;
+            i = children.length + index;
         } else {
             i = index;
         }
+        console.log(index, i);
+
 
         const referenceNode = children[i] || null;
         container.insertBefore(newElement, referenceNode);
