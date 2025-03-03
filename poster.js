@@ -80,7 +80,7 @@ async function imageUpload(data, poster_id) {
             console.log(response);
         },
         error: function (error) {
-            console.error("fehler", error);
+            console.error("Error", error);
         }
     });
 }
