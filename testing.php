@@ -190,6 +190,9 @@ test_equal("title setter A", setTitle(3, 'Changed Title'), "successfully updated
 test_equal("title setter B", getTitle(3), "Changed Title");
 
 test_equal("author getter", implode(",", getAuthors(3)["name"]), 'Test-Name,Other Author');
+// test_equal("authors null", getAuthors(1), '');
+print_r(getAuthors(1));
+
 test_equal("boxes getter", implode(",", getBoxes(3)), 'New Text,Text Content 2');
 test_equal("boxes getter empty", sizeof(getBoxes(100)), 0);
 
