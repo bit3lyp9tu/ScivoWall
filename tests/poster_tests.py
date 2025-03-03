@@ -93,6 +93,12 @@ class PythonOrgSearch(unittest.TestCase):
             .split("</tr>")[1]
             + "</tr>"
         )
+        print(
+            re.search(
+                '<tr id="nr-[0-9]*"><td>.*</td><td>20[2-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-2[0-9]:[0-6][0-9]:[0-6][0-9]</td><td><td><a>Edit</a></td></td><td><td><input type="button" class="btn" value="Delete"></td></td></tr>',
+                content_line,
+            )
+        )
         self.assertTrue(
             '<tr id="nr-1"><td>Test Title $$ x $$</td><td>2025-02-25 14:43:29</td><td><td><a>Edit</a></td></td><td><td><input type="button" class="btn" value="Delete"></td></td></tr>'
             in content_line
