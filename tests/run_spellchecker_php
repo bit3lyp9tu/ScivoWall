@@ -1,0 +1,52 @@
+#!/bin/bash
+
+python_version=$(python3 --version | sed -e 's#Python ##')
+VENV_DIR=$HOME/.spellchecker_$python_version
+
+if ! [[ -e spellchecker_requirements.txt ]]; then
+	echo "spellchecker_requirements.txt not found"
+	exit 1
+fi
+
+if ! command -v python3 2>/dev/null >/dev/null; then
+	echo "python3 not found"
+	exit 1
+fi
+
+requirements_hash=$(cat spellchecker_requirements.txt | md5sum | sed -e 's#\s.*##')
+
+create_venv=0
+
+if ! [[ -d $VENV_DIR ]]; then
+	create_venv=1
+fi
+
+if ! [[ -e "$VENV_DIR/hash" ]]; then
+	create_venv=1
+fi
+
+if [[ $create_venv -eq 1 ]]; then
+	python3 -mvenv $VENV_DIR
+fi
+
+source $VENV_DIR/bin/activate
+
+venv_hash=$(cat "$VENV_DIR/hash" 2>/dev/null)
+
+if [[ $venv_hash != $requirements_hash ]]; then
+	for install_me in $(cat spellchecker_requirements.txt); do
+		pip install $install_me
+	done
+
+	echo "$requirements_hash" > "$VENV_DIR/hash"
+fi
+
+cd ..
+
+if [[ -n $1 ]]; then
+        python3 tests/find_typos_in_php.py $*
+else
+        files=$(ls *.php | grep -v tex-mml-chtml.js | grep -v jquery | grep -v plotly | grep -v tooltipster | tr '\n' ' ')
+        eval "python3 tests/find_typos_in_php.py $files"
+fi
+
