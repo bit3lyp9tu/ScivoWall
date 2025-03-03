@@ -539,9 +539,6 @@ function insertElementAtIndex(container, newElement, index) {
         } else {
             i = index;
         }
-        console.log(index, i);
-
-
         const referenceNode = children[i] || null;
         container.insertBefore(newElement, referenceNode);
     } else {

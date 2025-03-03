@@ -189,7 +189,7 @@ test_equal("title getter", getTitle(3), 'First Project');
 test_equal("title setter A", setTitle(3, 'Changed Title'), "successfully updated");
 test_equal("title setter B", getTitle(3), "Changed Title");
 
-test_equal("author getter", implode(",", getAuthors(3)), 'Test-Name,Other Author');
+test_equal("author getter", implode(",", getAuthors(3)["name"]), 'Test-Name,Other Author');
 test_equal("boxes getter", implode(",", getBoxes(3)), 'New Text,Text Content 2');
 test_equal("boxes getter empty", sizeof(getBoxes(100)), 0);
 
@@ -198,8 +198,13 @@ deleteBox(2, 3);
 test_equal("delete box", implode(",", getBoxes(3)), 'New Text');
 
 removeAuthor(2, 3);
-test_equal("remove author", implode(",", getAuthors(3)), 'Test-Name');
+test_equal("remove author", implode(",", getAuthors(3)["name"]), 'Test-Name');
 
+test_equal("add list of authors", addAuthors(3, ["author1", "auhtor2", "author3"]), '[success|success],[success|success],[success|success],');
+test_equal("added list of authors correctly", implode(",", getAuthors(3)["name"]), 'Test-Name,author1,auhtor2,author3');
+
+test_equal("overwrite Authors", overwriteAuthors(3, ["author2", "author3", "author4"]), 'successfully deleted[success|success],[success|success],[success|success],');
+test_equal("overwrite Authors check content", implode(",", getAuthors(3)["name"]), 'author2,author3,author4');
 
 overwriteBoxes(3, array("Content A"));
 test_equal("overwrite boxes equal size edit", implode(",", getBoxes(3)), 'Content A');
@@ -246,19 +251,6 @@ test_equal("update last edit date user 2", ($t1 + $sleep_time == $t2) ? 1 : 0, 1
 
 // print_r(unpack('H*', 'AB101')[1]);
 // print_r(str2bin('AB101'));
-
-
-$content = new stdClass();
-
-$content->name = "test";
-$content->type = "image/jpeg";
-$content->size = 0;
-$content->last_modified = 0;
-$content->webkit_relative_path = "";
-$content->data = $_FILES['img']['bgpattern.jpeg'];
-
-addImage(json_encode($content));
-print_r(1);
 
 /*
 name:	bug

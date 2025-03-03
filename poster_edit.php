@@ -33,7 +33,7 @@
 
     function getAuthors($poster_id) {
         $author_names = getterQuery(
-            "SELECT name
+            "SELECT id, name
             FROM
                 author, (
                     SELECT author_id
@@ -41,11 +41,10 @@
                     WHERE author_to_poster.poster_id=?
                 ) AS sub
             WHERE sub.author_id=author.id",
-            ["name"],
+            ["id", "name"],
             "i", $poster_id
         );
-
-        return json_decode($author_names, true)["name"];
+        return json_decode($author_names, true);
     }
 
     function getBoxes($poster_id) {
@@ -201,6 +200,57 @@
         );
         return $result;
     }
+    function addAuthors($poster_id, $authors) {
+        $results = "";
+
+        for ($i=0; $i < sizeof($authors); $i++) {
+
+            $results .= "[" . addAuthor($authors[$i]);
+
+            $id = getLastInsertID();
+            $results .= "|" . connectAuthorToPoster($id, $poster_id) . "],";
+        }
+        return $results;
+    }
+    function searchAuthor($name, $poster_id) {
+        $result = getterQuery(
+            "SELECT a.id AS author_id, a.name AS name, b.id AS id, b.poster_id AS poster_id
+            FROM author AS a, author_to_poster AS b
+            WHERE a.id=b.author_id AND a.name=? AND b.poster_id=?",
+            ["author_id", "name", "id", "poster_id"], "si", $name, $poster_id
+        );
+        return json_decode($result, true);
+    }
+    // TODO: changes only author_to_poster, but not author
+    function overwriteAuthors($poster_id, $authors) {
+        $results = "";
+
+        $results .= deleteQuery(
+            "DELETE FROM author_to_poster
+            WHERE poster_id=?", "i", $poster_id
+        );
+
+        $results .= addAuthors($poster_id, $authors);
+
+        // $existing_authors = getAuthors($poster_id);
+        // for ($i=0; $i < sizeof($authors); $i++) {
+        //     // check if $authors[$i] already exits
+        //     //      $existing_authors = searchAuthor($authors[$i], $poster_id);
+        //     // $res = array_search($authors[$i], $existing_authors["name"]);
+        //     if (in_array($authors[$i], $existing_authors["name"])) {
+        //         //  -true:     check if local poster_id is equal to $poster_id
+        //         //          -true:      none
+        //         //          -false:     add new author connection($id, $poster_id)
+        //         // $results .= "[-|" . connectAuthorToPoster($existing_authors["id"][$res], $poster_id) . "],";
+        //     }else{
+        //         //  -false:    add $authors[$i]; add author connection($id, $poster_id)
+        //         $results .= "[" . addAuthor($authors[$i]);
+        //         $id = getLastInsertID();
+        //         $results .= "|" . connectAuthorToPoster($id, $poster_id) . "],";
+        //     }
+        // }
+        return $results;
+    }
 
     function getLastInsertID() {
         return json_decode(getterQuery(
@@ -312,7 +362,7 @@
         $content = new stdClass();
 
         $content->title = getTitle($poster_id);
-        $content->authors = getAuthors($poster_id); //direct from project
+        $content->authors = getAuthors($poster_id)["name"]; //direct from project
         // $content->all_authors = ...      //other authors the user once wrote in a project// TODO: request list of all authors the user has a connection with
         $content->boxes = getBoxes($poster_id);
         $content->visibility = getVisibility($poster_id);
@@ -354,11 +404,12 @@
 
                 setTitle($poster_id, $title);
                 updateEditDate("poster", $poster_id);
-                //TODO: setAuthors()
+                // addAuthors($poster_id, $authors);
+                overwriteAuthors($poster_id, $authors);
                 overwriteBoxes($poster_id, $content);
                 setVisibility($poster_id, $visibility);
 
-                echo "success?" . $public;
+                echo "success?";
 
             }else{
                 echo "ERROR";
