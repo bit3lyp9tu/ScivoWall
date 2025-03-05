@@ -1,5 +1,13 @@
 <?php
     //include("queries.php");
+
+    function foo(...$param) {
+        return is_array($param) . "<br>";
+    }
+    echo foo("abc123");
+    echo foo();
+    echo foo(1,2,3);
+    echo foo(1,2,"ab","c");
 ?>
 <!DOCTYPE html>
 <html lang='en'>
@@ -23,61 +31,6 @@
 </head>
 
 <body>
-    Page
-
-    <div id="typeahead-container" style="display: flex;">
-        <div style="display: flex;">
-            <input type="search" id="typeahead" autocomplete="on" placeholder="...">
-            <button id="remove-element" onclick=remove()>X</button>
-        </div>
-    </div>
-
-    <script>
-        // start with single textfield
-        // once filed with content,
-        //      insert new button field
-        //      should button pressed - field gets removed
-
-        const inputElement = document.getElementById("typeahead");
-
-        var list = ['Grey', 'Brown', 'Black', 'Blue'];
-
-        const instance = typeahead({
-            input: inputElement,
-            source: {
-                local: list,
-            }
-        });
-
-        if (document.getElementById("typeahead").value) {
-            console.log("content");
-
-            const input = document.createElement("input");
-            input.type = "search";
-            input.id = "typeahead";
-            // input.class = "tt-input";
-            input.autocomplete = "on";
-            input.placeholder = "...";
-
-            const btn = document.createElement("button");
-            btn.id = "remove-element";
-            btn.onclick = remove();
-            btn.innerText = "X";
-
-            const container = document.createElement("div");
-            container.style.display = "flex";
-            container.appendChild(input);
-            container.appendChild(btn);
-
-            document.getElementById("typeahead-container").appendChild(container);
-        }
-
-        function remove() {
-            console.log("remove item", this.closest("div"));
-            this.closest("div").remove();
-        }
-
-    </script>
 
 </body>
 

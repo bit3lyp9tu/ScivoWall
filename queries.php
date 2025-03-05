@@ -2,6 +2,12 @@
     // getterQuery: $stmt->close in exception damit nie offene statements bleiben, auch wenns fehlschlägt
     // getterQuery: nicht per default als json sondern als php datenstruktur zurückgeben; json when needed machen, meist ist es einfacher im code wenn man es als php datenstruktur hat
 
+    // function exception_error_handler($errno, $errstr, $errfile, $errline ) {
+	//     throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
+	// }
+	// set_error_handler("exception_error_handler");
+	// ini_set('display_errors', '1');
+
     $db_path = "/etc/dbpw";
 
     $password = null;
@@ -85,6 +91,164 @@
             return "No results found";
         }
         $stmt->close();
+    }
+
+    function getCoulmnNames($query) {
+        $colnames = [];
+        $str = trim(preg_replace('/\s\s*/', " ", $query));
+
+        if(preg_match("/select\s*(.*)\s*from/i", $str, $matches)) {
+            $in_between = $matches[1];
+
+            foreach (explode(",", $in_between) as $col) {
+                $col = preg_replace("/^\s*/", "", $col);
+                $col = preg_replace("/\s*$/", "", $col);
+                $col = preg_replace("/\s+/", " ", $col);
+
+                $colname = $col;
+
+                if(preg_match("/.+ as ([\w\d_]+)/i", $col, $internal_matches)) {
+                        $colname = $internal_matches[1];
+                }
+                $colnames[] = $colname;
+            }
+        } else {
+            $colnames[] = "[ERROR]: ".htmlentities($query)." does not match";
+        }
+        return $colnames;
+    }
+
+    // TODO: needs to be finished (for reference: test complex table with linebreaks)
+    function getTableNames($query) {
+        $colnames = array();
+        // print_r("-----------------------------------------------------------------------------\n" . $query . "\n");
+
+        if(preg_match('/(?<=FROM )[\w+\, ]+/i', $query, $matches)) {
+
+            for ($i=0; $i < sizeof($matches); $i++) {
+                foreach (explode(",", str_replace("\n", "", $matches[$i])) as $col) {
+                    // print_r("--" . $col);
+                    foreach(explode(" ", $col) as $j) {
+                        $val = preg_replace("/\s/", "", $j);
+                        if (preg_match("/WHERE/i", $val)) {
+                            break;
+                        }elseif (preg_match("/AS/i", $val)) {
+                            continue 2;
+                        } else {
+                            if ($val != "") {
+                                $colnames[] = $val;
+                            }
+                        }
+                        // print_r($val . "\n");
+                    }
+                }
+            }
+        } else {
+            $colnames[] = "[ERROR]: ".htmlentities($query)." does not match";
+        }
+        return $colnames;
+    }
+
+    function getTypeStr(...$params) {
+        $result = "";
+
+        if (is_array($params)) {
+            foreach ($params as $i) {
+                // if ($i != "") {
+
+                // print_r($i . "\n");
+                if (gettype($i) == "integer") {
+                    $result .= 'i';
+                }elseif (gettype($i) == "string") {
+                    $result .= 's';
+                }else{
+                    // print_r($i);
+                    $result .= '_';
+                    throw new Exception('[ERROR] unknown type at index [' . $i . ']');
+                }
+                // }
+            }
+
+        }else{
+            if (is_string($params)[0]) {
+                return 's';
+            }
+        }
+        // print_r($result . "\n");
+        return $result;
+    }
+
+    function getDBHeader($table) {
+        return json_decode(getterQuery("DESC " . $table . ";", ["Field", "Type", "Null", "Key", "Default", "Extra"], "", null), true);
+    }
+
+    function getterQuery2($sql, ...$param) {
+        $out = array();
+
+        // $param = $paramA == [] ? null : $paramA;
+        // print_r("[" . implode(",", $param) . "]\n");
+
+        $target_values = array();
+        if (str_contains($sql, '*')) {
+            foreach (getTableNames($sql) as $i) {
+                $target_values = getDBHeader($i)["Field"];
+            }
+        }else{
+            $target_values = getCoulmnNames($sql);
+        }
+
+        if (preg_match_all("/\?/i", $sql) != count($param)) {
+            $out["[ERROR]"] =
+            "Found param-references '?' (" . preg_match("/\?/i", $sql) . ") in query does not match the amound of params (" . count($param) . ") given.";
+            return $out;
+            // throw new Exception(
+            //     "Found param-references '?' (" . preg_match("/\?/i", $sql) .
+            //     ") in query does not match the amound of params (" . sizeof($param) . ") given.");
+        }
+
+        $types = "";
+        // print_r($param);
+
+        try {
+            if ($param != []) {
+                print_r($param);
+                $types = getTypeStr($param);
+            }
+
+        } catch (Exception $e) {
+            $out["[ERROR]"] = $e->getMessage() . " at " . $e->getLine();
+            return $out;
+        }
+
+        // print_r("[" . $types . " " . implode(",", $param) . "]\n");
+
+        $stmt = $GLOBALS["conn"]->prepare($sql);
+        if ($types != "") {
+            print_r($types . "\n");
+            $stmt->bind_param($types, ...$param);
+        }
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        for ($i = 0; $i < count($target_values); $i++) {
+            $out[$target_values[$i]] = array();
+        }
+
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                // try {
+                    for ($i = 0; $i < count($target_values); $i++) {
+                        $out[$target_values[$i]][] = $row[$target_values[$i]];
+                    }
+                // } catch (mysqli_sql_exception $th) {
+                //     $out["[ERROR]"] = $th->getMessage() . " " . $th->getLine();
+                //     break;
+                // }
+            }
+        }
+        $stmt->close();
+        return $out;
     }
 
     function simpleQuery($sql) {

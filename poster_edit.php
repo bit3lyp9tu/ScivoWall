@@ -32,7 +32,7 @@
     }
 
     function getAuthors($poster_id) {
-        $author_names = getterQuery(
+        $author_names = getterQuery2(
             "SELECT id, name
             FROM
                 author, (
@@ -59,7 +59,6 @@
 
             return json_decode($content, true)["content"];
         }else{
-
             return [];
         }
     }
