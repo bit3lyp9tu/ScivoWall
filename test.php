@@ -2,12 +2,14 @@
     //include("queries.php");
 
     function foo(...$param) {
-        return is_array($param) . "<br>";
+        return gettype($param[0]);
     }
-    echo foo("abc123");
-    echo foo();
-    echo foo(1,2,3);
-    echo foo(1,2,"ab","c");
+    echo foo("abc123") . "<br>";
+    echo foo() . "<br>";
+    echo foo(1,2,3) . "<br>";
+    echo foo(1,2,"ab","c") . "<br>";
+    echo foo("TestingTitle2") . "<br>";
+    echo gettype("TestingTitle2") . "<br>";
 ?>
 <!DOCTYPE html>
 <html lang='en'>

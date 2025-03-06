@@ -350,11 +350,11 @@
     }
 
     function isPublic($poster_id) {
-        $result = getterQuery(
-            "SELECT 1 AS 'is_public' FROM poster WHERE poster_id=? AND fk_view_mode=? AND visible=?",
-            ["is_public"], "iii", $poster_id, 1, 1
+        $result = getterQuery2(
+            "SELECT 1 AS is_public FROM poster WHERE poster_id=? AND fk_view_mode=? AND visible=?",
+            $poster_id, 1, 1
         );
-        return $result != "No results found" ? true : false;
+        return sizeof($result["is_public"]) != 0 ? true : false;
     }
 
     function load_content($poster_id) {

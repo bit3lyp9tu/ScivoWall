@@ -94,6 +94,7 @@
     }
 
     function getCoulmnNames($query) {
+        // print_r("\n" . $query . "\n");
         $colnames = [];
         $str = trim(preg_replace('/\s\s*/', " ", $query));
 
@@ -106,9 +107,14 @@
                 $col = preg_replace("/\s+/", " ", $col);
 
                 $colname = $col;
+                // print_r(preg_match("/(?<=.+ AS )(\'?[\w\d_ ]+\'?)/i", $col));
 
                 if(preg_match("/.+ as ([\w\d_]+)/i", $col, $internal_matches)) {
-                        $colname = $internal_matches[1];
+                    // (?<=.+ AS )(\'?[\w\d_ ]+\'?)
+                    $colname = $internal_matches[1];
+                    // if(preg_match("/(?<=.+ AS )(\'?[\w\d_ ]+\'?)/i", $internal_matches[1], $var)) {
+                    //     $colname = $var;
+                    // }
                 }
                 $colnames[] = $colname;
             }
@@ -156,25 +162,18 @@
             foreach ($params as $i) {
                 // if ($i != "") {
 
-                // print_r($i . "\n");
+                // print_r(implode(",", $params) . "\n-- " . $i . "\n");
                 if (gettype($i) == "integer") {
                     $result .= 'i';
                 }elseif (gettype($i) == "string") {
                     $result .= 's';
                 }else{
-                    // print_r($i);
                     $result .= '_';
                     throw new Exception('[ERROR] unknown type at index [' . $i . ']');
                 }
                 // }
             }
-
-        }else{
-            if (is_string($params)[0]) {
-                return 's';
-            }
         }
-        // print_r($result . "\n");
         return $result;
     }
 
@@ -184,9 +183,6 @@
 
     function getterQuery2($sql, ...$param) {
         $out = array();
-
-        // $param = $paramA == [] ? null : $paramA;
-        // print_r("[" . implode(",", $param) . "]\n");
 
         $target_values = array();
         if (str_contains($sql, '*')) {
@@ -207,24 +203,17 @@
         }
 
         $types = "";
-        // print_r($param);
-
         try {
-            if ($param != []) {
-                print_r($param);
-                $types = getTypeStr($param);
+            if (count($param) >= 1) {
+                $types = getTypeStr(...$param);
             }
-
         } catch (Exception $e) {
             $out["[ERROR]"] = $e->getMessage() . " at " . $e->getLine();
             return $out;
         }
 
-        // print_r("[" . $types . " " . implode(",", $param) . "]\n");
-
         $stmt = $GLOBALS["conn"]->prepare($sql);
         if ($types != "") {
-            print_r($types . "\n");
             $stmt->bind_param($types, ...$param);
         }
         $stmt->execute();
@@ -237,14 +226,14 @@
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                // try {
+                try {
                     for ($i = 0; $i < count($target_values); $i++) {
                         $out[$target_values[$i]][] = $row[$target_values[$i]];
                     }
-                // } catch (mysqli_sql_exception $th) {
-                //     $out["[ERROR]"] = $th->getMessage() . " " . $th->getLine();
-                //     break;
-                // }
+                } catch (mysqli_sql_exception $th) {
+                    $out["[ERROR]"] = $th->getMessage() . " " . $th->getLine();
+                    break;
+                }
             }
         }
         $stmt->close();

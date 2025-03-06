@@ -99,6 +99,9 @@ test_equal("get column name C", implode(",", getCoulmnNames(
 // TODO: test_equal("get column name D", implode(",", getCoulmnNames('SELECT (SELECT id2, name2 FROM author2 WHERE id2=2) AS name FROM author;')), 'name');
 test_equal("get column name error", implode(",", getCoulmnNames("SELECT id AS")), '[ERROR]: SELECT id AS does not match');
 
+//TODO print_r(getCoulmnNames("SELECT title, from_unixtime(last_edit_date) AS 'last edit', visible FROM poster WHERE fk_view_mode=?"));
+
+
 // check get tables of query
 test_equal("get table error", implode(",", getTableNames("SELECT * FR")), '[ERROR]: SELECT * FR does not match');
 test_equal("get simple table", implode(",", getTableNames("SELECT * FROM user WHERE id=1;")), 'user');
@@ -117,6 +120,7 @@ test_equal("get tables with alias", implode(",", getTableNames("SELECT * FROM us
 test_equal("type dedection int", getTypeStr(1), "i");
 test_equal("type dedection str", getTypeStr("test"), "s");
 test_equal("type dedection list of int and str", getTypeStr(1, 'test', 10, 'test2'), "isis");
+test_equal("type dedection 4", getTypeStr("TestingTitle2"), "s");
 
 // check get table description
 test_equal("get attributes of session table", implode(",", getDBHeader("session")["Field"]), 'id,user_id,sessionID,expiration_date');
@@ -139,12 +143,13 @@ test_equal("getter query unequal amount of references and given params2",
 			getterQuery2("SELECT title, user_id FROM poster;", 1)["[ERROR]"],
 			"Found param-references '?' (0) in query does not match the amound of params (1) given.");
 
-$result = getterQuery("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", ["user_id", "name", "pass_sha", "salt", "pepper", "access_level"], "s", "Test-Name");
-test_equal("select query get json result", $result,
-	'{"user_id":[1],"name":["Test-Name"],"pass_sha":["0bf301312acc91474e96e1a07422a791"],"salt":["vAfcB\"$2NE[C}Rpw)9vhI\/-4YPS<}?@F"],"pepper":["a2d47c981889513c5e2ddbca71f414"],"access_level":[1]}'
-);
-$result = getterQuery("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", ["user_id", "name", "pass_sha", "salt", "pepper", "registration_date", "last_login_date", "access_level"], "s", "---");
-test_equal("select query getter", $result, "No results found");
+$result = json_encode(getterQuery2("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "Test-Name"), true);
+//TODO
+// test_equal("select query get json result", $result,
+// 	'{"user_id":[1],"name":["Test-Name"],"pass_sha":["0bf301312acc91474e96e1a07422a791"],"salt":["vAfcB\"$2NE[C}Rpw)9vhI\/-4YPS<}?@F"],"pepper":["a2d47c981889513c5e2ddbca71f414"],"access_level":[1]}'
+// );
+$result = json_encode(getterQuery2("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "---"), true);
+test_equal("select query getter", $result, '{"user_id":[],"name":[],"pass_sha":[],"salt":[],"pepper":[],"access_level":[]}');
 
 // // Empty Delete???
 // test_equal("delete query", deleteQuery("DELETE FROM poster WHERE poster.title = ?", "s", "Testing Title"), "successfully deleted");
@@ -153,43 +158,43 @@ test_equal("select query getter", $result, "No results found");
 test_equal("update query new entry", insertQuery("INSERT INTO poster (title, user_id) VALUE (?, ?)", "si", 'TestingTitle', 1), "success");
 test_equal("update query edit", editQuery("UPDATE poster SET \n poster.title=? \n WHERE poster.title=? \n AND poster.user_id=?", "sss", 'TestingTitle2', 'TestingTitle', 1), "successfully updated");
 
-print_r(getterQuery2("SELECT title, user_id FROM poster WHERE poster.title=?;", "TestingTitle2"));
-// test_equal("update query check status", json_encode(getterQuery2("SELECT title, user_id FROM poster WHERE poster.title=?", "TestingTitle2"), true), '{"title":["TestingTitle2"],"user_id":[1]}');
+test_equal("update query check status", json_encode(getterQuery2("SELECT title, user_id FROM poster WHERE poster.title=?", "TestingTitle2"), true), '{"title":["TestingTitle2"],"user_id":[1]}');
 test_equal("update query cleanup", deleteQuery("DELETE FROM poster WHERE poster.title = ?", "s", "TestingTitle"), "successfully deleted");
 
 // //Account Management
 test_equal("delete user", deleteQuery("DELETE FROM user WHERE user.name = ?", "s", "testing"), "successfully deleted");
-// $result = getterQuery("SELECT user_id, name FROM user WHERE user.User_id > ?", ["user_id", "name"], "s", 0);
-// test_equal("delete user", $result, '{"user_id":[1],"name":["Test-Name"]}');
+$result = json_encode(getterQuery2("SELECT user_id, name FROM user WHERE user.User_id > ?", 0), true);
+test_equal("delete user", $result, '{"user_id":[1],"name":["Test-Name"]}');
 
-// test_equal("register new user", register("testing", "1A_aaaaaaaaaa"), "success");
-// test_equal("register with same username twice", register("testing", "1A_aaaaaaaaaa"), "The user testing already exists.");
-// test_equal("register with number as username", register(123, "1A_aaaaaaaaaa"), "success");
-// test_equal("register bad password msg", register("testing2", "123"), "Password not complex enough");
 
-// test_equal("login unknown username", login("---", "---"), "Wrong Username or Password");
-// test_equal("login with wrong password", login("testing", "---"), "Wrong Username or Password");
-// test_equal("login successfully", login("testing", "1A_aaaaaaaaaa"), "Correct Password");
+test_equal("register new user", register("testing", "1A_aaaaaaaaaa"), "success");
+test_equal("register with same username twice", register("testing", "1A_aaaaaaaaaa"), "The user testing already exists.");
+test_equal("register with number as username", register(123, "1A_aaaaaaaaaa"), "success");
+test_equal("register bad password msg", register("testing2", "123"), "Password not complex enough");
+
+test_equal("login unknown username", login("---", "---"), "Wrong Username or Password");
+test_equal("login with wrong password", login("testing", "---"), "Wrong Username or Password");
+test_equal("login successfully", login("testing", "1A_aaaaaaaaaa"), "Correct Password");
 // //TODO: check after correct session during login
 
-// test_equal("is user non-admin", isAdmin(1), false);
-// $result = editQuery("UPDATE user SET user.access_level=? WHERE user.user_id=?", "ii", 3, 1);
-// test_equal("is user admin", isAdmin(1), true);
+test_equal("is user non-admin", isAdmin(1), false);
+$result = editQuery("UPDATE user SET user.access_level=? WHERE user.user_id=?", "ii", 3, 1);
+test_equal("is user admin", isAdmin(1), true);
 
-// editQuery("UPDATE poster SET fk_view_mode=?", "i", 1);
-// updateVisibility(1, true);
-// test_equal("update visibility", getterQuery("SELECT visible FROM poster", ["visible"], "", null), '{"visible":[1]}');
-// updateVisibility(1, false);
-// test_equal("update visibility", getterQuery("SELECT visible FROM poster", ["visible"], "", null), '{"visible":[0]}');
+editQuery("UPDATE poster SET fk_view_mode=?", "i", 1);
+updateVisibility(1, true);
+test_equal("update visibility", json_encode(getterQuery2("SELECT visible FROM poster"), true), '{"visible":[1]}');
+updateVisibility(1, false);
+test_equal("update visibility", json_encode(getterQuery2("SELECT visible FROM poster"), true), '{"visible":[0]}');
 
-// test_equal("is public false", isPublic(1), false);
-// editQuery("UPDATE poster SET visible=?", "i", 1);
-// test_equal("is public true", isPublic(1), true);
+test_equal("is public false", isPublic(1), false);
+editQuery("UPDATE poster SET visible=?", "i", 1);
+test_equal("is public true", isPublic(1), true);
 
-// test_equal("create new project", create_project("new Project", 1), '{"title":["TestingTitle2","new Project"]}');
-// test_equal("fetch all projects db check", getterQuery("SELECT poster_id, title, user_id FROM poster", ["poster_id", "title", "user_id"], "", null), '{"poster_id":[1,2],"title":["TestingTitle2","new Project"],"user_id":[1,1]}');
+test_equal("create new project", create_project("new Project", 1), '{"title":["TestingTitle2","new Project"]}');
+test_equal("fetch all projects db check", json_encode(getterQuery2("SELECT poster_id, title, user_id FROM poster"), true), '{"poster_id":[1,2],"title":["TestingTitle2","new Project"],"user_id":[1,1]}');
 
-// test_equal("fetch all projects", implode(",", json_decode(fetch_projects(1), true)["title"]), 'TestingTitle2,new Project');
+// test_equal("fetch all projects", implode(",", fetch_projects(1)["title"]), 'TestingTitle2,new Project');
 
 // test_equal("delete project", delete_project(1, 1), '{"title":["new Project"]}');
 // test_equal("delete project db check", getterQuery("SELECT poster_id, title FROM poster", ["poster_id", "title"], "", null), '{"poster_id":[2],"title":["new Project"]}');

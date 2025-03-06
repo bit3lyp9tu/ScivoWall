@@ -69,10 +69,10 @@
         // if ($user_id == null) {
         //     $user_id = getValidUserFromSession();
         // }
-        $result = getterQuery(
-            "SELECT access_level FROM user WHERE user_id=?", ["access_level"], "i", $user_id
+        $result = getterQuery2(
+            "SELECT access_level FROM user WHERE user_id=?", $user_id
         );
-        return json_decode($result, true)["access_level"][0] >= 2;
+        return $result["access_level"][0] >= 2;
     }
 
     function register($name, $pw) {
@@ -103,25 +103,26 @@
 
         # TODO: select user_id from user where username = ? and passwort = sha(?);
 
-        $result = getterQuery(
+        $result = getterQuery2(
             "SELECT user_id, pass_sha, salt, pepper FROM user WHERE user.name=?",
-            ["user_id", "pass_sha", "salt", "pepper"],
-            "s", $name);
+            $name
+        );
 
-        if ($result == "No results found") {
+        if (sizeof($result["user_id"]) == 0 &&
+            sizeof($result["pass_sha"]) == 0 &&
+            sizeof($result["salt"]) == 0 &&
+            sizeof($result["pepper"]) == 0) {
+
             return "Wrong Username or Password";
         } else {
-
-            $res_dec = json_decode($result, true);
-
-            $hash = $res_dec["pass_sha"][0];
-            $salt = $res_dec["salt"][0];
-            $pepper = $res_dec["pepper"][0];
+            $hash = $result["pass_sha"][0];
+            $salt = $result["salt"][0];
+            $pepper = $result["pepper"][0];
 
             if (md5($pw . ":" . $salt . ":" . $pepper) == $hash || sha1($pw . ":" . $salt . ":" . $pepper) == $hash) {  //TODO: remove md5 when test-phase finished
 
                 //Create new Session
-                $user_id = $res_dec["user_id"][0];
+                $user_id = $result["user_id"][0];
                 $sid = session_create_id();
 
                 $insertion = insertQuery(
@@ -185,16 +186,15 @@
                 return "No results found";
             }else{
                 if (!$priv_acc && isAdmin($user_id)) {
-                    $result = getterQuery(
+                    $result = getterQuery2(
                         "SELECT title, from_unixtime(last_edit_date) AS 'last edit', visible FROM poster WHERE fk_view_mode=?",
-                        ["title", "last edit", "visible"], "i", 1
+                        1
                     );
                     return $result;
                 }else{
-                    $result = getterQuery(
+                    $result = getterQuery2(
                         "SELECT title, from_unixtime(last_edit_date) AS 'last edit' FROM poster WHERE poster.user_id=?",
-                        ["title", "last edit"],
-                        "s", $user_id
+                        $user_id
                     );
                     return $result;
                 }
@@ -216,12 +216,11 @@
                 );
 
                 //refresh list
-                $data = getterQuery(
+                $data = getterQuery2(
                     "SELECT title FROM poster WHERE poster.user_id=?",
-                    ["title"],
-                    "s", $user_id
+                    $user_id
                 );
-                return $data;
+                return json_encode($data, true);
             }else {
                 return "ERRORhvjjghgc";
             }
