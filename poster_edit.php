@@ -12,15 +12,14 @@
     function getTitle($poster_id) {
         //TODO: add test if id doesnt exists
 
-        $title = getterQuery(
+        $title = getterQuery2(
             "SELECT title
             FROM poster
             WHERE poster.poster_id=?",
-            ["title"],
-            "i", $poster_id
+            $poster_id
         );
 
-        return json_decode($title, true)["title"][0];
+        return $title["title"][0];
     }
     function setTitle($poster_id, $title) {
         $result = editQuery(
@@ -41,26 +40,25 @@
                     WHERE author_to_poster.poster_id=?
                 ) AS sub
             WHERE sub.author_id=author.id",
-            ["id", "name"],
-            "i", $poster_id
+            $poster_id
         );
-        return json_decode($author_names, true);
+        return $author_names;
     }
 
     function getBoxes($poster_id) {
-        $content = getterQuery(
+        $content = getterQuery2(
             "SELECT content
             FROM box
             WHERE box.poster_id=?",
-            ["content"],
-            "i", $poster_id
-        );
-        if ($content != "No results found") {
+            $poster_id
+        )["content"];
+        // if ($content != "No results found") {
 
-            return json_decode($content, true)["content"];
-        }else{
-            return [];
-        }
+        //     return json_decode($content, true)["content"];
+        // }else{
+        //     return [];
+        // }
+        return $content;
     }
 
     function addBox($poster_id, $content="") {
@@ -118,14 +116,14 @@
             // deleteBox(1, $poster_id);
         }
     }
-    function getImage($image_id) {
+    function getImage($image_id) {  //TODO: old and untested
         $result = getterQuery(
             "SELECT file_name, type, size, last_modified, data, fk_poster FROM image WHERE image_id=?",
             ["file_name", "type", "size", "last_modified", "data", "fk_poster"], "i", $image_id
         );
         return $result;//json_decode($result, true)["data"][0];
     }
-    function getFullImage($name, $poster_id) {
+    function getFullImage($name, $poster_id) {  //TODO: old and untested
         $result = getterQuery(
             "SELECT file_name, type, size, last_modified, data FROM image WHERE fk_poster=? AND file_name=? LIMIT 1",
             ["file_name", "type", "size", "last_modified", "data"], "is", $poster_id, $name
@@ -211,14 +209,14 @@
         }
         return $results;
     }
-    function searchAuthor($name, $poster_id) {
-        $result = getterQuery(
+    function searchAuthor($name, $poster_id) {  //TODO: untested
+        $result = getterQuery2(
             "SELECT a.id AS author_id, a.name AS name, b.id AS id, b.poster_id AS poster_id
             FROM author AS a, author_to_poster AS b
             WHERE a.id=b.author_id AND a.name=? AND b.poster_id=?",
-            ["author_id", "name", "id", "poster_id"], "si", $name, $poster_id
+            $name, $poster_id
         );
-        return json_decode($result, true);
+        return $result;
     }
     // TODO: changes only author_to_poster, but not author
     function overwriteAuthors($poster_id, $authors) {
@@ -296,19 +294,19 @@
     }
 
     function getVisibilityOptions() {
-        $result = getterQuery(
-            "SELECT name FROM view_modes", ["name"], "", null
+        $result = getterQuery2(
+            "SELECT name FROM view_modes"
         );
-        return json_decode($result, true)["name"];
+        return $result["name"];
     }
     function getVisibility($poster_id) {
 
-        $result = getterQuery(
+        $result = getterQuery2(
             "SELECT fk_view_mode
             FROM poster
-            WHERE poster_id=?", ["fk_view_mode"], "i", $poster_id
+            WHERE poster_id=?", $poster_id
         );
-        return json_decode($result, true)["fk_view_mode"][0];
+        return $result["fk_view_mode"][0];
     }
     function setVisibility($poster_id, $value) {
 
@@ -340,7 +338,7 @@
         }
     }
 
-    function fetchPublicPosters() {
+    function fetchPublicPosters() {  //TODO: old and untested
         $result = getterQuery(
             "SELECT poster_id, title
             FROM poster

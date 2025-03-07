@@ -93,35 +93,60 @@
         $stmt->close();
     }
 
-    function getCoulmnNames($query) {
+    // TODO: include matching after '*'
+    function getCoulmnNames($query, $rm_kleene=true) {
         // print_r("\n" . $query . "\n");
         $colnames = [];
-        $str = trim(preg_replace('/\s\s*/', " ", $query));
 
-        if(preg_match("/select\s*(.*)\s*from/i", $str, $matches)) {
-            $in_between = $matches[1];
+        // $str = trim(preg_replace('/\s\s*/', " ", $query));
+        // if(preg_match("/select\s*(.*)\s*from/i", $str, $matches)) {
+        //     $in_between = $matches[1];
 
-            foreach (explode(",", $in_between) as $col) {
-                $col = preg_replace("/^\s*/", "", $col);
-                $col = preg_replace("/\s*$/", "", $col);
-                $col = preg_replace("/\s+/", " ", $col);
+        //     foreach (explode(",", $in_between) as $col) {
+        //         $col = preg_replace("/^\s*/", "", $col);
+        //         $col = preg_replace("/\s*$/", "", $col);
+        //         $col = preg_replace("/\s+/", " ", $col);
 
-                $colname = $col;
-                // print_r(preg_match("/(?<=.+ AS )(\'?[\w\d_ ]+\'?)/i", $col));
+        //         $colname = $col;
+        //         if(preg_match("/(?<= AS )(\'?[\w\d_ ]+\'?)/i", $col, $internal_matches)) {
+        //             $colname = $internal_matches[1];
+        //         }
+        //         $colnames[] = $colname;
+        //     }
+        $n = str_replace("\n", " ", $query);
+        $n = str_replace("\t", " ", $n);
 
-                if(preg_match("/.+ as ([\w\d_]+)/i", $col, $internal_matches)) {
-                    // (?<=.+ AS )(\'?[\w\d_ ]+\'?)
-                    $colname = $internal_matches[1];
-                    // if(preg_match("/(?<=.+ AS )(\'?[\w\d_ ]+\'?)/i", $internal_matches[1], $var)) {
-                    //     $colname = $var;
-                    // }
+        $n = preg_replace("/\s?(\w+\([\w\.]+\))(?=( AS \w+)?\,?)/i", " FILLER ", $n);
+
+        if(preg_match_all("/(?<=SELECT )[\w\d\s\,\*\-\.]+(?= FROM)/i", $n, $matches)) {
+            // print_r($matches);
+            foreach ($matches[0] as $j) {
+                $res = explode(",", $j);
+                foreach ($res as $i) {
+                    if(preg_match("/(?<= AS )\w+/i", $i, $res2)) {
+                        $colnames[] = str_replace(" ", "", $res2[0]);
+                    }else{
+                        $colnames[] = str_replace(" ", "", $i);
+                    }
                 }
-                $colnames[] = $colname;
             }
         } else {
             $colnames[] = "[ERROR]: ".htmlentities($query)." does not match";
         }
-        return $colnames;
+
+        $result = [];
+        if($rm_kleene) {
+            for ($i=0; $i < sizeof($colnames); $i++) {
+                if ($colnames[$i] != '*') {
+                    $result[] = $colnames[$i];
+                }
+            }
+        }else{
+            //TODO: how to treat cases with kleene?
+            $result = $colnames;
+        }
+
+        return array_values(array_unique($result));//TODO: ???
     }
 
     // TODO: needs to be finished (for reference: test complex table with linebreaks)
@@ -181,6 +206,7 @@
         return json_decode(getterQuery("DESC " . $table . ";", ["Field", "Type", "Null", "Key", "Default", "Extra"], "", null), true);
     }
 
+    // TODO:    using from_unixtime(last_edit_date) AS 'last edit' as selector throws errors
     function getterQuery2($sql, ...$param) {
         $out = array();
 
@@ -190,6 +216,7 @@
                 $target_values = getDBHeader($i)["Field"];
             }
         }else{
+            // print_r(array_values(array_unique(getCoulmnNames($sql))));
             $target_values = getCoulmnNames($sql);
         }
 
@@ -221,14 +248,18 @@
         $result = $stmt->get_result();
 
         for ($i = 0; $i < count($target_values); $i++) {
+            // if(array_key_exists($target_values[$i], $row)) {
             $out[$target_values[$i]] = array();
+            // }
         }
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 try {
                     for ($i = 0; $i < count($target_values); $i++) {
-                        $out[$target_values[$i]][] = $row[$target_values[$i]];
+                        if(array_key_exists($target_values[$i], $row)) {
+                            $out[$target_values[$i]][] = $row[$target_values[$i]];
+                        }
                     }
                 } catch (mysqli_sql_exception $th) {
                     $out["[ERROR]"] = $th->getMessage() . " " . $th->getLine();

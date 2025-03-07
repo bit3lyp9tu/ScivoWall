@@ -187,13 +187,13 @@
             }else{
                 if (!$priv_acc && isAdmin($user_id)) {
                     $result = getterQuery2(
-                        "SELECT title, from_unixtime(last_edit_date) AS 'last edit', visible FROM poster WHERE fk_view_mode=?",
+                        "SELECT title, from_unixtime(last_edit_date) AS last_edit, visible FROM poster WHERE fk_view_mode=?",
                         1
                     );
                     return $result;
                 }else{
                     $result = getterQuery2(
-                        "SELECT title, from_unixtime(last_edit_date) AS 'last edit' FROM poster WHERE poster.user_id=?",
+                        "SELECT title, from_unixtime(last_edit_date) AS last_edit FROM poster WHERE poster.user_id=?",
                         $user_id
                     );
                     return $result;
@@ -236,7 +236,7 @@
         if ($user_id != null) {
 
             # evtl aus der ranked_posters view herausholen statt aus der subquery
-            $result = getterQuery(
+            $result = getterQuery2(
                 "SELECT poster_id
                 FROM (
                     SELECT ROW_NUMBER() OVER (ORDER BY poster_id) AS local_id, poster_id
@@ -244,12 +244,11 @@
                     WHERE poster.user_id = ?
                 ) AS ranked_posters
                 WHERE local_id = ?",
-                ["poster_id"],
-                "ii", $user_id, $local_id
+                $user_id, $local_id
             );
             $res = deleteQuery(
                 "DELETE FROM poster WHERE poster.poster_id = ?",
-                "i", json_decode($result, true)["poster_id"][0]
+                "i", $result["poster_id"][0]
             );
             /*
                 if(!$res) {
@@ -258,12 +257,11 @@
             */
             // res  checken: wenn deleteQuery true/false (boolean) zurückgibt chekcen, also fehlerbehandlung
             //refresh list
-            $data = getterQuery(
+            $data = getterQuery2(
                 "SELECT title FROM poster WHERE poster.user_id=?",
-                ["title"],
-                "s", $user_id
+                $user_id
             );
-            return $data;
+            return json_encode($data, true);
             # TODO: nach jedem ausgeben von json exit 0, damit nicht ausversehen 2 oder mehr jsons konkatiniert werden
             # exit(0);
         }else{
