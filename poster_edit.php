@@ -117,16 +117,16 @@
         }
     }
     function getImage($image_id) {  //TODO: old and untested
-        $result = getterQuery(
+        $result = getterQuery2(
             "SELECT file_name, type, size, last_modified, data, fk_poster FROM image WHERE image_id=?",
-            ["file_name", "type", "size", "last_modified", "data", "fk_poster"], "i", $image_id
+            $image_id
         );
         return $result;//json_decode($result, true)["data"][0];
     }
     function getFullImage($name, $poster_id) {  //TODO: old and untested
-        $result = getterQuery(
+        $result = getterQuery2(
             "SELECT file_name, type, size, last_modified, data FROM image WHERE fk_poster=? AND file_name=? LIMIT 1",
-            ["file_name", "type", "size", "last_modified", "data"], "is", $poster_id, $name
+            $poster_id, $name
         );
         return $result;
     }
@@ -250,10 +250,9 @@
     }
 
     function getLastInsertID() {
-        return json_decode(getterQuery(
-            "SELECT LAST_INSERT_ID()",
-            ["LAST_INSERT_ID()"], "", null
-        ), true)["LAST_INSERT_ID()"][0];
+        return getterQuery2(
+            "SELECT LAST_INSERT_ID()"
+        )["LAST_INSERT_ID()"][0];
     }
 
     function addProject($user_id, $title) {
@@ -339,10 +338,10 @@
     }
 
     function fetchPublicPosters() {  //TODO: old and untested
-        $result = getterQuery(
+        $result = getterQuery2(
             "SELECT poster_id, title
             FROM poster
-            WHERE fk_view_mode=? AND visible=?", ["poster_id", "title"], "ii", 1, 1
+            WHERE fk_view_mode=? AND visible=?", 1, 1
         );
         return $result;
     }

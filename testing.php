@@ -109,6 +109,10 @@ $str3 = "SELECT title, from_unixtime(last_edit_date) AS last_edit, visible FROM 
 test_equal("C", implode(",", getCoulmnNames($str3)), "title,last_edit,visible");
 test_equal("get difficult column", implode(",", getCoulmnNames("SELECT title, from_unixtime(last_edit_date) AS last_edit, visible FROM poster WHERE fk_view_mode=?", 1)), "title,last_edit,visible");
 
+
+// test_equal("", implode(",", getCoulmnNames("SELECT * FROM author;")), 'id,name');
+
+
 // check get tables of query
 test_equal("get table error", implode(",", getTableNames("SELECT * FR")), '[ERROR]: SELECT * FR does not match');
 test_equal("get simple table", implode(",", getTableNames("SELECT * FROM user WHERE id=1;")), 'user');
@@ -141,16 +145,18 @@ test_equal("new getter query", implode(",",getterQuery2("SELECT id, user_id FROM
 test_equal("insert query", insertQuery("INSERT INTO user (name, pass_sha, salt, pepper) VALUE (?, ?, ?, ?)", "ssss", 'Test-Name', '0bf301312acc91474e96e1a07422a791', 'vAfcB"$2NE[C}Rpw)9vhI/-4YPS<}?@F', 'a2d47c981889513c5e2ddbca71f414'), "success");
 test_equal("select query get single result", runSingleQuery("SELECT user_id FROM user"), "<div>1</div>");
 
+test_equal("get inserted id", getLastInsertID(), 1);
+
 // print_r(getterQuery2("SELECT name FROM user;"));
 test_equal("test getter query kleene", implode(",", getterQuery2("SELECT * FROM user;")["name"]), 'Test-Name');
 test_equal("getter query unequal amount of references and given params",
 			getterQuery2("SELECT title, user_id FROM poster WHERE poster.title=?")["[ERROR]"],
 			"Found param-references '?' (1) in query does not match the amound of params (0) given.");
-test_equal("getter query unequal amount of references and given params2",
+			test_equal("getter query unequal amount of references and given params2",
 			getterQuery2("SELECT title, user_id FROM poster;", 1)["[ERROR]"],
 			"Found param-references '?' (0) in query does not match the amound of params (1) given.");
 
-$result = json_encode(getterQuery2("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "Test-Name"), true);
+			$result = json_encode(getterQuery2("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "Test-Name"), true);
 //TODO
 // test_equal("select query get json result", $result,
 // 	'{"user_id":[1],"name":["Test-Name"],"pass_sha":["0bf301312acc91474e96e1a07422a791"],"salt":["vAfcB\"$2NE[C}Rpw)9vhI\/-4YPS<}?@F"],"pepper":["a2d47c981889513c5e2ddbca71f414"],"access_level":[1]}'
@@ -167,6 +173,26 @@ test_equal("update query edit", editQuery("UPDATE poster SET \n poster.title=? \
 
 test_equal("update query check status", json_encode(getterQuery2("SELECT title, user_id FROM poster WHERE poster.title=?", "TestingTitle2"), true), '{"title":["TestingTitle2"],"user_id":[1]}');
 test_equal("update query cleanup", deleteQuery("DELETE FROM poster WHERE poster.title = ?", "s", "TestingTitle"), "successfully deleted");
+
+
+$str = "(A1 (B1 (C1 (D1))) A2 ((C1) (C1) B1) (B1) A3)";
+test_equal("", buildBrackets(resolveBrackets($str)), $str);
+
+$str = "(grxhgrdxA1 (A1 iehroo))";
+test_equal("", buildBrackets(resolveBrackets($str)), $str);
+
+$str = "(A1)";
+test_equal("", buildBrackets(resolveBrackets($str)), $str);
+
+$str = "(A1 A1 A1 A1 A1 A1 A1A1)";
+test_equal("", buildBrackets(resolveBrackets($str)), $str);
+
+$str = "A1";
+test_equal("", buildBrackets(resolveBrackets($str)), $str);
+
+$str = "(A1 (B1))";
+test_equal("", buildBrackets(resolveBrackets($str)), $str);
+
 
 // //Account Management
 test_equal("delete user", deleteQuery("DELETE FROM user WHERE user.name = ?", "s", "testing"), "successfully deleted");
@@ -214,7 +240,6 @@ test_equal("Password complexity length", getPwComplexityLevel("aaaaaaaaaaaaa"), 
 test_equal("Password complexity contains number", getPwComplexityLevel("1aaaaaaaaaaaa"), 2);
 test_equal("Password complexity contains upper letter", getPwComplexityLevel("1Aaaaaaaaaaaa"), 3);
 test_equal("Password complexity contains special char", getPwComplexityLevel("1A_aaaaaaaaaa"), 4);
-
 
 
 test_equal("check View Modes", json_encode(getterQuery2("SELECT name FROM view_modes"), true), '{"name":["public","private"]}');
@@ -318,6 +343,10 @@ test_equal("update last edit date user 2", ($t1 + $sleep_time == $t2) ? 1 : 0, 1
 
 // print_r(unpack('H*', 'AB101')[1]);
 // print_r(str2bin('AB101'));
+
+
+
+
 
 /*
 name:	bug

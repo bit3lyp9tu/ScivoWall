@@ -56,70 +56,16 @@
 		return "successfully deleted";
     }
 
-    function getterQuery($sql, $target_values, $types, ...$param) {
-        $stmt = $GLOBALS["conn"]->prepare($sql);
-        if ($types != "") {
-            $stmt->bind_param($types, ...$param);
-        }
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-
-        if ($result->num_rows > 0) {
-            $out = array();
-
-            for ($i = 0; $i < count($target_values); $i++) {
-                $out[$target_values[$i]] = array();
-            }
-
-            while ($row = $result->fetch_assoc()) {
-                try {
-                    for ($i = 0; $i < count($target_values); $i++) {
-
-                        $out[$target_values[$i]][] = $row[$target_values[$i]];
-                    }
-                } catch (mysqli_sql_exception $th) {
-		            #$stmt->close();
-                    return "Error: " . $th->getMessage();
-                }
-            }
-	        #$stmt->close();
-            return json_encode($out);
-
-        } else {
-	        #$stmt->close();
-            return "No results found";
-        }
-        $stmt->close();
-    }
-
     // TODO: include matching after '*'
     function getCoulmnNames($query, $rm_kleene=true) {
-        // print_r("\n" . $query . "\n");
         $colnames = [];
 
-        // $str = trim(preg_replace('/\s\s*/', " ", $query));
-        // if(preg_match("/select\s*(.*)\s*from/i", $str, $matches)) {
-        //     $in_between = $matches[1];
-
-        //     foreach (explode(",", $in_between) as $col) {
-        //         $col = preg_replace("/^\s*/", "", $col);
-        //         $col = preg_replace("/\s*$/", "", $col);
-        //         $col = preg_replace("/\s+/", " ", $col);
-
-        //         $colname = $col;
-        //         if(preg_match("/(?<= AS )(\'?[\w\d_ ]+\'?)/i", $col, $internal_matches)) {
-        //             $colname = $internal_matches[1];
-        //         }
-        //         $colnames[] = $colname;
-        //     }
         $n = str_replace("\n", " ", $query);
         $n = str_replace("\t", " ", $n);
 
         $n = preg_replace("/\s?(\w+\([\w\.]+\))(?=( AS \w+)?\,?)/i", " FILLER ", $n);
 
         if(preg_match_all("/(?<=SELECT )[\w\d\s\,\*\-\.]+(?= FROM)/i", $n, $matches)) {
-            // print_r($matches);
             foreach ($matches[0] as $j) {
                 $res = explode(",", $j);
                 foreach ($res as $i) {
@@ -130,6 +76,12 @@
                     }
                 }
             }
+        }elseif (preg_match_all('/(?<=SELECT )\w+\(\w?\)( AS \w+)?\;?/i', $query, $matches)) {
+            if(preg_match("/(?<= AS )\w+/i", $matches[0][0], $res2)) {
+                $colnames[] = $res2[0];
+            }else{
+                $colnames[] = $matches[0][0];
+            }
         } else {
             $colnames[] = "[ERROR]: ".htmlentities($query)." does not match";
         }
@@ -137,28 +89,30 @@
         $result = [];
         if($rm_kleene) {
             for ($i=0; $i < sizeof($colnames); $i++) {
-                if ($colnames[$i] != '*') {
+                if ($colnames[$i] != '*' && $rm_kleene) {
                     $result[] = $colnames[$i];
-                }
+                }//else {
+                    // $res = getDBHeader(getTableNames($query));
+                    // foreach ($res as $j) {
+                    //     $result[] = $res[$j];
+                    // }
+                // }
             }
         }else{
             //TODO: how to treat cases with kleene?
             $result = $colnames;
         }
-
         return array_values(array_unique($result));//TODO: ???
     }
 
     // TODO: needs to be finished (for reference: test complex table with linebreaks)
     function getTableNames($query) {
         $colnames = array();
-        // print_r("-----------------------------------------------------------------------------\n" . $query . "\n");
 
         if(preg_match('/(?<=FROM )[\w+\, ]+/i', $query, $matches)) {
 
             for ($i=0; $i < sizeof($matches); $i++) {
                 foreach (explode(",", str_replace("\n", "", $matches[$i])) as $col) {
-                    // print_r("--" . $col);
                     foreach(explode(" ", $col) as $j) {
                         $val = preg_replace("/\s/", "", $j);
                         if (preg_match("/WHERE/i", $val)) {
@@ -170,14 +124,85 @@
                                 $colnames[] = $val;
                             }
                         }
-                        // print_r($val . "\n");
                     }
                 }
             }
+        }elseif (preg_match('/(?<=SELECT )\w+\(\w?\)( AS \w+)?\;?/i', $query)) {
+            // TODO:
         } else {
             $colnames[] = "[ERROR]: ".htmlentities($query)." does not match";
         }
         return $colnames;
+    }
+
+    function matchColTable($query) {
+
+        $n = str_replace("\n", " ", $query);
+        $n = str_replace("\t", " ", $n);
+
+        $words = explode(" ", $n);
+
+        for ($i=0; $i < sizeof($words); $i++) {
+            if ($words[$i] == '*') {
+                for ($j=$i; $j < sizeof($words); $j++) {
+                    if ($words[$i] == '*') {
+
+                    }
+                }
+            }else{
+
+            }
+        }
+
+        return $words;
+    }
+
+    function resolveBrackets($input) {
+        $result = [];
+
+        $str = $input;
+        $i = 0;
+
+        $pattern = "/\([\w*\d*\s\{\}\.\*\,\=\<\>]+\)/i";
+
+        while (true) {
+            //TODO throw error if runs longer then 1 min
+            if(str_contains($str, '(') && str_contains($str, ')')) {
+                if(preg_match_all($pattern, $str, $matches)) {
+                    $result[] = $matches[0];
+                    $str = preg_replace($pattern, "{" . $i . "}", $str);
+
+                    $i += 1;
+                }
+            }else{
+                $result[][] = $str;
+                break;
+            }
+        }
+        return $result;
+    }
+
+    function last($list) {
+        return $list[array_key_last($list)];
+    }
+
+    function buildBrackets($structure) {
+        $str = last(last($structure));
+
+        while (true) {
+            preg_match_all("/\{[0-9]+\}/i", $str, $matches, PREG_OFFSET_CAPTURE);
+            if (sizeof($matches[0]) > 0) {
+
+                $end = last($matches[0])[0];
+                $value = array_pop($structure[str_replace("{", "", str_replace("}", "", $end))]);
+                $match_index = count($matches[0]) - 1;
+                $match_position = $matches[0][$match_index][1];
+                $str = substr_replace($str, $value, str_replace("{", "", str_replace("}", "", $match_position)), strlen($matches[0][$match_index][0]));
+            }else{
+                break;
+            }
+        }
+        return $str;
     }
 
     function getTypeStr(...$params) {
@@ -203,7 +228,7 @@
     }
 
     function getDBHeader($table) {
-        return json_decode(getterQuery("DESC " . $table . ";", ["Field", "Type", "Null", "Key", "Default", "Extra"], "", null), true);
+        return getterQuery2("DESC " . $table . ";");
     }
 
     // TODO:    using from_unixtime(last_edit_date) AS 'last edit' as selector throws errors
@@ -211,13 +236,16 @@
         $out = array();
 
         $target_values = array();
-        if (str_contains($sql, '*')) {
-            foreach (getTableNames($sql) as $i) {
-                $target_values = getDBHeader($i)["Field"];
-            }
+        if(explode(" ", $sql)[0] == "DESC") {
+            $target_values = ["Field", "Type", "Null", "Key", "Default", "Extra"];
         }else{
-            // print_r(array_values(array_unique(getCoulmnNames($sql))));
-            $target_values = getCoulmnNames($sql);
+            if (str_contains($sql, '*')) {
+                foreach (getTableNames($sql) as $i) {
+                    $target_values = getDBHeader($i)["Field"];
+                }
+            }else{
+                $target_values = getCoulmnNames($sql);
+            }
         }
 
         if (preg_match_all("/\?/i", $sql) != count($param)) {

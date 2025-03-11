@@ -54,14 +54,12 @@
             return null;
         }
 
-        $session = getterQuery(
+        return getterQuery2(
             "SELECT user_id
             FROM session
             WHERE session.sessionID = ?",
-            ["user_id"],
-            "s", $sessionID
-        );
-        return json_decode($session, true)["user_id"][0];
+            $sessionID
+        )["user_id"][0];
     }
 
     //TODO: make id not required
@@ -151,11 +149,10 @@
     //TODO: editing after logout bug
     function logout($user_id) {
 
-        $sid = getterQuery(
+        $sid = getterQuery2(
             "SELECT sessionID FROM session WHERE session.user_id=?",
-            ["sessionID"],
-            "s", $user_id
-        );
+            $user_id
+        )["sessionID"][0];
 
         //set browser-session to expired
         setcookie("sessionID", $sid, time() - 1, "/", "", false, true);   //TODO: placing additional time in variable
@@ -335,7 +332,7 @@
             $user_id = getValidUserFromSession();
 
             if ($user_id != null) {
-                $poster_id = json_decode(getterQuery(
+                $poster_id = getterQuery2(
                         "SELECT poster_id
                     FROM (
                         SELECT ROW_NUMBER() OVER (ORDER BY poster_id) AS local_id, poster_id
@@ -343,9 +340,8 @@
                         WHERE poster.user_id = ?
                     ) AS ranked_posters
                     WHERE local_id = ?",
-                    ["poster_id"],
-                    "ii", $user_id, $local_id
-                ), true)["poster_id"][0];
+                    $user_id, $local_id
+                )["poster_id"][0];
 
                 echo $poster_id;    //"success: local_id: " . $local_id . " poster_id: " . $poster_id . " user_id: " . $user_id;
             }else {
