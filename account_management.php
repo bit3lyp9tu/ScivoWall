@@ -183,17 +183,15 @@
                 return "No results found";
             }else{
                 if (!$priv_acc && isAdmin($user_id)) {
-                    $result = getterQuery2(
+                    return json_encode(getterQuery2(
                         "SELECT title, from_unixtime(last_edit_date) AS last_edit, visible FROM poster WHERE fk_view_mode=?",
                         1
-                    );
-                    return $result;
+                    ), true);
                 }else{
-                    $result = getterQuery2(
+                    return json_encode(getterQuery2(
                         "SELECT title, from_unixtime(last_edit_date) AS last_edit FROM poster WHERE poster.user_id=?",
                         $user_id
-                    );
-                    return $result;
+                    ), true);
                 }
             }
 

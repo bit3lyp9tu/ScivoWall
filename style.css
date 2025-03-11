@@ -199,8 +199,51 @@ mjx-container,
     border-color: rgb(40, 176, 255);
 } */
 
-.author-item {
+input#typeahead.tt-input {
     display: flex;
+    align-items: stretch;
+    justify-content: flex-start;
+
+    /* color: red; */
+    height: 100%;
 }
 
-.author-item-btn {}
+.author-item {
+    padding-left: 10pt;
+
+    display: flex;
+    align-items: center;
+    border: solid;
+    border-width: 1px;
+    border-color: #83d252;
+    border-radius: 5px;
+    background-color: white;
+
+    justify-content: space-between;
+
+    font-size: 1rem;
+    width: 7rem;
+}
+
+.author-item:hover {
+    background-color: #83d2522d;
+}
+
+.author-item:hover .author-item-btn {
+    display: block;
+}
+
+.typeahead-standalone {
+    display: flex;
+    align-items: stretch;
+}
+
+.author-item-btn {
+    display: flex;
+    align-self: flex-start;
+    height: 1.2rem;
+    width: 1.2rem;
+    border-radius: 1.2rem;
+
+    display: none;
+}

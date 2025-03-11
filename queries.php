@@ -210,9 +210,6 @@
 
         if (is_array($params)) {
             foreach ($params as $i) {
-                // if ($i != "") {
-
-                // print_r(implode(",", $params) . "\n-- " . $i . "\n");
                 if (gettype($i) == "integer") {
                     $result .= 'i';
                 }elseif (gettype($i) == "string") {
@@ -221,7 +218,6 @@
                     $result .= '_';
                     throw new Exception('[ERROR] unknown type at index [' . $i . ']');
                 }
-                // }
             }
         }
         return $result;
@@ -333,10 +329,4 @@
 		    }
 	    }
     }
-
-
-    // function getTitle($id) {
-	//     # prepared statement oder mysqli_real_escape_string
-    //     return runSingleQuery("SELECT title FROM poster WHERE poster.poster_id=" . $id);
-    // }
 ?>

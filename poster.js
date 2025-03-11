@@ -129,6 +129,7 @@ async function getLoadedImg(poster_id, img_name, style) {
         }
     });
     // console.log("data: ", JSON.parse(resp).data);
+    console.log(JSON.parse(resp));
 
     const container = document.createElement("div");
     const img = document.createElement("img");

@@ -85,7 +85,7 @@ class PythonOrgSearch(unittest.TestCase):
         ).get_attribute("innerHTML")
 
         self.assertTrue("<th>title</th>" in content_table)
-        self.assertTrue("<th>last edit</th>" in content_table)
+        self.assertTrue("<th>last_edit</th>" in content_table)
 
         content_line = (
             driver.find_element(By.CSS_SELECTOR, "#table-container>table")
@@ -174,7 +174,7 @@ class PythonOrgSearch(unittest.TestCase):
         text_field = driver.find_element(By.ID, "editBox-0")
         text_field.send_keys("Test Text")
         text_field.send_keys(Keys.RETURN)
-        driver.find_element(By.ID, "authors").click()
+        driver.find_element(By.ID, "typeahead").click()
         # click save
         driver.find_element(By.ID, "save-content").click()
         # reload

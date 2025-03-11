@@ -116,19 +116,17 @@
             // deleteBox(1, $poster_id);
         }
     }
-    function getImage($image_id) {  //TODO: old and untested
-        $result = getterQuery2(
-            "SELECT file_name, type, size, last_modified, data, fk_poster FROM image WHERE image_id=?",
+    function getImage($image_id) {  //TODO: untested
+        return json_encode(getterQuery2(
+            "SELECT data FROM image WHERE image_id=?",
             $image_id
-        );
-        return $result;//json_decode($result, true)["data"][0];
+        ), true)["data"][0];
     }
-    function getFullImage($name, $poster_id) {  //TODO: old and untested
-        $result = getterQuery2(
+    function getFullImage($name, $poster_id) {  //TODO: untested
+        return json_encode(getterQuery2(
             "SELECT file_name, type, size, last_modified, data FROM image WHERE fk_poster=? AND file_name=? LIMIT 1",
             $poster_id, $name
-        );
-        return $result;
+        ), true);
     }
 
     function str2bin($str) {
@@ -337,13 +335,13 @@
         }
     }
 
-    function fetchPublicPosters() {  //TODO: old and untested
+    function fetchPublicPosters() {  //TODO: untested
         $result = getterQuery2(
             "SELECT poster_id, title
             FROM poster
             WHERE fk_view_mode=? AND visible=?", 1, 1
         );
-        return $result;
+        return json_encode($result, true);
     }
 
     function isPublic($poster_id) {
