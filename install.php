@@ -22,7 +22,11 @@
 	}
 
 	function run_query ($sql) {
-		$result = $GLOBALS["conn"]->query($sql);
+		try {
+			$result = $GLOBALS["conn"]->query($sql);
+		} catch (mysqli_sql_exception $th) {
+			die($th->getMessage());
+		}
 
 		if($result === false) {
 			die("ERROR: ".$GLOBALS["conn"]->error);
