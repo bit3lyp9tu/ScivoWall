@@ -216,7 +216,7 @@ input#typeahead.tt-input {
     border: solid;
     border-width: 1px;
     border-color: #83d252;
-    border-radius: 5px;
+    border-radius: 7px;
     background-color: white;
 
     justify-content: space-between;
