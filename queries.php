@@ -20,11 +20,15 @@
     }
 
     // Create connection
-    $GLOBALS["conn"] = new mysqli("localhost", "poster_generator", $password);
+    try {
+	    $GLOBALS["conn"] = new mysqli("localhost", "poster_generator", $password);
 
-    // Check connection
-    if ($GLOBALS["conn"]->connect_error) {
-        die("Connection failed: " . $GLOBALS["conn"]->connect_error);
+	    // Check connection
+	    if ($GLOBALS["conn"]->connect_error) {
+		die("Connection failed: " . $GLOBALS["conn"]->connect_error);
+	    }
+    } catch (mysqli_sql_exception $th) {
+	    die($th->getMessage());
     }
 
     function insertQuery($sql, $types, ...$param) {
