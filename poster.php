@@ -31,8 +31,9 @@
         <img id="preview-img" src="" alt="Preview" style="max-width: 100%; max-height: 100%; display: none;">
     </div>-->
     <!-- <div id="img"></div> -->
-    <button id="img-load">Load Image</button>
+    <p id="tester" style="width:600px;height:250px;"></p>
 
+    <button id="img-load">Load Image</button>
 
     <div id="titles">
         <div>

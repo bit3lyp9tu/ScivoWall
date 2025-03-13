@@ -417,9 +417,30 @@ window.onload = async function () {
         console.error("content head request failed " + error);
     }
 
+    loadPlot(
+        "tester",
+        [
+            {
+                x: [1, 2, 3, 4, 5],
+                y: [1, 2, 4, 8, 16]
+            },
+            {
+                x: [1, 2, 3, 4, 5],
+                y: [2, 2, 1, 11, 15]
+            }
+        ],
+        {
+            margin: { t: 1 }
+        }
+    );
+
     if (response.status != 'error') {
+        //TODO: iterate single functions over a shared loop
         await show(response);
         loadImages();
+
+        loadPlots();
+
         imgDragDrop();
         buttonEvents();
 
@@ -648,8 +669,36 @@ async function loadImages() {
         }
     }
 }
+function loadPlots() {
+    const boxes = document.getElementById("boxes");
 
-var dragged_text = ""
+    for (let i = 0; i < boxes.children.length; i++) {
+        const word = boxes.children[i].innerHTML.replaceAll("\n", "").match(/(?<=\<p\splaceholder\=\"plotly\"\>).*(?=\<\/p\>)/);
+        if (word) {
+            console.log(word);
+        }
+    }
+}
+
+function loadPlot(name, data, layout) {
+    const plot = document.getElementById(name);
+
+    Plotly.newPlot(plot, data, layout);
+}
+
+function searchForPlotSyntax(box) {
+
+}
+
+function plot_parser(string) {
+    const names = string.match(/(?<=data\:.?\n)\s{2}\w+[\,\w+]+/).replace(" ", "").split(",");
+    const data_lines = string.match(/(?<=data\:.?\n[\s{2}\w+\,]+\n)\s{2}[\d+\,]+\n/).replace(" ", "").split(",");
+
+    console.log("names", names);
+    console.log("data-lines", data_lines);
+}
+
+var dragged_text = "";
 var is_draging = false;
 var dragend_item = null;
 
@@ -701,5 +750,4 @@ document.addEventListener("mouseover", function (event) {
     //     console.log(is_draging);
     //     console.log(event.target);
     // }
-
 });
