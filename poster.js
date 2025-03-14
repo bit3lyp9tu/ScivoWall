@@ -283,6 +283,8 @@ document.addEventListener("click", async function (event) {
 
             loadImages();
 
+            loadPlots();
+
             // forget old selected
             selected_box = null;
         }
@@ -417,22 +419,22 @@ window.onload = async function () {
         console.error("content head request failed " + error);
     }
 
-    loadPlot(
-        "tester",
-        [
-            {
-                x: [1, 2, 3, 4, 5],
-                y: [1, 2, 4, 8, 16]
-            },
-            {
-                x: [1, 2, 3, 4, 5],
-                y: [2, 2, 1, 11, 15]
-            }
-        ],
-        {
-            margin: { t: 1 }
-        }
-    );
+    // loadPlot(
+    //     "tester",
+    //     [
+    //         {
+    //             x: [1, 2, 3, 4, 5],
+    //             y: [1, 2, 4, 8, 16]
+    //         },
+    //         {
+    //             x: [1, 2, 3, 4, 5],
+    //             y: [2, 2, 1, 11, 15]
+    //         }
+    //     ],
+    //     {
+    //         margin: { t: 1 }
+    //     }
+    // );
 
     if (response.status != 'error') {
         //TODO: iterate single functions over a shared loop
@@ -673,21 +675,42 @@ function loadPlots() {
     const boxes = document.getElementById("boxes");
 
     for (let i = 0; i < boxes.children.length; i++) {
-        const word = boxes.children[i].innerHTML.replaceAll("\n", "").match(/(?<=\<p\splaceholder\=\"plotly\"\>).*(?=\<\/p\>)/);
-        if (word) {
-            console.log(word);
+        const word = boxes.children[i].innerHTML.replaceAll("\n", ";").match(/(?<=\<p\sid\=\"\w+\"\splaceholder\=\"plotly\"\>).*(?=\<\/p\>)/);
+        const id = boxes.children[i].getAttribute("data-content").replaceAll("\n", ";").match(/(?<=\<p(\splaceholder\=\"plotly\")?\sid\=\")\w+(?=\"(\s|\>))/);
+        if (word && id) {
+            var type = 0;
+            var content = {
+                "data": {}
+            };
+
+            word[0].split(";").forEach(element => {
+
+                if (element.match(/data:\n?/i)) {
+                    type = 1;
+                } else if (element.match(/layout:\n?/i)) {
+                    type = 2;
+                }
+
+                if (type) {
+                    if (element.startsWith("  ")) {
+                        if (type == 1) {
+                            const data_string = element.replaceAll(" ", "").split(":");
+                            const data_prefix = data_string[0];
+                            const data_content = [];
+                            data_string[1].split(",").forEach(element => {
+                                data_content.push(Number(element));
+                            });
+
+                            content["data"][data_prefix] = data_content;
+                        }
+                    }
+                }
+            });
+            console.log(id[0], content);
+            const plot = document.getElementById(id[0]);
+            Plotly.newPlot(plot, [{ x: content["data"]["x"], y: content["data"]["y"] }], { margin: { t: 1 } });
         }
     }
-}
-
-function loadPlot(name, data, layout) {
-    const plot = document.getElementById(name);
-
-    Plotly.newPlot(plot, data, layout);
-}
-
-function searchForPlotSyntax(box) {
-
 }
 
 function plot_parser(string) {
