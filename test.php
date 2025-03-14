@@ -31,11 +31,58 @@
 
 <script>
 
-    TESTER = document.getElementById('tester');
-    Plotly.newPlot( TESTER, [{
-    x: [1, 2, 3, 4, 5],
-    y: [1, 2, 4, 8, 16] }], {
-    margin: { t: 0 } } );
+    window.onload = function () {
+
+
+        const json = `{
+  "data": [
+    {
+        "z": [
+        [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+            ],
+        [
+            1,
+            9,
+            4,
+            7,
+            5,
+            2,
+            4
+            ],
+            [
+          2,
+          4,
+          2,
+          1,
+          6,
+          9,
+          3
+        ]
+      ],
+      "type": "heatmap"
+    }
+  ],
+  "layout": {
+    "title": {
+        "text": "Customize The Edit Chart Link Text"
+    }
+    },
+    "config": {
+        "showLink": true,
+    "plotlyServerURL": "https://chart-studio.plotly.com",
+    "linkText": "This text is custom!"
+    }
+}`;
+console.log(json);
+console.log(JSON.parse(json));
+};
 
 </script>
 

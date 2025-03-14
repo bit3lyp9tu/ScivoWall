@@ -675,50 +675,53 @@ function loadPlots() {
     const boxes = document.getElementById("boxes");
 
     for (let i = 0; i < boxes.children.length; i++) {
-        const word = boxes.children[i].innerHTML.replaceAll("\n", ";").match(/(?<=\<p\sid\=\"\w+\"\splaceholder\=\"plotly\"\>).*(?=\<\/p\>)/);
-        const id = boxes.children[i].getAttribute("data-content").replaceAll("\n", ";").match(/(?<=\<p(\splaceholder\=\"plotly\")?\sid\=\")\w+(?=\"(\s|\>))/);
+        const word = boxes.children[i].getAttribute("data-content").replaceAll("\n", "").match(/(?<=\<p\sid\=\"\w+\"\splaceholder\=\"plotly\"\svisibility\=\"\w+\"\>).*(?=\<\/p\>)/);
+        const id = boxes.children[i].getAttribute("data-content").replaceAll("\n", "").match(/(?<=\<p(\splaceholder\=\"plotly\")?\sid\=\")\w+(?=\"(\s|\>))/);
         if (word && id) {
-            var type = 0;
             var content = {
-                "data": {}
+                "data": {},
+                "layout": {},
+                "config": {}
             };
 
-            word[0].split(";").forEach(element => {
-
-                if (element.match(/data:\n?/i)) {
-                    type = 1;
-                } else if (element.match(/layout:\n?/i)) {
-                    type = 2;
-                }
-
-                if (type) {
-                    if (element.startsWith("  ")) {
-                        if (type == 1) {
-                            const data_string = element.replaceAll(" ", "").split(":");
-                            const data_prefix = data_string[0];
-                            const data_content = [];
-                            data_string[1].split(",").forEach(element => {
-                                data_content.push(Number(element));
-                            });
-
-                            content["data"][data_prefix] = data_content;
-                        }
-                    }
-                }
-            });
-            console.log(id[0], content);
-            const plot = document.getElementById(id[0]);
-            Plotly.newPlot(plot, [{ x: content["data"]["x"], y: content["data"]["y"] }], { margin: { t: 1 } });
+            json = repairQuoting(word[0])
+            console.log(json);
+            try {
+                //TODO: for some reason sometimes parsing throws error
+                content = JSON.parse(json);
+            } catch (e) {
+                console.error(e);
+                content = {};
+            }
+            if (Object.keys(content).length != 0) {
+                const plot = document.getElementById(id[0]);
+                Plotly.newPlot(plot, content["data"], content["layout"], content["config"]);
+            }
+            //Example:
+            //             <p id="test2" placeholder="plotly" visibility="hidden">
+            // {
+            // data: [{
+            //     y:['Marc', 'Henrietta', 'Jean', 'Claude', 'Jeffrey', 'Jonathan', 'Jennifer', 'Zacharias'],
+            //       x: [90, 40, 60, 80, 75, 92, 87, 73],
+            //       type: 'bar',
+            //       orientation: 'h'}],
+            // layout: {
+            //     title: {
+            //         text: 'Always Display the Modebar'
+            //     },
+            //     showlegend: false
+            // },
+            // config: {displayModeBar: true}
+            // }
+            // </p>
         }
     }
 }
 
-function plot_parser(string) {
-    const names = string.match(/(?<=data\:.?\n)\s{2}\w+[\,\w+]+/).replace(" ", "").split(",");
-    const data_lines = string.match(/(?<=data\:.?\n[\s{2}\w+\,]+\n)\s{2}[\d+\,]+\n/).replace(" ", "").split(",");
-
-    console.log("names", names);
-    console.log("data-lines", data_lines);
+function repairQuoting(string) {
+    return string.replace(/\b(\w+)(?=\s*:)/g, function (i) {
+        return `"` + i + `"`;
+    }).replaceAll(`'`, `"`);
 }
 
 var dragged_text = "";
