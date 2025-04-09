@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang='en'>
 <?php
     $site_script="login.js";
 
@@ -6,8 +8,6 @@
 
     // jquery in lokale datei statt über code.jquery.com
 ?>
-<!DOCTYPE html>
-<html lang='en'>
 <body>
     <div>
         <form action="" id="login-form">

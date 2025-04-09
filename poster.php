@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang='en'>
 <?php
     $site_script="poster.js";
 
@@ -6,8 +8,6 @@
 
     include("poster_edit.php")
 ?>
-<!DOCTYPE html>
-<html lang='en'>
 <body>
     <div id="logo_headline">
         <img class="nomargin" id='scadslogo' src="img/scadslogo.png" draggable="false"/>

@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang='en'>
 <?php
     // include_once("index.php");
     include("account_management.php");
@@ -5,8 +7,6 @@
 
 	// automatisch die projekte laden
 ?>
-<!DOCTYPE html>
-<html lang='en'>
 <body>
 
     <div>

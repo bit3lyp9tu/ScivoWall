@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang='en'>
 <?php
 	//TODO: box height changes between selected and unselected state
 	//TODO: if cursor releases click outside of box, deleted text will return
@@ -21,8 +23,6 @@
 
     include("poster_edit.php")
 ?>
-<!DOCTYPE html>
-<html lang='en'>
 <body>
     <div id="logo_headline">
         <img class="nomargin" id='scadslogo' src="img/scadslogo.png" draggable="false"/>

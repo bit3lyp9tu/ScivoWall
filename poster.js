@@ -276,10 +276,20 @@ document.addEventListener("click", async function (event) {
 
         } else if (selected_box && event.target !== selected_box) {// if there was something once selected and if the new selected is different from the old
 
+            console.log("TESTETSTSTTSTTS", selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``));
+            // selected_box = selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``);
+            // if (element.querySelector("p[placeholder='plotly']")) {
+            // }
+
             // change old back to non-editable and save old edits
             const element = createArea("div", selected_box.id, "box", selected_box.value);
+
             await typeset(element, () => marked.marked(selected_box.value));
+            //if (selected_box && selected_box.parentNode) {
             selected_box.parentNode.replaceChild(element, selected_box);
+            //} else {
+            //                console.error("Selected box has no parent Node or is undefined:", selected_box);
+            //          }
 
             loadImages();
 
@@ -671,57 +681,122 @@ async function loadImages() {
         }
     }
 }
+
+function json_parse(data) {
+    try {
+        var res = JSON.parse(data);
+        return res;
+    } catch (e) {
+        console.error(e);
+        console.error("This JSON caused this to happen:", data)
+    }
+
+    return null;
+}
+
 function loadPlots() {
     const boxes = document.getElementById("boxes");
 
     for (let i = 0; i < boxes.children.length; i++) {
-        const word = boxes.children[i].getAttribute("data-content").replaceAll("\n", "").match(/(?<=\<p\sid\=\"\w+\"\splaceholder\=\"plotly\"\svisibility\=\"\w+\"\>).*(?=\<\/p\>)/);
-        const id = boxes.children[i].getAttribute("data-content").replaceAll("\n", "").match(/(?<=\<p(\splaceholder\=\"plotly\")?\sid\=\")\w+(?=\"(\s|\>))/);
-        if (word && id) {
-            var content = {
-                "data": {},
-                "layout": {},
-                "config": {}
-            };
+        const data_content = boxes.children[i].getAttribute("data-content");
 
-            json = repairQuoting(word[0])
-            console.log(json);
-            try {
-                //TODO: for some reason sometimes parsing throws error
-                content = JSON.parse(json);
-            } catch (e) {
-                console.error(e);
-                content = {};
+        const head_data = data_content.match(/(?<=\<p\s)[placeholder\=\"plotly\",visibility\=\"hidden\",id=\"\w+\",\s]+(?=\>)/sgm);
+        const body = data_content.match(/(?<=>).*(?=\<\/p\>)/gs);
+
+        if (head_data) {
+            for (let j = 0; j < head_data.length; j++) {
+                const header = header_data_to_json(head_data[j]);
+
+                if (header["placeholder"] && header["placeholder"] == "plotly") {
+                    const hash_id = md5(i + body + j + "randomness");
+                    console.log("id", hash_id);
+
+                    console.log("header", header);
+                    console.log("body", json_parse(repairJson(body[j])));
+
+                    //TODO
+                    // var content = {
+                    //     "data": {},
+                    //     "layout": {},
+                    //     "config": {}
+                    // };
+
+                    var content = json_parse(repairJson(body[j]));
+                    console.log("body2", content["data"]);
+
+
+                    if (content && Object.keys(content).length != 0) {
+                        const plot = document.getElementById(hash_id);
+                        Plotly.newPlot(plot, content["data"], content["layout"], content["config"]);
+                    }
+                }
             }
-            if (Object.keys(content).length != 0) {
-                const plot = document.getElementById(id[0]);
-                Plotly.newPlot(plot, content["data"], content["layout"], content["config"]);
-            }
-            //Example:
-            //             <p id="test2" placeholder="plotly" visibility="hidden">
-            // {
-            // data: [{
-            //     y:['Marc', 'Henrietta', 'Jean', 'Claude', 'Jeffrey', 'Jonathan', 'Jennifer', 'Zacharias'],
-            //       x: [90, 40, 60, 80, 75, 92, 87, 73],
-            //       type: 'bar',
-            //       orientation: 'h'}],
-            // layout: {
-            //     title: {
-            //         text: 'Always Display the Modebar'
-            //     },
-            //     showlegend: false
-            // },
-            // config: {displayModeBar: true}
-            // }
-            // </p>
         }
+
+        // if (head_data && body) {
+        //     var content = {
+        //         "data": {},
+        //         "layout": {},
+        //         "config": {}
+        //     };
+
+        //     json = repairQuoting(body)
+        //     console.log(json);
+        //     try {
+        //         //TODO: for some reason sometimes parsing throws error
+        //         content = json_parse(json);
+        //     } catch (e) {
+        //         console.error(e);
+        //         content = {};
+        //     }
+        //     if (content && Object.keys(content).length != 0) {
+        //         const plot = document.getElementById(hash_id);
+        //         Plotly.newPlot(plot, content["data"], content["layout"], content["config"]);
+        //     }
+        //     //Example:
+        //     //<p id="test2" placeholder="plotly" visibility="hidden">
+        //     // {
+        //     // data: [{
+        //     //     y:['Marc', 'Henrietta', 'Jean', 'Claude', 'Jeffrey', 'Jonathan', 'Jennifer', 'Zacharias'],
+        //     //       x: [90, 40, 60, 80, 75, 92, 87, 73],
+        //     //       type: 'bar',
+        //     //       orientation: 'h'}],
+        //     // layout: {
+        //     //     title: {
+        //     //         text: 'Always Display the Modebar'
+        //     //     },
+        //     //     showlegend: false
+        //     // },
+        //     // config: {displayModeBar: true}
+        //     // }
+        //     // </p>
+        // }
     }
+}
+
+function header_data_to_json(content) {
+    var json = {};
+
+    content.split(" ").forEach(element => {
+        const s = element.split("=");
+
+        json[String(s[0])] = s[1].replaceAll(`"`, ``);
+    });
+    return json;
 }
 
 function repairQuoting(string) {
     return string.replace(/\b(\w+)(?=\s*:)/g, function (i) {
         return `"` + i + `"`;
     }).replaceAll(`'`, `"`);
+}
+
+function repairJson(input) {
+    var str = input.replace(/\b(\w+)(?=\s*:)/g, function (i) {
+        return `"` + i + `"`;
+    }).replaceAll(`'`, `"`);
+
+    return str.replaceAll(/\/\/.*\n/gm, `\n`);
 }
 
 var dragged_text = "";

@@ -1,9 +1,9 @@
+<!DOCTYPE html>
+<html lang='en'>
 <?php
     include("account_management.php");
     include("header.html");
 ?>
-<!DOCTYPE html>
-<html lang='en'>
 <body>
     <div>
         <form action="" id="form">
