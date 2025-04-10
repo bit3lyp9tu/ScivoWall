@@ -279,16 +279,22 @@ async function edit_box (_target) {
 }
 
 async function initEditBoxes() {
-	if (await isEditView()) {
-		const editBoxes = Array.from(document.querySelectorAll('[id^="editBox-"]'));
+    if (await isEditView()) {
+        const editBoxes = Array.from(document.querySelectorAll('[id^="editBox-"]'));
 
-		editBoxes.forEach(box => {
-			box.addEventListener('click', function () {
-				edit_box(this);
-			});
-		});
-	}
+        editBoxes.forEach(box => {
+            box.addEventListener('click', function (event) {
+                // Abbrechen, wenn das geklickte Element Teil der Plotly-UI ist
+                if (event.target.closest('.modebar-container, .plotly, .zoomlayer')) {
+                    return; // Ignoriere Plotly-interne Klicks
+                }
+
+                edit_box(this);
+            });
+        });
+    }
 }
+
 
 async function edit_box_event (event) {
 	const url = url_to_json();
