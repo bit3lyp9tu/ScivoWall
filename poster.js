@@ -233,7 +233,7 @@ async function show(response) {
 var selected_box = null;
 var selected_title = null;
 
-function edit_box (_target) {
+function edit_box_if_no_other_was_selected (_target) {
             // change box to editable
             const element = createArea("textarea", _target.id, "", _target.getAttribute("data-content"));
             element.rows = Math.round((_target.innerText.match(/(<br>|\n)/g) || []).length * 1.5) + 1;
@@ -270,43 +270,59 @@ async function edit_box_if_other_was_selected(_target) {
             selected_box = null;
 }
 
+async function edit_box (_target) {
+        if (_target.tagName === "DIV" && _target.id.startsWith("editBox") && selected_box === null) { // if new editBox gets selected
+		edit_box_if_no_other_was_selected(_target)
+        } else if (selected_box && _target !== selected_box) {// if there was something once selected and if the new selected is different from the old
+		edit_box_if_other_was_selected(_target);
+        }
+}
+
+async function initEditBoxes() {
+	if (await isEditView()) {
+		const editBoxes = Array.from(document.querySelectorAll('[id^="editBox-"]'));
+
+		editBoxes.forEach(box => {
+			box.addEventListener('click', function () {
+				edit_box(this);
+			});
+		});
+	}
+}
+
 async function edit_box_event (event) {
-    const url = url_to_json();
+	const url = url_to_json();
 
-    //TODO: check if session-id valid
-    if (url["mode"] != null && url["mode"] == 'private') {
-        // Edit Title
-        if (event.target.tagName === "DIV" && !event.target.id.startsWith("editBox") && event.target.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
+	//TODO: check if session-id valid
+	if (url["mode"] != null && url["mode"] == 'private') {
+		// Edit Title
+		if (event.target.tagName === "DIV" && !event.target.id.startsWith("editBox") && event.target.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
 
-            // change box to editable
-            const element = createArea("textarea", event.target.children[0].id, "", event.target.children[0].getAttribute("data-content"));
-            element.style.resize = "none"; //"vertical";
-            element.value = event.target.children[0].getAttribute("data-content");
-            event.target.children[0].parentNode.replaceChild(element, event.target.children[0]);
-            element.style['pointer-events'] = 'auto';
+			// change box to editable
+			const element = createArea("textarea", event.target.children[0].id, "", event.target.children[0].getAttribute("data-content"));
+			element.style.resize = "none"; //"vertical";
+			element.value = event.target.children[0].getAttribute("data-content");
+			event.target.children[0].parentNode.replaceChild(element, event.target.children[0]);
+			element.style['pointer-events'] = 'auto';
 
-            // remember box as previously selected
-            selected_title = element;
+			// remember box as previously selected
+			selected_title = element;
 
-        } else if (selected_title && event.target !== selected_title) {// if there was something once selected and if the new selected is different from the old
+		} else if (selected_title && event.target !== selected_title) {// if there was something once selected and if the new selected is different from the old
 
-            // change old back to non-editable and save old edits
-            const element = createArea("div", selected_title.id, "", selected_title.value);
-            await typeset(element, () => marked.marked(selected_title.value));
-            selected_title.parentNode.replaceChild(element, selected_title);
-            element.style['pointer-events'] = 'none';
+			// change old back to non-editable and save old edits
+			const element = createArea("div", selected_title.id, "", selected_title.value);
+			await typeset(element, () => marked.marked(selected_title.value));
+			selected_title.parentNode.replaceChild(element, selected_title);
+			element.style['pointer-events'] = 'none';
 
-            // forget old selected
-            selected_title = null;
-        }
+			// forget old selected
+			selected_title = null;
+		}
 
-        // Edit Boxes
-        if (event.target.tagName === "DIV" && event.target.id.startsWith("editBox") && selected_box === null) { // if new editBox gets selected
-		edit_box(event.target)
-        } else if (selected_box && event.target !== selected_box) {// if there was something once selected and if the new selected is different from the old
-		edit_box_if_other_was_selected(event.target);
-        }
-    }
+		// Edit Boxes
+		//edit_box(event.target)
+	}
 }
 
 document.addEventListener("click", edit_box_event);
@@ -511,6 +527,8 @@ window.onload = async function () {
             local: author_names,
         }
     });
+
+	initEditBoxes();
 };
 
 function author_item(value) {
