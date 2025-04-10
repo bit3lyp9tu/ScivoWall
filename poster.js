@@ -700,77 +700,53 @@ function loadPlots() {
     for (let i = 0; i < boxes.children.length; i++) {
         const data_content = boxes.children[i].getAttribute("data-content");
 
-        const head_data = data_content.match(/(?<=\<p\s)[placeholder\=\"plotly\",visibility\=\"hidden\",id=\"\w+\",\s]+(?=\>)/sgm);
-        const body = data_content.match(/(?<=>).*(?=\<\/p\>)/gs);
+        const head_data = data_content.match(/(?<=\<p\s)[\s,placeholder\=\"plotly\",(\w+\=\"?\'?\w+\"?\'?)]+(?=\>)/sgm);
+        const body = data_content.match(/(?<=<p\s?[\s,(\w+\=\"?\'?\w+\"?\'?)]*>).*?(?=\<\/p\>)/gsm);
+        // /(?<=>).*(?=\<\/p\>)/gs
+        // /\<p\s[placeholder\=\"plotly\",visibility\=\"hidden\",id=\"\w+\",\s]+\>.*\<\/p\>/sgmU
 
         if (head_data) {
             for (let j = 0; j < head_data.length; j++) {
                 const header = header_data_to_json(head_data[j]);
 
                 if (header["placeholder"] && header["placeholder"] == "plotly") {
-                    const hash_id = md5(i + body + j + "randomness");
-                    console.log("id", hash_id);
-
-                    console.log("header", header);
-                    console.log("body", json_parse(repairJson(body[j])));
-
-                    //TODO
-                    // var content = {
-                    //     "data": {},
-                    //     "layout": {},
-                    //     "config": {}
-                    // };
+                    // console.log("header", header);
+                    // console.log("body", (repairJson(body[j])));
 
                     var content = json_parse(repairJson(body[j]));
-                    console.log("body2", content["data"]);
-
 
                     if (content && Object.keys(content).length != 0) {
-                        const plot = document.getElementById(hash_id);
+                        const plot = boxes.children[i].querySelectorAll('p[placeholder="plotly"]')[j];
+                        plot.id = "plotly-" + i + "-" + j;
+                        // plot.style.visibility = 'hidden';
                         Plotly.newPlot(plot, content["data"], content["layout"], content["config"]);
                     }
+
+                    console.log(boxes.children[i].innerText);
+
                 }
             }
+
+            boxes.children[i].innerHTML.replaceAll(/(?<=<p\s?[\s,(\w+\=\"?\'?\w+\"?\'?)]*>).*?(?=\<\/p\>)/gsm, "");
         }
 
-        // if (head_data && body) {
-        //     var content = {
-        //         "data": {},
-        //         "layout": {},
-        //         "config": {}
-        //     };
-
-        //     json = repairQuoting(body)
-        //     console.log(json);
-        //     try {
-        //         //TODO: for some reason sometimes parsing throws error
-        //         content = json_parse(json);
-        //     } catch (e) {
-        //         console.error(e);
-        //         content = {};
-        //     }
-        //     if (content && Object.keys(content).length != 0) {
-        //         const plot = document.getElementById(hash_id);
-        //         Plotly.newPlot(plot, content["data"], content["layout"], content["config"]);
-        //     }
-        //     //Example:
-        //     //<p id="test2" placeholder="plotly" visibility="hidden">
-        //     // {
-        //     // data: [{
-        //     //     y:['Marc', 'Henrietta', 'Jean', 'Claude', 'Jeffrey', 'Jonathan', 'Jennifer', 'Zacharias'],
-        //     //       x: [90, 40, 60, 80, 75, 92, 87, 73],
-        //     //       type: 'bar',
-        //     //       orientation: 'h'}],
-        //     // layout: {
-        //     //     title: {
-        //     //         text: 'Always Display the Modebar'
-        //     //     },
-        //     //     showlegend: false
-        //     // },
-        //     // config: {displayModeBar: true}
-        //     // }
-        //     // </p>
+        //Example:
+        //<p id="test2" placeholder="plotly" visibility="hidden">
+        // {
+        // data: [{
+        //     y:['Marc', 'Henrietta', 'Jean', 'Claude', 'Jeffrey', 'Jonathan', 'Jennifer', 'Zacharias'],
+        //       x: [90, 40, 60, 80, 75, 92, 87, 73],
+        //       type: 'bar',
+        //       orientation: 'h'}],
+        // layout: {
+        //     title: {
+        //         text: 'Always Display the Modebar'
+        //     },
+        //     showlegend: false
+        // },
+        // config: {displayModeBar: true}
         // }
+        // </p>
     }
 }
 
