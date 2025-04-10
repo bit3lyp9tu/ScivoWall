@@ -233,119 +233,124 @@ async function show(response) {
 var selected_box = null;
 var selected_title = null;
 
-function edit_box_if_no_other_was_selected (_target) {
-            // change box to editable
-            const element = createArea("textarea", _target.id, "", _target.getAttribute("data-content"));
-            element.rows = Math.round((_target.innerText.match(/(<br>|\n)/g) || []).length * 1.5) + 1;
-            element.style.resize = "none"; //"vertical";
-            element.value = _target.getAttribute("data-content");
-            _target.parentNode.replaceChild(element, _target);
+function edit_box_if_no_other_was_selected(_target) {
+    // change box to editable
+    const element = createArea("textarea", _target.id, "", _target.getAttribute("data-content"));
+    element.rows = Math.round((_target.innerText.match(/(<br>|\n)/g) || []).length * 1.5) + 1;
+    element.style.resize = "none"; //"vertical";
+    element.value = _target.getAttribute("data-content");
 
-            //  remember box as previously selected
-            selected_box = element;
+    element.querySelectorAll('p[placeholder="plotly"]').forEach(e => {
+        e.remove();
+    });
+
+    _target.parentNode.replaceChild(element, _target);
+
+    //  remember box as previously selected
+    selected_box = element;
 }
 
 async function unedit_box() {
-	//console.log("TESTETSTSTTSTTS", selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``));
-	// selected_box = selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``);
-	// if (element.querySelector("p[placeholder='plotly']")) {
-	// }
+    //console.log("TESTETSTSTTSTTS", selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``));
+    // selected_box = selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``);
+    // if (element.querySelector("p[placeholder='plotly']")) {
+    // }
 
-	// change old back to non-editable and save old edits
-	if(selected_box) {
-		const element = createArea("div", selected_box.id, "box", selected_box.value);
+    // change old back to non-editable and save old edits
+    if (selected_box) {
+        const element = createArea("div", selected_box.id, "box", selected_box.value);
 
-		await typeset(element, () => marked.marked(selected_box.value));
-		if (selected_box && selected_box.parentNode) {
-			selected_box.parentNode.replaceChild(element, selected_box);
-		}
+        await typeset(element, () => marked.marked(selected_box.value));
+        if (selected_box && selected_box.parentNode) {
+            selected_box.parentNode.replaceChild(element, selected_box);
+        }
 
-		loadImages();
+        loadImages();
 
-		loadPlots();
+        loadPlots();
 
-		// forget old selected
-		selected_box = null;
-	}
+        // forget old selected
+        selected_box = null;
+    }
 
-	initEditBoxes();
+    initEditBoxes();
 }
 
-async function edit_box (_target) {
-        if (_target.tagName === "DIV" && _target.id.startsWith("editBox") && selected_box === null) { // if new editBox gets selected
-		edit_box_if_no_other_was_selected(_target)
-        } else if (selected_box && _target !== selected_box) {// if there was something once selected and if the new selected is different from the old
-		unedit_box();
-        }
+async function edit_box(_target) {
+    if (_target.tagName === "DIV" && _target.id.startsWith("editBox") && selected_box === null) { // if new editBox gets selected
+        edit_box_if_no_other_was_selected(_target)
+    } else if (selected_box && _target !== selected_box) {// if there was something once selected and if the new selected is different from the old
+        unedit_box();
+    }
 }
 
 function initUneditHandler() {
-	document.addEventListener('click', function (event) {
-		// Prüfe, ob der Klick *innerhalb* einer editBox war
-		const isInsideEditBox = event.target.closest('[id^="editBox-"]');
+    document.addEventListener('click', function (event) {
+        // Prüfe, ob der Klick *innerhalb* einer editBox war
+        const isInsideEditBox = event.target.closest('[id^="editBox-"]');
 
-		// Wenn NICHT innerhalb einer editBox → unedit_box() aufrufen
-		if (!isInsideEditBox) {
-			unedit_box();
-		}
-	});
+        // Wenn NICHT innerhalb einer editBox → unedit_box() aufrufen
+        if (!isInsideEditBox) {
+            unedit_box();
+        }
+    });
 }
 
 async function initEditBoxes() {
-	if (await isEditView()) {
-		const editBoxes = Array.from(document.querySelectorAll('[id^="editBox-"]'));
+    if (await isEditView()) {
+        const editBoxes = Array.from(document.querySelectorAll('[id^="editBox-"]'));
 
-		editBoxes.forEach(box => {
-			// Prüfen, ob der Listener bereits gesetzt wurde
-			if (!box._hasEditBoxClickListener) {
-				box.addEventListener('click', function (event) {
-					// Abbrechen, wenn das geklickte Element Teil der Plotly-UI ist
-					if (event.target.closest('.modebar-container, .plotly, .zoomlayer')) {
-						return; // Ignoriere Plotly-interne Klicks
-					}
+        editBoxes.forEach(box => {
+            // Prüfen, ob der Listener bereits gesetzt wurde
+            if (!box._hasEditBoxClickListener) {
+                box.addEventListener('click', function (event) {
+                    // Abbrechen, wenn das geklickte Element Teil der Plotly-UI ist
+                    if (event.target.closest('.modebar-container, .plotly, .zoomlayer')) {
+                        return; // Ignoriere Plotly-interne Klicks
+                    }
 
-					edit_box(this);
-				});
+                    edit_box(this);
+                });
 
-				box._hasEditBoxClickListener = true;
-			}
-		});
-	}
+                box._hasEditBoxClickListener = true;
+            }
+        });
+    }
 }
 
-async function edit_box_event (event) {
-	const url = url_to_json();
+async function edit_box_event(event) {
+    const url = url_to_json();
 
-	//TODO: check if session-id valid
-	if (url["mode"] != null && url["mode"] == 'private') {
-		// Edit Title
-		if (event.target.tagName === "DIV" && !event.target.id.startsWith("editBox") && event.target.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
+    //TODO: check if session-id valid
+    if (url["mode"] != null && url["mode"] == 'private') {
+        // Edit Title
+        if (event.target.tagName === "DIV" && !event.target.id.startsWith("editBox") && event.target.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
 
-			// change box to editable
-			const element = createArea("textarea", event.target.children[0].id, "", event.target.children[0].getAttribute("data-content"));
-			element.style.resize = "none"; //"vertical";
-			element.value = event.target.children[0].getAttribute("data-content");
-			event.target.children[0].parentNode.replaceChild(element, event.target.children[0]);
-			element.style['pointer-events'] = 'auto';
+            // change box to editable
+            const element = createArea("textarea", event.target.children[0].id, "", event.target.children[0].getAttribute("data-content"));
+            element.style.resize = "none"; //"vertical";
+            element.value = event.target.children[0].getAttribute("data-content");
+            event.target.children[0].parentNode.replaceChild(element, event.target.children[0]);
+            element.style['pointer-events'] = 'auto';
 
-			// remember box as previously selected
-			selected_title = element;
+            // remember box as previously selected
+            selected_title = element;
 
-		} else if (selected_title && event.target !== selected_title) {// if there was something once selected and if the new selected is different from the old
+        } else if (selected_title && event.target !== selected_title) {// if there was something once selected and if the new selected is different from the old
 
-			// change old back to non-editable and save old edits
-			const element = createArea("div", selected_title.id, "", selected_title.value);
-			await typeset(element, () => marked.marked(selected_title.value));
-			selected_title.parentNode.replaceChild(element, selected_title);
-			element.style['pointer-events'] = 'none';
+            // change old back to non-editable and save old edits
+            const element = createArea("div", selected_title.id, "", selected_title.value);
+            await typeset(element, () => marked.marked(selected_title.value));
+            selected_title.parentNode.replaceChild(element, selected_title);
+            element.style['pointer-events'] = 'none';
 
-			// forget old selected
-			selected_title = null;
-		}
+            // forget old selected
+            selected_title = null;
+        }
 
-		// Edit Boxes
-		//edit_box(event.target)
-	}
+        // Edit Boxes
+        //edit_box(event.target)
+    }
 }
 
 document.addEventListener("click", edit_box_event);
@@ -459,100 +464,100 @@ function createEditMenu() {
 }
 
 window.onload = async function () {
-	const data = url_to_json();
-	let response = {};
+    const data = url_to_json();
+    let response = {};
 
-	const state = await isEditView();
-	if (state) {
-		console.log("logged in");
-		createEditMenu();
-	} else {
-		console.log("logged out");
-	}
+    const state = await isEditView();
+    if (state) {
+        console.log("logged in");
+        createEditMenu();
+    } else {
+        console.log("logged out");
+    }
 
-	try {
-		response = await request(data);
+    try {
+        response = await request(data);
 
-		console.log(response);
-	} catch (error) {
-		console.error("content head request failed " + error);
-	}
+        console.log(response);
+    } catch (error) {
+        console.error("content head request failed " + error);
+    }
 
-	// loadPlot(
-	//     "tester",
-	//     [
-	//         {
-	//             x: [1, 2, 3, 4, 5],
-	//             y: [1, 2, 4, 8, 16]
-	//         },
-	//         {
-	//             x: [1, 2, 3, 4, 5],
-	//             y: [2, 2, 1, 11, 15]
-	//         }
-	//     ],
-	//     {
-	//         margin: { t: 1 }
-	//     }
-	// );
+    // loadPlot(
+    //     "tester",
+    //     [
+    //         {
+    //             x: [1, 2, 3, 4, 5],
+    //             y: [1, 2, 4, 8, 16]
+    //         },
+    //         {
+    //             x: [1, 2, 3, 4, 5],
+    //             y: [2, 2, 1, 11, 15]
+    //         }
+    //     ],
+    //     {
+    //         margin: { t: 1 }
+    //     }
+    // );
 
-	if (response.status != 'error') {
-		//TODO: iterate single functions over a shared loop
-		await show(response);
-		loadImages();
+    if (response.status != 'error') {
+        //TODO: iterate single functions over a shared loop
+        await show(response);
+        loadImages();
 
-		loadPlots();
+        loadPlots();
 
-		imgDragDrop();
-		buttonEvents();
+        imgDragDrop();
+        buttonEvents();
 
-	} else {
-		toastr["warning"]("Not Logged in");
-	}
+    } else {
+        toastr["warning"]("Not Logged in");
+    }
 
-	// start with single textfield
-	// once filed with content,
-	//      insert new button field
-	//      should button pressed - field gets removed
+    // start with single textfield
+    // once filed with content,
+    //      insert new button field
+    //      should button pressed - field gets removed
 
-	// if (document.getElementById("typeahead").value) {
-	//     console.log("content");
+    // if (document.getElementById("typeahead").value) {
+    //     console.log("content");
 
-	//     const input = document.createElement("input");
-	//     input.type = "search";
-	//     input.id = "typeahead";
-	//     // input.class = "tt-input";
-	//     input.autocomplete = "on";
-	//     input.placeholder = "...";
+    //     const input = document.createElement("input");
+    //     input.type = "search";
+    //     input.id = "typeahead";
+    //     // input.class = "tt-input";
+    //     input.autocomplete = "on";
+    //     input.placeholder = "...";
 
-	//     const btn = document.createElement("button");
-	//     btn.id = "remove-element";
-	//     // btn.onclick = remove();
-	//     btn.innerText = "X";
+    //     const btn = document.createElement("button");
+    //     btn.id = "remove-element";
+    //     // btn.onclick = remove();
+    //     btn.innerText = "X";
 
-	//     const container = document.createElement("div");
-	//     container.style.display = "flex";
-	//     container.appendChild(input);
-	//     container.appendChild(btn);
+    //     const container = document.createElement("div");
+    //     container.style.display = "flex";
+    //     container.appendChild(input);
+    //     container.appendChild(btn);
 
-	//     document.getElementById("typeahead-container").appendChild(container);
-	// }
+    //     document.getElementById("typeahead-container").appendChild(container);
+    // }
 
-	// function remove() {
-	//     console.log("remove item", this.closest("div"));
-	//     this.closest("div").remove();
-	// }
+    // function remove() {
+    //     console.log("remove item", this.closest("div"));
+    //     this.closest("div").remove();
+    // }
 
-	const inputElement = document.getElementById("typeahead");
+    const inputElement = document.getElementById("typeahead");
 
-	const instance = typeahead({
-		input: inputElement,
-		source: {
-			local: author_names,
-		}
-	});
+    const instance = typeahead({
+        input: inputElement,
+        source: {
+            local: author_names,
+        }
+    });
 
-	initEditBoxes();
-	initUneditHandler();
+    initEditBoxes();
+    initUneditHandler();
 };
 
 function author_item(value) {
@@ -697,6 +702,8 @@ function buttonEvents() {
         box.innerHTML = content;
 
         container.appendChild(box);
+
+        // TODO: redraw plotly
     };
     if (!document.getElementById("img-load")) {
         return;
@@ -747,69 +754,34 @@ function json_parse(data) {
 }
 
 function loadPlots() {
-    const boxes = document.getElementById("boxes");
+    var boxes = document.getElementById("boxes");
 
     for (let i = 0; i < boxes.children.length; i++) {
-        const parent_element = boxes.children[i];
-
+        var parent_element = boxes.children[i];
         const data_content = parent_element.getAttribute("data-content");
+
+        //TODO: bug?!
+        console.log("content", parent_element.innerText);
 
         const head_data = data_content.match(/(?<=\<p\s)[\s,placeholder\=\"plotly\",(\w+\=\"?\'?\w+\"?\'?)]+(?=\>)/sgm);
         const body = data_content.match(/(?<=<p\s?[\s,(\w+\=\"?\'?\w+\"?\'?)]*>).*?(?=\<\/p\>)/gsm);
-        // /(?<=>).*(?=\<\/p\>)/gs
-        // /\<p\s[placeholder\=\"plotly\",visibility\=\"hidden\",id=\"\w+\",\s]+\>.*\<\/p\>/sgmU
 
         if (head_data) {
-            for (let j = 0; j < head_data.length; j++) {
-                const header = header_data_to_json(head_data[j]);
+            const placeholder_list = parent_element.querySelectorAll('p[placeholder]');
 
-                if (header["placeholder"] && header["placeholder"] == "plotly") {
+            for (let j = 0; j < placeholder_list.length; j++) {
+                if (placeholder_list[j].getAttribute("placeholder") == "plotly") {
+
                     var content = json_parse(repairJson(body[j]));
 
                     if (content && Object.keys(content).length != 0) {
-                        const placeholder = parent_element.querySelectorAll('p[placeholder="plotly"]')[j];
-			
-			    if(placeholder) {
-
-				// Neues Div für Plot erstellen
-				const newPlotDiv = document.createElement('div');
-				newPlotDiv.id = "plotly-" + i + "-" + j;
-
-				// Div nach dem <p> einfügen
-				placeholder.insertAdjacentElement('afterend', newPlotDiv);
-
-				// Plot rendern
-				Plotly.newPlot(newPlotDiv, content["data"], content["layout"], content["config"]);
-
-				// <p> entfernen
-				placeholder.remove();
-			    }
+                        placeholder_list[j].id = "plotly-" + i + "-" + j;
+                        Plotly.newPlot(placeholder_list[j], content["data"], content["layout"], content["config"]);
+                        placeholder_list[j].innerHTML = placeholder_list[j].innerHTML.replace(/\{[\{,\},\[,\],\,\:,\",\',\s,\w+]*\}/gm, "");
                     }
                 }
             }
         }
-
-        log(parent_element.innerHTML)
-
-        parent_element.innerHTML.replaceAll(/(?<=<p\s?[\s,(\w+\=\"?\'?\w+\"?\'?)]*>).*?(?=\<\/p\>)/gsm, "");
-
-        //Example:
-        //<p id="test2" placeholder="plotly" visibility="hidden">
-        // {
-        // data: [{
-        //     y:['Marc', 'Henrietta', 'Jean', 'Claude', 'Jeffrey', 'Jonathan', 'Jennifer', 'Zacharias'],
-        //       x: [90, 40, 60, 80, 75, 92, 87, 73],
-        //       type: 'bar',
-        //       orientation: 'h'}],
-        // layout: {
-        //     title: {
-        //         text: 'Always Display the Modebar'
-        //     },
-        //     showlegend: false
-        // },
-        // config: {displayModeBar: true}
-        // }
-        // </p>
     }
 }
 
