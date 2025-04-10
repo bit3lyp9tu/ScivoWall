@@ -1,6 +1,8 @@
 
 var author_names = [];
 
+var log = console.log;
+
 function url_to_json() {
     const result = {};
 
@@ -698,7 +700,9 @@ function loadPlots() {
     const boxes = document.getElementById("boxes");
 
     for (let i = 0; i < boxes.children.length; i++) {
-        const data_content = boxes.children[i].getAttribute("data-content");
+        const parent_element = boxes.children[i];
+
+        const data_content = parent_element.getAttribute("data-content");
 
         const head_data = data_content.match(/(?<=\<p\s)[\s,placeholder\=\"plotly\",(\w+\=\"?\'?\w+\"?\'?)]+(?=\>)/sgm);
         const body = data_content.match(/(?<=<p\s?[\s,(\w+\=\"?\'?\w+\"?\'?)]*>).*?(?=\<\/p\>)/gsm);
@@ -716,18 +720,32 @@ function loadPlots() {
                     var content = json_parse(repairJson(body[j]));
 
                     if (content && Object.keys(content).length != 0) {
-                        const plot = boxes.children[i].querySelectorAll('p[placeholder="plotly"]')[j];
-                        plot.id = "plotly-" + i + "-" + j;
-                        // plot.style.visibility = 'hidden';
-                        Plotly.newPlot(plot, content["data"], content["layout"], content["config"]);
+                        const placeholder = parent_element.querySelectorAll('p[placeholder="plotly"]')[j];
+
+                        // Neues Div für den Plot erstellen
+                        const newPlotDiv = document.createElement('div');
+                        newPlotDiv.id = "plotly-" + i + "-" + j;
+
+                        // Insert after (also direkt nach dem Placeholder einfügen)
+                        if (placeholder.nextSibling) {
+                            placeholder.parentNode.insertBefore(newPlotDiv, placeholder.nextSibling);
+                        } else {
+                            // Wenn kein nextSibling existiert, einfach am Ende einfügen
+                            placeholder.parentNode.appendChild(newPlotDiv);
+                        }
+
+                        // Plot einfügen
+                        Plotly.newPlot(newPlotDiv, content["data"], content["layout"], content["config"]);
                     }
 
-                    console.log(boxes.children[i].innerText);
+                    console.log(parent_element.innerText);
 
                 }
             }
 
-            boxes.children[i].innerHTML.replaceAll(/(?<=<p\s?[\s,(\w+\=\"?\'?\w+\"?\'?)]*>).*?(?=\<\/p\>)/gsm, "");
+            log(parent_element.innerHTML)
+
+            parent_element.innerHTML.replaceAll(/(?<=<p\s?[\s,(\w+\=\"?\'?\w+\"?\'?)]*>).*?(?=\<\/p\>)/gsm, "");
         }
 
         //Example:
