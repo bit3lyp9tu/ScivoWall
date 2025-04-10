@@ -245,56 +245,73 @@ function edit_box_if_no_other_was_selected (_target) {
             selected_box = element;
 }
 
-async function edit_box_if_other_was_selected(_target) {
-            console.log("TESTETSTSTTSTTS", selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``));
-            // selected_box = selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``);
-            // if (element.querySelector("p[placeholder='plotly']")) {
-            // }
+async function unedit_box() {
+	//console.log("TESTETSTSTTSTTS", selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``));
+	// selected_box = selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``);
+	// if (element.querySelector("p[placeholder='plotly']")) {
+	// }
 
-            // change old back to non-editable and save old edits
-            const element = createArea("div", selected_box.id, "box", selected_box.value);
+	// change old back to non-editable and save old edits
+	if(selected_box) {
+		const element = createArea("div", selected_box.id, "box", selected_box.value);
 
-            await typeset(element, () => marked.marked(selected_box.value));
-            if (selected_box && selected_box.parentNode) {
-		    selected_box.parentNode.replaceChild(element, selected_box);
-	    }
-            //} else {
-            //                console.error("Selected box has no parent Node or is undefined:", selected_box);
-            //          }
+		await typeset(element, () => marked.marked(selected_box.value));
+		if (selected_box && selected_box.parentNode) {
+			selected_box.parentNode.replaceChild(element, selected_box);
+		}
 
-            loadImages();
+		loadImages();
 
-            loadPlots();
+		loadPlots();
 
-            // forget old selected
-            selected_box = null;
+		// forget old selected
+		selected_box = null;
+	}
+
+	initEditBoxes();
 }
 
 async function edit_box (_target) {
         if (_target.tagName === "DIV" && _target.id.startsWith("editBox") && selected_box === null) { // if new editBox gets selected
 		edit_box_if_no_other_was_selected(_target)
         } else if (selected_box && _target !== selected_box) {// if there was something once selected and if the new selected is different from the old
-		edit_box_if_other_was_selected(_target);
+		unedit_box();
         }
 }
 
-async function initEditBoxes() {
-    if (await isEditView()) {
-        const editBoxes = Array.from(document.querySelectorAll('[id^="editBox-"]'));
+function initUneditHandler() {
+	document.addEventListener('click', function (event) {
+		// Prüfe, ob der Klick *innerhalb* einer editBox war
+		const isInsideEditBox = event.target.closest('[id^="editBox-"]');
 
-        editBoxes.forEach(box => {
-            box.addEventListener('click', function (event) {
-                // Abbrechen, wenn das geklickte Element Teil der Plotly-UI ist
-                if (event.target.closest('.modebar-container, .plotly, .zoomlayer')) {
-                    return; // Ignoriere Plotly-interne Klicks
-                }
-
-                edit_box(this);
-            });
-        });
-    }
+		// Wenn NICHT innerhalb einer editBox → unedit_box() aufrufen
+		if (!isInsideEditBox) {
+			unedit_box();
+		}
+	});
 }
 
+async function initEditBoxes() {
+	if (await isEditView()) {
+		const editBoxes = Array.from(document.querySelectorAll('[id^="editBox-"]'));
+
+		editBoxes.forEach(box => {
+			// Prüfen, ob der Listener bereits gesetzt wurde
+			if (!box._hasEditBoxClickListener) {
+				box.addEventListener('click', function (event) {
+					// Abbrechen, wenn das geklickte Element Teil der Plotly-UI ist
+					if (event.target.closest('.modebar-container, .plotly, .zoomlayer')) {
+						return; // Ignoriere Plotly-interne Klicks
+					}
+
+					edit_box(this);
+				});
+
+				box._hasEditBoxClickListener = true;
+			}
+		});
+	}
+}
 
 async function edit_box_event (event) {
 	const url = url_to_json();
@@ -442,99 +459,100 @@ function createEditMenu() {
 }
 
 window.onload = async function () {
-    const data = url_to_json();
-    let response = {};
+	const data = url_to_json();
+	let response = {};
 
-    const state = await isEditView();
-    if (state) {
-        console.log("logged in");
-        createEditMenu();
-    } else {
-        console.log("logged out");
-    }
+	const state = await isEditView();
+	if (state) {
+		console.log("logged in");
+		createEditMenu();
+	} else {
+		console.log("logged out");
+	}
 
-    try {
-        response = await request(data);
+	try {
+		response = await request(data);
 
-        console.log(response);
-    } catch (error) {
-        console.error("content head request failed " + error);
-    }
+		console.log(response);
+	} catch (error) {
+		console.error("content head request failed " + error);
+	}
 
-    // loadPlot(
-    //     "tester",
-    //     [
-    //         {
-    //             x: [1, 2, 3, 4, 5],
-    //             y: [1, 2, 4, 8, 16]
-    //         },
-    //         {
-    //             x: [1, 2, 3, 4, 5],
-    //             y: [2, 2, 1, 11, 15]
-    //         }
-    //     ],
-    //     {
-    //         margin: { t: 1 }
-    //     }
-    // );
+	// loadPlot(
+	//     "tester",
+	//     [
+	//         {
+	//             x: [1, 2, 3, 4, 5],
+	//             y: [1, 2, 4, 8, 16]
+	//         },
+	//         {
+	//             x: [1, 2, 3, 4, 5],
+	//             y: [2, 2, 1, 11, 15]
+	//         }
+	//     ],
+	//     {
+	//         margin: { t: 1 }
+	//     }
+	// );
 
-    if (response.status != 'error') {
-        //TODO: iterate single functions over a shared loop
-        await show(response);
-        loadImages();
+	if (response.status != 'error') {
+		//TODO: iterate single functions over a shared loop
+		await show(response);
+		loadImages();
 
-        loadPlots();
+		loadPlots();
 
-        imgDragDrop();
-        buttonEvents();
+		imgDragDrop();
+		buttonEvents();
 
-    } else {
-        toastr["warning"]("Not Logged in");
-    }
+	} else {
+		toastr["warning"]("Not Logged in");
+	}
 
-    // start with single textfield
-    // once filed with content,
-    //      insert new button field
-    //      should button pressed - field gets removed
+	// start with single textfield
+	// once filed with content,
+	//      insert new button field
+	//      should button pressed - field gets removed
 
-    // if (document.getElementById("typeahead").value) {
-    //     console.log("content");
+	// if (document.getElementById("typeahead").value) {
+	//     console.log("content");
 
-    //     const input = document.createElement("input");
-    //     input.type = "search";
-    //     input.id = "typeahead";
-    //     // input.class = "tt-input";
-    //     input.autocomplete = "on";
-    //     input.placeholder = "...";
+	//     const input = document.createElement("input");
+	//     input.type = "search";
+	//     input.id = "typeahead";
+	//     // input.class = "tt-input";
+	//     input.autocomplete = "on";
+	//     input.placeholder = "...";
 
-    //     const btn = document.createElement("button");
-    //     btn.id = "remove-element";
-    //     // btn.onclick = remove();
-    //     btn.innerText = "X";
+	//     const btn = document.createElement("button");
+	//     btn.id = "remove-element";
+	//     // btn.onclick = remove();
+	//     btn.innerText = "X";
 
-    //     const container = document.createElement("div");
-    //     container.style.display = "flex";
-    //     container.appendChild(input);
-    //     container.appendChild(btn);
+	//     const container = document.createElement("div");
+	//     container.style.display = "flex";
+	//     container.appendChild(input);
+	//     container.appendChild(btn);
 
-    //     document.getElementById("typeahead-container").appendChild(container);
-    // }
+	//     document.getElementById("typeahead-container").appendChild(container);
+	// }
 
-    // function remove() {
-    //     console.log("remove item", this.closest("div"));
-    //     this.closest("div").remove();
-    // }
+	// function remove() {
+	//     console.log("remove item", this.closest("div"));
+	//     this.closest("div").remove();
+	// }
 
-    const inputElement = document.getElementById("typeahead");
+	const inputElement = document.getElementById("typeahead");
 
-    const instance = typeahead({
-        input: inputElement,
-        source: {
-            local: author_names,
-        }
-    });
+	const instance = typeahead({
+		input: inputElement,
+		source: {
+			local: author_names,
+		}
+	});
 
 	initEditBoxes();
+	initUneditHandler();
 };
 
 function author_item(value) {
