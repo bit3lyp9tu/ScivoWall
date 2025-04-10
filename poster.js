@@ -232,8 +232,45 @@ async function show(response) {
 
 var selected_box = null;
 var selected_title = null;
-document.addEventListener("click", async function (event) {
 
+function edit_box (_target) {
+            // change box to editable
+            const element = createArea("textarea", _target.id, "", _target.getAttribute("data-content"));
+            element.rows = Math.round((_target.innerText.match(/(<br>|\n)/g) || []).length * 1.5) + 1;
+            element.style.resize = "none"; //"vertical";
+            element.value = _target.getAttribute("data-content");
+            _target.parentNode.replaceChild(element, _target);
+
+            //  remember box as previously selected
+            selected_box = element;
+}
+
+async function edit_box_if_other_was_selected(_target) {
+            console.log("TESTETSTSTTSTTS", selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``));
+            // selected_box = selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``);
+            // if (element.querySelector("p[placeholder='plotly']")) {
+            // }
+
+            // change old back to non-editable and save old edits
+            const element = createArea("div", selected_box.id, "box", selected_box.value);
+
+            await typeset(element, () => marked.marked(selected_box.value));
+            if (selected_box && selected_box.parentNode) {
+		    selected_box.parentNode.replaceChild(element, selected_box);
+	    }
+            //} else {
+            //                console.error("Selected box has no parent Node or is undefined:", selected_box);
+            //          }
+
+            loadImages();
+
+            loadPlots();
+
+            // forget old selected
+            selected_box = null;
+}
+
+async function edit_box_event (event) {
     const url = url_to_json();
 
     //TODO: check if session-id valid
@@ -265,43 +302,14 @@ document.addEventListener("click", async function (event) {
 
         // Edit Boxes
         if (event.target.tagName === "DIV" && event.target.id.startsWith("editBox") && selected_box === null) { // if new editBox gets selected
-
-            // change box to editable
-            const element = createArea("textarea", event.target.id, "", event.target.getAttribute("data-content"));
-            element.rows = Math.round((event.target.innerText.match(/(<br>|\n)/g) || []).length * 1.5) + 1;
-            element.style.resize = "none"; //"vertical";
-            element.value = event.target.getAttribute("data-content");
-            event.target.parentNode.replaceChild(element, event.target);
-
-            //  remember box as previously selected
-            selected_box = element;
-
+		edit_box(event.target)
         } else if (selected_box && event.target !== selected_box) {// if there was something once selected and if the new selected is different from the old
-
-            console.log("TESTETSTSTTSTTS", selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``));
-            // selected_box = selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``);
-            // if (element.querySelector("p[placeholder='plotly']")) {
-            // }
-
-            // change old back to non-editable and save old edits
-            const element = createArea("div", selected_box.id, "box", selected_box.value);
-
-            await typeset(element, () => marked.marked(selected_box.value));
-            //if (selected_box && selected_box.parentNode) {
-            selected_box.parentNode.replaceChild(element, selected_box);
-            //} else {
-            //                console.error("Selected box has no parent Node or is undefined:", selected_box);
-            //          }
-
-            loadImages();
-
-            loadPlots();
-
-            // forget old selected
-            selected_box = null;
+		edit_box_if_other_was_selected(event.target);
         }
     }
-});
+}
+
+document.addEventListener("click", edit_box_event);
 
 //TODO: check for invalid names during image upload
 function imgDragDrop() {
@@ -714,39 +722,34 @@ function loadPlots() {
                 const header = header_data_to_json(head_data[j]);
 
                 if (header["placeholder"] && header["placeholder"] == "plotly") {
-                    // console.log("header", header);
-                    // console.log("body", (repairJson(body[j])));
-
                     var content = json_parse(repairJson(body[j]));
 
                     if (content && Object.keys(content).length != 0) {
                         const placeholder = parent_element.querySelectorAll('p[placeholder="plotly"]')[j];
+			
+			    if(placeholder) {
 
-                        // Neues Div für den Plot erstellen
-                        const newPlotDiv = document.createElement('div');
-                        newPlotDiv.id = "plotly-" + i + "-" + j;
+				// Neues Div für Plot erstellen
+				const newPlotDiv = document.createElement('div');
+				newPlotDiv.id = "plotly-" + i + "-" + j;
 
-                        // Insert after (also direkt nach dem Placeholder einfügen)
-                        if (placeholder.nextSibling) {
-                            placeholder.parentNode.insertBefore(newPlotDiv, placeholder.nextSibling);
-                        } else {
-                            // Wenn kein nextSibling existiert, einfach am Ende einfügen
-                            placeholder.parentNode.appendChild(newPlotDiv);
-                        }
+				// Div nach dem <p> einfügen
+				placeholder.insertAdjacentElement('afterend', newPlotDiv);
 
-                        // Plot einfügen
-                        Plotly.newPlot(newPlotDiv, content["data"], content["layout"], content["config"]);
+				// Plot rendern
+				Plotly.newPlot(newPlotDiv, content["data"], content["layout"], content["config"]);
+
+				// <p> entfernen
+				placeholder.remove();
+			    }
                     }
-
-                    console.log(parent_element.innerText);
-
                 }
             }
-
-            log(parent_element.innerHTML)
-
-            parent_element.innerHTML.replaceAll(/(?<=<p\s?[\s,(\w+\=\"?\'?\w+\"?\'?)]*>).*?(?=\<\/p\>)/gsm, "");
         }
+
+        log(parent_element.innerHTML)
+
+        parent_element.innerHTML.replaceAll(/(?<=<p\s?[\s,(\w+\=\"?\'?\w+\"?\'?)]*>).*?(?=\<\/p\>)/gsm, "");
 
         //Example:
         //<p id="test2" placeholder="plotly" visibility="hidden">
