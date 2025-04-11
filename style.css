@@ -253,3 +253,24 @@ p[placeholder="plotly"] {
     height: 500px;
     /* object-fit: cover; */
 }
+
+/* TODO find a better way to prevent overflow*/
+p.js-plotly-plot>div>div {
+    overflow: hidden;
+    width: auto;
+    /* height: 500px; */
+
+    /* margin: 0 0 0 0; */
+}
+
+img.table-img {
+    height: 7%;
+    width: 7%;
+}
+
+img.table-img:hover {
+    height: 50%;
+    width: 50%;
+
+    overflow: visible;
+}

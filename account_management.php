@@ -202,6 +202,53 @@
         }
     }
 
+    function fetch_images($user_id) {
+        if ($user_id) {
+            return json_encode(getterQuery2(
+                "SELECT 0 AS image_data, image.file_name AS name, from_unixtime(image.last_edit_date) AS last_edit, poster.title AS title
+                FROM image
+                INNER JOIN poster ON image.fk_poster=poster.poster_id
+                WHERE poster.user_id=?",
+                $user_id
+            ), true);
+
+        }else{
+            return "No or invalid session";
+        }
+    }
+
+    function fetch_img_data($user_id) {
+        if ($user_id) {
+            return json_encode(getterQuery2(
+                "SELECT image.data AS image_data
+                FROM image
+                INNER JOIN poster ON image.fk_poster=poster.poster_id
+                WHERE poster.user_id=?",
+                $user_id
+            ), true);
+
+        }else{
+            return "No or invalid session";
+        }
+    }
+
+    function fetch_authors($user_id) {
+        if ($user_id) {
+
+            return json_encode(getterQuery2(
+                "SELECT author.name AS name, poster.title AS title
+                FROM author
+                INNER JOIN author_to_poster ON author.id=author_to_poster.author_id
+                INNER JOIN poster ON author_to_poster.poster_id=poster.poster_id
+                WHERE poster.user_id=?",
+                $user_id
+            ), true);
+
+        }else{
+            return "No or invalid session";
+        }
+    }
+
     function create_project($name, $user_id) {
 
         if ($user_id != null) {
@@ -225,6 +272,59 @@
         }else{
             return "No or invalid session";
             #$msgs["errors"][] = "No or invalid session";
+        }
+    }
+
+    // TODO: UNTESTED / NOT WORKING
+    function delete_author($local_id, $user_id) {
+        if ($user_id != null) {
+
+            // problably only author_to_poster and poster is needed
+            $result = getterQuery2(
+                "SELECT author.id
+                FROM (
+                    SELECT ROW_NUMBER() OVER (ORDER BY author.id) AS local_id, author.id
+                    FROM author
+                    INNER JOIN author_to_poster ON author.id=author_to_poster.poster_id
+                    INNER JOIN poster ON author_to_poster.poster_id=poster.poster_id
+                    WHERE user_id=?
+                ) AS ranked_authors
+                WHERE local_id=?",
+                $user_id, $local_id
+            );
+
+            // return $res;
+
+        }else{
+            return "No or invalid session";
+        }
+    }
+
+    // TODO: UNTESTED
+    function delete_image($local_id, $user_id) {
+        if ($user_id != null) {
+
+            $result = getterQuery2(
+                "SELECT image_id
+                FROM (
+                    SELECT ROW_NUMBER() OVER (ORDER BY image_id) AS local_id, image_id
+                    FROM image
+                    INNER JOIN poster ON fk_poster=poster_id
+                    WHERE user_id=?
+                ) AS ranked_images
+                WHERE local_id=?",
+                $user_id, $local_id
+            );
+
+            $res = deleteQuery(
+                "DELETE FROM image WHERE image_id=?",
+                "i", $result
+            );
+
+            return $res;
+
+        }else{
+            return "No or invalid session";
         }
     }
 
@@ -299,6 +399,24 @@
 
             $user_id = getValidUserFromSession();
             echo fetch_projects($user_id, false);
+        }
+
+        if ($_POST['action'] == 'fetch_authors') {
+
+            $user_id = getValidUserFromSession();
+            echo fetch_authors($user_id);
+        }
+
+        if ($_POST['action'] == 'fetch_images') {
+
+            $user_id = getValidUserFromSession();
+            echo fetch_images($user_id);
+        }
+
+        if ($_POST['action'] == 'fetch_img_data') {
+
+            $user_id = getValidUserFromSession();
+            echo fetch_img_data($user_id);
         }
 
         if ($_POST['action'] == 'delete_project') {

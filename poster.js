@@ -754,6 +754,8 @@ function json_parse(data) {
 }
 
 function loadPlots() {
+    // TODO: plotly json with with breaks gets read but also converted into markdown
+
     var boxes = document.getElementById("boxes");
 
     for (let i = 0; i < boxes.children.length; i++) {

@@ -28,5 +28,15 @@
     <div id="table-container"></div>
 
     <!-- List Authors the User worked with + add new Authors -->
+
+    <br>
+
+    <button id="fetch-authors">Fetch Authors</button>
+    <div id="author-list"></div>
+    <br>
+
+    <button id="fetch-images">Fetch Images</button>
+    <div id="image-list"></div>
+
 </body>
 </html>

@@ -68,12 +68,19 @@ function updateVisibility(id, value) {
     });
 }
 
-function createTableFromJSON(id, data, ...additional_columns) {
+function change_row(parent_id, index) {
+    console.log(parent_id, index);
+}
+
+// TODO: may need an overwork
+function createTableFromJSON(id, data, editable_columns, ...additional_columns) {
     const table = document.createElement("table");
     table.setAttribute("border", "1");
 
     const headerRow = document.createElement("tr");
     const headers = Object.keys(data);
+
+    const config = {};
 
     headers.forEach(header => {
         const th = document.createElement("th");
@@ -84,7 +91,7 @@ function createTableFromJSON(id, data, ...additional_columns) {
 
     for (let i = 0; i < data[headers[0]].length; i++) {
         const row = document.createElement("tr");
-        row.id = "nr-" + (i + 1);
+        row.id = id + "--nr-" + (i + 1);
 
         headers.forEach(header => {
             const td = document.createElement("td");
@@ -94,11 +101,33 @@ function createTableFromJSON(id, data, ...additional_columns) {
                 elem.setAttribute("type", "checkbox");
                 elem.checked = data[header][i];
                 elem.onclick = function () {
-                    updateVisibility(this.closest('tr').id.split("-")[1], this.checked ? 1 : 0);
+                    updateVisibility(this.closest('tr').id.split("--nr-")[1], this.checked ? 1 : 0);
                 }
                 td.appendChild(elem);
+            } else if (header == "image_data") {
+                const container = document.createElement("DIV");
+                const img = document.createElement("IMG");
+                img.src = '';
+
+                container.appendChild(img);
+                td.appendChild(container);
+
             } else {
-                td.innerText = data[header][i];
+                if (editable_columns.includes(headers.indexOf(header))) {
+
+                    const elem = document.createElement("INPUT");
+                    elem.setAttribute("type", "text");
+                    elem.value = data[header][i];
+
+                    elem.onchange = function () {
+                        change_row(...this.closest('tr').id.split("--nr-"));
+                    }
+
+                    td.appendChild(elem);
+
+                } else {
+                    td.innerText = data[header][i];
+                }
             }
             row.appendChild(td);
         });
@@ -169,7 +198,7 @@ function loadTable(response) {
             // link.title = "Edit";
 
             link.onclick = async function () {
-                var local_id = this.closest('tr').id.split("-")[1];
+                var local_id = this.closest('tr').id.split("--nr-")[1];
                 const poster_id = await edit_translation(local_id);
                 window.location.href = "poster.php?id=" + poster_id + "&mode=private";
             }
@@ -184,13 +213,13 @@ function loadTable(response) {
             btn.className = "btn";
             btn.value = "Delete";
             btn.onclick = function () {
-                deleteRow(this.closest('tr').id.split("-")[1]);
+                deleteRow(this.closest('tr').id.split("--nr-")[1]);
             }
             td.appendChild(btn);
             return td;
         };
 
-        createTableFromJSON("table-container", data, editColumn, deleteColumn);
+        createTableFromJSON("table-container", data, [0], editColumn, deleteColumn);
     }
 }
 
@@ -233,6 +262,115 @@ $(document).ready(function () {
         });
     });
 });
+
+document.getElementById("fetch-authors").onclick = function () {
+    document.getElementById("author-list").replaceChildren();
+
+    $.ajax({
+        type: "POST",
+        url: "account_management.php",
+        data: {
+            action: "fetch_authors",
+        },
+        success: function (response) {
+            // console.log(JSON.parse(response));
+
+            if (response != "No or invalid session") {
+                if (response != "No results found") {
+
+                    const deleteColumn = (index) => {
+                        const td = document.createElement("td");
+                        const btn = document.createElement('input');
+                        btn.type = "button";
+                        btn.className = "btn";
+                        btn.value = "Delete";
+                        btn.onclick = function () {
+                            // deleteRow(this.closest('tr').id.split("--nr-")[1]);
+                            console.log(this.closest('tr').id.split("--nr-")[1]);
+                        }
+                        td.appendChild(btn);
+                        return td;
+                    };
+
+                    createTableFromJSON("author-list", JSON.parse(response), [0], deleteColumn);
+                }
+            }
+        },
+        error: function (err) {
+            console.error(err);
+        }
+    });
+}
+
+document.getElementById("fetch-images").onclick = function () {
+    document.getElementById("image-list").replaceChildren();
+
+    $.ajax({
+        type: "POST",
+        url: "account_management.php",
+        data: {
+            action: "fetch_images",
+        },
+        success: function (response) {
+
+            if (response != "No or invalid session") {
+                // console.log(JSON.parse(response));
+
+                if (response != "No results found") {
+
+                    const deleteColumn = (index) => {
+                        const td = document.createElement("td");
+                        const btn = document.createElement('input');
+                        btn.type = "button";
+                        btn.className = "btn";
+                        btn.value = "Delete";
+                        btn.onclick = function () {
+                            // deleteRow(this.closest('tr').id.split("--nr-")[1]);
+                            console.log(this.closest('tr').id.split("--nr-")[1]);
+                        }
+                        td.appendChild(btn);
+                        return td;
+                    };
+                    createTableFromJSON("image-list", JSON.parse(response), [1], deleteColumn);
+
+                    loadImgsInTable("image-list");
+                }
+            }
+        },
+        error: function (err) {
+            console.error(err);
+        }
+    });
+}
+
+async function loadImgsInTable(id) {
+    const img_data = JSON.parse(await $.ajax({
+        type: "POST",
+        url: "account_management.php",
+        data: {
+            action: 'fetch_img_data'
+        },
+        success: function (response) {
+            return response;
+        },
+        error: function () {
+            console.warn("Unable to fetch Image Data");
+            return "{}";
+        }
+    }))["image_data"];
+
+    const table = document.getElementById(id).children[0].children;
+    if (img_data.length == table.length - 1) {
+        for (let i = 1; i < table.length; i++) {
+            const img = table[i].querySelector('img');
+
+            img.classList.add("table-img");
+            img.src = img_data[i - 1];
+        }
+    } else {
+        console.warn("Rows and Images are unequal [" + img_data.length + ":" + (table.length - 1) + "]");
+    }
+}
 
 document.getElementById("logout").onclick = function () {
     $.ajax({

@@ -231,6 +231,9 @@ test_equal("fetch all projects db check", json_encode(getterQuery2("SELECT poste
 
 test_equal("fetch all projects", implode(",", fetch_projects(1)["title"]), 'TestingTitle2,new Project');
 
+// TODO
+// test_equal("fetch authors user is working with", implode(',', fetch_authors(1)["name"]), '');
+
 test_equal("delete project", delete_project(1, 1), '{"title":["new Project"]}');
 test_equal("delete project db check", json_encode(getterQuery2("SELECT poster_id, title FROM poster"), true), '{"poster_id":[2],"title":["new Project"]}');
 
