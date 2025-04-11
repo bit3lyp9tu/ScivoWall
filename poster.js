@@ -760,7 +760,6 @@ function loadPlots() {
         var parent_element = boxes.children[i];
         const data_content = parent_element.getAttribute("data-content");
 
-        //TODO: bug?!
         console.log("content", parent_element.innerText);
 
         const head_data = data_content.match(/(?<=\<p\s)[\s,placeholder\=\"plotly\",(\w+\=\"?\'?\w+\"?\'?)]+(?=\>)/sgm);
@@ -777,7 +776,7 @@ function loadPlots() {
                     if (content && Object.keys(content).length != 0) {
                         placeholder_list[j].id = "plotly-" + i + "-" + j;
                         Plotly.newPlot(placeholder_list[j], content["data"], content["layout"], content["config"]);
-                        placeholder_list[j].innerHTML = placeholder_list[j].innerHTML.replace(/\{[\{,\},\[,\],\,\:,\",\',\s,\w+]*\}/gm, "");
+                        placeholder_list[j].innerHTML = placeholder_list[j].innerHTML.replace(/\{[\{,\},\[,\],\,\:,\",\',\-,\s,\w+]*\}/gm, "");
                     }
                 }
             }
