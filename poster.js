@@ -703,7 +703,7 @@ function buttonEvents() {
 
         container.appendChild(box);
 
-        // TODO: redraw plotly
+        loadPlots();
     };
     if (!document.getElementById("img-load")) {
         return;
