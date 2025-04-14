@@ -226,7 +226,7 @@ test_equal("is public false", isPublic(1), false);
 editQuery("UPDATE poster SET visible=?", "i", 1);
 test_equal("is public true", isPublic(1), true);
 
-test_equal("create new project", create_project("new Project", 1), '{"title":["TestingTitle2","new Project"]}');
+test_equal("create new project", implode(",", create_project("new Project", 1)["title"]), 'TestingTitle2,new Project');
 test_equal("fetch all projects db check", json_encode(getterQuery2("SELECT poster_id, title, user_id, visible FROM poster"), true), '{"poster_id":[1,2],"title":["TestingTitle2","new Project"],"user_id":[1,1],"visible":[1,0]}');
 
 test_equal("fetch all projects", implode(",", fetch_projects(1)["title"]), 'TestingTitle2,new Project');

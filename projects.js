@@ -33,7 +33,7 @@ function deleteRow(local_id) {
         url: "account_management.php",
         data: {
             action: 'delete_project',
-            local_id: local_id
+            local_id: Number(local_id)
         },
         success: function (response) {
             loadTable(response);
@@ -156,10 +156,9 @@ function createTableFromJSON(id, data, editable_columns, ...additional_columns) 
 
                     elem.onchange = async function () {
                         var param = this.closest('tr').id.split("--nr-");
+                        console.log(this.value, ...param);
 
                         if (param[0] == 'author-list') {
-                            // console.log(param[1], this.value);
-
                             $.ajax({
                                 type: "POST",
                                 url: "account_management.php",
@@ -176,6 +175,26 @@ function createTableFromJSON(id, data, editable_columns, ...additional_columns) 
                                 }
                             });
                         }
+                        if (param[0] == 'table-container') {
+                            console.log("poster rename");
+
+                            $.ajax({
+                                type: "POST",
+                                url: "account_management.php",
+                                data: {
+                                    action: "rename_poster",
+                                    name: this.value,
+                                    id: Number(param[1])
+                                },
+                                success: function (response) {
+                                    console.log(response);
+                                },
+                                error: function (err) {
+                                    console.error(err);
+                                }
+                            });
+                        }
+                        load_project_page_data();
                     }
 
                     td.appendChild(elem);
@@ -404,9 +423,9 @@ async function fetch_images() {
 }
 
 function load_project_page_data() {
-    fetch_images();
-    fetch_authors_list();
     fetch_all_projects();
+    fetch_authors_list();
+    fetch_images();
 }
 
 async function loadImgsInTable(id) {

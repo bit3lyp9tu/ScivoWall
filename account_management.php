@@ -261,7 +261,7 @@
 
                 //refresh list
                 $data = getterQuery2(
-                    "SELECT title FROM poster WHERE poster.user_id=?",
+                    "SELECT title, from_unixtime(last_edit_date) AS last_edit FROM poster WHERE poster.user_id=?",
                     $user_id
                 );
                 return json_encode($data, true);
@@ -272,6 +272,30 @@
         }else{
             return "No or invalid session";
             #$msgs["errors"][] = "No or invalid session";
+        }
+    }
+
+    function rename_poster($name, $local_id, $user_id) {
+        if ($user_id != null) {
+
+            $poster_id = getterQuery2(
+                "SELECT poster_id
+                FROM (
+                    SELECT ROW_NUMBER() OVER (ORDER BY poster_id) AS local_id, poster_id
+                    FROM poster
+                    WHERE user_id=?
+                ) AS ranked_posters
+                WHERE local_id=?",
+                $user_id, $local_id
+            )["poster_id"][0];
+
+            return editQuery(
+                "UPDATE poster SET title=? WHERE poster_id=?",
+                "si", $name, $poster_id
+            );
+
+        }else{
+            return "No or invalid session";
         }
     }
 
@@ -365,6 +389,27 @@
         }
     }
 
+    function rename_image($name, $local_id, $user_id) {
+        if ($user_id != null) {
+
+            $id = getGlobalIDImage($local_id, $user_id);
+            if (is_numeric($id) && $id > 0) {
+                $res = editQuery(
+                    "UPDATE image SET file_name=? WHERE image_id=?",
+                    $name, $id
+                );
+
+                // TODO: edit name in img data
+
+                return $res;
+            }else{
+                return "No or invalid id:" . $id;
+            }
+        }else{
+            return "No or invalid session";
+        }
+    }
+
     // TODO: UNTESTED
     function delete_image($local_id, $user_id) {
 
@@ -389,7 +434,7 @@
         if ($user_id != null) {
 
             # evtl aus der ranked_posters view herausholen statt aus der subquery
-            $result = getterQuery2(
+            $poster_id = getterQuery2(
                 "SELECT poster_id
                 FROM (
                     SELECT ROW_NUMBER() OVER (ORDER BY poster_id) AS local_id, poster_id
@@ -398,20 +443,28 @@
                 ) AS ranked_posters
                 WHERE local_id = ?",
                 $user_id, $local_id
+            )["poster_id"][0];
+
+            //delete all images of poster
+            $res .= deleteQuery(
+                "DELETE FROM image WHERE fk_poster=?",
+                "i", $poster_id
             );
+
             $res = deleteQuery(
-                "DELETE FROM poster WHERE poster.poster_id = ?",
-                "i", $result["poster_id"][0]
+                "DELETE FROM poster WHERE poster_id=?",
+                "i", $poster_id
             );
+
             /*
-                if(!$res) {
-                    $msgs["error"][] = "deleteQuery failed...";
-                }
+            if(!$res) {
+                $msgs["error"][] = "deleteQuery failed...";
+            }
             */
             // res  checken: wenn deleteQuery true/false (boolean) zurückgibt chekcen, also fehlerbehandlung
             //refresh list
             $data = getterQuery2(
-                "SELECT title FROM poster WHERE poster.user_id=?",
+                "SELECT title, from_unixtime(last_edit_date) AS last_edit FROM poster WHERE poster.user_id=?",
                 $user_id
             );
             return json_encode($data, true);
@@ -512,6 +565,15 @@
 
             $user_id = getValidUserFromSession();
             echo create_project($name, $user_id);
+        }
+
+        if ($_POST['action'] == 'rename_poster') {
+
+            $name = isset($_POST['name']) ? $_POST['name'] : '';
+            $id = isset($_POST['id']) ? $_POST['id'] : 0;
+            $user_id = getValidUserFromSession();
+
+            echo rename_poster($name, $id, $user_id);
         }
 
         if ($_POST['action'] == 'logout') {

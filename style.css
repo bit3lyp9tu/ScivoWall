@@ -274,3 +274,9 @@ img.table-img:hover {
 
     overflow: visible;
 }
+
+div[data-content]:hover {
+    border: solid;
+    border-color: #83d252;
+    border-width: 1px;
+}

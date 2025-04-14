@@ -131,7 +131,7 @@ async function getLoadedImg(poster_id, img_name, style) {
         }
     });
     // console.log("data: ", JSON.parse(resp).data);
-    console.log(JSON.parse(resp));
+    // console.log(JSON.parse(resp));
 
     const container = document.createElement("div");
     const img = document.createElement("img");
@@ -367,7 +367,7 @@ function imgDragDrop() {
         return;
     }
     if (boxes.children.length == 0) {
-        console.error("boxes has no children");
+        console.error("boxes has no children"); // TODO: throws when boxes empty
         return;
     }
 
@@ -409,6 +409,8 @@ function imgDragDrop() {
                         // console.log(data);
 
                         await imageUpload(data, url["id"]);
+
+                        loadImages();
                     };
 
                     reader.readAsDataURL(file); // Read the file as base64
@@ -762,7 +764,7 @@ function loadPlots() {
         var parent_element = boxes.children[i];
         const data_content = parent_element.getAttribute("data-content");
 
-        console.log("content", parent_element.innerText);
+        // console.log("content", parent_element.innerText);
 
         const head_data = data_content.match(/(?<=\<p\s)[\s,placeholder\=\"plotly\",(\w+\=\"?\'?\w+\"?\'?)]+(?=\>)/sgm);
         const body = data_content.match(/(?<=<p\s?[\s,(\w+\=\"?\'?\w+\"?\'?)]*>).*?(?=\<\/p\>)/gsm);
@@ -816,6 +818,8 @@ var is_draging = false;
 var dragend_item = null;
 
 document.addEventListener("dragstart", function (event) {
+
+    console.log("drawstart event", event.target);
 
     if (document.getElementById("typeahead-container").contains(event.target)) {
         event.target.style.border = "dashed";
