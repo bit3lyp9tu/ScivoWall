@@ -200,10 +200,20 @@
         $results = "";
 
         for ($i=0; $i < sizeof($authors); $i++) {
+            $id = 0;
 
-            $results .= "[" . addAuthor($authors[$i]);
+            $res = getterQuery2(
+                "SELECT id FROM author WHERE name=?", $authors[$i]
+            )["id"];
 
-            $id = getLastInsertID();
+            if (sizeof($res) == 0) {
+                $results .= "[" . addAuthor($authors[$i]);
+                $id = getLastInsertID();
+            }else{
+
+                $id = $res[0];
+            }
+
             $results .= "|" . connectAuthorToPoster($id, $poster_id) . "],";
         }
         return $results;
