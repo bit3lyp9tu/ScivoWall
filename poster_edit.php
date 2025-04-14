@@ -195,6 +195,7 @@
         );
         return $result;
     }
+    # TODO: creates duplicates!
     function addAuthors($poster_id, $authors) {
         $results = "";
 

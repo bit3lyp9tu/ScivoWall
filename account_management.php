@@ -275,25 +275,21 @@
         }
     }
 
-    // TODO: UNTESTED / NOT WORKING
-    function delete_author($local_id, $user_id) {
+    // TODO: UNTESTED
+    function getGlobalIDAuthor($local_id, $user_id) {
         if ($user_id != null) {
 
-            // problably only author_to_poster and poster is needed
-            $result = getterQuery2(
-                "SELECT author.id
+            return getterQuery2(
+                "SELECT author_id
                 FROM (
-                    SELECT ROW_NUMBER() OVER (ORDER BY author.id) AS local_id, author.id
-                    FROM author
-                    INNER JOIN author_to_poster ON author.id=author_to_poster.poster_id
+                    SELECT ROW_NUMBER() OVER (ORDER BY author_to_poster.id) AS local_id, author_to_poster.author_id
+                    FROM author_to_poster
                     INNER JOIN poster ON author_to_poster.poster_id=poster.poster_id
                     WHERE user_id=?
                 ) AS ranked_authors
                 WHERE local_id=?",
                 $user_id, $local_id
-            );
-
-            // return $res;
+            )["author_id"][0];
 
         }else{
             return "No or invalid session";
@@ -301,10 +297,10 @@
     }
 
     // TODO: UNTESTED
-    function delete_image($local_id, $user_id) {
+    function getGlobalIDImage($local_id, $user_id) {
         if ($user_id != null) {
 
-            $result = getterQuery2(
+            return getterQuery2(
                 "SELECT image_id
                 FROM (
                     SELECT ROW_NUMBER() OVER (ORDER BY image_id) AS local_id, image_id
@@ -314,15 +310,75 @@
                 ) AS ranked_images
                 WHERE local_id=?",
                 $user_id, $local_id
-            );
+            )["image_id"][0];
 
-            $res = deleteQuery(
-                "DELETE FROM image WHERE image_id=?",
-                "i", $result
-            );
+        }else{
+            return "No or invalid session";
+        }
+    }
 
-            return $res;
+    // TODO: UNTESTED
+    function rename_author($name, $local_id, $user_id) {
 
+        if ($user_id != null) {
+
+            $id = getGlobalIDAuthor($local_id, $user_id);
+            if (is_numeric($id) && $id > 0) {
+
+                return editQuery(
+                    "UPDATE author SET name=? WHERE id=?",
+                    "si", $name, $id
+                );
+
+            }else{
+                return "No or invalid id:" . $id;
+            }
+        }else{
+            return "No or invalid session";
+        }
+    }
+
+    // TODO: UNTESTED
+    function delete_author($local_id, $user_id) {
+
+        if ($user_id != null) {
+
+            $id = getGlobalIDAuthor($local_id, $user_id);
+            if (is_numeric($id) && $id > 0) {
+                $res = deleteQuery(
+                    "DELETE FROM author WHERE id=?",
+                    "i", $id
+                );
+
+                $res2 = deleteQuery(
+                    "DELETE FROM author_to_poster WHERE author_id=?",
+                    "i", $id
+                );
+
+                return $res . " " . $res2;
+
+            }else{
+                return "No or invalid id:" . $id;
+            }
+        }else{
+            return "No or invalid session";
+        }
+    }
+
+    // TODO: UNTESTED
+    function delete_image($local_id, $user_id) {
+
+        if ($user_id != null) {
+
+            $id = getGlobalIDImage($local_id, $user_id);
+            if (is_numeric($id) && $id > 0) {
+                return deleteQuery(
+                    "DELETE FROM image WHERE image_id=?",
+                    "i", $id
+                );
+            }else{
+                return "No or invalid id:" . $id;
+            }
         }else{
             return "No or invalid session";
         }
@@ -407,10 +463,35 @@
             echo fetch_authors($user_id);
         }
 
+        if ($_POST['action'] == 'rename-author') {
+
+            $name = isset($_POST['name']) ? $_POST['name'] : '';
+            $local_id = isset($_POST['id']) ? $_POST['id'] : 0;
+            $user_id = getValidUserFromSession();
+
+            echo rename_author($name, $local_id, $user_id);
+        }
+
+        if ($_POST['action'] == 'delete-author') {
+
+            $local_id = isset($_POST['id']) ? $_POST['id'] : 0;
+            $user_id = getValidUserFromSession();
+
+            echo delete_author($local_id, $user_id);
+        }
+
         if ($_POST['action'] == 'fetch_images') {
 
             $user_id = getValidUserFromSession();
             echo fetch_images($user_id);
+        }
+
+        if ($_POST['action'] == 'delete-image') {
+
+            $local_id = isset($_POST['id']) ? $_POST['id'] : 0;
+            $user_id = getValidUserFromSession();
+
+            echo delete_image($local_id, $user_id);
         }
 
         if ($_POST['action'] == 'fetch_img_data') {

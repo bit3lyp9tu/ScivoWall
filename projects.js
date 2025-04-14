@@ -50,6 +50,45 @@ function deleteRow(local_id) {
     });
 }
 
+function deleteItem(parent_id, local_id) {
+
+    if (parent_id == 'author-list') {
+        $.ajax({
+            type: "POST",
+            url: "account_management.php",
+            data: {
+                action: "delete-author",
+                id: Number(local_id)
+            },
+            success: function (response) {
+                console.log(response);
+                fetch_authors_list();
+            },
+            error: function (err) {
+                console.error(err);
+            }
+        });
+    }
+
+    if (parent_id == 'image-list') {
+        $.ajax({
+            type: "POST",
+            url: "account_management.php",
+            data: {
+                action: "delete-image",
+                id: Number(local_id)
+            },
+            success: function (response) {
+                console.log(response);
+                fetch_images();
+            },
+            error: function (err) {
+                console.error(err);
+            }
+        });
+    }
+}
+
 function updateVisibility(id, value) {
     $.ajax({
         type: "POST",
@@ -66,10 +105,6 @@ function updateVisibility(id, value) {
             console.error(err);
         }
     });
-}
-
-function change_row(parent_id, index) {
-    console.log(parent_id, index);
 }
 
 // TODO: may need an overwork
@@ -119,8 +154,28 @@ function createTableFromJSON(id, data, editable_columns, ...additional_columns) 
                     elem.setAttribute("type", "text");
                     elem.value = data[header][i];
 
-                    elem.onchange = function () {
-                        change_row(...this.closest('tr').id.split("--nr-"));
+                    elem.onchange = async function () {
+                        var param = this.closest('tr').id.split("--nr-");
+
+                        if (param[0] == 'author-list') {
+                            // console.log(param[1], this.value);
+
+                            $.ajax({
+                                type: "POST",
+                                url: "account_management.php",
+                                data: {
+                                    action: "rename-author",
+                                    name: this.value,
+                                    id: Number(param[1])
+                                },
+                                success: function (response) {
+                                    console.log(response);
+                                },
+                                error: function (err) {
+                                    console.error(err);
+                                }
+                            });
+                        }
                     }
 
                     td.appendChild(elem);
@@ -235,35 +290,35 @@ function isJSON(data) {
 $(document).ready(function () {
     let registerForm = document.getElementById("load-form");
 
-    registerForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-
-        $.ajax({
-            type: "POST",
-            url: "account_management.php",
-            data: {
-                action: 'fetch_all_projects'
-            },
-            success: function (response) {
-                if (response != "No or invalid session") {
-                    if (response != "No results found") {
-                        loadTable(response);
-                        toastr["success"]("Loading Projects");
-                    } else {
-                        toastr["warning"]("No results found");
-                    }
-                } else {
-                    toastr["warning"]("Not logged in");
-                }
-            },
-            error: function () {
-                toastr["error"]("An error occurred");
-            }
-        });
-    });
+    load_project_page_data();
 });
 
-document.getElementById("fetch-authors").onclick = function () {
+async function fetch_all_projects() {
+    $.ajax({
+        type: "POST",
+        url: "account_management.php",
+        data: {
+            action: 'fetch_all_projects'
+        },
+        success: function (response) {
+            if (response != "No or invalid session") {
+                if (response != "No results found") {
+                    loadTable(response);
+                    toastr["success"]("Loading Projects");
+                } else {
+                    toastr["warning"]("No results found");
+                }
+            } else {
+                toastr["warning"]("Not logged in");
+            }
+        },
+        error: function () {
+            toastr["error"]("An error occurred");
+        }
+    });
+}
+
+async function fetch_authors_list() {
     document.getElementById("author-list").replaceChildren();
 
     $.ajax({
@@ -285,8 +340,11 @@ document.getElementById("fetch-authors").onclick = function () {
                         btn.className = "btn";
                         btn.value = "Delete";
                         btn.onclick = function () {
-                            // deleteRow(this.closest('tr').id.split("--nr-")[1]);
-                            console.log(this.closest('tr').id.split("--nr-")[1]);
+                            var param = this.closest('tr').id.split("--nr-");
+
+                            console.log(param[0], param[1], this.value);
+
+                            deleteItem(...this.closest('tr').id.split("--nr-"));
                         }
                         td.appendChild(btn);
                         return td;
@@ -302,7 +360,7 @@ document.getElementById("fetch-authors").onclick = function () {
     });
 }
 
-document.getElementById("fetch-images").onclick = function () {
+async function fetch_images() {
     document.getElementById("image-list").replaceChildren();
 
     $.ajax({
@@ -326,7 +384,9 @@ document.getElementById("fetch-images").onclick = function () {
                         btn.value = "Delete";
                         btn.onclick = function () {
                             // deleteRow(this.closest('tr').id.split("--nr-")[1]);
-                            console.log(this.closest('tr').id.split("--nr-")[1]);
+                            console.log(...this.closest('tr').id.split("--nr-"));
+
+                            deleteItem(...this.closest('tr').id.split("--nr-"));
                         }
                         td.appendChild(btn);
                         return td;
@@ -341,6 +401,12 @@ document.getElementById("fetch-images").onclick = function () {
             console.error(err);
         }
     });
+}
+
+function load_project_page_data() {
+    fetch_images();
+    fetch_authors_list();
+    fetch_all_projects();
 }
 
 async function loadImgsInTable(id) {
@@ -366,6 +432,8 @@ async function loadImgsInTable(id) {
 
             img.classList.add("table-img");
             img.src = img_data[i - 1];
+            // console.log(i, img_data[i - 1]);
+
         }
     } else {
         console.warn("Rows and Images are unequal [" + img_data.length + ":" + (table.length - 1) + "]");
