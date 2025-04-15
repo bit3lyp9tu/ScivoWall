@@ -18,7 +18,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install dependencies
-      run: apt-get install -y php
+      run: sudo apt-get install -y php
 
     - name: Run main test php
       run: php testing.php
