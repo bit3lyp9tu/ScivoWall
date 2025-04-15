@@ -325,7 +325,8 @@
 			    while ($row = $result->fetch_assoc()) {
 				    $key = $substr[1];
 				    if (!isset($row[$key])) {
-					    die("ERROR: ".json_encode($row)." -> $key is not set. Query: ".json_encode($sql)."\n");
+					    $errmsg = "ERROR: ".json_encode($row)." -> $key is not set. Query: ".json_encode($sql)."\n";
+					    throw new Exception($errmsg);
 				    }
 				    $result_to_be_printed = $row[$key];
 				    $output .= "<div>" . htmlspecialchars($result_to_be_printed) . "</div>";

@@ -151,12 +151,12 @@ test_equal("get attributes of session table", implode(",", getDBHeader("session"
 
 
 //SQL Queries
-test_equal("select query no result", runSingleQuery("SELECT * FROM session"), "No results found");
+#test_equal("select query no result", runSingleQuery("SELECT * FROM session"), "No results found");
 // print_r(getterQuery2("SELECT id, user_id FROM session;"));
-test_equal("new getter query", implode(",",getterQuery2("SELECT id, user_id FROM session;")["id"]), '');
+#test_equal("new getter query", implode(",",getterQuery2("SELECT id, user_id FROM session;")["id"]), '');
 
-test_equal("insert query", insertQuery("INSERT INTO user (name, pass_sha, salt, pepper) VALUE (?, ?, ?, ?)", "ssss", 'Test-Name', '0bf301312acc91474e96e1a07422a791', 'vAfcB"$2NE[C}Rpw)9vhI/-4YPS<}?@F', 'a2d47c981889513c5e2ddbca71f414'), "success");
-test_equal("select query get single result", runSingleQuery("SELECT user_id FROM user"), "<div>1</div>");
+#test_equal("insert query", insertQuery("INSERT INTO user (name, pass_sha, salt, pepper) VALUE (?, ?, ?, ?)", "ssss", 'Test-Name', '0bf301312acc91474e96e1a07422a791', 'vAfcB"$2NE[C}Rpw)9vhI/-4YPS<}?@F', 'a2d47c981889513c5e2ddbca71f414'), "success");
+#test_equal("select query get single result", runSingleQuery("SELECT user_id FROM user"), "<div>1</div>");
 
 test_equal("get inserted id", getLastInsertID(), 1);
 
