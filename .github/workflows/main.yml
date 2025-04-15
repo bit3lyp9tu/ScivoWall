@@ -22,7 +22,9 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install dependencies
-      run: sudo apt-get install -y php mysql-server
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y php mysql-server
 
     - uses: getong/mariadb-action@v1.11
       with:
