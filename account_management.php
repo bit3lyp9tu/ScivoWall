@@ -267,7 +267,7 @@
                     "SELECT title, from_unixtime(last_edit_date) AS last_edit FROM poster WHERE poster.user_id=?",
                     $user_id
                 );
-                return json_encode($data, true);
+                return json_encode($data, false);
             }else {
                 return "ERRORhvjjghgc";
             }
@@ -449,12 +449,12 @@
             )["poster_id"][0];
 
             //delete all images of poster
-            $res .= deleteQuery(
+            $res = deleteQuery(
                 "DELETE FROM image WHERE fk_poster=?",
                 "i", $poster_id
             );
 
-            $res = deleteQuery(
+            $res .= deleteQuery(
                 "DELETE FROM poster WHERE poster_id=?",
                 "i", $poster_id
             );

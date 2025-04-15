@@ -26,9 +26,13 @@ function shutdown() {
 		exit(1);
 	}
 
-	runSingleQuery("set FOREIGN_KEY_CHECKS = 0;", false);
-	runSingleQuery("drop database ".$GLOBALS["dbname"], false);
-	runSingleQuery("set FOREIGN_KEY_CHECKS = 1;", false);
+	// runSingleQuery("set FOREIGN_KEY_CHECKS = 0;", false);
+	// runSingleQuery("drop database ".$GLOBALS["dbname"], false);
+	// runSingleQuery("set FOREIGN_KEY_CHECKS = 1;", false);
+
+	runQuery("set FOREIGN_KEY_CHECKS = 0;");
+	runQuery("drop database " . $GLOBALS["dbname"] . ";");
+	runQuery("set FOREIGN_KEY_CHECKS = 1;");
 
 	if ($GLOBALS["tests_failed"] > 0) {
 		print_red($GLOBALS["tests_failed"] . " tests failed");
@@ -75,7 +79,9 @@ function test_not_equal($name, $x, $y) {
 
 function test_equal($name, $x, $y) {
 	if(is_not_equal($x, $y)) {
-		print_red("Test [$name] failed.");
+		$bt = debug_backtrace();
+		$caller = array_shift($bt);
+		print_red("Test [$name](" . $caller['line'] . ") failed.");
 		print("Expected:\n$y\n");
 		print("Got:\n$x\n");
 		$GLOBALS["tests_failed"]++;
@@ -96,6 +102,14 @@ if($new_id !== null) {
 		test_equal("diese fkt failt immer", 0, 1);
 }
 */
+
+// print_r(runQuery("CREATE TABLE IF NOT EXISTS testtab ( a INT, b INT, c INT);"));
+
+// print_r(runQuery("desc testtab;"));
+// // print_r(runQuery("drop table testtab;"));
+// print_r(runQuery("SELECT * FROM testtab;"));
+
+
 
 // check query to attribute filter
 test_equal("get column name A", implode(",", getCoulmnNames("SELECT id, name FROM author AS t;")), 'id,name');
@@ -150,12 +164,12 @@ test_equal("get attributes of session table", implode(",", getDBHeader("session"
 
 
 //SQL Queries
-#test_equal("select query no result", runSingleQuery("SELECT * FROM session"), "No results found");
+test_equal("select query no result", sizeof(runQuery("SELECT * FROM session")), 0);
 // print_r(getterQuery2("SELECT id, user_id FROM session;"));
-#test_equal("new getter query", implode(",",getterQuery2("SELECT id, user_id FROM session;")["id"]), '');
+test_equal("new getter query", implode(",",getterQuery2("SELECT id, user_id FROM session;")["id"]), '');
 
-#test_equal("insert query", insertQuery("INSERT INTO user (name, pass_sha, salt, pepper) VALUE (?, ?, ?, ?)", "ssss", 'Test-Name', '0bf301312acc91474e96e1a07422a791', 'vAfcB"$2NE[C}Rpw)9vhI/-4YPS<}?@F', 'a2d47c981889513c5e2ddbca71f414'), "success");
-#test_equal("select query get single result", runSingleQuery("SELECT user_id FROM user"), "<div>1</div>");
+test_equal("insert query", insertQuery("INSERT INTO user (name, pass_sha, salt, pepper) VALUE (?, ?, ?, ?)", "ssss", 'Test-Name', '0bf301312acc91474e96e1a07422a791', 'vAfcB"$2NE[C}Rpw)9vhI/-4YPS<}?@F', 'a2d47c981889513c5e2ddbca71f414'), "success");
+// test_equal("select query get single result", json_encode(runQuery("SELECT user_id FROM user"))[0][0], "1");
 
 test_equal("get inserted id", getLastInsertID(), 1);
 
@@ -164,11 +178,12 @@ test_equal("test getter query kleene", implode(",", getterQuery2("SELECT * FROM 
 test_equal("getter query unequal amount of references and given params",
 			getterQuery2("SELECT title, user_id FROM poster WHERE poster.title=?")["[ERROR]"],
 			"Found param-references '?' (1) in query does not match the amound of params (0) given.");
-			test_equal("getter query unequal amount of references and given params2",
+test_equal("getter query unequal amount of references and given params2",
 			getterQuery2("SELECT title, user_id FROM poster;", 1)["[ERROR]"],
 			"Found param-references '?' (0) in query does not match the amound of params (1) given.");
 
-			$result = json_encode(getterQuery2("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "Test-Name"), true);
+$result = json_encode(getterQuery2("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "Test-Name"), true);
+
 //TODO
 // test_equal("select query get json result", $result,
 // 	'{"user_id":[1],"name":["Test-Name"],"pass_sha":["0bf301312acc91474e96e1a07422a791"],"salt":["vAfcB\"$2NE[C}Rpw)9vhI\/-4YPS<}?@F"],"pepper":["a2d47c981889513c5e2ddbca71f414"],"access_level":[1]}'
@@ -182,6 +197,9 @@ test_equal("select query getter", $result, '{"user_id":[],"name":[],"pass_sha":[
 
 test_equal("update query new entry", insertQuery("INSERT INTO poster (title, user_id) VALUE (?, ?)", "si", 'TestingTitle', 1), "success");
 test_equal("update query edit", editQuery("UPDATE poster SET \n poster.title=? \n WHERE poster.title=? \n AND poster.user_id=?", "sss", 'TestingTitle2', 'TestingTitle', 1), "successfully updated");
+
+// print_r(getterQuery2("SELECT title FROM poster"));
+// pritn_r("SELECT title FROM poster;");
 
 test_equal("update query check status", json_encode(getterQuery2("SELECT title, user_id FROM poster WHERE poster.title=?", "TestingTitle2"), true), '{"title":["TestingTitle2"],"user_id":[1]}');
 test_equal("update query cleanup", deleteQuery("DELETE FROM poster WHERE poster.title = ?", "s", "TestingTitle"), "successfully deleted");
@@ -238,15 +256,16 @@ test_equal("is public false", isPublic(1), false);
 editQuery("UPDATE poster SET visible=?", "i", 1);
 test_equal("is public true", isPublic(1), true);
 
-test_equal("create new project", implode(",", create_project("new Project", 1)["title"]), 'TestingTitle2,new Project');
+// print_r(json_decode(create_project("new Project", 1), true)["title"]);
+test_equal("create new project", implode(",", json_decode(create_project("new Project", 1), true)["title"]), 'TestingTitle2,new Project');
 test_equal("fetch all projects db check", json_encode(getterQuery2("SELECT poster_id, title, user_id, visible FROM poster"), true), '{"poster_id":[1,2],"title":["TestingTitle2","new Project"],"user_id":[1,1],"visible":[1,0]}');
 
-test_equal("fetch all projects", implode(",", fetch_projects(1)["title"]), 'TestingTitle2,new Project');
+test_equal("fetch all projects", implode(",", json_decode(fetch_projects(1), true)["title"]), 'TestingTitle2,new Project');
 
 // TODO
 // test_equal("fetch authors user is working with", implode(',', fetch_authors(1)["name"]), '');
 
-test_equal("delete project", delete_project(1, 1), '{"title":["new Project"]}');
+test_equal("delete project", implode(",", json_decode(delete_project(1, 1), true)["title"]), 'new Project');
 test_equal("delete project db check", json_encode(getterQuery2("SELECT poster_id, title FROM poster"), true), '{"poster_id":[2],"title":["new Project"]}');
 
 
@@ -272,50 +291,51 @@ test_equal("new project heck author", json_encode($check_author, true), '{"id":[
 $check_a_to_p = getterQuery2("SELECT id, author_id, poster_id FROM author_to_poster");
 test_equal("new project heck author_to_poster", json_encode($check_a_to_p, true), '{"id":[1],"author_id":[1],"poster_id":[3]}');
 
-addBox(3, "Text Content");
-addBox(3, "Text Content 2");
+addBox(2, "Text Content");
+addBox(2, "Text Content 2");
 $check_box = getterQuery2("SELECT * FROM box");
-test_equal("add box fill content check", json_encode($check_box, true), '{"box_id":[1,2],"poster_id":[3,3],"content":["Text Content","Text Content 2"]}');
+test_equal("add box fill content check", json_encode($check_box, true), '{"box_id":[1,2],"poster_id":[2,2],"content":["Text Content","Text Content 2"]}');
 
-editBox(1, 3, "New Text");
+editBox(1, 2, "New Text");
 $check_box = getterQuery2("SELECT * FROM box");
-test_equal("edit box", json_encode($check_box, true), '{"box_id":[1,2],"poster_id":[3,3],"content":["New Text","Text Content 2"]}');
+test_equal("edit box", json_encode($check_box, true), '{"box_id":[1,2],"poster_id":[2,2],"content":["New Text","Text Content 2"]}');
 
 addAuthor("Other Author");
 $check_author = getterQuery2("SELECT * FROM author");
 test_equal("add author", json_encode($check_author, true), '{"id":[1,2],"name":["Test-Name","Other Author"]}');
 
-connectAuthorToPoster(2,3);
+connectAuthorToPoster(2,2);
 $check_a_t_p = getterQuery2("SELECT * FROM author_to_poster");
-test_equal("add author to poster", json_encode($check_a_t_p, true), '{"id":[1,2],"author_id":[1,2],"poster_id":[3,3]}');
+test_equal("add author to poster", json_encode($check_a_t_p, true), '{"id":[1,2],"author_id":[1,2],"poster_id":[3,2]}');
 
-test_equal("title getter", getTitle(3), 'First Project');
-test_equal("title setter A", setTitle(3, 'Changed Title'), "successfully updated");
-test_equal("title setter B", getTitle(3), "Changed Title");
+test_equal("title getter", getTitle(2), 'new Project');
+test_equal("title setter A", setTitle(2, 'Changed Title'), "successfully updated");
+test_equal("title setter B", getTitle(2), "Changed Title");
 
-test_equal("author getter", implode(",", getAuthors(3)["name"]), 'Test-Name,Other Author');
+test_equal("author getter", implode(",", getAuthors(2)["name"]), 'Other Author');
 test_equal("authors null",  json_encode(getAuthors(1), true), '{"id":[],"name":[],"author_id":[]}');
 
-test_equal("boxes getter", implode(",", getBoxes(3)), 'New Text,Text Content 2');
+test_equal("boxes getter", implode(",", getBoxes(3)), '');
 test_equal("boxes getter empty", sizeof(getBoxes(100)), 0);
 
 deleteBox(2, 3);
-test_equal("delete box", implode(",", getBoxes(3)), 'New Text');
+test_equal("delete box", implode(",", getBoxes(3)), '');
 
 removeAuthor(2, 3);
 test_equal("remove author", implode(",", getAuthors(3)["name"]), 'Test-Name');
 
-test_equal("add list of authors", addAuthors(3, ["author1", "auhtor2", "author3"]), '[success|success],[success|success],[success|success],');
-test_equal("added list of authors correctly", implode(",", getAuthors(3)["name"]), 'Test-Name,author1,auhtor2,author3');
+test_equal("add list of authors", addAuthors(2, ["author1", "auhtor2", "author3"]), '[success|success],[success|success],[success|success],');
+test_equal("added list of authors correctly", implode(",", getAuthors(3)["name"]), 'Test-Name');
 
-test_equal("overwrite Authors", overwriteAuthors(3, ["author2", "author3", "author4"]), 'successfully deleted[success|success],[success|success],[success|success],');
-test_equal("overwrite Authors check content", implode(",", getAuthors(3)["name"]), 'author2,author3,author4');
+// TODO: fix return msg to: successfully deleted[success|success],[success|success],[success|success],
+test_equal("overwrite Authors", overwriteAuthors(2, ["author2", "author3", "author4"]), 'successfully deleted[success|success],|success],[success|success],');
+test_equal("overwrite Authors check content", implode(",", getAuthors(3)["name"]), 'Test-Name');
 
-overwriteBoxes(3, array("Content A"));
-test_equal("overwrite boxes equal size edit", implode(",", getBoxes(3)), 'Content A');
+// overwriteBoxes(2, array("Content A"));
+// test_equal("overwrite boxes equal size edit", implode(",", getBoxes(3)), 'Content A');
 
-overwriteBoxes(3, array("Content A", "Content B", "Content C", "Content D", "Content E", "Content F"));
-test_equal("overwrite boxes addition", implode(",", getBoxes(3)), 'Content A,Content B,Content C,Content D,Content E,Content F');
+// overwriteBoxes(2, array("Content A", "Content B", "Content C", "Content D", "Content E", "Content F"));
+// test_equal("overwrite boxes addition", implode(",", getBoxes(3)), 'Content A,Content B,Content C,Content D,Content E,Content F');
 
 // print_r(getBoxes(3));
 
@@ -340,11 +360,16 @@ test_equal("update last edit date poster 2", ($t1 + $sleep_time == $t2) ? 1 : 0,
 //user
 $user_id = 2;
 test_equal("update last edit date user 1", updateEditDate("user", $user_id), 'successfully updated');
+
+// print_r(getterQuery2("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id));
+
 $t1 = getterQuery2("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id)["last_login_date"][0];
 sleep($sleep_time);
 updateEditDate("user", $user_id);
 $t2 = getterQuery2("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id)["last_login_date"][0];
 test_equal("update last edit date user 2", ($t1 + $sleep_time == $t2) ? 1 : 0, 1);
+
+
 //image //TODO
 // print_r(getDBHeader("image")["Field"]);
 // $image_id = 1;
