@@ -38,7 +38,8 @@ jobs:
 
     - name: Run main test php
       run: |
-        sudo sh -c 'echo "testpw" > /etc/dbpw'
+        sudo mkdir -p /etc/
+        echo "testpw" | sudo tee /etc/dbpw > /dev/null
         php testing.php
 
     - name: Create a new version
