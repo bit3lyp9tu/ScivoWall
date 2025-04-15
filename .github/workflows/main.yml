@@ -1,0 +1,34 @@
+name: Main tests
+
+on:
+  push:
+    branches: "**"
+  pull_request:
+    branches: "**"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: apt-get install -y php
+
+    - name: Run main test php
+      run: php testing.php
+
+    - name: Create a new version
+      if: ${{ success() }}
+      run: |
+        echo "Creating new version"
+        git tag ${{ github.run_number }} || true
+        git push origin --tags || true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
