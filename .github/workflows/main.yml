@@ -18,7 +18,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install dependencies
-      run: sudo apt-get install -y php
+      run: sudo apt-get install -y php mysql-server
 
     - name: Run main test php
       run: |
