@@ -21,7 +21,10 @@ jobs:
       run: sudo apt-get install -y php
 
     - name: Run main test php
-      run: php testing.php
+      run: |
+        pwd
+        ls
+        php testing.php
 
     - name: Create a new version
       if: ${{ success() }}
