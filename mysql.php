@@ -7,10 +7,9 @@
 		$password = file_get_contents($db_path);
 		$password = chop($password);
 	} else {
+		error_log("error_log: $db_path not found! Trying default-pw");
 		$password = "testpw";
-		error_log("$db_path not found!");
 	}
-
 
 	$servername = "localhost";
 	$username = "poster_generator";
