@@ -22,7 +22,8 @@ jobs:
 
     - name: Run main test php
       run: |
-        cd ..
+        pwd
+        ls
         php testing.php
 
     - name: Create a new version
