@@ -1,5 +1,11 @@
 <?php
 
+error_reporting(E_ALL);
+
+set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+});
+
 $isCLI = (php_sapi_name() == 'cli');
 
 if(!$isCLI) {
@@ -14,6 +20,13 @@ include("queries.php");
 include_once("functions.php");
 
 function shutdown() {
+	$error = error_get_last();
+
+	if ($error !== null) {
+		print_red("Script failed with error: " . $error['message']);
+		exit(1);
+	}
+
 	runSingleQuery("set FOREIGN_KEY_CHECKS = 0;", false);
 	runSingleQuery("drop database ".$GLOBALS["dbname"], false);
 	runSingleQuery("set FOREIGN_KEY_CHECKS = 1;", false);

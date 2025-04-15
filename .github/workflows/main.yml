@@ -34,7 +34,7 @@ jobs:
 
     - name: Run main test php
       run: |
-        sudo sh -c 'cat "testpw" > /etc/dbpw'
+        sudo sh -c 'echo "testpw" > /etc/dbpw'
         php testing.php
 
     - name: Create a new version
