@@ -323,7 +323,12 @@
 
 			    // Fetch all rows and generate HTML output
 			    while ($row = $result->fetch_assoc()) {
-				    $output .= "<div>" . htmlspecialchars($row[$substr[1]]) . "</div>";
+				    $key = $substr[1];
+				    if (!isset($row[$key])) {
+					    die("ERROR: ".json_encode($row)." -> $key is not set. Query: ".json_encode($sql)."\n");
+				    }
+				    $result_to_be_printed = $row[$key];
+				    $output .= "<div>" . htmlspecialchars($result_to_be_printed) . "</div>";
 			    }
 
 			    $output .= "";
