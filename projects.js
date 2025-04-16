@@ -152,7 +152,7 @@ function rename_poster(_this, param) {
         url: "account_management.php",
         data: {
             action: "rename_poster",
-            name: this.value,
+            name: _this.value,
             id: Number(param[1])
         },
         success: function (response) {
@@ -175,6 +175,30 @@ function insert_visibility_column(_this, data, td, header, i) {
         }
     }
     td.appendChild(elem);
+}
+
+function create_and_append_image_container(td) {
+    const container = document.createElement("DIV");
+    const img = document.createElement("IMG");
+    img.src = '';
+
+    container.appendChild(img);
+    td.appendChild(container);
+}
+
+async function change_action() {
+    var param = parse_id_name(this);
+    console.log(this.value, ...param);
+
+    if (param[0] == 'author-list') {
+        rename_author(this, param);
+    }
+    if (param[0] == 'table-container') {
+        console.log("poster rename");
+
+        rename_poster(this, param);
+    }
+    load_project_page_data();
 }
 
 // TODO: may need an overwork
@@ -204,13 +228,7 @@ function createTableFromJSON(id, data, editable_columns, ...additional_columns) 
             if (header == "visible") {
                 insert_visibility_column(this, data, td, header, i);
             } else if (header == "image_data") {
-                const container = document.createElement("DIV");
-                const img = document.createElement("IMG");
-                img.src = '';
-
-                container.appendChild(img);
-                td.appendChild(container);
-
+                create_and_append_image_container(td);
             } else {
                 if (editable_columns.includes(headers.indexOf(header))) {
 
@@ -218,20 +236,7 @@ function createTableFromJSON(id, data, editable_columns, ...additional_columns) 
                     elem.setAttribute("type", "text");
                     elem.value = data[header][i];
 
-                    elem.onchange = async function () {
-                        var param = this.closest('tr').id.split("--nr-");
-                        console.log(this.value, ...param);
-
-                        if (param[0] == 'author-list') {
-                            rename_author(this, param);
-                        }
-                        if (param[0] == 'table-container') {
-                            console.log("poster rename");
-
-                            rename_poster(this, param);
-                        }
-                        load_project_page_data();
-                    }
+                    elem.onchange = change_action;
 
                     td.appendChild(elem);
 
@@ -336,8 +341,13 @@ function loadTable(response) {
     }
 }
 
+function parse_id_name(_this) {
+    return _this.closest('tr').id.split("--nr-");
+}
+
 function get_found_id(_this) {
-    var found_id = _this.closest('tr').id.split("--nr-")[1];
+    var parsed_id_name = parse_id_name(_this);
+    var found_id = parsed_id_name[1];
     if (!found_id.match(/^\d+$/)) {
         console.error(`Found-ID is not a number: ${found_id}`);
         return null;
@@ -346,6 +356,12 @@ function get_found_id(_this) {
     found_id = Number(found_id);
 
     return found_id;
+}
+
+function get_found_element_name(_this) {
+    var parsed_id_name = parse_id_name(_this);
+
+    return parsed_id_name[1];
 }
 
 function isJSON(data) {
@@ -410,11 +426,11 @@ async function fetch_authors_list() {
                         btn.className = "btn";
                         btn.value = "Delete";
                         btn.onclick = function () {
-                            var param = this.closest('tr').id.split("--nr-");
+                            var param = parse_id_name(this);
 
                             console.log(param[0], param[1], this.value);
 
-                            deleteItem(...this.closest('tr').id.split("--nr-"));
+                            deleteItem(...param);
                         }
                         td.appendChild(btn);
                         return td;
