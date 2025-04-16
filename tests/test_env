@@ -1,0 +1,9 @@
+#!/bin/bash
+
+export DB_NAME="testDB"
+
+sudo mariadb -e "CREATE DATABASE ${DB_NAME};"
+#sudo mariadb -e "USE ${DB_NAME};"
+
+php testing.php
+

@@ -13,7 +13,14 @@ if(!$isCLI) {
 }
 
 $GLOBALS["tests_failed"] = 0;
-$GLOBALS["dbname"] = "poster_generator_test";
+
+if (sizeof($argv) == 2 && isset($argv[1])) {
+	$GLOBALS["dbname"] = $argv[1];
+} else if (getenv("dbname")) {
+	$GLOBALS["dbname"] = getenv("getenv");
+} else {
+	$GLOBALS["dbname"] = "poster_generator_test";
+}
 
 include("queries.php");
 include_once("functions.php");
