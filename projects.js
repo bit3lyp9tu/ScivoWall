@@ -398,6 +398,11 @@ function get_found_id(_this) {
 function get_found_element_name(_this) {
     var parsed_id_name = parse_id_name(_this);
 
+    if (parsed_id_name.length < 2) {
+        err(`Error in get_found_element: element had no 2 splitted elements`, _this)
+        return null;
+    }
+
     return parsed_id_name[1];
 }
 
@@ -409,10 +414,6 @@ function isJSON(data) {
     }
     return true;
 }
-
-$(document).ready(function () {
-    load_project_page_data();
-});
 
 async function fetch_all_projects() {
     $.ajax({
@@ -454,7 +455,7 @@ async function fetch_authors_list() {
             if (response != "No or invalid session") {
                 if (response != "No results found") {
 
-                    const deleteColumn = (index) => {
+                    function deleteColumn(index) {
                         const td = document.createElement("td");
                         const btn = document.createElement('input');
                         btn.type = "button";
@@ -505,9 +506,11 @@ async function fetch_images() {
                         btn.value = "Delete";
                         btn.onclick = function () {
                             // deleteRow(this.closest('tr').id.split("--nr-")[1]);
-                            console.log(...this.closest('tr').id.split("--nr-"));
+                            var parsed_id_name = parse_id_name(this);
 
-                            deleteItem(...this.closest('tr').id.split("--nr-"));
+                            console.log(parsed_id_name);
+
+                            deleteItem(parsed_id_name);
                         }
                         td.appendChild(btn);
                         return td;
@@ -531,7 +534,7 @@ function load_project_page_data() {
 }
 
 async function loadImgsInTable(id) {
-    const img_data = JSON.parse(await $.ajax({
+    var json_string = await $.ajax({
         type: "POST",
         url: "account_management.php",
         data: {
@@ -544,9 +547,44 @@ async function loadImgsInTable(id) {
             console.warn("Unable to fetch Image Data");
             return "{}";
         }
-    }))["image_data"];
+    });
 
-    const table = document.getElementById(id).children[0].children;
+    if (!isJSON(json_string)) {
+        err(`loadImgsInTable: Is invalid JSON-string: ${json_string}`)
+        return null;
+    }
+
+    var json_parsed = JSON.parse(json_string);
+
+    if (!Object.keys(json_parsed).includes("image_data")) {
+        console.error(`loadImgsInTable: json_parsed does not include image_data`, json_parsed);
+        return null;
+    }
+
+    const img_data = json_parsed["image_data"];
+
+    var elem = document.getElementById(id);
+
+    if (!elem) {
+        console.error(`loadImgsInTable: elem not found by id ${id}`)
+        return null;
+    }
+
+    var elem_children = elem.children;
+
+    if (elem_children.length == 0) {
+        console.error(`loadImgsInTable: elem has no children: `, elem);
+        return null;
+    }
+
+    var first_child = elem_children[0];
+
+    if (!first_child.children.length) {
+        console.error(`loadImgsInTable: first_child has no children`, first_child);
+        return null;
+    }
+
+    const table = first_child.children;
     if (img_data.length == table.length - 1) {
         for (let i = 1; i < table.length; i++) {
             const img = table[i].querySelector('img');
@@ -557,7 +595,7 @@ async function loadImgsInTable(id) {
 
         }
     } else {
-        console.warn("Rows and Images are unequal [" + img_data.length + ":" + (table.length - 1) + "]");
+        console.warn(`Rows and Images are unequal [${img_data.length}: ${(table.length - 1)}]`);
     }
 }
 
@@ -578,3 +616,7 @@ document.getElementById("logout").onclick = function () {
         }
     });
 }
+
+$(document).ready(function () {
+    load_project_page_data();
+});
