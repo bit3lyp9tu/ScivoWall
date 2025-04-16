@@ -230,6 +230,14 @@ function make_headers_editable(editable_columns, headers, data, i, row) {
     });
 }
 
+function append_additional_columns(additional_columns, i, row) {
+    additional_columns.forEach(column => {
+        const td = document.createElement("td");
+        td.appendChild(column(i));
+        row.appendChild(td);
+    });
+}
+
 // TODO: may need an overwork
 function createTableFromJSON(id, data, editable_columns, ...additional_columns) {
     const table = document.createElement("table");
@@ -238,13 +246,12 @@ function createTableFromJSON(id, data, editable_columns, ...additional_columns) 
     const headerRow = document.createElement("tr");
     const headers = Object.keys(data);
 
-    const config = {};
-
     headers.forEach(header => {
         const th = document.createElement("th");
         th.innerText = header;
         headerRow.appendChild(th);
     });
+
     table.appendChild(headerRow);
 
     for (let i = 0; i < data[headers[0]].length; i++) {
@@ -253,14 +260,11 @@ function createTableFromJSON(id, data, editable_columns, ...additional_columns) 
 
         make_headers_editable(editable_columns, headers, data, i, row);
 
-        additional_columns.forEach(column => {
-            const td = document.createElement("td");
-            td.appendChild(column(i));
-            row.appendChild(td);
-        });
+        append_additional_columns(additional_columns, i, row);
 
         table.appendChild(row);
     }
+
     document.getElementById(id).appendChild(table);
 }
 
@@ -348,7 +352,29 @@ function loadTable(response) {
 }
 
 function parse_id_name(_this) {
-    return _this.closest('tr').id.split("--nr-");
+    var elem = null;
+    if (!_this) {
+        console.error("_this is not defined");
+        return;
+    }
+
+    elem = _this;
+
+    if (!elem.closest("tr")) {
+        console.error('_this.closest("tr") could not be found');
+        return;
+    }
+
+    elem = elem.closest("tr");
+
+    if (!elem.id) {
+        console.error("elem.closest('tr') does not have an ID!", elem);
+        return;
+    }
+
+    elem = elem.id;
+
+    return elem.split("--nr-");
 }
 
 function get_found_id(_this) {
@@ -380,8 +406,6 @@ function isJSON(data) {
 }
 
 $(document).ready(function () {
-    let registerForm = document.getElementById("load-form");
-
     load_project_page_data();
 });
 
