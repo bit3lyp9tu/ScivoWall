@@ -201,6 +201,16 @@ async function change_action() {
     load_project_page_data();
 }
 
+function make_column_editable(data, header, i, td) {
+    const elem = document.createElement("INPUT");
+    elem.setAttribute("type", "text");
+    elem.value = data[header][i];
+
+    elem.onchange = change_action;
+
+    td.appendChild(elem);
+}
+
 // TODO: may need an overwork
 function createTableFromJSON(id, data, editable_columns, ...additional_columns) {
     const table = document.createElement("table");
@@ -231,15 +241,7 @@ function createTableFromJSON(id, data, editable_columns, ...additional_columns) 
                 create_and_append_image_container(td);
             } else {
                 if (editable_columns.includes(headers.indexOf(header))) {
-
-                    const elem = document.createElement("INPUT");
-                    elem.setAttribute("type", "text");
-                    elem.value = data[header][i];
-
-                    elem.onchange = change_action;
-
-                    td.appendChild(elem);
-
+                    make_column_editable(data, header, i, td);
                 } else {
                     td.innerText = data[header][i];
                 }
