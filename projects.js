@@ -2,32 +2,41 @@
 function createProject() {
     const project_name = document.getElementById("project-name");
 
-    if (project_name.value != "") {
-        $.ajax({
-            type: "POST",
-            url: "account_management.php",
-            data: {
-                action: 'create_project',
-                name: project_name.value
-            },
-            success: function (response) {
+    if (project_name.value == "") {
+        return;
+    }
 
-                if (response == "ERROR" || response == "No or invalid session") {
-                    toastr["warning"]("Not logged in");
-                } else {
-                    loadTable(response);
-                    toastr["success"]("New Project created");
-                }
-            },
-            error: function () {
-                toastr["error"]("An error occurred");
+    $.ajax({
+        type: "POST",
+        url: "account_management.php",
+        data: {
+            action: 'create_project',
+            name: project_name.value
+        },
+        success: function (response) {
+            if (response == "ERROR" || response == "No or invalid session") {
+                toastr["warning"]("Not logged in");
+            } else {
+                loadTable(response);
+                toastr["success"]("New Project created");
             }
-        });
+        },
+        error: function () {
+            toastr["error"]("An error occurred");
+        }
+    });
+}
+
+function error_if_not_number(name, data) {
+    if (typeof (data) != "number") {
+        console.error(`deleteRow: ${name} is not a number: ${data}`);
     }
 }
 
 //TODO: reloaded data after delete should include last edit time
 function deleteRow(local_id) {
+    error_if_not_number("local_id", local_id)
+
     $.ajax({
         type: "POST",
         url: "account_management.php",
@@ -50,42 +59,51 @@ function deleteRow(local_id) {
     });
 }
 
+function delete_author(local_id) {
+    $.ajax({
+        type: "POST",
+        url: "account_management.php",
+        data: {
+            action: "delete-author",
+            id: Number(local_id)
+        },
+        success: function (response) {
+            console.log(response);
+            fetch_authors_list();
+        },
+        error: function (err) {
+            console.error(err);
+        }
+    });
+}
+
+function delete_image(local_id) {
+    $.ajax({
+        type: "POST",
+        url: "account_management.php",
+        data: {
+            action: "delete-image",
+            id: Number(local_id)
+        },
+        success: function (response) {
+            console.log(response);
+            fetch_images();
+        },
+        error: function (err) {
+            console.error(err);
+        }
+    });
+}
+
 function deleteItem(parent_id, local_id) {
+    error_if_not_number("local_id", local_id);
 
     if (parent_id == 'author-list') {
-        $.ajax({
-            type: "POST",
-            url: "account_management.php",
-            data: {
-                action: "delete-author",
-                id: Number(local_id)
-            },
-            success: function (response) {
-                console.log(response);
-                fetch_authors_list();
-            },
-            error: function (err) {
-                console.error(err);
-            }
-        });
-    }
-
-    if (parent_id == 'image-list') {
-        $.ajax({
-            type: "POST",
-            url: "account_management.php",
-            data: {
-                action: "delete-image",
-                id: Number(local_id)
-            },
-            success: function (response) {
-                console.log(response);
-                fetch_images();
-            },
-            error: function (err) {
-                console.error(err);
-            }
-        });
+        delete_author(local_id);
+    } else if (parent_id == 'image-list') {
+        delete_image(local_id);
+    } else {
+        console.error(`deleteItem: unknown parent_id ${parent_id}`)
     }
 }
 
@@ -287,7 +305,13 @@ function loadTable(response) {
             btn.className = "btn";
             btn.value = "Delete";
             btn.onclick = function () {
-                deleteRow(this.closest('tr').id.split("--nr-")[1]);
+                let found_id = this.closest('tr').id.split("--nr-")[1];
+                if (!found_id.match(/^\d+$/)) {
+                    console.error(`Found-ID is not a number: ${found_id}`);
+                    return;
+                }
+                found_id = Number(found_id);
+                deleteRow(found_id);
             }
             td.appendChild(btn);
             return td;
