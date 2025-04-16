@@ -211,6 +211,25 @@ function make_column_editable(data, header, i, td) {
     td.appendChild(elem);
 }
 
+function make_headers_editable(editable_columns, headers, data, i, row) {
+    headers.forEach(header => {
+        const td = document.createElement("td");
+
+        if (header == "visible") {
+            insert_visibility_column(this, data, td, header, i);
+        } else if (header == "image_data") {
+            create_and_append_image_container(td);
+        } else {
+            if (editable_columns.includes(headers.indexOf(header))) {
+                make_column_editable(data, header, i, td);
+            } else {
+                td.innerText = data[header][i];
+            }
+        }
+        row.appendChild(td);
+    });
+}
+
 // TODO: may need an overwork
 function createTableFromJSON(id, data, editable_columns, ...additional_columns) {
     const table = document.createElement("table");
@@ -232,22 +251,7 @@ function createTableFromJSON(id, data, editable_columns, ...additional_columns) 
         const row = document.createElement("tr");
         row.id = id + "--nr-" + (i + 1);
 
-        headers.forEach(header => {
-            const td = document.createElement("td");
-
-            if (header == "visible") {
-                insert_visibility_column(this, data, td, header, i);
-            } else if (header == "image_data") {
-                create_and_append_image_container(td);
-            } else {
-                if (editable_columns.includes(headers.indexOf(header))) {
-                    make_column_editable(data, header, i, td);
-                } else {
-                    td.innerText = data[header][i];
-                }
-            }
-            row.appendChild(td);
-        });
+        make_headers_editable(editable_columns, headers, data, i, row);
 
         additional_columns.forEach(column => {
             const td = document.createElement("td");
