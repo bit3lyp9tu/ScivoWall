@@ -1,3 +1,6 @@
+const log = console.log;
+const err = console.error;
+const warn = console.warn;
 
 function createProject() {
     const project_name = document.getElementById("project-name");
@@ -125,6 +128,55 @@ function updateVisibility(id, value) {
     });
 }
 
+function rename_author(_this, param) {
+    $.ajax({
+        type: "POST",
+        url: "account_management.php",
+        data: {
+            action: "rename-author",
+            name: _this.value,
+            id: Number(param[1])
+        },
+        success: function (response) {
+            console.log(response);
+        },
+        error: function (err) {
+            console.error(err);
+        }
+    });
+}
+
+function rename_poster(_this, param) {
+    $.ajax({
+        type: "POST",
+        url: "account_management.php",
+        data: {
+            action: "rename_poster",
+            name: this.value,
+            id: Number(param[1])
+        },
+        success: function (response) {
+            console.log(response);
+        },
+        error: function (err) {
+            console.error(err);
+        }
+    });
+}
+
+function insert_visibility_column(_this, data, td, header, i) {
+    const elem = document.createElement("INPUT");
+    elem.setAttribute("type", "checkbox");
+    elem.checked = data[header][i];
+    elem.onclick = function () {
+        let found_id = get_found_id(this);
+        if (found_id !== null) {
+            updateVisibility(found_id, this.checked ? 1 : 0);
+        }
+    }
+    td.appendChild(elem);
+}
+
 // TODO: may need an overwork
 function createTableFromJSON(id, data, editable_columns, ...additional_columns) {
     const table = document.createElement("table");
@@ -150,13 +202,7 @@ function createTableFromJSON(id, data, editable_columns, ...additional_columns) 
             const td = document.createElement("td");
 
             if (header == "visible") {
-                const elem = document.createElement("INPUT");
-                elem.setAttribute("type", "checkbox");
-                elem.checked = data[header][i];
-                elem.onclick = function () {
-                    updateVisibility(this.closest('tr').id.split("--nr-")[1], this.checked ? 1 : 0);
-                }
-                td.appendChild(elem);
+                insert_visibility_column(this, data, td, header, i);
             } else if (header == "image_data") {
                 const container = document.createElement("DIV");
                 const img = document.createElement("IMG");
@@ -177,40 +223,12 @@ function createTableFromJSON(id, data, editable_columns, ...additional_columns) 
                         console.log(this.value, ...param);
 
                         if (param[0] == 'author-list') {
-                            $.ajax({
-                                type: "POST",
-                                url: "account_management.php",
-                                data: {
-                                    action: "rename-author",
-                                    name: this.value,
-                                    id: Number(param[1])
-                                },
-                                success: function (response) {
-                                    console.log(response);
-                                },
-                                error: function (err) {
-                                    console.error(err);
-                                }
-                            });
+                            rename_author(this, param);
                         }
                         if (param[0] == 'table-container') {
                             console.log("poster rename");
 
-                            $.ajax({
-                                type: "POST",
-                                url: "account_management.php",
-                                data: {
-                                    action: "rename_poster",
-                                    name: this.value,
-                                    id: Number(param[1])
-                                },
-                                success: function (response) {
-                                    console.log(response);
-                                },
-                                error: function (err) {
-                                    console.error(err);
-                                }
-                            });
+                            rename_poster(this, param);
                         }
                         load_project_page_data();
                     }
@@ -305,13 +323,10 @@ function loadTable(response) {
             btn.className = "btn";
             btn.value = "Delete";
             btn.onclick = function () {
-                let found_id = this.closest('tr').id.split("--nr-")[1];
-                if (!found_id.match(/^\d+$/)) {
-                    console.error(`Found-ID is not a number: ${found_id}`);
-                    return;
+                let found_id = get_found_id(this);
+                if (found_id !== null) {
+                    deleteRow(found_id);
                 }
-                found_id = Number(found_id);
-                deleteRow(found_id);
             }
             td.appendChild(btn);
             return td;
@@ -319,6 +334,18 @@ function loadTable(response) {
 
         createTableFromJSON("table-container", data, [0], editColumn, deleteColumn);
     }
+}
+
+function get_found_id(_this) {
+    var found_id = _this.closest('tr').id.split("--nr-")[1];
+    if (!found_id.match(/^\d+$/)) {
+        console.error(`Found-ID is not a number: ${found_id}`);
+        return null;
+    }
+
+    found_id = Number(found_id);
+
+    return found_id;
 }
 
 function isJSON(data) {
