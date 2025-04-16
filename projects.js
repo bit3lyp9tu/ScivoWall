@@ -269,6 +269,8 @@ function createTableFromJSON(id, data, editable_columns, ...additional_columns) 
 }
 
 async function edit_translation(local_id) {
+    error_if_not_number("local_id", local_id);
+
     const result = await $.ajax({
         type: "POST",
         url: "account_management.php",
@@ -280,8 +282,8 @@ async function edit_translation(local_id) {
             // console.log(response);
             return response;
         },
-        error: function () {
-            return "[ERROR]";
+        error: function (err) {
+            return `[ERROR] ${err}`;
         }
     });
     return result;
@@ -295,9 +297,10 @@ async function isAdmin() {
             action: "is-admin"
         },
         success: function (response) {
-            return response;
+            return !!response;
         },
-        error: function () {
+        error: function (err) {
+            err(`Error while checking isAdmin: ${err}`);
             return false;
         }
     });
@@ -323,7 +326,7 @@ function loadTable(response) {
             // link.title = "Edit";
 
             link.onclick = async function () {
-                var local_id = this.closest('tr').id.split("--nr-")[1];
+                var local_id = get_found_id(this);
                 const poster_id = await edit_translation(local_id);
                 window.location.href = "poster.php?id=" + poster_id + "&mode=private";
             }
@@ -360,21 +363,23 @@ function parse_id_name(_this) {
 
     elem = _this;
 
-    if (!elem.closest("tr")) {
+    if (!$(elem).closest("tr")) {
         console.error('_this.closest("tr") could not be found');
         return;
     }
 
-    elem = elem.closest("tr");
+    elem = $(elem).closest("tr");
 
-    if (!elem.id) {
+    if (!$(elem).attr("id")) {
         console.error("elem.closest('tr') does not have an ID!", elem);
         return;
     }
 
-    elem = elem.id;
+    elem = $(elem).attr("id");
 
-    return elem.split("--nr-");
+    var splitted = elem.split("--nr-");
+
+    return splitted;
 }
 
 function get_found_id(_this) {
