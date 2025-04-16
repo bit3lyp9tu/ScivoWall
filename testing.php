@@ -28,6 +28,10 @@ include_once("functions.php");
 function shutdown() {
 	$error = error_get_last();
 
+	runQuery("set FOREIGN_KEY_CHECKS = 0;");
+	runQuery("drop database " . $GLOBALS["dbname"] . ";");
+	runQuery("set FOREIGN_KEY_CHECKS = 1;");
+
 	if ($error !== null) {
 		print_red("Script failed with error: " . $error['message']);
 		exit(1);
@@ -36,10 +40,6 @@ function shutdown() {
 	// runSingleQuery("set FOREIGN_KEY_CHECKS = 0;", false);
 	// runSingleQuery("drop database ".$GLOBALS["dbname"], false);
 	// runSingleQuery("set FOREIGN_KEY_CHECKS = 1;", false);
-
-	runQuery("set FOREIGN_KEY_CHECKS = 0;");
-	runQuery("drop database " . $GLOBALS["dbname"] . ";");
-	runQuery("set FOREIGN_KEY_CHECKS = 1;");
 
 	if ($GLOBALS["tests_failed"] > 0) {
 		print_red($GLOBALS["tests_failed"] . " tests failed");
