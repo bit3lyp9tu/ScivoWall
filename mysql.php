@@ -12,14 +12,13 @@
 		$password = chop($password);
 	} else {
 		error_log("error_log: $db_path not found! Trying default-pw");
-		$password = "testpw";
+		$password = "password";
 
 		$port = 3307;
 	}
 
 	// Create connection
 	try {
-		dier("mysqli($servername, $username, $password, '', $port)");
 		$GLOBALS["conn"] = new mysqli($servername, $username, $password, "", $port);
 
 		// Check connection
