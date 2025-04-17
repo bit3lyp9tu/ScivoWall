@@ -2,14 +2,36 @@ import re
 import sys
 
 
+def getWithoutComments(list):
+    l = []
+    for line in list:
+        i = line.find("//")
+        if i != -1:
+            l.append(line[:i])
+        else:
+            l.append(line)
+    return l
+
+
 def getFunctionList(file):
     f = open(file, "r")
-    return {l for l in re.findall(r"(?<=function\s)\w+(?=\([\s,(\$\w+)]*\))", f.read())}
+    return {
+        l
+        for l in re.findall(
+            r"(?<=function\s)\w+(?=\([\s,(\$\w+)]*\))",
+            list_to_string(getWithoutComments(f.read().split("\n"))),
+        )
+    }
 
 
 def getFunctionCalls(file):
     f = open(file, "r")
-    return {l for l in re.findall(r"\w+(?=\()", f.read())}
+    return {
+        l
+        for l in re.findall(
+            r"\w+(?=\()", list_to_string(getWithoutComments(f.read().split("\n")))
+        )
+    }
 
 
 def getBuildInFuncPHP():
@@ -26,6 +48,14 @@ def getFunctDifference(source_file, test_file):
     return (func - buid_in_func) - calls
 
 
+def list_to_string(list):
+    str = ""
+    for i in list:
+        str += i
+
+    return str
+
+
 def main():
 
     if len(sys.argv) == 2 + 1:
@@ -34,6 +64,10 @@ def main():
             print(l)
     else:
         print()
+
+    # f = open("./queries.php", "r")
+    # for i in getWithoutComments(f.readlines()):
+    #     print(i)
 
 
 if __name__ == "__main__":

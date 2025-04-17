@@ -1,2 +1,5 @@
+./install.php
+./functions.php
+./queries.php
 ./poster_edit.php
 ./account_management.php
