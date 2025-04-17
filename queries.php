@@ -8,28 +8,7 @@
 	// set_error_handler("exception_error_handler");
 	// ini_set('display_errors', '1');
 
-    $db_path = "/etc/dbpw";
-
-    $password = null;
-
-    if (file_exists($db_path)) {
-        $password = file_get_contents($db_path);
-        $password = chop($password);
-    } else {
-        die("AAAA: $db_path not found!");
-    }
-
-    // Create connection
-    try {
-	    $GLOBALS["conn"] = new mysqli("localhost", "poster_generator", $password);
-
-	    // Check connection
-	    if ($GLOBALS["conn"]->connect_error) {
-		die("Connection failed: " . $GLOBALS["conn"]->connect_error);
-	    }
-    } catch (mysqli_sql_exception $th) {
-	    die($th->getMessage());
-    }
+    include_once("mysql.php");
 
     function insertQuery($sql, $types, ...$param) {
         $stmt = $GLOBALS["conn"]->prepare($sql);
