@@ -5,6 +5,8 @@
 	$servername = "localhost";
 	$username = "poster_generator";
 
+	$port = 3306;
+
 	if (file_exists($db_path)) {
 		$password = file_get_contents($db_path);
 		$password = chop($password);
@@ -12,6 +14,8 @@
 		error_log("error_log: $db_path not found! Trying default-pw");
 		$username = "root";
 		$password = "testpw";
+
+		$port = 3800;
 	}
 
 	// Create connection
