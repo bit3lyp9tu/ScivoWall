@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -ex
+
 export DB_NAME="testDB"
 
 echo Run tests on Test-DB: ${DB_NAME}
