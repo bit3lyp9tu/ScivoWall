@@ -15,7 +15,7 @@
 		$username = "root";
 		$password = "testpw";
 
-		$port = 3800;
+		$port = 3307;
 	}
 
 	// Create connection
