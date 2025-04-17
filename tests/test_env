@@ -6,7 +6,7 @@ export DB_NAME="testDB"
 
 echo Run tests on Test-DB: ${DB_NAME}
 
-sudo mariadb -e "CREATE DATABASE ${DB_NAME};"
+sudo mariadb -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
 
 sudo mariadb $DB_NAME < ./tests/test_config2.sql
 

@@ -19,6 +19,7 @@
 
 	// Create connection
 	try {
+		dier("mysqli($servername, $username, $password, '', $port)");
 		$GLOBALS["conn"] = new mysqli($servername, $username, $password, "", $port);
 
 		// Check connection
