@@ -15,10 +15,18 @@
 	$username = "poster_generator";
 
 	// Create connection
-	$GLOBALS["conn"] = new mysqli($servername, $username, $password);
+	try {
+		$GLOBALS["conn"] = new mysqli($servername, $username, $password);
 
-	// Check connection
-	if ($GLOBALS["conn"]->connect_error) {
-		die("Connection failed: " . $GLOBALS["conn"]->connect_error);
+		// Check connection
+		if ($GLOBALS["conn"]->connect_error) {
+			error_log("Connection failed: " . $GLOBALS["conn"]->connect_error);
+
+			exit(1);
+		}
+	} catch (\Throwable $e) {
+		error_log("Error trying to initialize database connection: $e");
+		exit(1);
+
 	}
 ?>
