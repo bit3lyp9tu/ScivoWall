@@ -26,7 +26,6 @@
 		}
 	} catch (\Throwable $e) {
 		error_log("Error trying to initialize database connection: $e");
-		exit(1);
-
+		exit(2);
 	}
 ?>
