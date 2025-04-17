@@ -2,6 +2,7 @@
 	$db_path = "/etc/dbpw";
 
 	$password = null;
+	$servername = "localhost";
 	$username = "poster_generator";
 
 	if (file_exists($db_path)) {
