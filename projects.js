@@ -505,6 +505,7 @@ async function fetch_images() {
                         btn.className = "btn";
                         btn.value = "Delete";
                         btn.onclick = function () {
+                            // TODO: error if poster was preiously deleted
                             // deleteRow(this.closest('tr').id.split("--nr-")[1]);
                             var parsed_id_name = parse_id_name(this);
 

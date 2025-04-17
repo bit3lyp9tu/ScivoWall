@@ -9,6 +9,9 @@
         return $data;
     }
 
+    // TODO: check for all functions using poster_id if id exists
+    // TODO: check for all functions using user_id if id exists
+
     function getTitle($poster_id) {
         //TODO: add test if id doesnt exists
 
@@ -69,20 +72,20 @@
         );
         return $result;
     }
-    function editBox($index, $poster_id, $content="") {
+    function editBox($local_id, $poster_id, $content="") {
 
         $result = editQuery(
             "UPDATE box SET box.content=?
             WHERE box.box_id=(
                 SELECT box_id
                 FROM (
-                    SELECT ROW_NUMBER() OVER(ORDER BY box_id) AS row_nr, box_id
+                    SELECT ROW_NUMBER() OVER(ORDER BY box_id) AS local_id, box_id
                     FROM box
                     WHERE box.poster_id=?
                 ) AS ranked_boxes
-                WHERE row_nr=?
+                WHERE local_id=?
             )",
-            "sii", $content, $poster_id, $index
+            "sii", $content, $poster_id, $local_id
         );
         return $result;
     }
@@ -179,19 +182,19 @@
         );
         return $result;
     }
-    function removeAuthor($index, $poster_id) {
+    function removeAuthor($local_id, $poster_id) {
         $result = deleteQuery(
             "DELETE FROM author_to_poster
             WHERE author_to_poster.id=(
                 SELECT id
                 FROM (
-                    SELECT ROW_NUMBER() OVER(ORDER BY id) AS row_nr, id
+                    SELECT ROW_NUMBER() OVER(ORDER BY id) AS local_id, id
                     FROM author_to_poster
                     WHERE author_to_poster.poster_id=?
                 ) AS ranked_authors
-                WHERE row_nr=?
+                WHERE local_id=?
             )",
-            "ii", $poster_id, $index
+            "ii", $poster_id, $local_id
         );
         return $result;
     }
@@ -359,7 +362,7 @@
             "SELECT 1 AS is_public FROM poster WHERE poster_id=? AND fk_view_mode=? AND visible=?",
             $poster_id, 1, 1
         );
-        return sizeof($result["is_public"]) != 0 ? true : false;
+        return sizeof($result["is_public"]) != 0 ? 1 : 0;
     }
 
     function load_content($poster_id) {

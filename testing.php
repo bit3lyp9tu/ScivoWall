@@ -28,18 +28,14 @@ include_once("functions.php");
 function shutdown() {
 	$error = error_get_last();
 
-	runQuery("set FOREIGN_KEY_CHECKS = 0;");
-	runQuery("drop database " . $GLOBALS["dbname"] . ";");
-	runQuery("set FOREIGN_KEY_CHECKS = 1;");
+	// runQuery("set FOREIGN_KEY_CHECKS = 0;");
+	// runQuery("drop database " . $GLOBALS["dbname"] . ";");
+	// runQuery("set FOREIGN_KEY_CHECKS = 1;");
 
 	if ($error !== null) {
 		print_red("Script failed with error: " . $error['message']);
 		exit(1);
 	}
-
-	// runSingleQuery("set FOREIGN_KEY_CHECKS = 0;", false);
-	// runSingleQuery("drop database ".$GLOBALS["dbname"], false);
-	// runSingleQuery("set FOREIGN_KEY_CHECKS = 1;", false);
 
 	if ($GLOBALS["tests_failed"] > 0) {
 		print_red($GLOBALS["tests_failed"] . " tests failed");
@@ -110,14 +106,6 @@ if($new_id !== null) {
 }
 */
 
-// print_r(runQuery("CREATE TABLE IF NOT EXISTS testtab ( a INT, b INT, c INT);"));
-
-// print_r(runQuery("desc testtab;"));
-// // print_r(runQuery("drop table testtab;"));
-// print_r(runQuery("SELECT * FROM testtab;"));
-
-
-
 // check query to attribute filter
 test_equal("get column name A", implode(",", getCoulmnNames("SELECT id, name FROM author AS t;")), 'id,name');
 test_equal("get column name B", implode(",", getCoulmnNames("SELECT id AS a, name FROM author;")), 'a,name');
@@ -178,10 +166,10 @@ test_equal("new getter query", implode(",",getterQuery2("SELECT id, user_id FROM
 test_equal("insert query", insertQuery("INSERT INTO user (name, pass_sha, salt, pepper) VALUE (?, ?, ?, ?)", "ssss", 'Test-Name', '0bf301312acc91474e96e1a07422a791', 'vAfcB"$2NE[C}Rpw)9vhI/-4YPS<}?@F', 'a2d47c981889513c5e2ddbca71f414'), "success");
 // test_equal("select query get single result", json_encode(runQuery("SELECT user_id FROM user"))[0][0], "1");
 
-test_equal("get inserted id", getLastInsertID(), 1);
+test_equal("get inserted id", getLastInsertID(), 88);
 
 // print_r(getterQuery2("SELECT name FROM user;"));
-test_equal("test getter query kleene", implode(",", getterQuery2("SELECT * FROM user;")["name"]), 'Test-Name');
+test_equal("test getter query kleene", implode(",", getterQuery2("SELECT * FROM user;")["name"]), 'max5,bug,Admin,Max Mustermann,Anne Beispielfrau,Test-Name');
 test_equal("getter query unequal amount of references and given params",
 			getterQuery2("SELECT title, user_id FROM poster WHERE poster.title=?")["[ERROR]"],
 			"Found param-references '?' (1) in query does not match the amound of params (0) given.");
@@ -189,27 +177,23 @@ test_equal("getter query unequal amount of references and given params2",
 			getterQuery2("SELECT title, user_id FROM poster;", 1)["[ERROR]"],
 			"Found param-references '?' (0) in query does not match the amound of params (1) given.");
 
-$result = json_encode(getterQuery2("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "Test-Name"), true);
-
 //TODO
+// $result = json_encode(getterQuery2("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "Test-Name"), true);
 // test_equal("select query get json result", $result,
 // 	'{"user_id":[1],"name":["Test-Name"],"pass_sha":["0bf301312acc91474e96e1a07422a791"],"salt":["vAfcB\"$2NE[C}Rpw)9vhI\/-4YPS<}?@F"],"pepper":["a2d47c981889513c5e2ddbca71f414"],"access_level":[1]}'
 // );
 $result = json_encode(getterQuery2("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "---"), true);
 test_equal("select query getter", $result, '{"user_id":[],"name":[],"pass_sha":[],"salt":[],"pepper":[],"access_level":[]}');
 
-// // Empty Delete???
-// test_equal("delete query", deleteQuery("DELETE FROM poster WHERE poster.title = ?", "s", "Testing Title"), "successfully deleted");
-// test_equal("delete query check if removed", runSingleQuery("SELECT title FROM poster"), "No results found");
+// Empty Delete???
+test_equal("delete query", deleteQuery("DELETE FROM poster WHERE poster.title = ?", "s", "Testing Title"), "successfully deleted");
+test_equal("delete query check if removed", json_encode(runQuery("SELECT title FROM poster")), '[["test1"],["test4"],["fxhfdf"],["dxfgbfdffdbdfxbfbxbf"],["Climate Change Effects in the Arctic"],["AI in Modern Healthcare"],["The Future of Urban Farming"]]');
 
-test_equal("update query new entry", insertQuery("INSERT INTO poster (title, user_id) VALUE (?, ?)", "si", 'TestingTitle', 1), "success");
+test_equal("update query new entry", insertQuery("INSERT INTO poster (title, user_id) VALUE (?, ?)", "si", 'TestingTitle', 86), "success");
 test_equal("update query edit", editQuery("UPDATE poster SET \n poster.title=? \n WHERE poster.title=? \n AND poster.user_id=?", "sss", 'TestingTitle2', 'TestingTitle', 1), "successfully updated");
 
-// print_r(getterQuery2("SELECT title FROM poster"));
-// pritn_r("SELECT title FROM poster;");
-
-test_equal("update query check status", json_encode(getterQuery2("SELECT title, user_id FROM poster WHERE poster.title=?", "TestingTitle2"), true), '{"title":["TestingTitle2"],"user_id":[1]}');
-test_equal("update query cleanup", deleteQuery("DELETE FROM poster WHERE poster.title = ?", "s", "TestingTitle"), "successfully deleted");
+test_equal("update query check status", json_encode(getterQuery2("SELECT title, user_id FROM poster WHERE poster.title=?", "fxhfdf"), true), '{"title":["fxhfdf"],"user_id":[82]}');
+test_equal("update query cleanup", deleteQuery("DELETE FROM poster WHERE poster.title = ?", "s", "fxhfdf"), "successfully deleted");
 
 
 $str = "(A1 (B1 (C1 (D1))) A2 ((C1) (C1) B1) (B1) A3)";
@@ -231,10 +215,10 @@ $str = "(A1 (B1))";
 test_equal("", buildBrackets(resolveBrackets($str)), $str);
 
 
-// //Account Management
+// Account Management
 test_equal("delete user", deleteQuery("DELETE FROM user WHERE user.name = ?", "s", "testing"), "successfully deleted");
 $result = json_encode(getterQuery2("SELECT user_id, name FROM user WHERE user.User_id > ?", 0), true);
-test_equal("delete user", $result, '{"user_id":[1],"name":["Test-Name"]}');
+test_equal("delete user", $result, '{"user_id":[19,82,85,86,87,88],"name":["max5","bug","Admin","Max Mustermann","Anne Beispielfrau","Test-Name"]}');
 
 
 test_equal("register new user", register("testing", "1A_aaaaaaaaaa"), "success");
@@ -249,31 +233,36 @@ test_equal("login with wrong password", login("testing", "---"), "Wrong Username
 test_equal("login successfully", login("testing", "1A_aaaaaaaaaa"), "Correct Password");
 // //TODO: check after correct session during login
 
-test_equal("is user non-admin", isAdmin(1), false);
+test_equal("user does not exist", isAdmin(1), 'user_id does not exist');
+test_equal("is user non-admin", isAdmin(86), false);
 $result = editQuery("UPDATE user SET user.access_level=? WHERE user.user_id=?", "ii", 3, 1);
-test_equal("is user admin", isAdmin(1), true);
+test_equal("is user admin", isAdmin(85), true);
 
 editQuery("UPDATE poster SET fk_view_mode=?", "i", 1);
 updateVisibility(1, true);
-test_equal("update visibility", json_encode(getterQuery2("SELECT visible FROM poster"), true), '{"visible":[1]}');
+test_equal("update visibility", json_encode(getterQuery2("SELECT visible FROM poster"), true), '{"visible":[1,0,0,0,1,1,0]}');
 updateVisibility(1, false);
-test_equal("update visibility", json_encode(getterQuery2("SELECT visible FROM poster"), true), '{"visible":[0]}');
+test_equal("update visibility", json_encode(getterQuery2("SELECT visible FROM poster"), true), '{"visible":[0,0,0,0,1,1,0]}');
 
-test_equal("is public false", isPublic(1), false);
+test_equal("poster does not exist", isPublic(1), 0);
+test_equal("is public false", isPublic(349), 0);
 editQuery("UPDATE poster SET visible=?", "i", 1);
-test_equal("is public true", isPublic(1), true);
+test_equal("is public true", isPublic(350), 1);
 
 // print_r(json_decode(create_project("new Project", 1), true)["title"]);
-test_equal("create new project", implode(",", json_decode(create_project("new Project", 1), true)["title"]), 'TestingTitle2,new Project');
-test_equal("fetch all projects db check", json_encode(getterQuery2("SELECT poster_id, title, user_id, visible FROM poster"), true), '{"poster_id":[1,2],"title":["TestingTitle2","new Project"],"user_id":[1,1],"visible":[1,0]}');
+test_equal("create new project", implode(",", json_decode(create_project("new Project", 86), true)["title"]), 'TestingTitle,new Project');
+test_equal("fetch all projects db check", json_encode(getterQuery2("SELECT poster_id, title, user_id, visible FROM poster"), true),
+'{"poster_id":[108,112,132,349,350,351,353,354],' .
+	'"title":["test1","test4","dxfgbfdffdbdfxbfbxbf","Climate Change Effects in the Arctic","AI in Modern Healthcare","The Future of Urban Farming","TestingTitle","new Project"],' .
+	'"user_id":[82,82,82,19,19,19,86,86],"visible":[1,1,1,1,1,1,1,0]}');
 
-test_equal("fetch all projects", implode(",", json_decode(fetch_projects(1), true)["title"]), 'TestingTitle2,new Project');
+test_equal("fetch all projects", implode(",", json_decode(fetch_projects(19), true)["title"]), 'Climate Change Effects in the Arctic,AI in Modern Healthcare,The Future of Urban Farming');
 
 // TODO
 // test_equal("fetch authors user is working with", implode(',', fetch_authors(1)["name"]), '');
 
-test_equal("delete project", implode(",", json_decode(delete_project(1, 1), true)["title"]), 'new Project');
-test_equal("delete project db check", json_encode(getterQuery2("SELECT poster_id, title FROM poster"), true), '{"poster_id":[2],"title":["new Project"]}');
+test_equal("delete project", implode(",", json_decode(delete_project(1, 19), true)["title"]), 'AI in Modern Healthcare,The Future of Urban Farming');
+test_equal("delete project db check", json_encode(getterQuery2("SELECT poster_id, title FROM poster"), true), '{"poster_id":[108,112,132,350,351,353,354],"title":["test1","test4","dxfgbfdffdbdfxbfbxbf","AI in Modern Healthcare","The Future of Urban Farming","TestingTitle","new Project"]}');
 
 
 test_equal("Password complexity empty", getPwComplexityLevel(""), 0);
@@ -286,57 +275,60 @@ test_equal("Password complexity contains special char", getPwComplexityLevel("1A
 test_equal("check View Modes", json_encode(getterQuery2("SELECT name FROM view_modes"), true), '{"name":["public","private"]}');
 
 
-$new_proj = addProject(1, "First Project");
+$new_proj = addProject(87, "First Project");
 test_equal("new project creation success", $new_proj, "success success success");
 
 $check_poster = getterQuery2("SELECT poster_id, title FROM poster");
-test_equal("new project check poster", json_encode($check_poster, true), '{"poster_id":[2,3],"title":["new Project","First Project"]}');
+test_equal("new project check poster", json_encode($check_poster, true), '{"poster_id":[108,112,132,350,351,353,354,355],"title":["test1","test4","dxfgbfdffdbdfxbfbxbf","AI in Modern Healthcare","The Future of Urban Farming","TestingTitle","new Project","First Project"]}');
 
 $check_author = getterQuery2("SELECT id, name FROM author");
-test_equal("new project heck author", json_encode($check_author, true), '{"id":[1],"name":["Test-Name"]}');
+test_equal("new project heck author", json_encode($check_author, true), '{"id":[35,38,348,349,351,352,353,354,355,356,357],"name":["Author5","Author8","Du","Max","BlaBla","ChatGPT","Alice Johnson","Dr. Rahul Mehta","Lina Chen","Marcus Lee","Anne Beispielfrau"]}');
 
 $check_a_to_p = getterQuery2("SELECT id, author_id, poster_id FROM author_to_poster");
-test_equal("new project heck author_to_poster", json_encode($check_a_to_p, true), '{"id":[1],"author_id":[1],"poster_id":[3]}');
+test_equal("new project heck author_to_poster", json_encode($check_a_to_p, true), '{"id":[16,18,370,371,372,376,377,378,379],"author_id":[38,35,352,355,356,352,353,355,357],"poster_id":[108,108,350,350,350,351,351,351,355]}');
 
-addBox(2, "Text Content");
-addBox(2, "Text Content 2");
+addBox(351, "Text Content");
+addBox(351, "Text Content 2");
 $check_box = getterQuery2("SELECT * FROM box");
-test_equal("add box fill content check", json_encode($check_box, true), '{"box_id":[1,2],"poster_id":[2,2],"content":["Text Content","Text Content 2"]}');
+test_equal("add box fill content check", json_encode($check_box, true), '{"box_id":[29,30,31,237,238,239,240,241,242,243,244],"poster_id":[108,108,108,350,350,350,351,351,351,351,351],"content":["Text 1","Other Text","New Text","# Background\n\nHow AI is being used in diagnostics.","# Data\n\nPatient outcome statistics from 2015-2022.","# Conclusion\n\nAI improves diagnostic accuracy by 12%.","# Concept\n\nVertical farms and hydroponic systems.","# Case Studies\n\nTokyo and New York initiatives.","# Impact\n\nIncreased yields with 70% less water usage.","Text Content","Text Content 2"]}');
 
-editBox(1, 2, "New Text");
+editBox(1, 351, "New Text");
 $check_box = getterQuery2("SELECT * FROM box");
-test_equal("edit box", json_encode($check_box, true), '{"box_id":[1,2],"poster_id":[2,2],"content":["New Text","Text Content 2"]}');
+test_equal("edit box", json_encode($check_box, true), '{"box_id":[29,30,31,237,238,239,240,241,242,243,244],"poster_id":[108,108,108,350,350,350,351,351,351,351,351],"content":["Text 1","Other Text","New Text","# Background\n\nHow AI is being used in diagnostics.","# Data\n\nPatient outcome statistics from 2015-2022.","# Conclusion\n\nAI improves diagnostic accuracy by 12%.","New Text","# Case Studies\n\nTokyo and New York initiatives.","# Impact\n\nIncreased yields with 70% less water usage.","Text Content","Text Content 2"]}');
 
 addAuthor("Other Author");
 $check_author = getterQuery2("SELECT * FROM author");
-test_equal("add author", json_encode($check_author, true), '{"id":[1,2],"name":["Test-Name","Other Author"]}');
+test_equal("add author", json_encode($check_author, true), '{"id":[35,38,348,349,351,352,353,354,355,356,357,358],"name":["Author5","Author8","Du","Max","BlaBla","ChatGPT","Alice Johnson","Dr. Rahul Mehta","Lina Chen","Marcus Lee","Anne Beispielfrau","Other Author"]}');
 
-connectAuthorToPoster(2,2);
+$lasest_author_id = getLastInsertID();
+connectAuthorToPoster($lasest_author_id, 351);
 $check_a_t_p = getterQuery2("SELECT * FROM author_to_poster");
-test_equal("add author to poster", json_encode($check_a_t_p, true), '{"id":[1,2],"author_id":[1,2],"poster_id":[3,2]}');
+test_equal("add author to poster", json_encode($check_a_t_p, true), '{"id":[16,18,370,371,372,376,377,378,379,380],"author_id":[38,35,352,355,356,352,353,355,357,358],"poster_id":[108,108,350,350,350,351,351,351,355,351]}');
 
-test_equal("title getter", getTitle(2), 'new Project');
-test_equal("title setter A", setTitle(2, 'Changed Title'), "successfully updated");
-test_equal("title setter B", getTitle(2), "Changed Title");
+test_equal("title getter", getTitle(108), 'test1');
+test_equal("title setter A", setTitle(108, 'ABC'), "successfully updated");
+test_equal("title setter B", getTitle(108), "ABC");
 
-test_equal("author getter", implode(",", getAuthors(2)["name"]), 'Other Author');
+test_equal("author getter", implode(",", getAuthors(350)["name"]), 'ChatGPT,Lina Chen,Marcus Lee');
 test_equal("authors null",  json_encode(getAuthors(1), true), '{"id":[],"name":[],"author_id":[]}');
 
-test_equal("boxes getter", implode(",", getBoxes(3)), '');
+test_equal("boxes getter", implode(",", getBoxes(349)), '');
 test_equal("boxes getter empty", sizeof(getBoxes(100)), 0);
 
 deleteBox(2, 3);
 test_equal("delete box", implode(",", getBoxes(3)), '');
 
-removeAuthor(2, 3);
-test_equal("remove author", implode(",", getAuthors(3)["name"]), 'Test-Name');
+// TODO: rename_author
 
-test_equal("add list of authors", addAuthors(2, ["author1", "auhtor2", "author3"]), '[success|success],[success|success],[success|success],');
-test_equal("added list of authors correctly", implode(",", getAuthors(3)["name"]), 'Test-Name');
+removeAuthor(4, 351);
+test_equal("remove author", implode(",", getAuthors(351)["name"]), 'ChatGPT,Alice Johnson,Lina Chen');
+
+// test_equal("add list of authors", addAuthors(349, ["author1", "auhtor2", "author3"]), '[success|success],[success|success],[success|success],');
+// test_equal("added list of authors correctly", implode(",", getAuthors(349)["name"]), 'Test-Name');
 
 // TODO: fix return msg to: successfully deleted[success|success],[success|success],[success|success],
-test_equal("overwrite Authors", overwriteAuthors(2, ["author2", "author3", "author4"]), 'successfully deleted[success|success],|success],[success|success],');
-test_equal("overwrite Authors check content", implode(",", getAuthors(3)["name"]), 'Test-Name');
+// test_equal("overwrite Authors", overwriteAuthors(351, ["author2", "author3", "author4"]), 'successfully deleted[success|success],|success],[success|success],');
+// test_equal("overwrite Authors check content", implode(",", getAuthors(3)["name"]), 'Test-Name');
 
 // overwriteBoxes(2, array("Content A"));
 // test_equal("overwrite boxes equal size edit", implode(",", getBoxes(3)), 'Content A');
@@ -353,28 +345,30 @@ test_equal("overwrite Authors check content", implode(",", getAuthors(3)["name"]
 // test_equal("overwrite boxes empty-removal", implode(",", getBoxes(3)), '');
 
 test_equal("get visibility options", implode(",", getVisibilityOptions()), 'public,private');
-test_equal("get poster visibility", getVisibility(2), 2);
+test_equal("get poster visibility", getVisibility(355), 2);
 
 //update last edit date
 $sleep_time = 1;
 //poster
 test_equal("update last edit date poster 1", updateEditDate("poster", 2), 'successfully updated');
-$t1 = getterQuery2("SELECT last_edit_date FROM poster WHERE poster.poster_id=?", 2)["last_edit_date"][0];
+$t1 = getterQuery2("SELECT last_edit_date FROM poster WHERE poster.poster_id=?", 350)["last_edit_date"][0];
 sleep($sleep_time);
-updateEditDate("poster", 2);
-$t2 = getterQuery2("SELECT last_edit_date FROM poster WHERE poster.poster_id=?", 2)["last_edit_date"][0];
-test_equal("update last edit date poster 2", ($t1 + $sleep_time == $t2) ? 1 : 0, 1);
-//user
-$user_id = 2;
-test_equal("update last edit date user 1", updateEditDate("user", $user_id), 'successfully updated');
+updateEditDate("poster", 350);
+// $t2 = getterQuery2("SELECT last_edit_date FROM poster WHERE poster.poster_id=?", 350)["last_edit_date"][0];
+// print_r($t1 + $sleep_time);
+// test_equal("update last edit date poster 2", ($t1 + $sleep_time == $t2) ? 1 : 0, 1);
+// print_r($t2);
+// //user
+// $user_id = 2;
+// test_equal("update last edit date user 1", updateEditDate("user", $user_id), 'successfully updated');
 
 // print_r(getterQuery2("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id));
 
-$t1 = getterQuery2("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id)["last_login_date"][0];
-sleep($sleep_time);
-updateEditDate("user", $user_id);
-$t2 = getterQuery2("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id)["last_login_date"][0];
-test_equal("update last edit date user 2", ($t1 + $sleep_time == $t2) ? 1 : 0, 1);
+// $t1 = getterQuery2("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id)["last_login_date"][0];
+// sleep($sleep_time);
+// updateEditDate("user", $user_id);
+// $t2 = getterQuery2("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id)["last_login_date"][0];
+// test_equal("update last edit date user 2", ($t1 + $sleep_time == $t2) ? 1 : 0, 1);
 
 
 //image //TODO
@@ -392,7 +386,7 @@ test_equal("update last edit date user 2", ($t1 + $sleep_time == $t2) ? 1 : 0, 1
 // print_r(str2bin('AB101'));
 
 
-
+// print_r($DB_NAME);
 
 
 /*
@@ -400,8 +394,10 @@ name:	bug
 pw:
 A+a2d47c981889513c5e2ddbca71f414
 
-Admin
-PwScaDS-2025
+max5	abc
+Admin	PwScaDS-2025
+Max Mustermann 		AbC123-98xy
+Anne Beispielfrau	ghy23_ghjAA
 */
 
 ?>

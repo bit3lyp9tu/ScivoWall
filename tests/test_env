@@ -3,7 +3,12 @@
 export DB_NAME="testDB"
 
 sudo mariadb -e "CREATE DATABASE ${DB_NAME};"
-#sudo mariadb -e "USE ${DB_NAME};"
 
-php testing.php
+sudo mariadb $DB_NAME < ./tests/test_config2.sql
+
+php testing.php $DB_NAME
+
+sudo mariadb-dump $DB_NAME > ./tests/post_test.sql
+
+sudo mariadb -e "DROP DATABASE ${DB_NAME};"
 

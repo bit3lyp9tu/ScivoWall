@@ -69,8 +69,13 @@
         // }
         $result = getterQuery2(
             "SELECT access_level FROM user WHERE user_id=?", $user_id
-        );
-        return $result["access_level"][0] >= 2;
+        )["access_level"];
+
+        if (sizeof($result) > 0) {
+            return $result[0] >= 2;
+        }else{
+            return "user_id does not exist";
+        }
     }
 
     function register($name, $pw) {
@@ -401,8 +406,6 @@
                     "UPDATE image SET file_name=? WHERE image_id=?",
                     $name, $id
                 );
-
-                // TODO: edit name in img data
 
                 return $res;
             }else{
