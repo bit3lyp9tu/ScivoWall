@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 export DB_NAME="testDB"
 
