@@ -38,9 +38,9 @@ jobs:
         mysql user: 'poster_generator'
         mysql password: testpw
 
-    - name: Run main test php
+    - name: Run test script
       run: |
-        php testing.php
+        ./tests/test_env
 
     - name: Create a new version
       if: ${{ success() }}
