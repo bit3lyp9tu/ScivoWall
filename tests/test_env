@@ -10,6 +10,8 @@ sudo mariadb -e "CREATE DATABASE ${DB_NAME};"
 
 sudo mariadb $DB_NAME < ./tests/test_config2.sql
 
+sudo mariadb -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO 'poster_generator'@'localhost' IDENTIFIED BY 'testpw'; FLUSH PRIVILEGES;"
+
 php testing.php $DB_NAME
 
 sudo mariadb-dump $DB_NAME > ./tests/post_test.sql
