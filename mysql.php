@@ -13,8 +13,6 @@
 	} else {
 		error_log("error_log: $db_path not found! Trying default-pw");
 		$password = "testpw";
-
-		$port = 3307;
 	}
 
 	// Create connection
