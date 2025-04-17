@@ -20,7 +20,7 @@
 
 	// Create connection
 	try {
-		$GLOBALS["conn"] = new mysqli($servername, $username, $password);
+		$GLOBALS["conn"] = new mysqli($servername, $username, $password, "", $port);
 
 		// Check connection
 		if ($GLOBALS["conn"]->connect_error) {
