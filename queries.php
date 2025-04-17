@@ -16,7 +16,7 @@
         $password = file_get_contents($db_path);
         $password = chop($password);
     } else {
-        die("$db_path not found!");
+        die("AAAA: $db_path not found!");
     }
 
     // Create connection
