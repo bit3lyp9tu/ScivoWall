@@ -1,18 +1,5 @@
 <?php
-	$db_path = "/etc/dbpw";
-
-	$password = null;
-
-	if (file_exists($db_path)) {
-		$password = file_get_contents($db_path);
-		$password = chop($password);
-	} else {
-		die("$db_path not found!");
-	}
-
-
-	$servername = "localhost";
-	$username = "poster_generator";
+	include_once("mysql.php");
 
 	// Create connection
 	$conn = new mysqli($servername, $username, $password);
