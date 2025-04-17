@@ -42,7 +42,6 @@ jobs:
     - name: Run test script
       run: |
         ./tests/test_env
-        ls /etc/
 
     - name: Create a new version
       if: ${{ success() }}
