@@ -7,3 +7,4 @@ log_unknown_json_solution.txt
 tests/.coverage
 tests/post_test.sql
 tests/php_build_in_func
+tests/test_report.json
