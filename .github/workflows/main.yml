@@ -56,10 +56,10 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: code-coverage-report
-        path: tests/post_test.json
+        path: tests/test_report.json
 
     - name: Archive Changed Database After Tests
       uses: actions/upload-artifact@v4
       with:
         name: store-post-test-sql
-        path: tests/test_report.sql
+        path: tests/post_test.sql
