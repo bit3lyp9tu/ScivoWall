@@ -2,6 +2,7 @@ import re
 import sys
 
 import json
+import yaml
 
 from collections import Counter
 
@@ -211,10 +212,10 @@ def getIncludedFilesAll(file):
 
 def createReport(test_file, a, b, c):
     source_files = getIncludedFilesAll(test_file)
-    json = {}
+    result = {}
 
-    json["test_file"] = test_file
-    json["source_files_names"] = source_files
+    result["test_file"] = test_file
+    result["source_files_names"] = source_files
 
     list = {}
     list[test_file] = getFunctionList(test_file)
@@ -225,18 +226,18 @@ def createReport(test_file, a, b, c):
 
     all, used, unused, other = getCallEvaluation(calls, list)
 
-    json["all"] = all
-    json["used"] = used
-    json["unused"] = unused
+    result["all"] = all
+    result["used"] = used
+    result["unused"] = unused
 
-    json["calls_in_test"] = calls
-    json["sourceles_calls"] = other
+    result["calls_in_test"] = calls
+    result["sourceles_calls"] = other
 
     score, max, test_scores = getTestScore(a, b, c, all)
 
-    json["test_scores"] = test_scores
+    result["test_scores"] = test_scores
 
-    json["summary"] = {
+    result["summary"] = {
         "test_file_name": test_file,
         "source_files": len(source_files),
         "calls_in_test": len(calls),
@@ -248,7 +249,7 @@ def createReport(test_file, a, b, c):
         "percentage": round((max - score) / max * 100, 3),
     }
 
-    return json
+    return result
 
 
 def main():
@@ -264,6 +265,9 @@ def main():
 
         with open("./tests/test_report.json", "w") as f:
             json.dump(result, f, indent=2)
+
+        print(json.dumps(result["summary"], indent=2))
+
     else:
         print("Error")
 

@@ -32,4 +32,3 @@ done
 # done
 
 python3 ./tests/coverage.py ./testing.php 2 0 0
-cat ./tests/test_report.json
