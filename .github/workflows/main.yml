@@ -47,7 +47,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: code-coverage-report
-        path: tests/code-coverage.json
+        path: tests/test_report.json
 
     - name: Create a new version
       if: ${{ success() }}
