@@ -43,12 +43,6 @@ jobs:
       run: |
         ./tests/test_env
 
-    - name: Archive code coverage results
-      uses: actions/upload-artifact@v4
-      with:
-        name: code-coverage-report
-        path: tests/test_report.json
-
     - name: Create a new version
       if: ${{ success() }}
       run: |
@@ -58,3 +52,14 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Archive code coverage results
+      uses: actions/upload-artifact@v4
+      with:
+        name: code-coverage-report
+        path: tests/test_report.json
+
+    - name: Archive Changed Database After Tests
+      uses: actions/upload-artifact@v4
+      with:
+        name: code-coverage-report
+        path: tests/post_test.sql
