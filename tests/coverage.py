@@ -17,12 +17,21 @@ def getWithoutComments(list):
     return l
 
 
+def getFunctionData(head):
+    variables = re.search(r"(?<=\().*(?=\))", head).group().replace(" ", "").split(",")
+
+    return (
+        re.search(r"\w+(?=\()", head).group(),
+        [] if 0 < len(variables) and variables[0] == "" else variables,
+    )
+
+
 def getFunctionList(file):
     f = open(file, "r")
     return [
-        l
+        getFunctionData(l)
         for l in re.findall(
-            r"(?<=function\s)\w+(?=\([\s,(\$\w+),\=]*\))",
+            r"(?<=function\s)\w+\([\s,((\.\.\.)?\$\w+),\=,\",\']*\)(?=\s\{)",
             list_to_string(getWithoutComments(f.read().split("\n"))),
         )
     ]
@@ -78,7 +87,6 @@ def getReport(source_file, test_file):
 
 
 def getCleanedCalls(calls):
-
     build_in_func = getBuildInFuncPHP()
 
     res = Counter(calls)
@@ -87,6 +95,69 @@ def getCleanedCalls(calls):
             res.pop(i)
 
     return res
+
+
+def getCallEvaluation(calls, source_files):
+
+    used_functions = []
+    unused_functions = []
+    all_functions = []
+
+    stack = set()
+
+    for i in source_files.keys():
+        file = source_files[i]
+
+        for function, parameters in file:
+            data = {
+                "name": function,
+                "file": i,
+                "test_occurrences": calls[function] if function in calls.keys() else 0,
+                "parameters": parameters,
+            }
+
+            if function in calls.keys():
+                used_functions.append(data)
+            else:
+                unused_functions.append(data)
+            all_functions.append(data)
+            stack.add(function)
+
+    return (
+        all_functions,
+        used_functions,
+        unused_functions,
+        [i for i in (calls.keys() - stack)],
+    )
+
+
+def getTestScore(a, b, c, all_functions):
+    scores = {}
+
+    max_score = 0
+    score = 0
+
+    for item in all_functions:
+        name, _, test_occurrences, parameters = item
+
+        param = len(item[parameters])
+        extra = [i for i in item[parameters] if "..." in i or "=" in i]
+
+        specified = 1 * a + param * b + len(extra) * c
+        occurred = item[test_occurrences]
+
+        delta = 0 if specified <= occurred else specified - occurred
+
+        max_score += specified
+        score += delta
+
+        scores[item[name]] = {
+            "specified_occurrences": specified,
+            "test_occurrences": occurred,
+            "delta": delta,
+        }
+
+    return score, max_score, scores
 
 
 def getUntestedFunctions(file, function_all):
@@ -138,36 +209,63 @@ def getIncludedFilesAll(file):
     return visited_files
 
 
-def createReport(test_file):
-    json = {}
+def createReport(test_file, a, b, c):
     source_files = getIncludedFilesAll(test_file)
+    json = {}
 
     json["test_file"] = test_file
     json["source_files_names"] = source_files
 
     list = {}
-    function_all = set()
-
+    list[test_file] = getFunctionList(test_file)
     for sf in source_files:
-        body_data = {}
-        body_data["custom_functions"] = len(set(getFunctionList(sf)))
-        body_data["function_calls"] = len(set(getFunctionCalls(sf)))
-        # body_data["custom_function_calls"] = getReport(sf, test_file)
-        body_data["cleaned_calls"] = getCleanedCalls(getFunctionCalls(sf))
-        # function_all.update()
+        list[sf] = getFunctionList(sf)
 
-        list[sf] = body_data
-    json["source_files"] = list
+    calls = getCleanedCalls(getFunctionCalls(test_file))
+
+    all, used, unused, other = getCallEvaluation(calls, list)
+
+    json["all"] = all
+    json["used"] = used
+    json["unused"] = unused
+
+    json["calls_in_test"] = calls
+    json["sourceles_calls"] = other
+
+    score, max, test_scores = getTestScore(a, b, c, all)
+
+    json["test_scores"] = test_scores
+
+    json["summary"] = {
+        "test_file_name": test_file,
+        "source_files": len(source_files),
+        "calls_in_test": len(calls),
+        "found_source_functions": len(all),
+        "sourceless_calls": len(other),
+        "score": len(test_scores.keys()),
+        "calc_score": score,
+        "max_score": max,
+        "percentage": round((max - score) / max * 100, 3),
+    }
 
     return json
 
 
 def main():
 
-    result = createReport(sys.argv[1])
+    if len(sys.argv) >= 1 + 1:
 
-    with open("./tests/test_report.json", "w") as f:
-        json.dump(result, f, indent=2)
+        if len(sys.argv) == 1 + 1:
+            result = createReport(sys.argv[1], 1, 0, 0)
+        else:
+            result = createReport(
+                sys.argv[1], int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4])
+            )
+
+        with open("./tests/test_report.json", "w") as f:
+            json.dump(result, f, indent=2)
+    else:
+        print("Error")
 
     # if len(sys.argv) == 2 + 1:
     #     # print(f"Difference of {sys.argv[1]} - {sys.argv[2]}")

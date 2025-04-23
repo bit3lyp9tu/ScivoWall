@@ -31,5 +31,5 @@ done
 #     python3 ./tests/coverage.py $i ./testing.php | sed 's/^/- /'
 # done
 
-python3 ./tests/coverage.py ./testing.php
+python3 ./tests/coverage.py ./testing.php 2 0 0
 cat ./tests/test_report.json
