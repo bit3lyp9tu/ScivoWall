@@ -2,7 +2,6 @@ import re
 import sys
 
 import json
-import yaml
 
 from collections import Counter
 

@@ -43,6 +43,12 @@ jobs:
       run: |
         ./tests/test_env
 
+    - name: Archive code coverage results
+      uses: actions/upload-artifact@v4
+      with:
+        name: code-coverage-report
+        path: tests/code-coverage.json
+
     - name: Create a new version
       if: ${{ success() }}
       run: |
