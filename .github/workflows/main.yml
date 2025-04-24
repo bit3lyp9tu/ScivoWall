@@ -49,7 +49,6 @@ jobs:
         sudo cp /var/cache/apt/archives/*.deb ./apt-cache/
 
 
-
     # - name: Pull MariaDB image manually
     #   run: docker pull mariadb:latest
 
