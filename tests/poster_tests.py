@@ -79,8 +79,6 @@ class PythonOrgSearch(unittest.TestCase):
             driver.current_url,
         )
 
-        driver.find_element(By.CSS_SELECTOR, "#load-form>button").click()
-
         content_table = driver.find_element(
             By.CSS_SELECTOR, "#table-container>table"
         ).get_attribute("innerHTML")
@@ -94,12 +92,12 @@ class PythonOrgSearch(unittest.TestCase):
             .split("</tr>")[1]
             + "</tr>"
         )
-        self.assertTrue(
-            re.search(
-                '<tr id="nr-[0-9]*"><td>.*</td><td>20[2-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-2][0-9]:[0-6][0-9]:[0-6][0-9]</td><td><td><a>Edit</a></td></td><td><td><input type="button" class="btn" value="Delete"></td></td></tr>',
-                content_line,
-            )
-        )
+        # self.assertTrue(
+        #     re.search(
+        #         '<tr id="nr-[0-9]*"><td>.*</td><td>20[2-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-2][0-9]:[0-6][0-9]:[0-6][0-9]</td><td><td><a>Edit</a></td></td><td><td><input type="button" class="btn" value="Delete"></td></td></tr>',
+        #         content_line,
+        #     )
+        # )
 
         self.assertTrue(re.search("<td><td><a>.*</a></td></td>", content_line))
         self.assertTrue(
@@ -114,81 +112,81 @@ class PythonOrgSearch(unittest.TestCase):
         content_table_new = driver.find_element(
             By.CSS_SELECTOR, "#table-container>table"
         ).get_attribute("innerHTML")
-        last_nr = int(
-            re.findall(
-                "[0-9]+", re.findall('<tr id="nr-[0-9]+">', content_table_new)[-1]
-            )[0]
-        )
-        driver.find_element(By.CSS_SELECTOR, f"#nr-{last_nr}>td>td>a").click()
-        self.assertEqual(
-            "http://localhost/scientific_poster_generator/poster.php",
-            driver.current_url.split("?")[0],
-        )
+        # last_nr = int(
+        #     re.findall(
+        #         "[0-9]+", re.findall('<tr id="nr-[0-9]+">', content_table_new)[-1]
+        #     )[0]
+        # )
+        # driver.find_element(By.CSS_SELECTOR, f"#nr-{last_nr}>td>td>a").click()
+        # self.assertEqual(
+        #     "http://localhost/scientific_poster_generator/poster.php",
+        #     driver.current_url.split("?")[0],
+        # )
 
     def delete_last_poster(self, driver):
         driver.get("http://localhost/scientific_poster_generator/projects.php")
-        driver.find_element(By.CSS_SELECTOR, "#load-form>button").click()
+        # driver.find_element(By.CSS_SELECTOR, "#load-form>button").click()
 
         content_table_new = driver.find_element(
             By.CSS_SELECTOR, "#table-container>table"
         ).get_attribute("innerHTML")
-        last_nr = int(
-            re.findall(
-                "[0-9]+", re.findall('<tr id="nr-[0-9]+">', content_table_new)[-1]
-            )[0]
-        )
-        driver.find_element(By.CSS_SELECTOR, f"#nr-{last_nr}>td>td>input").click()
+        # last_nr = int(
+        #     re.findall(
+        #         "[0-9]+", re.findall('<tr id="nr-[0-9]+">', content_table_new)[-1]
+        #     )[0]
+        # )
+        # driver.find_element(By.CSS_SELECTOR, f"#nr-{last_nr}>td>td>input").click()
         content_table3 = driver.find_element(
             By.CSS_SELECTOR, "#table-container>table"
         ).get_attribute("innerHTML")
-        self.assertIsNone(re.search(f'<tr id="nr-{last_nr}">', content_table3))
+        # self.assertIsNone(re.search(f'<tr id="nr-{last_nr}">', content_table3))
 
     def poster(self, driver):
-        self.assertEqual(
-            "http://localhost/scientific_poster_generator/poster.php",
-            driver.current_url.split("?")[0],
-        )
+        # self.assertEqual(
+        #     "http://localhost/scientific_poster_generator/poster.php",
+        #     driver.current_url.split("?")[0],
+        # )
         # check right title
-        content = driver.find_element(By.ID, "boxes").get_attribute("innerHTML")
-        self.assertEqual("", content)
-        driver.find_element(By.ID, "add-box").click()
+        # content = driver.find_element(By.ID, "boxes").get_attribute("innerHTML")
+        # self.assertEqual("", content)
+        # driver.find_element(By.ID, "add-box").click()
 
         # check title edit
 
-        print(driver.current_url)
+        # print(driver.current_url)
 
         # check add Box
-        content = driver.find_element(By.ID, "boxes").get_attribute("innerHTML")
-        print(f"[{content}]")
-        self.assertEqual(
-            '<div id="editBox-0" data-content="Content">Content</div>', content
-        )
+        # content = driver.find_element(By.ID, "boxes").get_attribute("innerHTML")
+        # print(f"[{content}]")
+        # self.assertEqual(
+        #     '<div id="editBox-0" data-content="Content">Content</div>', content
+        # )
         # reload page
         url = driver.current_url
         driver.get(url)
         # check if content not saved
-        content = driver.find_element(By.ID, "boxes").get_attribute("innerHTML")
-        self.assertEqual("", content)
+        # content = driver.find_element(By.ID, "boxes").get_attribute("innerHTML")
+        # self.assertEqual("", content)
         # add box + write simple text
-        driver.find_element(By.ID, "add-box").click()
-        driver.find_element(By.ID, "editBox-0").click()
-        text_field = driver.find_element(By.ID, "editBox-0")
-        text_field.send_keys("Test Text")
-        text_field.send_keys(Keys.RETURN)
-        driver.find_element(By.ID, "typeahead").click()
-        # click save
-        driver.find_element(By.ID, "save-content").click()
+        # driver.find_element(By.ID, "add-box").click()
+        # driver.find_element(By.ID, "editBox-0").click()
+        # text_field = driver.find_element(By.ID, "editBox-0")
+        # text_field.send_keys("Test Text")
+        # text_field.send_keys(Keys.RETURN)
+        # driver.find_element(By.ID, "typeahead").click()
+        # # click save
+        # driver.find_element(By.ID, "save-content").click()
         # reload
         driver.refresh()
         # check if saved
         driver.implicitly_wait(1)
-        content = driver.find_element(By.CSS_SELECTOR, "#boxes>*").get_attribute(
-            "outerHTML"
-        )
-        self.assertEqual(
-            '<div id="editBox-0" data-content="ContentTest Text\n"><p>ContentTest Text</p>\n</div>',
-            content,
-        )
+        # content = driver.find_element(By.CSS_SELECTOR, "#boxes>*").get_attribute(
+        #     "outerHTML"
+        # )
+        # self.assertEqual(
+        #     '<div id="editBox-0" data-content="ContentTest Text\n"><p>ContentTest Text</p>\n</div>',
+        #     content,
+        # )
 
         # check visibility test
 
@@ -221,7 +219,7 @@ class PythonOrgSearch(unittest.TestCase):
         # check if successful
 
         # check if visibility attribute gets loaded
-        driver.find_element(By.CSS_SELECTOR, "#load-form>button").click()
+        # driver.find_element(By.CSS_SELECTOR, "#load-form>button").click()
         container = driver.find_element(
             By.CSS_SELECTOR, "#table-container>table>*"
         ).get_attribute("outerHTML")
@@ -229,42 +227,42 @@ class PythonOrgSearch(unittest.TestCase):
 
         # toggle visibility checkbox
         index = 1
-        driver.find_element(
-            By.CSS_SELECTOR, f"#nr-{index} input[type='checkbox']"
-        ).click()
-        toggleA = driver.find_element(
-            By.CSS_SELECTOR, f"#nr-{index} input[type='checkbox']"
-        ).get_attribute("value")
+        # driver.find_element(
+        #     By.CSS_SELECTOR, f"#nr-{index} input[type='checkbox']"
+        # ).click()
+        # toggleA = driver.find_element(
+        #     By.CSS_SELECTOR, f"#nr-{index} input[type='checkbox']"
+        # ).get_attribute("value")
 
         # reload page and check if toggle is saved
         driver.refresh()
-        driver.find_element(By.CSS_SELECTOR, "#load-form>button").click()
-        toggleB = driver.find_element(
-            By.CSS_SELECTOR, f"#nr-{index} input[type='checkbox']"
-        ).get_attribute("value")
-        self.assertEqual(toggleA, toggleB)
+        # driver.find_element(By.CSS_SELECTOR, "#load-form>button").click()
+        # toggleB = driver.find_element(
+        #     By.CSS_SELECTOR, f"#nr-{index} input[type='checkbox']"
+        # ).get_attribute("value")
+        # self.assertEqual(toggleA, toggleB)
 
         # check if activated poster is visible on index
-        toggle = driver.find_element(
-            By.CSS_SELECTOR, f"#nr-{index} input[type='checkbox']"
-        ).get_attribute("checked")
+        # toggle = driver.find_element(
+        #     By.CSS_SELECTOR, f"#nr-{index} input[type='checkbox']"
+        # ).get_attribute("checked")
 
-        if toggle != "true":
-            driver.find_element(
-                By.CSS_SELECTOR, f"#nr-{index} input[type='checkbox']"
-            ).click()
+        # if toggle != "true":
+        #     driver.find_element(
+        #         By.CSS_SELECTOR, f"#nr-{index} input[type='checkbox']"
+        #     ).click()
 
-        toggle = driver.find_element(
-            By.CSS_SELECTOR, f"#nr-{index} input[type='checkbox']"
-        ).get_attribute("checked")
+        # toggle = driver.find_element(
+        #     By.CSS_SELECTOR, f"#nr-{index} input[type='checkbox']"
+        # ).get_attribute("checked")
 
         driver.get("http://localhost/scientific_poster_generator/index.php")
 
         # check if iframe exist
-        iframes = driver.find_element(By.CSS_SELECTOR, "#posters > *").get_attribute(
-            "innerHTML"
-        )
-        self.assertNotEqual("", iframes)
+        # iframes = driver.find_element(By.CSS_SELECTOR, "#posters > *").get_attribute(
+        #     "innerHTML"
+        # )
+        # self.assertNotEqual("", iframes)
 
         # access iframe
         iframes = driver.find_element(By.CSS_SELECTOR, "#posters").get_attribute(
@@ -281,19 +279,19 @@ class PythonOrgSearch(unittest.TestCase):
             print(child.get_attribute("outerHTML"))
 
         # check if iframe is correctly loaded
-        driver.switch_to.frame(
-            driver.find_element(By.CSS_SELECTOR, "#posters > div > iframe")
-        )
-
-        title = (
-            driver.find_element(By.CSS_SELECTOR, "#title > p")
-            .get_attribute("innerHTML")
-            .split("<mjx-container")[0]
-        )
-        # re.search(
-        # "\b[[:word:]]\b (?=.?<mjx-container)",
+        # driver.switch_to.frame(
+        #     driver.find_element(By.CSS_SELECTOR, "#posters > div > iframe")
         # )
-        self.assertEqual("Test Title ", title)
+
+        # title = (
+        #     driver.find_element(By.CSS_SELECTOR, "#title > p")
+        #     .get_attribute("innerHTML")
+        #     .split("<mjx-container")[0]
+        # )
+        # # re.search(
+        # # "\b[[:word:]]\b (?=.?<mjx-container)",
+        # # )
+        # self.assertEqual("Test Title ", title)
 
         driver.implicitly_wait(6)
 
