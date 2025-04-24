@@ -27,11 +27,11 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y php mysql-server
         sudo apt install mariadb-server
+    #   sudo apt-get install -y php mysql-server
 
-    - name: Pull MariaDB image manually
-      run: docker pull mariadb:latest
+    # - name: Pull MariaDB image manually
+    #   run: docker pull mariadb:latest
 
     - uses: getong/mariadb-action@v1.11
       with:
