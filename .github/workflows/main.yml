@@ -22,15 +22,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-
-    - name: Copy APT cache to workspace
-      if: steps.apt-cache.outputs.cache-hit != 'true'
-      run: |
-        mkdir -p ./apt-cache
-        sudo cp /var/cache/apt/archives/*.deb ./apt-cache/
-
     - name: Cache APT packages
+    - uses: actions/checkout@v4
       id: apt-cache
       uses: actions/cache@v4
       with:
@@ -39,13 +32,21 @@ jobs:
         restore-keys: |
           apt-packages-${{ runner.os }}-
 
+    - name: Move cached packages back
+      run: |
+        sudo cp ./apt-cache/*.deb /var/cache/apt/archives/ || true
+
     - name: Install dependencies
       if: steps.apt-cache.outputs.cache-hit != 'true'
       run: |
-        sudo cp ./apt-cache/*.deb /var/cache/apt/archives/ || true
         sudo apt-get update
         sudo apt install mariadb-server
     #   sudo apt-get install -y php mysql-server
+
+    - name: Copy APT cache to workspace
+      run: |
+        mkdir -p ./apt-cache
+        sudo cp /var/cache/apt/archives/*.deb ./apt-cache/
 
 
 
