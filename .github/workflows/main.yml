@@ -25,6 +25,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Copy APT cache to workspace
+      if: steps.apt-cache.outputs.cache-hit != 'true'
       run: |
         mkdir -p ./apt-cache
         sudo cp /var/cache/apt/archives/*.deb ./apt-cache/
