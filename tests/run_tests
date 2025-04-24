@@ -13,6 +13,8 @@ if ! command -v python3 2>/dev/null >/dev/null; then
 	exit 1
 fi
 
+cat requirements.txt | md5sum
+
 requirements_hash=$(cat requirements.txt | md5sum | sed -e 's#\s.*##')
 
 create_venv=0
@@ -47,8 +49,6 @@ if [[ "$GITHUB_ACTIONS" = "true" ]]; then
 else
 	echo GITHUB_ACTION does not exist
 fi
-
-echo -----------------------------------------------------------
 
 # python3 poster_tests.py $*
 # coverage run -p poster_tests.py
