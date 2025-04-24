@@ -9,6 +9,9 @@ on:
 permissions:
   contents: read
 
+env:
+  DB_USER: 'poster_generator'
+
 jobs:
   main-tests:
     permissions:
@@ -26,8 +29,6 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y php mysql-server
         sudo apt install mariadb-server
-        pwd
-        echo ${{ runner.TOOL_CACHE }}
 
     - uses: getong/mariadb-action@v1.11
       with:
@@ -38,7 +39,7 @@ jobs:
         mariadb version: '10.4.10'
         mysql database: 'some_test'
         mysql root password: password
-        mysql user: 'poster_generator'
+        mysql user: ${{ env.DB_USER }}
         mysql password: password
 
     - name: Run test script
