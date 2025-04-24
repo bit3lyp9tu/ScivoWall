@@ -24,11 +24,23 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Cache APT packages
+      id: apt-cache
+      uses: actions/cache@v4
+      with:
+        path: /var/cache/apt/archives
+        key: apt-packages-${{ runner.os }}-${{ hashFiles('.github/workflows/main.yml') }}
+        restore-keys: |
+          apt-packages-${{ runner.os }}-
+
     - name: Install dependencies
+      if: steps.apt-cache.outputs.cache-hit != 'true'
       run: |
         sudo apt-get update
         sudo apt install mariadb-server
     #   sudo apt-get install -y php mysql-server
+
+
 
     # - name: Pull MariaDB image manually
     #   run: docker pull mariadb:latest
