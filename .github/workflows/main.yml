@@ -47,7 +47,6 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt install mariadb-server
-
         pip install selenium
         pip install mypy
     #   sudo apt-get install -y php mysql-server

@@ -47,7 +47,7 @@ else
 	echo running on github actions
 fi
 
-# python3 poster_tests.py $*
+python3 poster_tests.py $*
 # coverage run -p poster_tests.py
 # coverage combine
 # coverage report
