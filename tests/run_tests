@@ -41,7 +41,7 @@ if [[ $venv_hash != $requirements_hash ]]; then
 	echo "$requirements_hash" > "$VENV_DIR/hash"
 fi
 
-if [[ -z "${GITHUB_ACTION}" ]]; then
+if [[ "$GITHUB_ACTIONS" = "true" ]]; then
 
 	echo GITHUB_ACTION does exist
 else
