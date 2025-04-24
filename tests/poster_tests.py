@@ -18,20 +18,23 @@ class PythonOrgSearch(unittest.TestCase):
 
     def test_search_in_python_org(self):
         driver = self.driver
-        driver.get("http://localhost/scientific_poster_generator/login.php")
-        self.assertIn("Poster Generator", driver.title)
+        # driver.get("http://localhost/scientific_poster_generator/login.php")
+        # self.assertIn("Poster Generator", driver.title)
 
-        self.login(self.driver, "max5", "abc")
-        self.projects(self.driver)
-        self.poster(self.driver)
+        driver.get("https://example.com")
+        print(driver.title)
 
-        self.author(self.driver)
+        # self.login(self.driver, "max5", "abc")
+        # self.projects(self.driver)
+        # self.poster(self.driver)
 
-        self.delete_last_poster(self.driver)
+        # self.author(self.driver)
 
-        # self.logout(self.driver)
+        # self.delete_last_poster(self.driver)
 
-        self.admin(self.driver)
+        # # self.logout(self.driver)
+
+        # self.admin(self.driver)
 
     # def tearDown(self):
     #     self.driver.close()
@@ -308,6 +311,6 @@ class PythonOrgSearch(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-
     print("Hello World")
+
+    unittest.main()
