@@ -48,6 +48,8 @@ else
 	echo GITHUB_ACTION does not exist
 fi
 
+echo -----------------------------------------------------------
+
 # python3 poster_tests.py $*
 # coverage run -p poster_tests.py
 # coverage combine
