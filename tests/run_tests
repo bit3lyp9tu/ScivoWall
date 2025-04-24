@@ -13,41 +13,34 @@ if ! command -v python3 2>/dev/null >/dev/null; then
 	exit 1
 fi
 
-cat requirements.txt | md5sum
+if [[ "$GITHUB_ACTIONS" != "true" ]]; then
 
-requirements_hash=$(cat requirements.txt | md5sum | sed -e 's#\s.*##')
+	requirements_hash=$(cat requirements.txt | md5sum | sed -e 's#\s.*##')
+	create_venv=0
 
-create_venv=0
+	if ! [[ -d $VENV_DIR ]]; then
+		create_venv=1
+	fi
 
-if ! [[ -d $VENV_DIR ]]; then
-	create_venv=1
-fi
+	if ! [[ -e "$VENV_DIR/hash" ]]; then
+		create_venv=1
+	fi
 
-if ! [[ -e "$VENV_DIR/hash" ]]; then
-	create_venv=1
-fi
+	if [[ $create_venv -eq 1 ]]; then
+		python3 -mvenv $VENV_DIR
+	fi
 
-if [[ $create_venv -eq 1 ]]; then
-	python3 -mvenv $VENV_DIR
-fi
+	source $VENV_DIR/bin/activate
 
-source $VENV_DIR/bin/activate
+	venv_hash=$(cat "$VENV_DIR/hash" 2>/dev/null)
 
-venv_hash=$(cat "$VENV_DIR/hash" 2>/dev/null)
+	if [[ $venv_hash != $requirements_hash ]]; then
+		for install_me in $(cat requirements.txt); do
+			pip install $install_me
+		done
 
-if [[ $venv_hash != $requirements_hash ]]; then
-	for install_me in $(cat requirements.txt); do
-		pip install $install_me
-	done
-
-	echo "$requirements_hash" > "$VENV_DIR/hash"
-fi
-
-if [[ "$GITHUB_ACTIONS" = "true" ]]; then
-
-	echo GITHUB_ACTION does exist
-else
-	echo GITHUB_ACTION does not exist
+		echo "$requirements_hash" > "$VENV_DIR/hash"
+	fi
 fi
 
 # python3 poster_tests.py $*
