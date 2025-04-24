@@ -26,6 +26,9 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y php mysql-server
         sudo apt install mariadb-server
+        pwd
+        ls .
+        echo ${{ runner.TOOL_CACHE }}
 
     - uses: getong/mariadb-action@v1.11
       with:
