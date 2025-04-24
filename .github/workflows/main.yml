@@ -28,14 +28,14 @@ jobs:
       id: apt-cache
       uses: actions/cache@v4
       with:
-        path: ./apt-cache/
+        path: /var/cache/apt/archives
         key: apt-packages-${{ runner.os }}-${{ hashFiles('.github/workflows/main.yml') }}
         restore-keys: |
           apt-packages-${{ runner.os }}-
 
-    - name: Move cached packages back
-      run: |
-        sudo cp ./apt-cache/*.deb /var/cache/apt/archives/ || true
+    # - name: Move cached packages back
+    #   run: |
+    #     sudo cp ./apt-cache/*.deb /var/cache/apt/archives/ || true
 
     - name: Install dependencies
       if: steps.apt-cache.outputs.cache-hit != 'true'
@@ -44,10 +44,10 @@ jobs:
         sudo apt install mariadb-server
     #   sudo apt-get install -y php mysql-server
 
-    - name: Copy APT cache to workspace
-      run: |
-        mkdir -p ./apt-cache
-        sudo cp /var/cache/apt/archives/*.deb ./apt-cache/
+    # - name: Copy APT cache to workspace
+    #   run: |
+    #     mkdir -p ./apt-cache
+    #     sudo cp /var/cache/apt/archives/*.deb ./apt-cache/
 
 
     # - name: Pull MariaDB image manually
