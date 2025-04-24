@@ -41,6 +41,13 @@ if [[ $venv_hash != $requirements_hash ]]; then
 	echo "$requirements_hash" > "$VENV_DIR/hash"
 fi
 
+if [[ -z "${GITHUB_ACTION}" ]]; then
+
+	echo GITHUB_ACTION does exist
+else
+	echo GITHUB_ACTION does not exist
+fi
+
 # python3 poster_tests.py $*
 # coverage run -p poster_tests.py
 # coverage combine
