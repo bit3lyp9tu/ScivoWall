@@ -24,11 +24,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Copy APT cache to workspace
+      run: |
+        mkdir -p ./apt-cache
+        sudo cp /var/cache/apt/archives/*.deb ./apt-cache/
+
     - name: Cache APT packages
       id: apt-cache
       uses: actions/cache@v4
       with:
-        path: /var/cache/apt/archives
+        path: ./apt-cache/
         key: apt-packages-${{ runner.os }}-${{ hashFiles('.github/workflows/main.yml') }}
         restore-keys: |
           apt-packages-${{ runner.os }}-
@@ -36,6 +41,7 @@ jobs:
     - name: Install dependencies
       if: steps.apt-cache.outputs.cache-hit != 'true'
       run: |
+        sudo cp ./apt-cache/*.deb /var/cache/apt/archives/ || true
         sudo apt-get update
         sudo apt install mariadb-server
     #   sudo apt-get install -y php mysql-server
