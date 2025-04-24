@@ -30,6 +30,9 @@ jobs:
         sudo apt-get install -y php mysql-server
         sudo apt install mariadb-server
 
+    - name: Pull MariaDB image manually
+      run: docker pull mariadb:latest
+
     - uses: getong/mariadb-action@v1.11
       with:
         host port: 3800
