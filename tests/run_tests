@@ -41,6 +41,11 @@ if [[ "$GITHUB_ACTIONS" != "true" ]]; then
 
 		echo "$requirements_hash" > "$VENV_DIR/hash"
 	fi
+
+
+	echo running locally
+else
+	echo running on github actions
 fi
 
 # python3 poster_tests.py $*
