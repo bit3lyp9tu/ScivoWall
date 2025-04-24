@@ -41,7 +41,7 @@ if [[ $venv_hash != $requirements_hash ]]; then
 	echo "$requirements_hash" > "$VENV_DIR/hash"
 fi
 
-# python3 poster_tests.py $*
-coverage run -p poster_tests.py
-coverage combine
-coverage report
+python3 poster_tests.py $*
+# coverage run -p poster_tests.py
+# coverage combine
+# coverage report

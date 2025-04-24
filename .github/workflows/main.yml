@@ -24,10 +24,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Grand folder permissions
-      run: |
-        sudo chmod +rw /var/cache/apt/archives/
-  # sudo chmod +rw /var/cache/apt/archives/lock
+    # - name: Grand folder permissions
+    #   run: |
+    #     sudo chmod +rw /var/cache/apt/archives/partial
+    #   # sudo chmod +rw /var/cache/apt/archives/lock
 
     - name: Cache APT packages
       id: apt-cache

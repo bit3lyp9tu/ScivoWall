@@ -16,8 +16,6 @@ sudo mariadb-dump $DB_NAME > ./tests/post_test.sql
 sudo mariadb -e "DROP DATABASE ${DB_NAME};"
 
 
-echo --- PHP Coverage ---
-
 php -r 'foreach(get_defined_functions()["internal"] as $i) {echo $i . "\n";};' > ./tests/php_build_in_func
 
 for i in __halt_compiler abstract and array as break callable case catch class clone const continue declare default die do echo else elseif empty enddeclare endfor endforeach endif endswitch endwhile eval exit extends final for foreach function global goto if implements include include_once instanceof insteadof interface isset list namespace new or print private protected public require require_once return static switch throw trait try unset use var while xor
@@ -31,4 +29,7 @@ done
 #     python3 ./tests/coverage.py $i ./testing.php | sed 's/^/- /'
 # done
 
+cd tests; ./run_tests; cd ..
+
+echo --- PHP Coverage ---
 python3 ./tests/coverage.py ./testing.php 2 0 0
