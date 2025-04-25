@@ -1,3 +1,5 @@
+import os
+
 import unittest
 import mypy
 import re
@@ -7,6 +9,7 @@ from selenium import webdriver
 # from selenium.webdriver.common.by import By
 # from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 
 
@@ -16,11 +19,14 @@ class PythonOrgSearch(unittest.TestCase):
         options = Options()
         options.add_argument("--headless")
 
-        print("Firefox options binary:", options.binary_location)
-        options.binary_location = "/snap/bin/firefox"
-        print("Firefox options binary:", options.binary_location)
-
-        self.driver = webdriver.Firefox(options=options)
+        if os.environ.get("GITHUB_ACTIONS"):
+            print("Firefox options binary:", options.binary_location)
+            print("Firefox options binary:", options.binary_location)
+            options.binary_location = "/snap/bin/firefox"
+            service = Service(executable_path="/snap/bin/geckodriver")
+            self.driver = webdriver.Firefox(service=service, options=options)
+        else:
+            self.driver = webdriver.Firefox(options=options)
 
     def test_search_in_python_org(self):
         driver = self.driver

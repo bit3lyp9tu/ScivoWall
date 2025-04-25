@@ -87,11 +87,13 @@ jobs:
     - name: Run test script
       run: |
         which firefox
-        firefox --version
         which geckodriver
-        geckodriver --version
+
+        /snap/bin/firefox --headless --version
 
         ./tests/test_env
+    # firefox --version
+    # geckodriver --version
 
     - name: Create a new version
       if: ${{ success() }}
