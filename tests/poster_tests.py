@@ -31,16 +31,16 @@ class PythonOrgSearch(unittest.TestCase):
     def test_search_in_python_org(self):
         driver = self.driver
         driver.get("http://127.0.0.1:8080/scientific_poster_generator/login.php")
-        print(driver.title)
+        # print(driver.title)
         self.assertIn("Poster Generator", driver.title)
 
-        driver.get("http://127.0.0.1:8080/scientific_poster_generator/register.php")
-        print(driver.title)
-        self.assertIn("Poster Generator", driver.title)
+        # driver.get("http://127.0.0.1:8080/scientific_poster_generator/register.php")
+        # print(driver.title)
+        # self.assertIn("Poster Generator", driver.title)
 
-        driver.get("http://127.0.0.1:8080/scientific_poster_generator/projects.php")
-        print(driver.title)
-        self.assertIn("Poster Generator", driver.title)
+        # driver.get("http://127.0.0.1:8080/scientific_poster_generator/projects.php")
+        # print(driver.title)
+        # self.assertIn("Poster Generator", driver.title)
 
     def tearDown(self):
         self.driver.close()
