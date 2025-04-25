@@ -60,6 +60,7 @@ jobs:
         chmod +x geckodriver
         sudo mv geckodriver /usr/local/bin/
         echo "/snap/bin" >> $GITHUB_PATH
+        pip install webdriver-manager
     # git clone https://github.com/mozilla/geckodriver.git --depth 1 --branch=master
     # sudo apt-get install -y php mysql-server
 
@@ -71,6 +72,10 @@ jobs:
 
     # - name: Pull MariaDB image manually
     #   run: docker pull mariadb:latest
+
+    - name: Install dependencies for headless Firefox
+      run: |
+        sudo apt-get install -y libx11-xcb-dev libxcb1-dev libdbus-1-3 libxtst6 libnss3 libgdk-pixbuf2.0-0
 
     - uses: getong/mariadb-action@v1.11
       with:
@@ -90,6 +95,8 @@ jobs:
         which geckodriver
 
         /snap/bin/firefox --headless --version
+
+        file /snap/bin/firefox
 
         ./tests/test_env
     # firefox --version

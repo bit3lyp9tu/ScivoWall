@@ -19,12 +19,17 @@ class PythonOrgSearch(unittest.TestCase):
         options = Options()
         options.add_argument("--headless")
 
+        print(f"is github action: {os.environ.get("GITHUB_ACTIONS")}")
+
         if os.environ.get("GITHUB_ACTIONS"):
             print("Firefox options binary:", options.binary_location)
             print("Firefox options binary:", options.binary_location)
             options.binary_location = "/snap/bin/firefox"
-            service = Service(executable_path="/snap/bin/geckodriver")
-            self.driver = webdriver.Firefox(service=service, options=options)
+            # service = Service(executable_path="/snap/bin/geckodriver")
+            # Automatically manage the geckodriver
+            self.driver = webdriver.Firefox(
+                executable_path=GeckoDriverManager().install(), options=options
+            )
         else:
             self.driver = webdriver.Firefox(options=options)
 
