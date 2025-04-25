@@ -50,7 +50,7 @@ jobs:
         pip install selenium
         pip install mypy
         sudo apt-get install -y firefox
-        pip install git+https://github.com/mozilla/geckodriver.git
+        sudo apt-get install git+https://github.com/mozilla/geckodriver.git
     # git clone https://github.com/mozilla/geckodriver.git --depth 1 --branch=master
     # chmod +x geckodriver
     # sudo mv geckodriver /usr/local/bin/
