@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang='en'>
 <?php
-    include("account_management.php");
-    include("header.html");
+    include(__DIR__ . "/" . "account_management.php");
+    include(__DIR__ . "/" . "header.html");
 ?>
 <body>
     <div>

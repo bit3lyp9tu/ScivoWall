@@ -8,7 +8,7 @@
 	// set_error_handler("exception_error_handler");
 	// ini_set('display_errors', '1');
 
-    include_once("mysql.php");
+    include_once(__DIR__ . "/" . "mysql.php");
 
     function insertQuery($sql, $types, ...$param) {
         $stmt = $GLOBALS["conn"]->prepare($sql);

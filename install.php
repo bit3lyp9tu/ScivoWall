@@ -1,5 +1,5 @@
 <?php
-	include("mysql.php");
+	include(__DIR__ . "/" . "mysql.php");
 
 	$GLOBALS["queries"] = [];
 

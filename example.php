@@ -1,5 +1,5 @@
 <?php
-	include_once("mysql.php");
+	include_once(__DIR__ . "/" . "mysql.php");
 
 	// Create connection
 	$conn = new mysqli($servername, $username, $password);

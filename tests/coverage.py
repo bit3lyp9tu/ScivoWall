@@ -185,10 +185,18 @@ def getIncludedFiles(target_file):
     f = open(target_file, "r")
     lines = list_to_string(getWithoutComments(f.read().split("\n")))
 
-    l = re.findall(r"(?<=include\(\")[\w+,\_,\-]+\.\w+(?=\"\)\;)", lines)
-    l.extend(re.findall(r"(?<=include_once\(\")[\w+,\_,\-]+\.\w+(?=\"\)\;)", lines))
+    l = re.findall(
+        r"(?<=include\()[\s,\.,\",\/,\w+]+(?=\"\)\;)",
+        lines,
+    )
+    l.extend(
+        re.findall(
+            r"(?<=include_once\()[\s,\.,\",\/,\w+]+(?=\"\)\;)",
+            lines,
+        )
+    )
 
-    return l
+    return [re.sub(r"(__DIR__\s?\.\s?\"\/\"\s?\.\s?\"|\")", "", i) for i in l]
 
 
 def getIncludedFilesAll(file):

@@ -22,8 +22,8 @@
 		$GLOBALS["dbname"] = "poster_generator_test";
 	}
 
-	include("queries.php");
-	include_once("functions.php");
+	include(__DIR__ . "/" . "queries.php");
+	include_once(__DIR__ . "/" . "functions.php");
 
 	function shutdown() {
 		$error = error_get_last();
@@ -48,11 +48,11 @@
 
 	register_shutdown_function('shutdown');
 
-	include("install.php");
+	include(__DIR__ . "/" . "install.php");
 
-	include("account_management.php");
+	include(__DIR__ . "/" . "account_management.php");
 
-	include_once("poster_edit.php");
+	include_once(__DIR__ . "/" . "poster_edit.php");
 
 	function print_green($text) {
 		echo "\033[32m$text\033[0m\n";

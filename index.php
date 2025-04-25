@@ -18,10 +18,10 @@
 
     $site_script="index.js";
 
-    include("account_management.php");
-    include("header.html");
+    include(__DIR__ . "/" . "account_management.php");
+    include(__DIR__ . "/" . "header.html");
 
-    include("poster_edit.php")
+    include(__DIR__ . "/" . "poster_edit.php")
 ?>
 <body>
     <div id="logo_headline">

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang='en'>
 <?php
-    // include_once("index.php");
-    include("account_management.php");
-    include("header.html");
+    // include_once(__DIR__ . "/" . "index.php");
+    include(__DIR__ . "/" . "account_management.php");
+    include(__DIR__ . "/" . "header.html");
 
 	// automatisch die projekte laden
 ?>

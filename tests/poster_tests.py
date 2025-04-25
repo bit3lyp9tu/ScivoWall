@@ -33,6 +33,12 @@ class PythonOrgSearch(unittest.TestCase):
         driver.get("http://127.0.0.1:8080/scientific_poster_generator/login.php")
         self.assertIn("Poster Generator", driver.title)
 
+        driver.get("http://127.0.0.1:8080/scientific_poster_generator/register.php")
+        self.assertIn("Poster Generator", driver.title)
+
+        driver.get("http://127.0.0.1:8080/scientific_poster_generator/projects.php")
+        self.assertIn("Poster Generator", driver.title)
+
     def tearDown(self):
         self.driver.close()
 

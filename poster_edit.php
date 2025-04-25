@@ -1,7 +1,7 @@
 <?php
-    include_once("queries.php");
-    include_once("install.php");
-    include_once("account_management.php");
+    include_once(__DIR__ . "/" . "queries.php");
+    include_once(__DIR__ . "/" . "install.php");
+    include_once(__DIR__ . "/" . "account_management.php");
 
     function getData() {
         $data = isset($_GET['id']) ? $_GET['id'] : '';
