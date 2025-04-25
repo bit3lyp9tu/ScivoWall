@@ -102,14 +102,9 @@ jobs:
         which geckodriver
 
         echo -----
-
-        /snap/bin/firefox --headless --version
-        ls -l /snap/firefox/current/
-
-        file /snap/bin/firefox
-
-        echo -----
         netstat -tuln
+        echo --
+        ps aux | grep firefox
         ps aux | grep geckodriver
 
 

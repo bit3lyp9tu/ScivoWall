@@ -25,11 +25,9 @@ class PythonOrgSearch(unittest.TestCase):
 
         print(f"is github action: {os.environ.get("GITHUB_ACTIONS")}")
         if os.environ.get("GITHUB_ACTIONS"):
-            firefox_bin = "/snap/firefox/current/usr/lib/firefox/firefox"
-            firefoxdriver_bin = "/snap/firefox/current/usr/lib/firefox/geckodriver"
 
-            options.binary_location = firefox_bin  # "/snap/bin/firefox"
-            service = FirefoxService(GeckoDriverManager().install())
+            options.binary_location = "/usr/bin/firefox"
+            service = FirefoxService(executable_path="/usr/local/bin/geckodriver")
             self.driver = webdriver.Firefox(service=service, options=options)
         else:
             self.driver = webdriver.Firefox(options=options)
