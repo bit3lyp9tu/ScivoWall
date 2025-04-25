@@ -50,15 +50,14 @@ jobs:
         pip install selenium
         pip install mypy
         sudo apt-get install -y firefox
-        sudo apt-get install git+https://github.com/mozilla/geckodriver.git
+        GECKO_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | grep 'tag_name' | cut -d '"' -f4)
+        echo $GECKO_VERSION
+        wget https://github.com/mozilla/geckodriver/releases/download/$GECKO_VERSION/geckodriver-$GECKO_VERSION-linux64.tar.gz
+        tar -xzf geckodriver-$GECKO_VERSION-linux64.tar.gz
+        chmod +x geckodriver
+        sudo mv geckodriver /usr/local/bin/
     # git clone https://github.com/mozilla/geckodriver.git --depth 1 --branch=master
-    # chmod +x geckodriver
-    # sudo mv geckodriver /usr/local/bin/
     # sudo apt-get install -y php mysql-server
-    #     GECKO_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | grep 'tag_name' | cut -d '"' -f4)
-    #     echo $GECKO_VERSION
-    # # wget https://github.com/mozilla/geckodriver/releases/download/$GECKO_VERSION/geckodriver-$GECKO_VERSION-linux64.tar.gz
-    # # tar -xzf geckodriver-$GECKO_VERSION-linux64.tar.gz
 
     # - name: Copy APT cache to workspace
     #   run: |
