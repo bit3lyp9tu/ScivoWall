@@ -20,6 +20,8 @@
 
     echo "<p>PHP script is running!</p>";
 
+    print_r(scandir("/scientific_poster_generator/"));
+
     ob_end_flush();
 ?>
 <body>
