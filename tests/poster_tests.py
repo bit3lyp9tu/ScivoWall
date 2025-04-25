@@ -21,7 +21,6 @@ class PythonOrgSearch(unittest.TestCase):
         options.add_argument("--headless")
 
         print(f"is github action: {os.environ.get("GITHUB_ACTIONS")}")
-
         if os.environ.get("GITHUB_ACTIONS"):
             print("Firefox options binary:", options.binary_location)
             print("Firefox options binary:", options.binary_location)
