@@ -7,16 +7,19 @@ from selenium import webdriver
 # from selenium.webdriver.common.by import By
 # from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 
 
 class PythonOrgSearch(unittest.TestCase):
 
     def setUp(self):
         options = Options()
-        # options.add_argument("--headless")
+        options.add_argument("--headless")
 
-        print("Firefox options binary:", options.binary_location)
-        print("Firefox options binary:", options.binary)
+        # print("Firefox options binary:", options.binary_location)
+        # options.binary_location = "/usr/bin/firefox"
+        # print("Firefox options binary:", options.binary_location)
+        # print("Firefox options binary:", options.binary)
 
         self.driver = webdriver.Firefox(options=options)
 

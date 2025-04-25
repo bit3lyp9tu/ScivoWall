@@ -59,6 +59,7 @@ jobs:
         tar -xzf geckodriver-$GECKO_VERSION-linux64.tar.gz
         chmod +x geckodriver
         sudo mv geckodriver /usr/local/bin/
+        echo "/snap/bin" >> $GITHUB_PATH
     # git clone https://github.com/mozilla/geckodriver.git --depth 1 --branch=master
     # sudo apt-get install -y php mysql-server
 
