@@ -98,7 +98,8 @@ jobs:
 
     - name: Run test script
       run: |
-        curl -i http://localhost:8080/scientific_poster_generator/login.php
+        curl -i http://127.0.0.1:8080/scientific_poster_generator/login.php
+        echo -----------------
         ./tests/test_env
 
     - name: Create a new version
