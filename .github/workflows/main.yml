@@ -89,16 +89,25 @@ jobs:
         mysql user: ${{ env.DB_USER }}
         mysql password: password
 
-    - name: Run test script
+    - name: Debug
       run: |
         which firefox
         which geckodriver
+
+        echo -----
 
         /snap/bin/firefox --headless --version
         ls -l /snap/firefox/current/
 
         file /snap/bin/firefox
 
+        echo -----
+        netstat -tuln | grep 48981
+        ps aux | grep geckodriver
+
+
+    - name: Run test script
+      run: |
         ./tests/test_env
     # firefox --version
     # geckodriver --version
