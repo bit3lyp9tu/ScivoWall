@@ -61,6 +61,8 @@ jobs:
         sudo mv geckodriver /usr/local/bin/
         echo "/snap/bin" >> $GITHUB_PATH
         pip install webdriver-manager
+
+        sudo apt-get install -y net-tools
     # git clone https://github.com/mozilla/geckodriver.git --depth 1 --branch=master
     # sudo apt-get install -y php mysql-server
 
@@ -109,8 +111,6 @@ jobs:
     - name: Run test script
       run: |
         ./tests/test_env
-    # firefox --version
-    # geckodriver --version
 
     - name: Create a new version
       if: ${{ success() }}
