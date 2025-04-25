@@ -89,6 +89,13 @@ jobs:
         mysql user: ${{ env.DB_USER }}
         mysql password: password
 
+    - name: Server test
+      run: |
+        ps aux | grep php
+        php -S 127.0.0.1:8080 -t /home/runner/work/scientific_poster_generator/scientific_poster_generator &
+        ps aux | grep php
+
+
     - name: Run test script
       run: |
         ./tests/test_env
