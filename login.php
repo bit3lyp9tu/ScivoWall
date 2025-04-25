@@ -11,10 +11,10 @@
     echo "<p>Still processing!</p>";
 
     // include("account_management.php");
-    // include("header.html");
     // echo realpath("account_management.php");
     // echo "file 2";
     echo realpath(__DIR__ . "/" . "header.html");
+    include(__DIR__ . "/" . "header.html");
 
     // jquery in lokale datei statt über code.jquery.com
 
