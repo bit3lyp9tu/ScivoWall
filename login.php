@@ -1,28 +1,20 @@
 <!DOCTYPE html>
 <html lang='en'>
 <?php
-    ob_start();
+    // ob_start();
 
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);
+    // error_reporting(E_ALL);
+    // ini_set('display_errors', 1);
 
-    // $site_script="login.js";
+    $site_script="login.js";
     // var_dump($site_script); // To see if it's getting processed
-    echo "<p>Still processing!</p>";
 
-    // echo realpath("account_management.php");
-    // echo "file 2";
-    // echo realpath(__DIR__ . "/" . "header.html");
     include(__DIR__ . "/" . "header.html");
     include(__DIR__ . "/" . "account_management.php");
 
     // jquery in lokale datei statt über code.jquery.com
 
-    echo "<p>PHP script is running!</p>";
-
-    print_r(scandir(__DIR__));
-
-    ob_end_flush();
+    // ob_end_flush();
 ?>
 <body>
     <div>
