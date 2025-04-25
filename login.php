@@ -10,25 +10,17 @@
     // var_dump($site_script); // To see if it's getting processed
     echo "<p>Still processing!</p>";
 
-    // include("account_management.php");
     // echo realpath("account_management.php");
     // echo "file 2";
-    echo realpath(__DIR__ . "/" . "header.html");
+    // echo realpath(__DIR__ . "/" . "header.html");
     include(__DIR__ . "/" . "header.html");
+    include(__DIR__ . "/" . "account_management.php");
 
     // jquery in lokale datei statt über code.jquery.com
 
     echo "<p>PHP script is running!</p>";
 
-    print_r(__DIR__);
-    $directory = __DIR__;
-    if (is_dir($directory)) {
-        $files = scandir($directory);
-        echo "Dir exists";
-    } else {
-        echo "Directory does not exist: " . $directory;
-    }
-    // print_r(scandir("/scientific_poster_generator/"));
+    print_r(scandir(__DIR__));
 
     // ob_end_flush();
 ?>
