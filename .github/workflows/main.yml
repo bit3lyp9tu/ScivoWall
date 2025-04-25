@@ -91,7 +91,7 @@ jobs:
 
     - name: Manage Server
       run: |
-        php -S 0.0.0.0:8080 -t /home/runner/work/scientific_poster_generator 2>&1 | tee php_errors.log
+        php -S 0.0.0.0:8080 -t /home/runner/work/scientific_poster_generator &
         sleep 5
         netstat -tuln
         ps aux | grep php
@@ -102,10 +102,8 @@ jobs:
       run: |
         curl -v http://127.0.0.1:8080/scientific_poster_generator/login.php
         echo -----------------
-        cat php_errors.log
-        echo -----------------
         ./tests/test_env
-        cat php_errors.log
+      # cat php_errors.log
 
 
     - name: Create a new version
