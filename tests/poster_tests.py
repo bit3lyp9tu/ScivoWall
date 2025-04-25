@@ -16,10 +16,9 @@ class PythonOrgSearch(unittest.TestCase):
         options = Options()
         options.add_argument("--headless")
 
-        # print("Firefox options binary:", options.binary_location)
-        # options.binary_location = "/usr/bin/firefox"
-        # print("Firefox options binary:", options.binary_location)
-        # print("Firefox options binary:", options.binary)
+        print("Firefox options binary:", options.binary_location)
+        options.binary_location = "/snap/bin/firefox"
+        print("Firefox options binary:", options.binary_location)
 
         self.driver = webdriver.Firefox(options=options)
 
