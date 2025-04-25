@@ -30,7 +30,7 @@ class PythonOrgSearch(unittest.TestCase):
 
     def test_search_in_python_org(self):
         driver = self.driver
-        driver.get("http://localhost:8080/scientific_poster_generator/login.php")
+        driver.get("http://localhost:80/scientific_poster_generator/login.php")
         self.assertIn("Poster Generator", driver.title)
 
     def tearDown(self):
