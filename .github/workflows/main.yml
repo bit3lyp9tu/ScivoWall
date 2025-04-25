@@ -104,7 +104,7 @@ jobs:
         file /snap/bin/firefox
 
         echo -----
-        netstat -tuln | grep 48981
+        netstat -tuln
         ps aux | grep geckodriver
 
 
