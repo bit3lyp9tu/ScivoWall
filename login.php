@@ -20,6 +20,14 @@
 
     echo "<p>PHP script is running!</p>";
 
+    print_r(__DIR__);
+    $directory = __DIR__;
+    if (is_dir($directory)) {
+        $files = scandir($directory);
+        echo "Dir exists";
+    } else {
+        echo "Directory does not exist: " . $directory;
+    }
     print_r(scandir("/scientific_poster_generator/"));
 
     ob_end_flush();
