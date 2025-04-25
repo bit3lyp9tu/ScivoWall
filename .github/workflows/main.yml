@@ -92,7 +92,7 @@ jobs:
     - name: Manage Server
       run: |
         echo ----
-        php -S 127.0.0.1:8080 -t /home/runner/work/scientific_poster_generator
+        php -S 127.0.0.1:8080 -t /home/runner/work/scientific_poster_generator &
         ps aux | grep php
   # ls /home/runner/work/scientific_poster_generator/scientific_poster_generator
 
