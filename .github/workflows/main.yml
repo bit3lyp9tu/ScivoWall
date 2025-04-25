@@ -91,6 +91,8 @@ jobs:
 
     - name: Server test
       run: |
+        ls /home/runner/work/scientific_poster_generator
+        echo ----
         ps aux | grep php
         php -S 127.0.0.1:8080 -t /home/runner/work/scientific_poster_generator/scientific_poster_generator &
         ps aux | grep php
