@@ -96,11 +96,11 @@ jobs:
         netstat -tuln
         ps aux | grep php
         echo ---
-        ls -l /home/runner/work/scientific_poster_generator/scientific_poster_generator/test.php
+        ls -l /home/runner/work/scientific_poster_generator/scientific_poster_generator/login.php
 
     - name: Run test script
       run: |
-        curl -v http://127.0.0.1:8080/scientific_poster_generator/test.php
+        curl -v http://127.0.0.1:8080/scientific_poster_generator/login.php
         echo -----------------
         ./tests/test_env
       # cat php_errors.log

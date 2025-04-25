@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html lang='en'>
 <?php
+    ob_start();
+
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
 
-    $site_script="login.js";
+    // $site_script="login.js";
 
-    include("account_management.php");
-    include("header.html");
+    // include("account_management.php");
+    // include("header.html");
 
     // jquery in lokale datei statt über code.jquery.com
+
+    echo "<p>PHP script is running!</p>";
+
+    ob_end_flush();
 ?>
 <body>
     <div>
