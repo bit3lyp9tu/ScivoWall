@@ -22,7 +22,7 @@
 
     print_r(scandir(__DIR__));
 
-    // ob_end_flush();
+    ob_end_flush();
 ?>
 <body>
     <div>
