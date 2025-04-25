@@ -91,10 +91,9 @@ jobs:
 
     - name: Manage Server
       run: |
-        netstat -tuln
-        echo ----
         php -S 0.0.0.0:8080 -t /home/runner/work/scientific_poster_generator &
         sleep 5
+        netstat -tuln
         ps aux | grep php
   # ls /home/runner/work/scientific_poster_generator/scientific_poster_generator
 
