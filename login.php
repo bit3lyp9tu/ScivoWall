@@ -6,10 +6,15 @@
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
 
-    // $site_script="login.js";
+    $site_script="login.js";
+    var_dump($site_script); // To see if it's getting processed
+    echo "<p>Still processing!</p>";
 
     // include("account_management.php");
     // include("header.html");
+    echo realpath("account_management.php");
+    echo "file 2";
+    echo realpath("header.html");
 
     // jquery in lokale datei statt über code.jquery.com
 

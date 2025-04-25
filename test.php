@@ -4,3 +4,9 @@
 
     echo "<p>PHP script is running!</p>";
 ?>
+<!DOCTYPE html>
+<html lang='en'>
+    <body>
+        <p>TestTest</p>
+    </body>
+</html>
