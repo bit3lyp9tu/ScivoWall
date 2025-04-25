@@ -96,7 +96,7 @@ jobs:
         netstat -tuln
         ps aux | grep php
         echo ---
-        ls -l /home/runner/work/scientific_poster_generator/scientific_poster_generator/tets.php
+        ls -l /home/runner/work/scientific_poster_generator/scientific_poster_generator/test.php
 
     - name: Run test script
       run: |
