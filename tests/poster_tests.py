@@ -9,8 +9,10 @@ from selenium import webdriver
 # from selenium.webdriver.common.by import By
 # from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.firefox.service import Service
+
+# from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
+from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.firefox import GeckoDriverManager
 
 
@@ -23,7 +25,8 @@ class PythonOrgSearch(unittest.TestCase):
         print(f"is github action: {os.environ.get("GITHUB_ACTIONS")}")
         if os.environ.get("GITHUB_ACTIONS"):
             options.binary_location = "/snap/bin/firefox"
-            service = Service(executable_path="/snap/bin/geckodriver")
+            # service = Service(executable_path="/snap/bin/geckodriver")
+            service = FirefoxService(GeckoDriverManager().install())
             # Automatically manage the geckodriver
             # self.driver = webdriver.Firefox(
             #     executable_path=GeckoDriverManager().install(), options=options

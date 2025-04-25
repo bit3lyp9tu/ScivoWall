@@ -95,6 +95,7 @@ jobs:
         which geckodriver
 
         /snap/bin/firefox --headless --version
+        ls -l /snap/firefox/current/
 
         file /snap/bin/firefox
 
