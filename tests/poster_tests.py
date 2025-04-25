@@ -15,6 +15,9 @@ class PythonOrgSearch(unittest.TestCase):
         options = Options()
         # options.add_argument("--headless")
 
+        print("Firefox options binary:", options.binary_location)
+        print("Firefox options binary:", options.binary)
+
         self.driver = webdriver.Firefox(options=options)
 
     def test_search_in_python_org(self):
