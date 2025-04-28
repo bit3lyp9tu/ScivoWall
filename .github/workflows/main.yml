@@ -31,17 +31,26 @@ jobs:
 
     - name: prepair cache environment
       run: |
-        mkdir -p $HOME/.aptcache
-        echo 'Dir::Cache::archives "$HOME/.aptcache";' | sudo tee /etc/apt/apt.conf.d/99custom-cache
+        mkdir -p $HOME/cache
+
+        mkdir -p $HOME/cache/.apt
+        echo 'Dir::Cache::archives "$HOME/cache/.apt";' | sudo tee /etc/apt/apt.conf.d/99custom-cache
+
+        mkdir -p $HOME/cache/.pip
+        pip config set global.cache-dir $HOME/cache/.pip
+
+      # mkdir -p $HOME/cache/.docker
 
     - name: Cache APT packages
       id: apt-cache
       uses: actions/cache@v4
       with:
-        path: ~/.aptcache
-        key: apt-packages-${{ runner.os }}-${{ hashFiles('.github/workflows/main.yml') }}
+        path: |
+          ~/cache/.apt
+          ~/cache/.pip
+        key: all-packages-${{ runner.os }}-${{ hashFiles('.github/workflows/main.yml') }}
         restore-keys: |
-          apt-packages-${{ runner.os }}-
+          all-packages-${{ runner.os }}-
 
     # - name: Move cached packages back
     #   run: |
@@ -54,8 +63,6 @@ jobs:
         sudo apt install mariadb-server
         pip install selenium
         pip install mypy
-
-        docker pull mariadb:latest
 
         echo $'Package: *\nPin: release o=LP-PPA-mozillateam\nPin-Priority: 1001' | sudo tee /etc/apt/preferences.d/mozilla-firefox
         sudo add-apt-repository -y ppa:mozillateam/ppa
@@ -72,6 +79,7 @@ jobs:
         tar -xzf geckodriver-$GECKO_VERSION-linux64.tar.gz
         chmod +x geckodriver
         sudo mv geckodriver /usr/local/bin/
+      # docker pull mariadb:latest
 
     - name: install check
       continue-on-error: true
