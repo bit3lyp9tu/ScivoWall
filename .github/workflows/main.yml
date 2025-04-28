@@ -71,6 +71,14 @@ jobs:
         chmod +x geckodriver
         sudo mv geckodriver /usr/local/bin/
 
+    - name: install check
+      run: |
+        where mariadb-server
+        where firefox
+        where geckodriver
+        pip show selenium
+        pip show mypy
+
     # - name: Grand folder permissions 2
     #   run: |
     #     sudo chmod +rwx /var/cache/apt/archives/lock
