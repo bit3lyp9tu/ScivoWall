@@ -44,6 +44,8 @@ jobs:
         echo "target = $HOME/cache/.pip" >> $HOME/.config/pip/pip.conf
         echo "PYTHONPATH=$HOME/cache/.pip" >> $GITHUB_ENV
 
+        mkdir -p ~/cache/.driver
+
       # mkdir -p ~/cache/.docker
 
     - name: Cache APT packages
@@ -53,6 +55,7 @@ jobs:
         path: |
           ~/cache/.apt
           ~/cache/.pip
+          ~/cache/.driver
         key: all-packages-${{ runner.os }}-${{ hashFiles('.github/workflows/main.yml') }}
         restore-keys: |
           all-packages-${{ runner.os }}-
@@ -83,7 +86,7 @@ jobs:
         wget https://github.com/mozilla/geckodriver/releases/download/$GECKO_VERSION/geckodriver-$GECKO_VERSION-linux64.tar.gz
         tar -xzf geckodriver-$GECKO_VERSION-linux64.tar.gz
         chmod +x geckodriver
-        sudo mv geckodriver /usr/local/bin/
+        sudo mv geckodriver $HOME/cache/.driver
 
         echo -------------------------------apt
         ls -la $HOME/cache/.apt
