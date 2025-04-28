@@ -24,10 +24,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    # - name: Grand folder permissions
-    #   run: |
-    #     sudo chmod +rw /var/cache/apt/archives/partial
-    #   # sudo chmod +rw /var/cache/apt/archives/lock
+    - name: Grand folder permissions
+      run: |
+        sudo chmod +rwx /var/cache/apt/archives/partial
+        sudo chmod +rwx /var/cache/apt/archives/lock
 
     - name: Cache APT packages
       id: apt-cache
@@ -65,8 +65,6 @@ jobs:
         tar -xzf geckodriver-$GECKO_VERSION-linux64.tar.gz
         chmod +x geckodriver
         sudo mv geckodriver /usr/local/bin/
-    # git clone https://github.com/mozilla/geckodriver.git --depth 1 --branch=master
-    # sudo apt-get install -y php mysql-server
 
     # - name: Copy APT cache to workspace
     #   run: |
