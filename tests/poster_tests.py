@@ -25,7 +25,7 @@ class PythonOrgSearch(unittest.TestCase):
 
         if os.environ.get("GITHUB_ACTIONS"):
             options.binary_location = "/usr/bin/firefox"
-            service = FirefoxService(executable_path="/usr/local/bin/geckodriver")
+            service = FirefoxService(executable_path="$HOME/cache/.driver/geckodriver")
             self.driver = webdriver.Firefox(service=service, options=options)
             self.address = "127.0.0.1:8080"
         else:
