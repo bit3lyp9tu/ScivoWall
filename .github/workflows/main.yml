@@ -84,7 +84,7 @@ jobs:
         [[ $GECKO_VERSION='' ]] && GECKO_VERSION='v0.36.0'
         echo $GECKO_VERSION
         wget https://github.com/mozilla/geckodriver/releases/download/$GECKO_VERSION/geckodriver-$GECKO_VERSION-linux64.tar.gz
-        tar -xzf geckodriver-$GECKO_VERSION-linux64.tar.gz
+        sudo tar -xzf geckodriver-$GECKO_VERSION-linux64.tar.gz
         chmod +x geckodriver
         sudo mv geckodriver $HOME/cache/.driver
 
@@ -92,6 +92,9 @@ jobs:
         ls -la $HOME/cache/.apt
         echo -------------------------------pip
         ls -la $HOME/cache/.pip
+        echo -------------------------------driver
+        ls -la $HOME/cache/.driver
+
       # docker pull mariadb:latest
 
     - name: install check
