@@ -31,8 +31,9 @@ jobs:
 
     - name: prepair cache environment
       run: |
-        sudo mkdir -p $HOME/cache/.apt/partial
+        sudo mkdir -p $HOME/cache
 
+        sudo mkdir -p $HOME/cache/.apt
         sudo chown -R _apt:root $HOME/cache/.apt
         sudo chmod -R 700 $HOME/cache/.apt
 
