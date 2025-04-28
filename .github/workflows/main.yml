@@ -53,6 +53,7 @@ jobs:
 
         mkdir -p ~/cache/.driver
 
+
       # mkdir -p ~/cache/.docker
 
     - name: Cache APT packages
@@ -120,6 +121,16 @@ jobs:
         dpkg -l | grep mariadb-server
         echo ---
         sudo mariadb -e "SHOW DATABASES;"
+
+
+        echo -----------------------------------------------------------
+
+        ls -ld /home/runner/cache/.apt
+        ls -ld /home/runner/cache/.apt/partial
+        ls -ld /home/runner/cache/.apt/lock
+
+        sudo -u _apt ls /home/runner/cache/.apt/partial
+        sudo -u _apt ls /home/runner/cache/.apt/lock
 
     - name: Debug directories
       run: |
