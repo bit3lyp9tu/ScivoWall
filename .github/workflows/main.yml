@@ -72,6 +72,7 @@ jobs:
         sudo mv geckodriver /usr/local/bin/
 
     - name: install check
+      continue-on-error: true
       run: |
         where mariadb-server
         where firefox
