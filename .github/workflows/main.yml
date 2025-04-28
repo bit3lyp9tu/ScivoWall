@@ -33,7 +33,7 @@ jobs:
       run: |
         mkdir -p $HOME/cache
 
-        sudo mkdir -p $HOME/cache/.apt
+        mkdir -p $HOME/cache/.apt
         sudo chown -R _apt:root $HOME/cache/.apt
         sudo chmod -R 700 $HOME/cache/.apt
 
