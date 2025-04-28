@@ -31,18 +31,13 @@ jobs:
 
     - name: prepair cache environment
       run: |
-        export APT_CACHE="$HOME/cache/.apt"
+        sudo mkdir -p $HOME/cache/.apt/partial
 
-        sudo mkdir -p "$APT_CACHE/partial"
-
-        sudo chown -R _apt:root "$APT_CACHE"
-
-        sudo chmod -R 700 "$APT_CACHE"
+        sudo chown -R _apt:root $HOME/cache/.apt
+        sudo chmod -R 700 $HOME/cache/.apt
 
         echo "Ownership:"
-        ls -ld "$APT_CACHE" "$APT_CACHE/partial"
-        echo "Permissions:"
-        namei -l "$APT_CACHE/partial"
+        ls -ld  $HOME/cache/.apt
 
         echo 'Dir::Cache::archives "/home/runner/cache/.apt";' | sudo tee /etc/apt/apt.conf.d/99custom-cache
 
