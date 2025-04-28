@@ -64,7 +64,7 @@ jobs:
     - name: Grand folder permissions
       run: |
         sudo chmod +rwx /var/cache/apt/archives/lock
-        sudo chmod a+rwX /var/cache/apt/archives/partial
+        sudo chmod +rwX /var/cache/apt/archives/partial
 
     # - name: Copy APT cache to workspace
     #   run: |
