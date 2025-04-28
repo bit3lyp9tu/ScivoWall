@@ -31,7 +31,7 @@ jobs:
 
     - name: prepair cache environment
       run: |
-        sudo mkdir -p $HOME/cache
+        mkdir -p $HOME/cache
 
         mkdir -p $HOME/cache/.pip
         pip config set global.cache-dir $HOME/cache/.pip
@@ -39,16 +39,17 @@ jobs:
         echo "target = $HOME/cache/.pip" >> $HOME/.config/pip/pip.conf
         echo "PYTHONPATH=$HOME/cache/.pip" >> $GITHUB_ENV
 
+
         sudo mkdir -p $HOME/cache/.apt
         sudo chown -R runner:root $HOME/cache/.apt
         sudo chmod -R 700 $HOME/cache/.apt
 
         echo $USER
-
         echo "Ownership:"
         sudo ls -ld  $HOME/cache/.apt
 
         echo 'Dir::Cache::archives "/home/runner/cache/.apt";' | sudo tee /etc/apt/apt.conf.d/99custom-cache
+
 
         mkdir -p ~/cache/.driver
 
