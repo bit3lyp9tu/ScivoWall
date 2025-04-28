@@ -31,15 +31,15 @@ jobs:
 
     - name: prepair cache environment
       run: |
-        mkdir -p $HOME/cache
+        mkdir -p ~/cache
 
-        mkdir -p $HOME/cache/.apt
+        mkdir -p ~/cache/.apt
         echo 'Dir::Cache::archives "~/cache/.apt";' | sudo tee /etc/apt/apt.conf.d/99custom-cache
 
-        mkdir -p $HOME/cache/.pip
+        mkdir -p ~/cache/.pip
         pip config set global.cache-dir ~/cache/.pip
 
-      # mkdir -p $HOME/cache/.docker
+      # mkdir -p ~/cache/.docker
 
     - name: Cache APT packages
       id: apt-cache
@@ -93,17 +93,17 @@ jobs:
         echo ---
         sudo mariadb -e "SHOW DATABASES;"
         echo ---
-        ls -la $HOME
+        ls -la ~
         echo ---
-        ls -la $HOME/cache
+        ls -la ~/cache
         echo ------
 
     - name: Debug directories
       run: |
         echo "APT cache contents:"
-        ls -la $HOME/cache/.apt
+        ls -la ~/cache/.apt
         echo "Pip cache contents:"
-        ls -la $HOME/cache/.pip
+        ls -la ~/cache/.pip
 
     # - name: Grand folder permissions 2
     #   run: |
