@@ -34,7 +34,6 @@ jobs:
         mkdir -p $HOME/cache
 
         mkdir -p $HOME/cache/.apt
-        sudo chown -R *:root $HOME/cache/.apt
         sudo chmod -R 700 $HOME/cache/.apt
 
         echo $USER
