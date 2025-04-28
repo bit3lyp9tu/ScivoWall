@@ -53,7 +53,7 @@ jobs:
         mkdir -p ~/cache/.driver
 
 
-      # mkdir -p ~/cache/.docker
+        mkdir -p ~/cache/.docker
 
     - name: Cache APT packages
       id: apt-cache
@@ -102,7 +102,9 @@ jobs:
         echo -------------------------------driver
         ls -la $HOME/cache/.driver/geckodriver
 
-      # docker pull mariadb:latest
+        docker pull mariadb:latest
+        docker save -o $HOME/cache/.docker/image.tar mariadb:latest
+
 
     - name: install check
       continue-on-error: true
@@ -128,8 +130,8 @@ jobs:
         ls -ld /home/runner/cache/.apt/partial
         ls -ld /home/runner/cache/.apt/lock
 
-        sudo -u _apt ls /home/runner/cache/.apt/partial
-        sudo -u _apt ls /home/runner/cache/.apt/lock
+      # sudo -u _apt ls /home/runner/cache/.apt/partial
+      # sudo -u _apt ls /home/runner/cache/.apt/lock
 
     - name: Debug directories
       run: |
@@ -142,10 +144,10 @@ jobs:
       run: |
         cat /var/log/apt/history.log
 
-    # - name: Grand folder permissions 2
-    #   run: |
-    #     sudo chmod +rwx /var/cache/apt/archives/lock
-    #     sudo chmod +rwX /var/cache/apt/archives/partial
+    - name: Grand folder permissions 2
+      run: |
+        sudo chmod -R 700 $HOME/cache/.apt
+
 
     # - name: Copy APT cache to workspace
     #   run: |
@@ -155,6 +157,10 @@ jobs:
 
     # - name: Pull MariaDB image manually
     #   run: docker pull mariadb:latest
+
+    - uses: load docker image
+      run: |
+        docker load -i $HOME/cache/.docker/image.tar
 
     - uses: getong/mariadb-action@v1.11
       with:
