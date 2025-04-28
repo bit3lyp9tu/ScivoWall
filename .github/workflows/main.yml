@@ -74,11 +74,11 @@ jobs:
     - name: install check
       continue-on-error: true
       run: |
-        where mariadb-server
+        pip show mypy
+        pip show selenium
         where firefox
         where geckodriver
-        pip show selenium
-        pip show mypy
+        where mariadb-server
 
     # - name: Grand folder permissions 2
     #   run: |
