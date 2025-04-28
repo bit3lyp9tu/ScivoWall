@@ -37,6 +37,7 @@ jobs:
         sudo chown -R _apt:root $HOME/cache/.apt
         sudo chmod -R 755 $HOME/cache/.apt
 
+        mkdir -p $HOME/cache/.apt/partial
         sudo chown -R _apt:root $HOME/cache/.apt/partial
         sudo chmod -R 755 $HOME/cache/.apt/partial
 
