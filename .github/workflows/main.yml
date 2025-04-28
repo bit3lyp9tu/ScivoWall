@@ -26,7 +26,7 @@ jobs:
 
     - name: Grand folder permissions
       run: |
-        sudo chmod +rwx /var/cache/apt/archives
+        sudo chmod a+rwX /var/cache/apt/archives
         ls -ld /var/cache/apt/archives
 
 
