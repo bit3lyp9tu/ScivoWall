@@ -36,6 +36,7 @@ jobs:
         sudo mkdir -p "$APT_CACHE/partial"
 
         sudo chown -R _apt:root "$APT_CACHE"
+
         sudo chmod -R 700 "$APT_CACHE"
 
         echo "Ownership:"
