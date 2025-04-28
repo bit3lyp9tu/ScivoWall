@@ -79,6 +79,10 @@ jobs:
         whereis firefox
         whereis geckodriver
         whereis mariadb-server
+        echo ---
+        dpkg -l
+        echo ---
+        dpkg -l | grep mariadb-server
 
     # - name: Grand folder permissions 2
     #   run: |
