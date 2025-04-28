@@ -101,7 +101,7 @@ jobs:
         ./tests/test_env
         ls -l /var/cache/apt/archives
         echo ---
-        ls -l /var/cache/apt/archives/partial
+        ls -ld /var/cache/apt/archives/partial
 
 
     - name: Create a new version
