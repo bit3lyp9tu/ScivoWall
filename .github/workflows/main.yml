@@ -55,6 +55,8 @@ jobs:
         pip install selenium
         pip install mypy
 
+        docker pull mariadb:latest
+
         echo $'Package: *\nPin: release o=LP-PPA-mozillateam\nPin-Priority: 1001' | sudo tee /etc/apt/preferences.d/mozilla-firefox
         sudo add-apt-repository -y ppa:mozillateam/ppa
         sudo apt-get update
