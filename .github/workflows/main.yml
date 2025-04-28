@@ -98,6 +98,13 @@ jobs:
         ls -la $HOME/cache
         echo ------
 
+    - name: Debug directories
+      run: |
+        echo "APT cache contents:"
+        ls -la $HOME/mycache/.apt
+        echo "Pip cache contents:"
+        ls -la $HOME/mycache/.pip
+
     # - name: Grand folder permissions 2
     #   run: |
     #     sudo chmod +rwx /var/cache/apt/archives/lock
@@ -136,9 +143,6 @@ jobs:
         curl -v http://127.0.0.1:8080/scientific_poster_generator/login.php
         echo -----------------
         ./tests/test_env
-        ls -l /var/cache/apt/archives
-        echo ---
-        ls -ld /var/cache/apt/archives/partial
 
 
     - name: Create a new version
