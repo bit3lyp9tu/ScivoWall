@@ -46,8 +46,8 @@ jobs:
       uses: actions/cache@v4
       with:
         path: |
-          ~/cache/.apt
-          ~/cache/.pip
+          $HOME/cache/.apt
+          $HOME/cache/.pip
         key: all-packages-${{ runner.os }}-${{ hashFiles('.github/workflows/main.yml') }}
         restore-keys: |
           all-packages-${{ runner.os }}-
