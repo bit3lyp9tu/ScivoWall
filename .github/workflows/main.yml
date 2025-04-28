@@ -26,8 +26,8 @@ jobs:
 
     - name: Grand folder permissions
       run: |
-        sudo chmod +rwx /var/cache/apt/archives/partial
         sudo chmod +rwx /var/cache/apt/archives/lock
+        sudo chmod a+rwX /var/cache/apt/archives/partial
 
     - name: Cache APT packages
       id: apt-cache
@@ -100,6 +100,8 @@ jobs:
         echo -----------------
         ./tests/test_env
         ls -l /var/cache/apt/archives
+        echo ---
+        ls -l /var/cache/apt/archives/partial
 
 
     - name: Create a new version

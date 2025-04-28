@@ -17,6 +17,8 @@ from selenium.webdriver.firefox.service import Service as FirefoxService
 
 class PythonOrgSearch(unittest.TestCase):
 
+    address = ""
+
     def setUp(self):
         options = Options()
         options.add_argument("--headless")
@@ -25,13 +27,15 @@ class PythonOrgSearch(unittest.TestCase):
             options.binary_location = "/usr/bin/firefox"
             service = FirefoxService(executable_path="/usr/local/bin/geckodriver")
             self.driver = webdriver.Firefox(service=service, options=options)
+            self.address = "127.0.0.1:8080"
         else:
             self.driver = webdriver.Firefox(options=options)
+            self.address = "localhost"
 
     def test_search_in_python_org(self):
         driver = self.driver
-        driver.get("http://127.0.0.1:8080/scientific_poster_generator/login.php")
-        # print(driver.title)
+        driver.get(f"http://{self.address}/scientific_poster_generator/login.php")
+        print(driver.title)
         self.assertIn("Poster Generator", driver.title)
 
         # driver.get("http://127.0.0.1:8080/scientific_poster_generator/register.php")
@@ -47,6 +51,6 @@ class PythonOrgSearch(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    print("Hello World")
+    # print("Hello World")
 
     unittest.main()
