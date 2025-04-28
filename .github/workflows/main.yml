@@ -101,9 +101,9 @@ jobs:
     - name: Debug directories
       run: |
         echo "APT cache contents:"
-        ls -la $HOME/mycache/.apt
+        ls -la $HOME/cache/.apt
         echo "Pip cache contents:"
-        ls -la $HOME/mycache/.pip
+        ls -la $HOME/cache/.pip
 
     # - name: Grand folder permissions 2
     #   run: |
