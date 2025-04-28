@@ -34,7 +34,7 @@ jobs:
         mkdir -p $HOME/cache
 
         mkdir -p $HOME/cache/.apt
-        sudo chown -R root:root $HOME/cache/.apt
+        sudo chown -R _apt:root $HOME/cache/.apt
         sudo chmod -R 755 $HOME/cache/.apt
         echo 'Dir::Cache::archives "/home/runner/cache/.apt";' | sudo tee /etc/apt/apt.conf.d/99custom-cache
 
@@ -85,7 +85,7 @@ jobs:
         echo $GECKO_VERSION
         wget https://github.com/mozilla/geckodriver/releases/download/$GECKO_VERSION/geckodriver-$GECKO_VERSION-linux64.tar.gz
         sudo tar -xzf geckodriver-$GECKO_VERSION-linux64.tar.gz
-        chmod +x geckodriver
+        sudo chmod +x geckodriver
         sudo mv geckodriver $HOME/cache/.driver
 
         echo -------------------------------apt
