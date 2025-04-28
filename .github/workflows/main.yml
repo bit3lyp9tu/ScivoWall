@@ -76,9 +76,9 @@ jobs:
       run: |
         pip show mypy
         pip show selenium
-        where firefox
-        where geckodriver
-        where mariadb-server
+        whereis firefox
+        whereis geckodriver
+        whereis mariadb-server
 
     # - name: Grand folder permissions 2
     #   run: |
