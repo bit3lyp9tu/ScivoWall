@@ -63,6 +63,8 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt install mariadb-server
+
+        python -m pip install --upgrade pip
         pip install selenium
         pip install mypy
 
