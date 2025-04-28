@@ -34,7 +34,7 @@ jobs:
         mkdir -p $HOME/cache
 
         mkdir -p $HOME/cache/.apt
-        sudo chmod +rwx $HOME/cache/.apt/archives
+        sudo chmod +rwX $HOME/cache/.apt
         echo 'Dir::Cache::archives "/home/runner/cache/.apt";' | sudo tee /etc/apt/apt.conf.d/99custom-cache
 
         mkdir -p $HOME/cache/.pip
