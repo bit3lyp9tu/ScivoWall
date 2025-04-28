@@ -81,6 +81,7 @@ jobs:
         whereis mariadb-server
         dpkg -l | grep mariadb-server
         echo ---
+        sudo mariadb -e "SHOW DATABASES;"
 
     # - name: Grand folder permissions 2
     #   run: |
@@ -102,7 +103,7 @@ jobs:
         container port: 3307
         character set server: 'utf8'
         collation server: 'utf8_general_ci'
-        mariadb version: '10.4.10'
+        mariadb version: 'latest'
         mysql database: 'some_test'
         mysql root password: password
         mysql user: ${{ env.DB_USER }}
