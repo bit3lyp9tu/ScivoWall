@@ -24,6 +24,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Grand folder permissions
+      run: |
+        sudo chmod +rwx /var/cache/apt/archives
+        ls -ld /var/cache/apt/archives
+
+
     - name: Cache APT packages
       id: apt-cache
       uses: actions/cache@v4
@@ -61,7 +67,7 @@ jobs:
         chmod +x geckodriver
         sudo mv geckodriver /usr/local/bin/
 
-    - name: Grand folder permissions
+    - name: Grand folder permissions 2
       run: |
         sudo chmod +rwx /var/cache/apt/archives/lock
         sudo chmod +rwX /var/cache/apt/archives/partial
