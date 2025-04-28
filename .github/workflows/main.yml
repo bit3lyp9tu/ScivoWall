@@ -62,9 +62,6 @@ jobs:
     - name: Install dependencies
       if: steps.apt-cache.outputs.cache-hit != 'true'
       run: |
-        sudo apt-get update
-        sudo apt install mariadb-server
-
         python -m pip install --upgrade pip
         pip install --upgrade selenium
         pip install --upgrade mypy
@@ -72,8 +69,9 @@ jobs:
         echo $'Package: *\nPin: release o=LP-PPA-mozillateam\nPin-Priority: 1001' | sudo tee /etc/apt/preferences.d/mozilla-firefox
         sudo add-apt-repository -y ppa:mozillateam/ppa
         sudo apt-get update
-        sudo apt-get install -y firefox
-        sudo apt-get install -y libx11-xcb-dev libxcb1-dev libdbus-1-3 libxtst6 libnss3 libgdk-pixbuf2.0-0
+        sudo apt install --reinstall mariadb-server
+        sudo apt-get install --reinstall -y firefox
+        sudo apt-get install --reinstall -y libx11-xcb-dev libxcb1-dev libdbus-1-3 libxtst6 libnss3 libgdk-pixbuf2.0-0
 
         GECKO_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | grep -o '"tag_name":"[^"]*"' | sed 's/"tag_name":"//;s/"$//')
         echo $GECKO_VERSION
@@ -96,6 +94,11 @@ jobs:
       run: |
         pip show mypy
         pip show selenium
+
+        echo ---------
+        sudo apt-config dump | grep Dir::Cache::archives
+        echo ---------
+
         whereis firefox
         whereis geckodriver
         whereis mariadb-server
@@ -109,6 +112,10 @@ jobs:
         ls -la $HOME/cache/.apt
         echo "Pip cache contents:"
         ls -la $HOME/cache/.pip
+
+    - name: apt log
+      run: |
+        cat /var/log/apt/history.log
 
     # - name: Grand folder permissions 2
     #   run: |
