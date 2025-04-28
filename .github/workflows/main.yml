@@ -41,6 +41,10 @@ jobs:
         sudo chown -R _apt:root $HOME/cache/.apt/partial
         sudo chmod -R 755 $HOME/cache/.apt/partial
 
+        sudo mkdir -p $HOME/cache/.apt/lock
+        sudo chown -R _apt:root $HOME/cache/.apt/lock
+        sudo chmod -R 755 $HOME/cache/.apt/lock
+
         echo 'Dir::Cache::archives "/home/runner/cache/.apt";' | sudo tee /etc/apt/apt.conf.d/99custom-cache
 
         mkdir -p $HOME/cache/.pip
@@ -98,7 +102,7 @@ jobs:
         echo -------------------------------pip
         ls -la $HOME/cache/.pip
         echo -------------------------------driver
-        ls -la $HOME/cache/.driver
+        ls -la $HOME/cache/.driver/geckodriver
 
       # docker pull mariadb:latest
 
