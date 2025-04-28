@@ -92,7 +92,9 @@ jobs:
         dpkg -l | grep mariadb-server
         echo ---
         sudo mariadb -e "SHOW DATABASES;"
+        echo ---
         ls $HOME
+        echo ---
         ls $HOME/cache
 
     # - name: Grand folder permissions 2
