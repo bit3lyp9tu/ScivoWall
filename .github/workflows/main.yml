@@ -158,7 +158,7 @@ jobs:
     # - name: Pull MariaDB image manually
     #   run: docker pull mariadb:latest
 
-    - uses: load docker image
+    - name: load docker image
       run: |
         docker load -i $HOME/cache/.docker/image.tar
 
