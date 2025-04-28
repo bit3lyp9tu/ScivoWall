@@ -85,8 +85,8 @@ jobs:
         [[ $GECKO_VERSION='' ]] && GECKO_VERSION='v0.36.0'
         echo $GECKO_VERSION
         wget https://github.com/mozilla/geckodriver/releases/download/$GECKO_VERSION/geckodriver-$GECKO_VERSION-linux64.tar.gz
-        sudo tar -xzf geckodriver-$GECKO_VERSION-linux64.tar.gz
-        sudo chmod +x geckodriver
+        tar -xzf geckodriver-$GECKO_VERSION-linux64.tar.gz
+        chmod +x geckodriver
         sudo mv geckodriver $HOME/cache/.driver
 
         echo -------------------------------apt
