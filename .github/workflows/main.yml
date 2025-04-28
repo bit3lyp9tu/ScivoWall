@@ -40,6 +40,7 @@ jobs:
         pip config set global.cache-dir $HOME/cache/.pip
         echo "[global]" > $HOME/.config/pip/pip.conf
         echo "target = $HOME/cache/.pip" >> $HOME/.config/pip/pip.conf
+        echo "PYTHONPATH=$HOME/cache/.pip" >> $GITHUB_ENV
 
       # mkdir -p ~/cache/.docker
 
@@ -84,8 +85,10 @@ jobs:
         chmod +x geckodriver
         sudo mv geckodriver /usr/local/bin/
 
-        echo -------------------------------
+        echo -------------------------------apt
         ls -la $HOME/cache/.apt
+        echo -------------------------------pip
+        ls -la $HOME/cache/.pip
       # docker pull mariadb:latest
 
     - name: install check
@@ -99,11 +102,6 @@ jobs:
         dpkg -l | grep mariadb-server
         echo ---
         sudo mariadb -e "SHOW DATABASES;"
-        echo ---
-        ls -la $HOME
-        echo ---
-        ls -la $HOME/cache
-        echo ------
 
     - name: Debug directories
       run: |
