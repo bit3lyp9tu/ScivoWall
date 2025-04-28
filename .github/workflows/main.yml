@@ -93,9 +93,10 @@ jobs:
         echo ---
         sudo mariadb -e "SHOW DATABASES;"
         echo ---
-        ls $HOME
+        ls -la $HOME
         echo ---
-        ls $HOME/cache
+        ls -la $HOME/cache
+        echo ------
 
     # - name: Grand folder permissions 2
     #   run: |
