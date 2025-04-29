@@ -54,7 +54,7 @@ jobs:
     # echo 'Dir::Cache::archives "/home/runner/cache/.apt";' | sudo tee /etc/apt/apt.conf.d/99custom-cache
 
 
-    - name: Cache APT packages
+    - name: Cache Packages
       id: apt-cache
       uses: actions/cache@v4
       with:
@@ -208,3 +208,8 @@ jobs:
       with:
         name: store-post-test-sql
         path: tests/post_test.sql
+
+    - name: "TODO to Issue"
+      uses: "alstr/todo-to-issue-action@v5"
+      with:
+        CLOSE_ISSUES: "true"
