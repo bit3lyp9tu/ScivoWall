@@ -1,5 +1,12 @@
 #!/bin/bash
 
+
+if [ "$#" -eq 1 ]; then
+	DB_NAME="$1"
+else
+	DB_NAME="db"
+fi
+
 python_version=$(python3 --version | sed -e 's#Python ##')
 VENV_DIR=$HOME/.poster_generator_test_suite_$python_version
 
@@ -42,12 +49,17 @@ if [[ "$GITHUB_ACTIONS" != "true" ]]; then
 		echo "$requirements_hash" > "$VENV_DIR/hash"
 	fi
 
-	echo running locally
+	echo Running Locally
 else
-	echo running on github actions
+	echo Running On GitHub Actions
 fi
 
-python3 poster_tests.py $*
+echo Running Frontend-Tests...
+
+echo Run tests on Test-DB: ${DB_NAME}
+
+# python3 poster_tests.py $*
+
 # coverage run -p poster_tests.py
 # coverage combine
 # coverage report

@@ -133,9 +133,9 @@ jobs:
 
         echo -----------------------------------------------------------
 
-        ls -ld /home/runner/cache/.apt
-        ls -ld /home/runner/cache/.apt/partial
-        ls -ld /home/runner/cache/.apt/lock
+        ls -ld $HOME/cache/.apt
+        ls -ld $HOME/cache/.apt/partial
+        ls -ld $HOME/cache/.apt/lock
 
 
     - name: Debug directories
