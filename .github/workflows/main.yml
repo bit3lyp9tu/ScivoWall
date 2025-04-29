@@ -68,9 +68,6 @@ jobs:
         restore-keys: |
           all-packages-${{ runner.os }}-
 
-    # - name: Move cached packages back
-    #   run: |
-    #     sudo cp ./apt-cache/*.deb /var/cache/apt/archives/ || true
 
     - name: Install dependencies
       if: steps.apt-cache.outputs.cache-hit != 'true'
@@ -131,8 +128,6 @@ jobs:
         ls -ld /home/runner/cache/.apt/partial
         ls -ld /home/runner/cache/.apt/lock
 
-      # sudo -u _apt ls /home/runner/cache/.apt/partial
-      # sudo -u _apt ls /home/runner/cache/.apt/lock
 
     - name: Debug directories
       run: |
@@ -153,15 +148,6 @@ jobs:
       run: |
         sudo chmod -R 700 $HOME/cache/.apt
 
-
-    # - name: Copy APT cache to workspace
-    #   run: |
-    #     mkdir -p ./apt-cache
-    #     sudo cp /var/cache/apt/archives/*.deb ./apt-cache/
-
-
-    # - name: Pull MariaDB image manually
-    #   run: docker pull mariadb:latest
 
     - name: load docker image
       run: |
