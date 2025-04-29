@@ -52,8 +52,8 @@ jobs:
 
         mkdir -p ~/cache/.driver
 
-
         mkdir -p ~/cache/.docker
+
 
     - name: Cache APT packages
       id: apt-cache
@@ -63,6 +63,7 @@ jobs:
           ~/cache/.apt
           ~/cache/.pip
           ~/cache/.driver
+          ~/cache/.docker
         key: all-packages-${{ runner.os }}-${{ hashFiles('.github/workflows/main.yml') }}
         restore-keys: |
           all-packages-${{ runner.os }}-
@@ -139,6 +140,10 @@ jobs:
         ls -la $HOME/cache/.apt
         echo "Pip cache contents:"
         ls -la $HOME/cache/.pip
+        echo "Driver cache contents:"
+        ls -la $HOME/cache/.driver
+        echo "Docker cache contents:"
+        ls -la $HOME/cache/.docker
 
     - name: apt log
       run: |
