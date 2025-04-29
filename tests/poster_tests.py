@@ -50,10 +50,5 @@ if __name__ == "__main__":
 
     unittest.main()
 
-    # TODO: test todo-to-issue 2
-
-    # TODO: test todo-to-issue 3
-
-    # TODO: test todo-to-issue 4
-
-    # TODO: test todo-to-issue 5
+    # TODO: test todo-to-issue test
+    #  labels: enhancement, help wanted
