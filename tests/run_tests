@@ -54,6 +54,9 @@ else
 	echo Running On GitHub Actions
 fi
 
+# sudo /etc/init.d/apache2 restart
+# export DB_NAME=$DB_NAME
+
 echo Running Frontend-Tests...
 
 echo Run tests on Test-DB: ${DB_NAME}
@@ -63,6 +66,8 @@ sudo mariadb -e "DROP DATABASE IF EXISTS ${DB_NAME};"
 sudo mariadb -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
 sudo mariadb $DB_NAME < ./test_config2.sql
 sudo mariadb -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO 'poster_generator'@'localhost' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
+
+sudo mariadb -e "SHOW DATABASES;"
 
 python3 poster_tests.py
 # $*

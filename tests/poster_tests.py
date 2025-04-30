@@ -43,6 +43,7 @@ class PythonOrgSearch(unittest.TestCase):
         print("Testing Page: " + driver.title)
 
         self.login_page(driver)
+
         self.user_page(driver)
         self.poster_page(driver, "")
         self.admin_user(driver, "")
