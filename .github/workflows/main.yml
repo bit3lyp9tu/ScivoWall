@@ -184,8 +184,10 @@ jobs:
     - name: Run test script
       run: |
         curl -v http://127.0.0.1:8080/scientific_poster_generator/login.php
-        echo ----------------- > $GITHUB_STEP_SUMMARY
-        ./tests/test_env >> $GITHUB_STEP_SUMMARY
+
+        echo -----------------
+        ./tests/test_env
+      # >> $GITHUB_STEP_SUMMARY
 
 
     - name: Create a new version
