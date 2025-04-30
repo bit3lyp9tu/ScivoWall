@@ -11,8 +11,8 @@
 		$password = file_get_contents($db_path);
 		$password = chop($password);
 	} else {
-		error_log("error_log: $db_path not found! Trying default-pw");
 		$password = "password";
+		error_log("error_log: $db_path not found! Trying default-pw");
 
 		$port = 3307;
 	}
