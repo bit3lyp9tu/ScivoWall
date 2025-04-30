@@ -22,9 +22,10 @@ class PythonOrgSearch(unittest.TestCase):
 
     def setUp(self):
         options = Options()
-        # options.add_argument("--headless")
 
         if os.environ.get("GITHUB_ACTIONS"):
+            options.add_argument("--headless")
+
             options.binary_location = "/usr/bin/firefox"
             service = FirefoxService(
                 executable_path="/home/runner/cache/.driver/geckodriver"
@@ -49,8 +50,9 @@ class PythonOrgSearch(unittest.TestCase):
 
         self.logout(driver)
 
-    # def tearDown(self):
-    #     self.driver.close()
+    def tearDown(self):
+        if os.environ.get("GITHUB_ACTIONS"):
+            self.driver.close()
 
     def login_page(self, driver):
 
@@ -112,7 +114,6 @@ class PythonOrgSearch(unittest.TestCase):
         driver.find_element(By.ID, "name").clear()
         driver.find_element(By.ID, "pw").clear()
 
-    # TODO: unused
     def logout(self, driver):
         driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
         # check if page contains logout
