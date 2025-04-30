@@ -58,6 +58,7 @@ echo Running Frontend-Tests...
 
 echo Run tests on Test-DB: ${DB_NAME}
 
+# TODO: doesnt seem to work correctly (local db poster_generator gets edited)
 sudo mariadb -e "DROP DATABASE IF EXISTS ${DB_NAME};"
 sudo mariadb -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
 sudo mariadb $DB_NAME < ./test_config2.sql
