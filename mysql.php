@@ -28,11 +28,13 @@
 			exit(1);
 		}
 	} catch (\Throwable $e) {
+		echo "<pre>";
 		if (preg_match('/Class "mysqli" not found/', $e)) {
-			error_log("The Module mysqli not found. Try installing it with\nsudo apt-get install php-mysqli");
+			echo "The Module mysqli not found. Try installing it with\nsudo apt-get install php-mysqli";
 		} else {
-			error_log("Error trying to initialize database connection: $e");
+			echo "Error trying to initialize database connection: $e";
 		}
+		echo "</pre>";
 		exit(2);
 	}
 ?>
