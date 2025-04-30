@@ -39,10 +39,13 @@
 		return $result;
 	}
 
-
-	if(!array_key_exists("dbname", $GLOBALS)) {
+	if (getenv('DB_NAME')) {
+		$GLOBALS['dbname'] = getenv('DB_NAME');
+	}else{
 		$GLOBALS["dbname"] = "poster_generator";
 	}
+
+	// print_r("name: " . $GLOBALS['dbname'] . "\n");
 
 	//TODO: add columns in user: last logged-in date/ date of registration
 	//TODO: add columns in poster: date of creation/ last edit date/ last edited by user_id

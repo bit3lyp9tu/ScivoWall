@@ -14,7 +14,7 @@ echo Run tests on Test-DB: ${DB_NAME}
 
 php testing.php $DB_NAME
 
-sudo mariadb-dump $DB_NAME > ./tests/post_test.sql
+sudo mariadb-dump $DB_NAME > ./tests/results_backend_test.sql
 sudo mariadb -e "DROP DATABASE ${DB_NAME};"
 
 

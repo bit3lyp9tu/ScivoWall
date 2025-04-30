@@ -16,6 +16,8 @@
 	//TODO: error in address-link is constantly produced
 	//TODO: remove content redundancy in .box elements
 
+    // TODO: add login/register button
+
     $site_script="index.js";
 
     include(__DIR__ . "/" . "account_management.php");

@@ -5,7 +5,8 @@ log_unknown_json_solution.txt
 .vscode/settings.json
 
 tests/.coverage
-tests/post_test.sql
+tests/results_backend_test.sql
+tests/results_frontend_test.sql
 tests/php_build_in_func
 tests/test_report.json
 tests/test_log

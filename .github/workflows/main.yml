@@ -207,7 +207,9 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: store-post-test-sql
-        path: tests/post_test.sql
+        path: |
+          tests/resuts_backend_test.sql
+          tests/resuts_frontend_test.sql
 
   todo-to-issue:
     runs-on: "ubuntu-latest"

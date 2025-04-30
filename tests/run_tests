@@ -58,8 +58,16 @@ echo Running Frontend-Tests...
 
 echo Run tests on Test-DB: ${DB_NAME}
 
+sudo mariadb -e "DROP DATABASE IF EXISTS ${DB_NAME};"
+sudo mariadb -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
+sudo mariadb $DB_NAME < ./test_config2.sql
+sudo mariadb -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO 'poster_generator'@'localhost' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
+
 python3 poster_tests.py
 # $*
+
+sudo mariadb-dump $DB_NAME > ./results_frontend_test.sql
+sudo mariadb -e "DROP DATABASE ${DB_NAME};"
 
 # coverage run -p poster_tests.py
 # coverage combine
