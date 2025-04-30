@@ -11,8 +11,8 @@
 		$password = file_get_contents($db_path);
 		$password = chop($password);
 	} else {
-		$password = "password";
 		error_log("error_log: $db_path not found! Trying default-pw");
+		$password = "password";
 
 		$port = 3307;
 	}
@@ -28,13 +28,11 @@
 			exit(1);
 		}
 	} catch (\Throwable $e) {
-		echo "<pre>";
 		if (preg_match('/Class "mysqli" not found/', $e)) {
-			echo "The Module mysqli not found. Try installing it with\nsudo apt-get install php-mysqli";
+			error_log("The Module mysqli not found. Try installing it with\nsudo apt-get install php-mysqli");
 		} else {
-			echo "Error trying to initialize database connection: $e";
+			error_log("Error trying to initialize database connection: $e");
 		}
-		echo "</pre>";
 		exit(2);
 	}
 ?>
