@@ -41,7 +41,12 @@
 
 	if (getenv('DB_NAME')) {
 		$GLOBALS['dbname'] = getenv('DB_NAME');
-	}else{
+	}
+	// else{
+	// 	$GLOBALS["dbname"] = "poster_generator";
+	// }
+
+	if(!array_key_exists("dbname", $GLOBALS)) {
 		$GLOBALS["dbname"] = "poster_generator";
 	}
 

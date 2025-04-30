@@ -17,7 +17,7 @@
 		$port = 3307;
 	}
 
-	print_r("servername: " . $servername . "\nusername: " . $username . "\npassword: " . $password . "\nport: " . $port);
+	print_r("servername: " . $servername . "\nusername: " . $username . "\npassword: " . $password . "\nport: " . $port . "\n");
 
 	// Create connection
 	try {
