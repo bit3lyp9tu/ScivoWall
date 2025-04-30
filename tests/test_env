@@ -7,6 +7,9 @@ export DB_NAME="testDB"
 sudo mariadb -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
 sudo mariadb $DB_NAME < ./tests/test_config2.sql
 
+# TODO: unsave
+sudo mariadb -e "CREATE USER poster_generator@localhost IDENTIFIED BY 'password';"
+
 echo User:
 sudo mariadb -e "select user(),current_user();"
 
