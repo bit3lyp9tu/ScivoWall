@@ -44,6 +44,21 @@ class PythonOrgSearch(unittest.TestCase):
     def tearDown(self):
         self.driver.close()
 
+    def login(self):
+        pass
+
+    def logout(self):
+        pass
+
+    def register(self):
+        pass
+
+    def index_page(self):
+        pass
+
+    def user_page(self):
+        pass
+
 
 if __name__ == "__main__":
     # print("Hello World")
