@@ -81,6 +81,9 @@ CODE=$?
 if [[ "$GITHUB_ACTIONS" != "true" ]]; then
 	sudo mariadb-dump $DB_NAME > ./results_frontend_test.sql
 	sudo mariadb -e "DROP DATABASE ${DB_NAME};"
+
+	sudo mariadb -e "CREATE DATABASE IF NOT EXISTS poster_generator;"
+	sudo mariadb poster_generator < ./test_config2.sql
 else
 	mariadb-dump -h 127.0.0.1 -P 3800 -u poster_generator -ppassword $DB_NAME > ./results_frontend_test.sql
 	mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword -e "DROP DATABASE ${DB_NAME};"
