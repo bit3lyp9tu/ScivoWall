@@ -1,6 +1,6 @@
 <?php
-    include_once(__DIR__ . "/" . "queries.php");
     include_once(__DIR__ . "/" . "install.php");
+    include_once(__DIR__ . "/" . "queries.php");
 
     $msgs = array(
         "success" => [],

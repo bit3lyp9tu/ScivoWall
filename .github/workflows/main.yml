@@ -183,6 +183,8 @@ jobs:
 
     - name: Run test script
       run: |
+        curl -v http://127.0.0.1:8080/scientific_poster_generator/test.php
+        echo -----------------
         curl -v http://127.0.0.1:8080/scientific_poster_generator/login.php
         echo -----------------
         ./tests/test_env >> $GITHUB_STEP_SUMMARY

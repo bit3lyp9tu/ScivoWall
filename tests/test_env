@@ -10,13 +10,10 @@ sudo mariadb $DB_NAME < ./tests/test_config2.sql
 # TODO: unsave
 # sudo mariadb -e "CREATE USER poster_generator@localhost IDENTIFIED BY 'password';"
 
-echo User:
-sudo mariadb -e "select user(),current_user();"
+# echo User:
+# sudo mariadb -e "select user(),current_user();"
 
 sudo mariadb -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO 'poster_generator'@'localhost' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
-
-echo User:
-sudo mariadb -e "select user(),current_user();"
 
 echo Running Backend-Tests...
 
