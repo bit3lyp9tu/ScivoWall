@@ -122,7 +122,7 @@ class PythonOrgSearch(unittest.TestCase):
         self.assertIsNotNone(logout)
         logout.click()
         self.assertEqual(
-            "http://localhost/scientific_poster_generator/login.php",
+            f"http://{self.address}/scientific_poster_generator/login.php",
             driver.current_url,
         )
 
