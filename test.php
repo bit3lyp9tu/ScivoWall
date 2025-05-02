@@ -4,23 +4,28 @@
 
     echo "<p>PHP script is running!</p>";
 
-	$servername = "127.0.0.1";
-	$username = "poster_generator";
-	$password = "password";
-	$port = 3307;
+    $servername = "127.0.0.1";
+    $username = "poster_generator";
+    $password = "password";
+    $database = "poster_generator";
+    $port = 3800;//3307
 
-    $GLOBALS["conn"] = new mysqli($servername, $username, $password, "", $port);
+    $conn = new mysqli($servername, $username, $password, $database, $port);
 
-    $sql = "SELECT name FROM poster_generator.user;";
-    $result = $GLOBALS["conn"]->query($sql);
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
 
-    if ($result === True) {
+    $sql = "SELECT name FROM user;";
+    $result = $conn->query($sql);
+
+    if ($result === true) {
         print_r($result);
-    }else{
+    } else {
         try {
             print_r($result->fetch_all());
         } catch (Throwable $th) {
-            print_r(array());
+            print_r([]);
         }
     }
 ?>
