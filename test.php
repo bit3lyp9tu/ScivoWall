@@ -8,7 +8,7 @@
     $username = "poster_generator";
     $password = "password";
     $database = "poster_generator";
-    $port = 3800;//3307
+    $port = 3307;
 
     $conn = new mysqli($servername, $username, $password, $database, $port);
 
