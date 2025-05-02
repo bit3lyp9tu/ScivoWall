@@ -385,6 +385,7 @@
 	// print_r(unpack('H*', 'AB101')[1]);
 	// print_r(str2bin('AB101'));
 
+	test_equal(1, 2)
 
 	// print_r($DB_NAME);
 
