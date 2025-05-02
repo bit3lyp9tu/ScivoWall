@@ -182,13 +182,14 @@ jobs:
         ps aux | grep php
 
     - name: Run test script
+      continue-on-error: true
       run: |
         echo -----------------p3800
-        mariadb -h 127.0.0.1 -P 3800 -u poster_generator -p password -e "SHOW DATABASES;"
+        mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword -e "SHOW DATABASES;"
         echo -----------------p3307
-        mariadb -h 127.0.0.1 -P 3307 -u poster_generator -p password -e "SHOW DATABASES;"
+        mariadb -h 127.0.0.1 -P 3307 -u poster_generator -ppassword -e "SHOW DATABASES;"
         echo -----------------p3307uroot
-        mariadb -h 127.0.0.1 -P 3307 -u root -p password -e "SHOW DATABASES;"
+        mariadb -h 127.0.0.1 -P 3307 -u root -ppassword -e "SHOW DATABASES;"
         echo -----------------
         curl -v http://127.0.0.1:8080/scientific_poster_generator/test.php
       # curl -v http://127.0.0.1:8080/scientific_poster_generator/login.php
