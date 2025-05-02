@@ -90,4 +90,6 @@ fi
 # coverage combine
 # coverage report
 
+echo End Frontend-Tests
+
 exit $CODE
