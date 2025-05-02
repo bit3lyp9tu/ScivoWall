@@ -76,6 +76,7 @@ fi
 
 python3 poster_tests.py
 #  $*
+CODE=$?
 
 if [[ "$GITHUB_ACTIONS" != "true" ]]; then
 	sudo mariadb-dump $DB_NAME > ./results_frontend_test.sql
@@ -88,3 +89,5 @@ fi
 # coverage run -p poster_tests.py
 # coverage combine
 # coverage report
+
+exit $CODE
