@@ -183,19 +183,16 @@ jobs:
     - name: Run test script
       continue-on-error: false
       run: |
-        echo -----------------p3800
-        mariadb -h 127.0.0.1 -P 3800 -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO "poster_generator"@"%" IDENTIFIED BY "password"; FLUSH PRIVILEGES;'
-        echo -----------------
-        mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword poster_generator < ./tests/test_config2.sql
-        echo -----------------
-        mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword -e "SHOW DATABASES";
-        echo -----------------
-        curl -v http://127.0.0.1:8080/scientific_poster_generator/test.php
-        curl -v http://127.0.0.1:8080/scientific_poster_generator/login.php
-
         echo -----------------TEST
         ./tests/test_env >> $GITHUB_STEP_SUMMARY
-        ls ./tests/*.sql
+    # echo -----------------p3800
+    # mariadb -h 127.0.0.1 -P 3800 -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO "poster_generator"@"%" IDENTIFIED BY "password"; FLUSH PRIVILEGES;'
+    # echo -----------------
+    # mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword poster_generator < ./tests/test_config2.sql
+    # echo -----------------
+    # mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword -e "SHOW DATABASES";
+    # echo -----------------
+    # curl -v http://127.0.0.1:8080/scientific_poster_generator/login.php
 
 
     - name: Create a new version
