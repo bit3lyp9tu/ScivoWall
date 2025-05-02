@@ -4,10 +4,9 @@
 
     echo "<p>PHP script is running!</p>";
 
-
-	$password = "password";
-	$servername = "localhost";
+	$servername = "127.0.0.1";
 	$username = "poster_generator";
+	$password = "password";
 	$port = 3307;
 
     $GLOBALS["conn"] = new mysqli($servername, $username, $password, "", $port);
