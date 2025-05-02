@@ -4,13 +4,17 @@
 
     echo "<p>PHP script is running!</p>";
 
-    $servername = "127.0.0.1";
-    $port = 3800;//3307;
+    $servername = "localhost";
+    $port = 3800;
 
     $database = "poster_generator";
 
     $username = "poster_generator";
     $password = "password";
+
+    if (getenv("GITHUB_ACTIONS")) {
+        $servername = "127.0.0.1";
+    }
 
     $conn = new mysqli($servername, $username, $password, $database, $port);
 
