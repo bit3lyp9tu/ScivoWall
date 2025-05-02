@@ -170,9 +170,9 @@ jobs:
         collation server: 'utf8_general_ci'
         mariadb version: 'latest'
         mysql database: 'poster_generator'
-        mysql root password: password
-        mysql user: ${{ env.DB_USER }}
-        mysql password: password
+        mysql root password: 'password'
+        mysql user: 'poster_generator'
+        mysql password: 'password'
 
     - name: Manage Server
       run: |
@@ -185,11 +185,7 @@ jobs:
       continue-on-error: true
       run: |
         echo -----------------p3800
-        mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword -e "SHOW DATABASES;"
-        echo -----------------p3307
-        mariadb -h 127.0.0.1 -P 3307 -u poster_generator -ppassword -e "SHOW DATABASES;"
-        echo -----------------p3307uroot
-        mariadb -h 127.0.0.1 -P 3307 -u root -ppassword -e "SHOW DATABASES;"
+        mariadb -h 127.0.0.1 -P 3800 -u root -ppassword -e \"GRANT ALL PRIVILEGES ON *.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
         echo -----------------
         curl -v http://127.0.0.1:8080/scientific_poster_generator/test.php
       # curl -v http://127.0.0.1:8080/scientific_poster_generator/login.php
