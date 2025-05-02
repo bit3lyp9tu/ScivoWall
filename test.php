@@ -11,8 +11,24 @@
 	$port = 3307;
 
     $GLOBALS["conn"] = new mysqli($servername, $username, $password, "", $port);
-    $result = mysqli_query($$GLOBALS["conn"], "SELECT name FROM user;");
-    print_r($result);
+
+    $sql = "SELECT name FROM user;";
+
+    try {
+        $result = $GLOBALS["conn"]->query($sql);
+    } catch (Throwable $th) {
+
+        print_r(array());
+    }
+    if ($result === True) {
+        print_r($result);
+    }else{
+        try {
+            print_r($result->fetch_all());
+        } catch (Throwable $th) {
+            print_r(array());
+        }
+    }
 ?>
 <!DOCTYPE html>
 <html lang='en'>
