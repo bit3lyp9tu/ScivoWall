@@ -61,7 +61,6 @@ echo Running Frontend-Tests...
 
 echo Run tests on Test-DB: ${DB_NAME}
 
-
 mariadb -h 127.0.0.1 -P 3800 -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO "poster_generator"@"%" IDENTIFIED BY "password"; FLUSH PRIVILEGES;'
 mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword -e "DROP DATABASE IF EXISTS ${DB_NAME};"
 mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
@@ -78,8 +77,12 @@ sudo mariadb -e "SHOW DATABASES;"
 python3 poster_tests.py
 #  $*
 
-sudo mariadb-dump $DB_NAME > ./results_frontend_test.sql
-sudo mariadb -e "DROP DATABASE ${DB_NAME};"
+
+mariadb-dump -h 127.0.0.1 -P 3800 -u poster_generator -ppassword $DB_NAME > ./tests/results_frontend_test.sql
+mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword -e "DROP DATABASE ${DB_NAME};"
+
+# sudo mariadb-dump $DB_NAME > ./results_frontend_test.sql
+# sudo mariadb -e "DROP DATABASE ${DB_NAME};"
 
 # coverage run -p poster_tests.py
 # coverage combine

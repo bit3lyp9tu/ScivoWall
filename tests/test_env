@@ -20,8 +20,11 @@ echo Run tests on Test-DB: ${DB_NAME}
 
 php testing.php $DB_NAME
 
-sudo mariadb-dump $DB_NAME > ./tests/results_backend_test.sql
-sudo mariadb -e "DROP DATABASE ${DB_NAME};"
+mariadb-dump -h 127.0.0.1 -P 3800 -u poster_generator -ppassword $DB_NAME > ./tests/results_backend_test.sql
+mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword -e "DROP DATABASE ${DB_NAME};"
+
+# sudo mariadb-dump $DB_NAME > ./tests/results_backend_test.sql
+# sudo mariadb -e "DROP DATABASE ${DB_NAME};"
 
 
 php -r 'foreach(get_defined_functions()["internal"] as $i) {echo $i . "\n";};' > ./tests/php_build_in_func
