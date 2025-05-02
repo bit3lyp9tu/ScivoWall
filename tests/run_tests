@@ -72,14 +72,14 @@ mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword $DB_NAME < ./test_co
 # sudo mariadb $DB_NAME < ./test_config2.sql
 # sudo mariadb -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 
-sudo mariadb -e "SHOW DATABASES;"
+# sudo mariadb -e "SHOW DATABASES;"
 
 python3 poster_tests.py
 #  $*
 
 
-mariadb-dump -h 127.0.0.1 -P 3800 -u poster_generator -ppassword $DB_NAME > ./results_frontend_test.sql
-mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword -e "DROP DATABASE ${DB_NAME};"
+# mariadb-dump -h 127.0.0.1 -P 3800 -u poster_generator -ppassword $DB_NAME > ./results_frontend_test.sql
+# mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword -e "DROP DATABASE ${DB_NAME};"
 
 # sudo mariadb-dump $DB_NAME > ./results_frontend_test.sql
 # sudo mariadb -e "DROP DATABASE ${DB_NAME};"
