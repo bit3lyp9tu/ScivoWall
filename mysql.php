@@ -1,25 +1,28 @@
 <?php
 	$db_path = "/etc/dbpw";
 
-	$password = null;
 	$servername = "localhost";
-	$username = "poster_generator";
+    $port = 3800;
 
-	$port = 3306;
+    $database = "poster_generator";
+
+    $username = "poster_generator";
+    $password = "password";
+
+	if (getenv("GITHUB_ACTIONS")) {
+        $servername = "127.0.0.1";
+    }
 
 	if (file_exists($db_path)) {
 		$password = file_get_contents($db_path);
 		$password = chop($password);
 	} else {
 		error_log("error_log: $db_path not found! Trying default-pw");
-		$password = "password";
-
-		$port = 3307;
 	}
 
 	// Create connection
 	try {
-		$GLOBALS["conn"] = new mysqli($servername, $username, $password, "", $port);
+		$GLOBALS["conn"] = new mysqli($servername, $username, $password, $database, $port);
 
 		// Check connection
 		if ($GLOBALS["conn"]->connect_error) {
