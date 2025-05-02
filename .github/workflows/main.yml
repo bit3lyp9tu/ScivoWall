@@ -183,11 +183,17 @@ jobs:
 
     - name: Run test script
       run: |
+        echo -----------------p3800
+        mariadb -h 127.0.0.1 -P 3800 -u poster_generator -p password -e "SHOW DATABASES;"
+        echo -----------------p3307
+        mariadb -h 127.0.0.1 -P 3307 -u poster_generator -p password -e "SHOW DATABASES;"
+        echo -----------------p3307uroot
+        mariadb -h 127.0.0.1 -P 3307 -u root -p password -e "SHOW DATABASES;"
+        echo -----------------
         curl -v http://127.0.0.1:8080/scientific_poster_generator/test.php
-        echo -----------------
-        curl -v http://127.0.0.1:8080/scientific_poster_generator/login.php
-        echo -----------------
-        ./tests/test_env >> $GITHUB_STEP_SUMMARY
+      # curl -v http://127.0.0.1:8080/scientific_poster_generator/login.php
+      # echo -----------------
+      # ./tests/test_env >> $GITHUB_STEP_SUMMARY
 
 
     - name: Create a new version

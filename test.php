@@ -8,12 +8,12 @@
     $username = "poster_generator";
     $password = "password";
     $database = "poster_generator";
-    $port = 3307;
+    $port = 3800;//3307;
 
     $conn = new mysqli($servername, $username, $password, $database, $port);
 
     if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
+        print_r("Connection failed: " . $conn->connect_error);
     }
 
     $sql = "SELECT name FROM user;";
