@@ -182,7 +182,7 @@ jobs:
         ps aux | grep php
 
     - name: Run test script
-      continue-on-error: true
+      continue-on-error: false
       run: |
         echo -----------------p3800
         mariadb -h 127.0.0.1 -P 3800 -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO "poster_generator"@"%" IDENTIFIED BY "password"; FLUSH PRIVILEGES;'
