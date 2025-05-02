@@ -12,14 +12,9 @@
 
     $GLOBALS["conn"] = new mysqli($servername, $username, $password, "", $port);
 
-    $sql = "SELECT name FROM user;";
+    $sql = "SELECT name FROM poster_generator.user;";
+    $result = $GLOBALS["conn"]->query($sql);
 
-    try {
-        $result = $GLOBALS["conn"]->query($sql);
-    } catch (Throwable $th) {
-
-        print_r(array());
-    }
     if ($result === True) {
         print_r($result);
     }else{
