@@ -88,7 +88,7 @@ class PythonOrgSearch(unittest.TestCase):
         self.login_fill_form(driver, "Max Mustermann", "AbC123-98xy")
         driver.find_element(By.ID, "login").click()
         self.assertEqual(
-            "http://localhost/scientific_poster_generator/projects.php",
+            f"http://{self.address}/scientific_poster_generator/projects.php",
             driver.current_url,
         )
 
