@@ -52,8 +52,6 @@ class PythonOrgSearch(unittest.TestCase):
 
         self.logout(driver)
 
-        self.assertEqual(1, 2)
-
     def tearDown(self):
         if os.environ.get("GITHUB_ACTIONS"):
             self.driver.close()
