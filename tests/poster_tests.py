@@ -1,5 +1,6 @@
 import os
 import sys
+import datetime
 
 import unittest
 import mypy
@@ -86,7 +87,7 @@ class PythonOrgSearch(unittest.TestCase):
         self.login_clear_form(self.driver)
 
         # check right name+pw
-        self.login_fill_form(driver, "Max Mustermann", "AbC123-98xy")
+        self.login_fill_form(driver, "max5", "abc")
         driver.find_element(By.ID, "login").click()
         self.assertEqual(
             f"http://{self.address}/scientific_poster_generator/projects.php",
@@ -139,8 +140,30 @@ class PythonOrgSearch(unittest.TestCase):
 
     def user_page(self, driver):
         # check poster list correctly loaded
+        poster_list_element = driver.find_element(
+            By.CSS_SELECTOR, "#table-container>table>tr#table-container--nr-3"
+        )
+        self.assertEqual(poster_list_element.text, "2025-04-16 13:43:02 Edit")
+
         # check add new poster
+        create_poster = driver.find_element(By.ID, "project-name")
+        create_poster.send_keys("Test Title")
+        create_poster.send_keys(Keys.RETURN)
+
+        driver.find_element(By.CSS_SELECTOR, "#create-project>button").click()
+
+        poster_list_element = driver.find_element(
+            By.CSS_SELECTOR, "#table-container>table>tr#table-container--nr-4"
+        )
+        self.assertIsNotNone(poster_list_element)
         #   check right date
+        # date = datetime.datetime.now().strftime("%Y-%m-%d")
+        # print(f"{type(date)} ---")
+        # print(f"{type(poster_list_element.text.split(" ")[0])} ---")
+        # self.assertTrue(
+        #     self.date_compair_day(date, poster_list_element.text.split(" ")[0])
+        # )
+
         # check edit poster title
         # check delete new poster
         # check access poster
@@ -151,6 +174,12 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check image list  ???
         pass
+
+    def date_compair_day(date1, date2):
+        g1 = date1.split(" ")
+        g2 = date2.split(" ")
+
+        return g1[0] == g2[0] and g1[1].split(":")[0] == g2[1].split(":")[0]
 
     def poster_page(self, driver, title):
         # check right title
