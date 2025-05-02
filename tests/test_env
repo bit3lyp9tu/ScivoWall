@@ -13,7 +13,7 @@ sudo mariadb $DB_NAME < ./tests/test_config2.sql
 # echo User:
 # sudo mariadb -e "select user(),current_user();"
 
-sudo mariadb -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO 'poster_generator'@'localhost' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
+sudo mariadb -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 
 echo Running Backend-Tests...
 
