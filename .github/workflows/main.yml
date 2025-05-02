@@ -183,6 +183,8 @@ jobs:
     - name: Run test script
       continue-on-error: false
       run: |
+        mariadb -h 127.0.0.1 -P 3800 -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO "poster_generator"@"%" IDENTIFIED BY "password"; FLUSH PRIVILEGES;'
+
         echo -----------------TEST
         ./tests/test_env >> $GITHUB_STEP_SUMMARY
     # echo -----------------p3800
