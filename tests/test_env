@@ -7,7 +7,7 @@ export DB_NAME="poster_generator"
 
 mariadb -h 127.0.0.1 -P 3800 -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO "poster_generator"@"%" IDENTIFIED BY "password"; FLUSH PRIVILEGES;'
 mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
-mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword $DB_NAME < ./tests/test_config2.sql
+mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword $DB_NAME < ./test_config2.sql
 
 # sudo mariadb -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
 # sudo mariadb $DB_NAME < ./tests/test_config2.sql
