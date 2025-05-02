@@ -114,7 +114,6 @@ jobs:
 
 
     - name: install check
-      continue-on-error: true
       run: |
         pip show mypy
         pip show selenium
@@ -196,6 +195,7 @@ jobs:
 
         echo -----------------TEST
         ./tests/test_env >> $GITHUB_STEP_SUMMARY
+        ls ./tests/*.sql
 
 
     - name: Create a new version
