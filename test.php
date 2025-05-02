@@ -5,10 +5,12 @@
     echo "<p>PHP script is running!</p>";
 
     $servername = "127.0.0.1";
+    $port = 3800;//3307;
+
+    $database = "poster_generator";
+
     $username = "poster_generator";
     $password = "password";
-    $database = "poster_generator";
-    $port = 3800;//3307;
 
     $conn = new mysqli($servername, $username, $password, $database, $port);
 
