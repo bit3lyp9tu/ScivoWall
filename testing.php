@@ -385,8 +385,6 @@
 	// print_r(unpack('H*', 'AB101')[1]);
 	// print_r(str2bin('AB101'));
 
-	throw new Exception("Error Processing Request", 1);
-
 	// print_r($DB_NAME);
 
 
