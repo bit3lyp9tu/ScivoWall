@@ -2,7 +2,7 @@
 
 set -e
 
-export DB_NAME="testDB"
+export DB_NAME="poster_generator"
 
 sudo mariadb -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
 sudo mariadb $DB_NAME < ./tests/test_config2.sql
