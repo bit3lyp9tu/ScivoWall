@@ -5,6 +5,8 @@ set -e
 # TODO: doesnt seem to work on other than poster_generator
 export DB_NAME="poster_generator"
 
+mariadb -h 127.0.0.1 -P 3800 -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO "poster_generator"@"%" IDENTIFIED BY "password"; FLUSH PRIVILEGES;'
+
 sudo mariadb -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
 sudo mariadb $DB_NAME < ./tests/test_config2.sql
 

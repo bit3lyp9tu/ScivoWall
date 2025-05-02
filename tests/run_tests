@@ -61,6 +61,8 @@ echo Running Frontend-Tests...
 
 echo Run tests on Test-DB: ${DB_NAME}
 
+mariadb -h 127.0.0.1 -P 3800 -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO "poster_generator"@"%" IDENTIFIED BY "password"; FLUSH PRIVILEGES;'
+
 # TODO: doesnt seem to work correctly (local db poster_generator gets edited)
 sudo mariadb -e "DROP DATABASE IF EXISTS ${DB_NAME};"
 sudo mariadb -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
