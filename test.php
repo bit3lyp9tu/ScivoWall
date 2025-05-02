@@ -16,7 +16,7 @@
         print_r("Connection failed: " . $conn->connect_error);
     }
 
-    $sql = "SELECT name FROM user;";
+    $sql = "SELECT name FROM poster_generator.user;";
     $result = $conn->query($sql);
 
     if ($result === true) {
