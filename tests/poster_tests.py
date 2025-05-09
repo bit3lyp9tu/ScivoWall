@@ -1,6 +1,7 @@
 import os
 import sys
 import datetime
+import time
 
 import unittest
 import mypy
@@ -9,6 +10,9 @@ from selenium import webdriver
 
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 
 # from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.firefox.options import Options
@@ -47,7 +51,7 @@ class PythonOrgSearch(unittest.TestCase):
         self.login_page(driver)
 
         self.user_page(driver)
-        self.poster_page(driver, "")
+        self.poster_page(driver, 3)
         self.admin_user(driver, "")
         self.index_page(driver)
 
@@ -172,19 +176,111 @@ class PythonOrgSearch(unittest.TestCase):
         )
 
         # check edit poster title
-        print(
-            driver.find_element(
-                By.ID,
-                "#table-container>table>tr#table-container--nr-4>input[type='text']",
-            ).text
+        custom_poster = driver.find_element(
+            By.CSS_SELECTOR,
+            "#table-container>table>tr#table-container--nr-4>td:first-child>input",
         )
+        self.assertEqual("Test Title", custom_poster.get_attribute("value"))
+
+        custom_poster.click()
+        custom_poster.send_keys(" abc")
+
+        time.sleep(3)
+        custom_poster.send_keys(Keys.TAB)
+        time.sleep(3)
+
+        driver.find_element(
+            By.CSS_SELECTOR,
+            "#table-container>table>tr#table-container--nr-1>td:first-child>input",
+        ).click()
+        time.sleep(3)
+
+        # custom_poster2 = driver.find_element(
+        #     By.CSS_SELECTOR,
+        #     "#table-container>table>tr#table-container--nr-4>td:first-child>input",
+        # )
+        # self.assertEqual("Test Title abc", custom_poster2.get_attribute("value"))
+
+        # check after page reload
 
         # check delete new poster
+        driver.find_element(
+            By.CSS_SELECTOR,
+            "#table-container>table>tr#table-container--nr-4>td:last-child>td>input",
+        ).click()
+        poster_list_element = driver.find_element(
+            By.CSS_SELECTOR, "#table-container>table>tr:last-child>td:first-child>input"
+        )
+        self.assertTrue(
+            poster_list_element not in ["Test Title", "Test Title abc"]
+        )  # TODO: change to only expecting 'Test Title abc'
+
         # check access poster
+        driver.find_element(
+            By.CSS_SELECTOR,
+            "#table-container>table>tr#table-container--nr-3>td:nth-last-child(2)>td>a",
+        ).click()
+        self.assertEqual(
+            f"http://{self.address}/scientific_poster_generator/poster.php",
+            driver.current_url.split("?")[0],
+        )
+
+        driver.get(
+            f"http://{self.address}/scientific_poster_generator/projects.php",
+        )
+
+        time.sleep(1)
 
         # check author list correctly loaded
+        author_list_element = driver.find_element(
+            By.CSS_SELECTOR,
+            "#author-list>table>tr#author-list--nr-9>td:first-child>input",
+        )
+        self.assertEqual("Lina Chen", author_list_element.get_attribute("value"))
+
+        author_list_element2 = driver.find_element(
+            By.CSS_SELECTOR,
+            "#author-list>table>tr#author-list--nr-9>td:nth-child(2)",
+        )
+        self.assertEqual("The Future of Urban Farming", author_list_element2.text)
+
         # check edit author name
+        author_list_element3 = driver.find_element(
+            By.CSS_SELECTOR,
+            "#author-list>table>tr#author-list--nr-9>td:first-child>input",
+        )
+        author_list_element3.click()
+        author_list_element3.send_keys(" abc")
+
+        time.sleep(1)
+        author_list_element3.send_keys(Keys.TAB)
+        time.sleep(1)
+
+        driver.find_element(
+            By.CSS_SELECTOR,
+            "#author-list>table>tr#author-list--nr-1>td:first-child>input",
+        ).click()
+        time.sleep(1)
+        author_list_element4 = driver.find_element(
+            By.CSS_SELECTOR,
+            "#author-list>table>tr#author-list--nr-9>td:first-child>input",
+        )
+        self.assertEqual("Lina Chen abc", author_list_element4.get_attribute("value"))
+        self.assertTrue(
+            author_list_element4.get_attribute("value")
+            in ["Lina Chen", "Lina Chen abc"]
+        )  # TODO: change to only expecting 'Lina Chen abc'
+
         # check delete author
+        driver.find_element(
+            By.CSS_SELECTOR,
+            "#author-list>table>tr#author-list--nr-9>td:last-child>td>input",
+        ).click()
+        author_list_element5 = driver.find_element(
+            By.CSS_SELECTOR,
+            "#author-list>table>tr:last-child>td:first-child>input",
+        )
+        self.assertIsNot("Alice johnson", author_list_element5.get_attribute("value"))
 
         # check image list  ???
         pass
@@ -196,13 +292,98 @@ class PythonOrgSearch(unittest.TestCase):
         return g1[0] == g2[0]
         # and g1[1].split(":")[0] == g2[1].split(":")[0]
 
-    def poster_page(self, driver, title):
+    def poster_page(self, driver, local_index):
+
+        driver.get(
+            f"http://{self.address}/scientific_poster_generator/projects.php",
+        )
+
+        time.sleep(3)
+
+        driver.find_element(
+            By.CSS_SELECTOR,
+            f"#table-container>table>tr#table-container--nr-{local_index}>td:nth-last-child(2)>td>a",
+        ).click()
+
         # check right title
-        # check edit title
-        #   +globally
+        title = driver.find_element(By.CSS_SELECTOR, "div#title")
+        print(title.text)
+        self.assertEqual("The Future of Urban Farming", title.text)
+
+        time.sleep(1)
+
+        # check edit title # TODO
+        # driver.find_element(By.CSS_SELECTOR, "div#titles>div>div#title").click()
+        # WebDriverWait(driver, 5).until(
+        #     EC.element_to_be_clickable((By.CSS_SELECTOR, "div#titles>div>div#title"))
+        # ).click()
+        # title2 = driver.find_element(By.CSS_SELECTOR, "textearea#title").get_attribute(
+        #     "data-content"
+        # )
+        # title2.click()
+        # title2.send_keys(" abc")
+        # title2.send_keys(Keys.RETURN)
+        # title3 = driver.find_element(By.CSS_SELECTOR, "div#title>p")
+        # self.assertEqual("The Future of Urban Farming", title3.text)
+        # #   +globally
+
+        # check authors
+        authors = set(
+            [
+                i.text
+                for i in driver.find_elements(
+                    By.CSS_SELECTOR, "div#typeahead-container>div.author-item"
+                )
+            ]
+        )
+        self.assertEqual(authors, {"ChatGPT", "Alice Johnson"})
+
         # check empty authors
-        # check add author
+
+        # check add author  # TODO
+        # author = driver.find_element(By.CSS_SELECTOR, "div#typeahead-container")
+        # author.click()
+        # author.send_keys("Author")
+        # driver.find_element(By.ID, "logo_headline").click()
+        # self.assertEqual(
+        #     set(
+        #         [
+        #             i.text
+        #             for i in driver.find_elements(
+        #                 By.CSS_SELECTOR, "div#typeahead-container>div.author-item"
+        #             )
+        #         ]
+        #     ),
+        #     {"ChatGPT", "Alice Johnson", "Author"},
+        # )
+
         # check author list switch order
+        drag = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable(
+                (
+                    By.CSS_SELECTOR,
+                    "div#typeahead-container>div:nth-child(1)",
+                )
+            )
+        )
+        drop = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable(
+                (
+                    By.CSS_SELECTOR,
+                    "div#typeahead-container>div:nth-child(2)",
+                )
+            )
+        )
+        ActionChains(driver).drag_and_drop(drag, drop).perform()
+        author_order = [
+            i.text
+            for i in driver.find_elements(
+                By.CSS_SELECTOR, "div#typeahead-container>div.author-item"
+            )
+        ]
+        print(author_order)
+        # self.assertEqual([], author_order)
+
         # check author stored
         # check add box
         #   +globally
@@ -222,6 +403,23 @@ class PythonOrgSearch(unittest.TestCase):
         pass
 
     def admin_user(self, driver, pw):
+        # # go to projects page
+        # driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
+        # time.sleep(1)
+
+        # # logout
+        # driver.find_element(By.ID, "logout").click()
+        # time.sleep(1)
+
+        # # login as admin
+        # self.login_fill_form(driver, "Admin", "PwScaDS-2025")
+        # driver.find_element(By.ID, "login").click()
+        # self.assertEqual(
+        #     f"http://{self.address}/scientific_poster_generator/projects.php",
+        #     driver.current_url,
+        # )
+        # time.sleep(1)
+
         # check login successfully
         # check posters set on public
         # check set poster to visible

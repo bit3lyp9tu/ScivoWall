@@ -205,6 +205,7 @@ function make_column_editable(data, header, i, td) {
     const elem = document.createElement("INPUT");
     elem.setAttribute("type", "text");
     elem.value = data[header][i];
+    elem.setAttribute("value", data[header][i]);
 
     elem.onchange = change_action;
 
