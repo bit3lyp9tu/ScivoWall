@@ -172,6 +172,13 @@ class PythonOrgSearch(unittest.TestCase):
         )
 
         # check edit poster title
+        print(
+            driver.find_element(
+                By.ID,
+                "#table-container>table>tr#table-container--nr-4>input[type='text']",
+            ).text
+        )
+
         # check delete new poster
         # check access poster
 
