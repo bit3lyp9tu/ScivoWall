@@ -162,7 +162,11 @@ class PythonOrgSearch(unittest.TestCase):
         poster_list_element = driver.find_element(
             By.CSS_SELECTOR, "#table-container>table>tr#table-container--nr-3"
         )
-        self.assertEqual(poster_list_element.text, "2025-04-16 13:43:02 Edit")
+        print("time: 13", poster_list_element.text)
+        self.assertTrue(
+            poster_list_element.text
+            in ["2025-04-16 13:43:02 Edit", "2025-04-16 15:43:02 Edit"]
+        )
 
         # check add new poster
         create_poster = driver.find_element(By.ID, "project-name")

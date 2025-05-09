@@ -34,6 +34,24 @@
             print_r([]);
         }
     }
+    // echo date_default_timezone_get();
+
+    // $local_tz = new DateTimeZone('Europe/London');
+    // $local = new DateTime('now', $local_tz);
+
+    // $user_tz = new DateTimeZone(timezone_name_from_abbr(date_default_timezone_get()));
+    // $user = new DateTime('now', $user_tz);
+
+    // $local_offset = $local->getOffset() / 3600;
+    // $user_offset = $user->getOffset() / 3600;
+
+    // $diff = $local_offset - $user_offset;
+
+    // print_r($diff);
+
+    // echo new DateTime('now', new DateTimeZone('Europe/London'))->getOffset() / 3600 - new DateTime('now', new DateTimeZone(timezone_name_from_abbr(date_default_timezone_get())))->getOffset() / 3600;
+
+    // php -r "echo new DateTime('now', new DateTimeZone('Europe/London'))->getOffset() / 3600 - new DateTime('now', new DateTimeZone(timezone_name_from_abbr(date_default_timezone_get())))->getOffset() / 3600;"
 ?>
 <!DOCTYPE html>
 <html lang='en'>

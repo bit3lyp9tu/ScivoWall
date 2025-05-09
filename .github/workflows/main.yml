@@ -176,6 +176,7 @@ jobs:
     - name: Manage Server
       run: |
         php -S 0.0.0.0:8080 -t /home/runner/work/scientific_poster_generator &
+        php -r 'date_default_timezone_set('Europe/Berlin');'
         sleep 5
         netstat -tuln
         ps aux | grep php
