@@ -144,25 +144,10 @@ class PythonOrgSearch(unittest.TestCase):
             driver.current_url,
         )
 
-        print("1:", driver.current_url)
-
-        print("2:", driver.find_element(By.CSS_SELECTOR, "#table-container").text)
-        print("3:", driver.find_element(By.CSS_SELECTOR, "#table-container>table").text)
-        print(
-            "4:", driver.find_element(By.CSS_SELECTOR, "#table-container>table>tr").text
-        )
-        print(
-            "5:",
-            driver.find_element(
-                By.CSS_SELECTOR, "#table-container>table>tr#table-container--nr-3"
-            ).text,
-        )
-
         # check poster list correctly loaded
         poster_list_element = driver.find_element(
             By.CSS_SELECTOR, "#table-container>table>tr#table-container--nr-3"
         )
-        print("time: 11", poster_list_element.text)
         self.assertTrue(
             poster_list_element.text
             in ["2025-04-16 13:43:02 Edit", "2025-04-16 11:43:02 Edit"]
@@ -179,13 +164,12 @@ class PythonOrgSearch(unittest.TestCase):
             By.CSS_SELECTOR, "#table-container>table>tr#table-container--nr-4"
         )
         self.assertIsNotNone(poster_list_element)
-        #   check right date
-        # date = datetime.datetime.now().strftime("%Y-%m-%d")
-        # print(f"{type(date)} ---")
-        # print(f"{type(poster_list_element.text.split(" ")[0])} ---")
-        # self.assertTrue(
-        #     self.date_compair_day(date, poster_list_element.text.split(" ")[0])
-        # )
+
+        # check right date
+        date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.assertTrue(
+            self.date_compair_day(date, poster_list_element.text.split(" ")[0])
+        )
 
         # check edit poster title
         # check delete new poster
@@ -198,11 +182,12 @@ class PythonOrgSearch(unittest.TestCase):
         # check image list  ???
         pass
 
-    def date_compair_day(date1, date2):
+    def date_compair_day(self, date1, date2):
         g1 = date1.split(" ")
         g2 = date2.split(" ")
 
-        return g1[0] == g2[0] and g1[1].split(":")[0] == g2[1].split(":")[0]
+        return g1[0] == g2[0]
+        # and g1[1].split(":")[0] == g2[1].split(":")[0]
 
     def poster_page(self, driver, title):
         # check right title
