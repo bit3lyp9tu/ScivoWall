@@ -51,7 +51,7 @@ class PythonOrgSearch(unittest.TestCase):
         self.admin_user(driver, "")
         self.index_page(driver)
 
-        self.logout(driver)
+        # self.logout(driver)
 
     def tearDown(self):
         if os.environ.get("GITHUB_ACTIONS"):
@@ -139,6 +139,25 @@ class PythonOrgSearch(unittest.TestCase):
         pass
 
     def user_page(self, driver):
+        self.assertEqual(
+            f"http://{self.address}/scientific_poster_generator/projects.php",
+            driver.current_url,
+        )
+
+        print("1:", driver.current_url)
+
+        print("2:", driver.find_element(By.CSS_SELECTOR, "#table-container").text)
+        print("3:", driver.find_element(By.CSS_SELECTOR, "#table-container>table").text)
+        print(
+            "4:", driver.find_element(By.CSS_SELECTOR, "#table-container>table>tr").text
+        )
+        print(
+            "5:",
+            driver.find_element(
+                By.CSS_SELECTOR, "#table-container>table>tr#table-container--nr-3"
+            ).text,
+        )
+
         # check poster list correctly loaded
         poster_list_element = driver.find_element(
             By.CSS_SELECTOR, "#table-container>table>tr#table-container--nr-3"
