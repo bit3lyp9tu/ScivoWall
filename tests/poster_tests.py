@@ -535,20 +535,22 @@ class PythonOrgSearch(unittest.TestCase):
             .all_selected_options[0]
             .text,
         )
-        # TODO: save?
+        driver.find_element(By.CSS_SELECTOR, "button#save-content").click()
+        time.sleep(self.wait_time)
 
-        # TODO: check right edit date (changes dont seem to get updated)
-        # driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
-        # time.sleep(self.wait_time)
-        # self.assertEqual(
-        #     datetime.datetime.now().strftime("%Y-%m-%d"),
-        #     driver.find_element(
-        #         By.CSS_SELECTOR,
-        #         "div#table-container>table>tr#table-container--nr-3",
-        #     ).text.split(" ")[0],
-        # )
+        driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
+        time.sleep(self.wait_time)
+        self.assertEqual(
+            datetime.datetime.now().strftime("%Y-%m-%d"),
+            driver.find_element(
+                By.CSS_SELECTOR,
+                "div#table-container>table>tr#table-container--nr-3",
+            ).text.split(" ")[0],
+        )
 
     def admin_user(self, driver, pw):
+        # TODO: ??? check posters set on public
+
         # go to projects page
         driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
         time.sleep(self.wait_time)
@@ -567,8 +569,68 @@ class PythonOrgSearch(unittest.TestCase):
         time.sleep(self.wait_time)
 
         # check login successfully
-        # check posters set on public
+        self.assertEqual(
+            5,
+            len(
+                driver.find_elements(
+                    By.CSS_SELECTOR,
+                    "div#table-container>table>tr#table-container--nr-1>td",
+                )
+            ),
+        )
         # check set poster to visible
+        self.assertTrue(
+            "on",
+            driver.find_elements(
+                By.CSS_SELECTOR,
+                "div#table-container>table>tr#table-container--nr-1>td:nth-child(3)>input",
+            )[0].get_attribute("value"),
+        )
+        driver.get(f"http://{self.address}/scientific_poster_generator/index.php")
+        self.assertIsNotNone(
+            driver.find_elements(By.CSS_SELECTOR, "div#posters>div>iframe")
+        )
+
+        time.sleep(self.wait_time)
+
+        driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
+
+        time.sleep(self.wait_time)
+
+        print(
+            driver.find_elements(
+                By.CSS_SELECTOR,
+                "div#table-container>table>tr#table-container--nr-1>td:nth-child(3)>input",
+            )[0].get_attribute("value")
+        )
+
+        visibility = driver.find_element(
+            By.CSS_SELECTOR,
+            "div#table-container>table>tr#table-container--nr-1>td:nth-child(3)",
+        )
+
+        print(visibility.is_selected())
+
+        # TODO: make work!
+        visibility.click()
+
+        print(visibility.is_selected())
+
+        print(
+            driver.find_elements(
+                By.CSS_SELECTOR,
+                "div#table-container>table>tr#table-container--nr-1>td:nth-child(3)>input",
+            )[0].get_attribute("value")
+        )
+
+        time.sleep(self.wait_time)
+
+        driver.get(f"http://{self.address}/scientific_poster_generator/index.php")
+
+        time.sleep(self.wait_time)
+
+        # print(driver.find_elements(By.CSS_SELECTOR, "div#posters>div>iframe"))
+
         pass
 
     def index_page(self, driver):
