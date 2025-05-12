@@ -455,6 +455,7 @@ function createEditMenu() {
     save_btn.id = "save-content";
     save_btn.innerText = "Save";
 
+    // TODO: needs save?
     const select_view_mode = document.createElement("select");
     select_view_mode.id = "view-mode";
     select_view_mode.name = "";
