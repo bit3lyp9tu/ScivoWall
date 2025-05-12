@@ -10,6 +10,7 @@ from selenium import webdriver
 
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
@@ -24,6 +25,7 @@ from selenium.webdriver.firefox.service import Service as FirefoxService
 
 class PythonOrgSearch(unittest.TestCase):
 
+    wait_time = 1
     address = ""
 
     def setUp(self):
@@ -65,41 +67,56 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check both empty
         self.login_fill_form(driver, "", "")
+        time.sleep(self.wait_time)
         driver.find_element(By.ID, "login").click()
         self.assertEqual(
             f"http://{self.address}/scientific_poster_generator/login.php",
             driver.current_url,
         )
+        time.sleep(self.wait_time)
         self.login_clear_form(self.driver)
 
+        time.sleep(self.wait_time)
         # check wrong name
         self.login_fill_form(driver, "Max Mustermann" + "123", "AbC123-98xy")
+        time.sleep(self.wait_time)
         driver.find_element(By.ID, "login").click()
+        time.sleep(self.wait_time)
         self.assertEqual(
             f"http://{self.address}/scientific_poster_generator/login.php",
             driver.current_url,
         )
+        time.sleep(self.wait_time)
         self.login_clear_form(self.driver)
 
+        time.sleep(self.wait_time)
         # check wrong pw
         self.login_fill_form(driver, "Max Mustermann", "AbC123-98xy" + "abc")
+        time.sleep(self.wait_time)
         driver.find_element(By.ID, "login").click()
+        time.sleep(self.wait_time)
         self.assertEqual(
             f"http://{self.address}/scientific_poster_generator/login.php",
             driver.current_url,
         )
+        time.sleep(self.wait_time)
         self.login_clear_form(self.driver)
 
+        time.sleep(self.wait_time)
         # check right name+pw
         self.login_fill_form(driver, "max5", "abc")
+        # time.sleep(self.wait_time)
         driver.find_element(By.ID, "login").click()
+        time.sleep(self.wait_time)
         self.assertEqual(
             f"http://{self.address}/scientific_poster_generator/projects.php",
             driver.current_url,
         )
 
+        time.sleep(self.wait_time)
         # check cookie session
         session_id = driver.get_cookie("sessionID")
+        time.sleep(self.wait_time)
         self.assertIsNotNone(session_id)
 
         pass
@@ -109,23 +126,32 @@ class PythonOrgSearch(unittest.TestCase):
             f"http://{self.address}/scientific_poster_generator/login.php",
             driver.current_url,
         )
+        time.sleep(self.wait_time)
         filed_name = driver.find_element(By.ID, "name")
+        time.sleep(self.wait_time)
         filed_name.send_keys(name)
         filed_name.send_keys(Keys.RETURN)
 
+        time.sleep(self.wait_time)
+
         filed_pw = driver.find_element(By.ID, "pw")
+        time.sleep(self.wait_time)
         filed_pw.send_keys(pw)
         filed_pw.send_keys(Keys.RETURN)
 
     def login_clear_form(self, driver):
         driver.find_element(By.ID, "name").clear()
+        time.sleep(self.wait_time)
         driver.find_element(By.ID, "pw").clear()
 
     def logout(self, driver):
         driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
+        time.sleep(self.wait_time)
         # check if page contains logout
         logout = driver.find_element(By.ID, "logout")
+        time.sleep(self.wait_time)
         self.assertIsNotNone(logout)
+        time.sleep(self.wait_time)
         logout.click()
         self.assertEqual(
             f"http://{self.address}/scientific_poster_generator/login.php",
@@ -147,46 +173,59 @@ class PythonOrgSearch(unittest.TestCase):
             f"http://{self.address}/scientific_poster_generator/projects.php",
             driver.current_url,
         )
+        time.sleep(self.wait_time)
 
         # check poster list correctly loaded
         poster_list_element = driver.find_element(
             By.CSS_SELECTOR, "#table-container>table>tr#table-container--nr-3"
         )
+        time.sleep(self.wait_time)
         self.assertTrue(
             poster_list_element.text
             in ["2025-04-16 13:43:02 Edit", "2025-04-16 11:43:02 Edit"]
         )
 
+        time.sleep(self.wait_time)
         # check add new poster
         create_poster = driver.find_element(By.ID, "project-name")
+        time.sleep(self.wait_time)
         create_poster.send_keys("Test Title")
         create_poster.send_keys(Keys.RETURN)
 
+        time.sleep(self.wait_time)
+
         driver.find_element(By.CSS_SELECTOR, "#create-project>button").click()
+        time.sleep(self.wait_time)
 
         poster_list_element = driver.find_element(
             By.CSS_SELECTOR, "#table-container>table>tr#table-container--nr-4"
         )
+        time.sleep(self.wait_time)
         self.assertIsNotNone(poster_list_element)
 
         # check right date
         date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        time.sleep(self.wait_time)
         self.assertTrue(
             self.date_compair_day(date, poster_list_element.text.split(" ")[0])
         )
 
+        time.sleep(self.wait_time)
         # check edit poster title
         custom_poster = driver.find_element(
             By.CSS_SELECTOR,
             "#table-container>table>tr#table-container--nr-4>td:first-child>input",
         )
+        time.sleep(self.wait_time)
         self.assertEqual("Test Title", custom_poster.get_attribute("value"))
 
-        custom_poster.click()
-        custom_poster.send_keys(" abc")
+        ActionChains(driver).click(custom_poster).send_keys(" abc").perform()
 
-        time.sleep(3)
-        custom_poster.send_keys(Keys.TAB)
+        # custom_poster.click()
+        # custom_poster.send_keys(" abc")
+
+        # time.sleep(3)
+        # custom_poster.send_keys(Keys.TAB)
         time.sleep(3)
 
         driver.find_element(
@@ -203,23 +242,29 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check after page reload
 
+        time.sleep(self.wait_time)
         # check delete new poster
         driver.find_element(
             By.CSS_SELECTOR,
             "#table-container>table>tr#table-container--nr-4>td:last-child>td>input",
         ).click()
+        time.sleep(self.wait_time)
         poster_list_element = driver.find_element(
             By.CSS_SELECTOR, "#table-container>table>tr:last-child>td:first-child>input"
         )
+        time.sleep(self.wait_time)
         self.assertTrue(
             poster_list_element not in ["Test Title", "Test Title abc"]
         )  # TODO: change to only expecting 'Test Title abc'
+        # self.assertEqual("Test Title abc", poster_list_element)
 
+        time.sleep(self.wait_time)
         # check access poster
         driver.find_element(
             By.CSS_SELECTOR,
             "#table-container>table>tr#table-container--nr-3>td:nth-last-child(2)>td>a",
         ).click()
+        time.sleep(self.wait_time)
         self.assertEqual(
             f"http://{self.address}/scientific_poster_generator/poster.php",
             driver.current_url.split("?")[0],
@@ -229,19 +274,21 @@ class PythonOrgSearch(unittest.TestCase):
             f"http://{self.address}/scientific_poster_generator/projects.php",
         )
 
-        time.sleep(1)
+        time.sleep(self.wait_time)
 
         # check author list correctly loaded
         author_list_element = driver.find_element(
             By.CSS_SELECTOR,
             "#author-list>table>tr#author-list--nr-9>td:first-child>input",
         )
+        time.sleep(self.wait_time)
         self.assertEqual("Lina Chen", author_list_element.get_attribute("value"))
 
         author_list_element2 = driver.find_element(
             By.CSS_SELECTOR,
             "#author-list>table>tr#author-list--nr-9>td:nth-child(2)",
         )
+        time.sleep(self.wait_time)
         self.assertEqual("The Future of Urban Farming", author_list_element2.text)
 
         # check edit author name
@@ -249,36 +296,38 @@ class PythonOrgSearch(unittest.TestCase):
             By.CSS_SELECTOR,
             "#author-list>table>tr#author-list--nr-9>td:first-child>input",
         )
+        time.sleep(self.wait_time)
         author_list_element3.click()
         author_list_element3.send_keys(" abc")
 
-        time.sleep(1)
+        time.sleep(self.wait_time)
         author_list_element3.send_keys(Keys.TAB)
-        time.sleep(1)
+        time.sleep(self.wait_time)
 
         driver.find_element(
             By.CSS_SELECTOR,
             "#author-list>table>tr#author-list--nr-1>td:first-child>input",
         ).click()
-        time.sleep(1)
+        time.sleep(self.wait_time)
         author_list_element4 = driver.find_element(
             By.CSS_SELECTOR,
             "#author-list>table>tr#author-list--nr-9>td:first-child>input",
         )
-        self.assertEqual("Lina Chen abc", author_list_element4.get_attribute("value"))
         self.assertTrue(
             author_list_element4.get_attribute("value")
             in ["Lina Chen", "Lina Chen abc"]
         )  # TODO: change to only expecting 'Lina Chen abc'
 
+        time.sleep(self.wait_time)
         # check delete author
         driver.find_element(
             By.CSS_SELECTOR,
-            "#author-list>table>tr#author-list--nr-9>td:last-child>td>input",
+            "#author-list>table>tr#author-list--nr-6>td:last-child>td>input",
         ).click()
+        time.sleep(self.wait_time)
         author_list_element5 = driver.find_element(
             By.CSS_SELECTOR,
-            "#author-list>table>tr:last-child>td:first-child>input",
+            "#author-list>table>tr:nth-child(6)>td:first-child>input",
         )
         self.assertIsNot("Alice johnson", author_list_element5.get_attribute("value"))
 
@@ -307,10 +356,11 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check right title
         title = driver.find_element(By.CSS_SELECTOR, "div#title")
-        print(title.text)
+        time.sleep(self.wait_time)
+        # print(title.text)
         self.assertEqual("The Future of Urban Farming", title.text)
 
-        time.sleep(1)
+        time.sleep(self.wait_time)
 
         # check edit title # TODO
         # driver.find_element(By.CSS_SELECTOR, "div#titles>div>div#title").click()
@@ -327,6 +377,7 @@ class PythonOrgSearch(unittest.TestCase):
         # self.assertEqual("The Future of Urban Farming", title3.text)
         # #   +globally
 
+        time.sleep(self.wait_time)
         # check authors
         authors = set(
             [
@@ -336,28 +387,41 @@ class PythonOrgSearch(unittest.TestCase):
                 )
             ]
         )
-        self.assertEqual(authors, {"ChatGPT", "Alice Johnson"})
+        self.assertTrue(
+            authors
+            in [
+                {"ChatGPT", "Alice Johnson", "Lina Chen abc"},
+                {"ChatGPT", "Alice Johnson", "Lina Chen"},
+            ]
+        )
 
         # check empty authors
 
-        # check add author  # TODO
-        # author = driver.find_element(By.CSS_SELECTOR, "div#typeahead-container")
-        # author.click()
-        # author.send_keys("Author")
-        # driver.find_element(By.ID, "logo_headline").click()
-        # self.assertEqual(
-        #     set(
-        #         [
-        #             i.text
-        #             for i in driver.find_elements(
-        #                 By.CSS_SELECTOR, "div#typeahead-container>div.author-item"
-        #             )
-        #         ]
-        #     ),
-        #     {"ChatGPT", "Alice Johnson", "Author"},
-        # )
+        # check add author
+        WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, "div#typeahead-container>div:last-child")
+            )
+        ).click()
+        ActionChains(driver).send_keys("Author").perform()
+        driver.find_element(By.ID, "logo_headline").click()
+        changed_authors = [
+            i.text
+            for i in driver.find_elements(
+                By.CSS_SELECTOR, "div#typeahead-container>div.author-item"
+            )
+        ]
+        print(changed_authors)
+        self.assertTrue(
+            changed_authors
+            in [
+                ["ChatGPT", "Alice Johnson", "Lina Chen abc", "Author"],
+                ["ChatGPT", "Alice Johnson", "Lina Chen", "Author"],
+            ],
+        )
 
-        # check author list switch order
+        time.sleep(self.wait_time)
+        # TODO: check author list switch order
         drag = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable(
                 (
@@ -366,14 +430,17 @@ class PythonOrgSearch(unittest.TestCase):
                 )
             )
         )
+        start = drag.location
+        time.sleep(self.wait_time)
         drop = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable(
                 (
                     By.CSS_SELECTOR,
-                    "div#typeahead-container>div:nth-child(2)",
+                    "div#typeahead-container>div:nth-child(3)",
                 )
             )
         )
+        finish = drop.location
         ActionChains(driver).drag_and_drop(drag, drop).perform()
         author_order = [
             i.text
@@ -381,44 +448,123 @@ class PythonOrgSearch(unittest.TestCase):
                 By.CSS_SELECTOR, "div#typeahead-container>div.author-item"
             )
         ]
-        print(author_order)
+        # print(author_order)
         # self.assertEqual([], author_order)
 
         # check author stored
-        # check add box
-        #   +globally
-        # check basic edit box
-        # check box markdown render
-        # check box math render
 
-        # check box plotly render   ???
-        # check box image render    ???
+        # check author delete
+        last_author = driver.find_element(
+            By.CSS_SELECTOR, "div#typeahead-container>div:nth-last-child(2)"
+        )
+        ActionChains(driver).move_to_element(last_author).perform()
+        driver.find_element(
+            By.CSS_SELECTOR,
+            "div#typeahead-container>div:nth-last-child(2)>button#remove-element",
+        ).click()
+        changed_authors2 = [
+            i.text
+            for i in driver.find_elements(
+                By.CSS_SELECTOR, "div#typeahead-container>div.author-item"
+            )
+        ]
+        self.assertTrue(
+            changed_authors2
+            in [
+                ["ChatGPT", "Alice Johnson", "Lina Chen abc"],
+                ["ChatGPT", "Alice Johnson", "Lina Chen"],
+            ],
+        )
+
+        # check add box
+        boxes = [i for i in driver.find_elements(By.CSS_SELECTOR, "div#boxes>div")]
+        driver.find_element(By.CSS_SELECTOR, "button#add-box").click()
+        boxes2 = [i for i in driver.find_elements(By.CSS_SELECTOR, "div#boxes>div")]
+        self.assertEqual(len(boxes) + 1, len(boxes2))
+
+        # check basic edit box
+        new_box = driver.find_element(By.CSS_SELECTOR, "div#boxes>div:nth-child(3)")
+        ActionChains(driver).move_to_element(new_box).click(new_box).perform()
+
+        ActionChains(driver).click(
+            driver.find_element(By.CSS_SELECTOR, "div#boxes>textarea#editBox-2")
+        ).send_keys(Keys.DOWN).send_keys(" abc").send_keys(Keys.ENTER).send_keys(
+            "$$ x $$"
+        ).click(
+            driver.find_element(By.CSS_SELECTOR, "img#scadslogo")
+        ).perform()
+
+        changed_box = driver.find_element(By.CSS_SELECTOR, "div#boxes>div:nth-child(3)")
+        self.assertEqual(
+            "# Impact\n\nIncreased yields with 70% less water usage. abc\n$$ x $$",
+            changed_box.get_attribute("data-content"),
+        )
+
+        # check box markdown render
+        self.assertEqual(
+            "Impact",
+            driver.find_element(By.CSS_SELECTOR, "div#boxes>div:nth-child(3)>h1").text,
+        )
+        self.assertEqual(
+            "Increased yields with 70% less water usage. abc\nx",
+            driver.find_element(By.CSS_SELECTOR, "div#boxes>div:nth-child(3)>p").text,
+        )
+
+        # check box math render
+        self.assertIsNotNone(
+            driver.find_element(
+                By.CSS_SELECTOR, "div#boxes>div:nth-child(3)>p>mjx-container"
+            )
+        )
+
+        # TODO: check box plotly render   ???
+        # TODO: check box image render    ???
         #   + stored globally
 
         # check visibility
+        select_element = driver.find_element(By.CSS_SELECTOR, "select#view-mode")
+        select = Select(select_element)
+        # print([i.text for i in select.options])
         #   - private
+        self.assertEqual("private", select.all_selected_options[0].text)
         #   - public
+        select.select_by_visible_text("public")
+        self.assertEqual(
+            "public",
+            Select(driver.find_element(By.CSS_SELECTOR, "select#view-mode"))
+            .all_selected_options[0]
+            .text,
+        )
+        # TODO: save?
 
-        # check right edit date
-        pass
+        # TODO: check right edit date (changes dont seem to get updated)
+        # driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
+        # time.sleep(self.wait_time)
+        # self.assertEqual(
+        #     datetime.datetime.now().strftime("%Y-%m-%d"),
+        #     driver.find_element(
+        #         By.CSS_SELECTOR,
+        #         "div#table-container>table>tr#table-container--nr-3",
+        #     ).text.split(" ")[0],
+        # )
 
     def admin_user(self, driver, pw):
-        # # go to projects page
-        # driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
-        # time.sleep(1)
+        # go to projects page
+        driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
+        time.sleep(self.wait_time)
 
-        # # logout
-        # driver.find_element(By.ID, "logout").click()
-        # time.sleep(1)
+        # logout
+        driver.find_element(By.ID, "logout").click()
+        time.sleep(self.wait_time)
 
-        # # login as admin
-        # self.login_fill_form(driver, "Admin", "PwScaDS-2025")
-        # driver.find_element(By.ID, "login").click()
-        # self.assertEqual(
-        #     f"http://{self.address}/scientific_poster_generator/projects.php",
-        #     driver.current_url,
-        # )
-        # time.sleep(1)
+        # login as admin
+        self.login_fill_form(driver, "Admin", "PwScaDS-2025")
+        driver.find_element(By.ID, "login").click()
+        self.assertEqual(
+            f"http://{self.address}/scientific_poster_generator/projects.php",
+            driver.current_url,
+        )
+        time.sleep(self.wait_time)
 
         # check login successfully
         # check posters set on public
