@@ -220,8 +220,15 @@
 	$result = json_encode(getterQuery2("SELECT user_id, name FROM user WHERE user.User_id > ?", 0), true);
 	test_equal("delete user", $result, '{"user_id":[19,82,85,86,87,88],"name":["max5","bug","Admin","Max Mustermann","Anne Beispielfrau","Test-Name"]}');
 
+	// TODO: need testing
+	// test_equal("test is table users empty", isEmpty(), 1);
 
 	test_equal("register new user", register("testing", "1A_aaaaaaaaaa"), "success");
+
+	test_equal("test is table users not empty", isEmpty(), 0);
+	// TODO: test fails (user_id does not exist)
+	// test_equal("test", isAdmin(1), true);
+
 	test_equal("register with same username twice", register("testing", "1A_aaaaaaaaaa"), "The user testing already exists.");
 	test_equal("register with number as username", register(123, "1A_aaaaaaaaaa"), "success");
 	test_equal("register bad password msg", register("testing2", "123"), "Password not complex enough");

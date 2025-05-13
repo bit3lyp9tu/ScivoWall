@@ -89,9 +89,20 @@
         $hash = sha1($pw . ":" . $salt . ":" . $pepper);
 
         try {
-            return insertQuery("INSERT INTO user (`name`, `pass_sha`, `salt`, `pepper`)
+            $state = 0;
+            if(isEmpty() === 1) {
+                $state = 1;
+            }
+
+            $result = insertQuery("INSERT INTO user (`name`, `pass_sha`, `salt`, `pepper`)
                 VALUES (?, ?, ?, ?)",
                 "ssss", $name, $hash, $salt, $pepper);
+
+            if($state === 1) {
+                $r = editQuery("UPDATE user SET user.access_level=? WHERE user.user_id=?", "ii", 2, getLastInsertID());
+            }
+
+            return $result;
 
         } catch (mysqli_sql_exception $th) {
             if ($th->getCode() == 1062) {
@@ -99,6 +110,14 @@
             }else{
                 return $th->getMessage();
             }
+        }
+    }
+
+    function isEmpty() {
+        if(getterQuery2("SELECT COUNT(name) AS n FROM user")["n"][0] === 0) {
+            return 1;
+        }else{
+            return 0;
         }
     }
 

@@ -26,41 +26,6 @@
     include(__DIR__ . "/" . "poster_edit.php");
 
     # TODO: Admin User/PW erstellen wenn nicht existiert (checkUserTable)
-
-    function checkUserTable() {
-        $sql = "SELECT COUNT(*) AS count FROM user";
-        $result = $GLOBALS["conn"]->query($sql);
-
-        if ($result && $row = $result->fetch_assoc()) {
-            if ($row['count'] == 0) {
-                // Keine Benutzer vorhanden – Formular anzeigen
-                echo <<<HTML
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Benutzer anlegen</title>
-    </head>
-    <body>
-        <h2>Admin user and pw</h2>
-        <form method="POST" action="    .php">
-            <label for="username">Benutzername:</label>
-            <input type="text" id="username" name="username" required><br><br>
-            <label for="password">Passwort:</label>
-            <input type="password" id="password" name="password" required><br><br>
-            <input type="submit" value="Erstellen">
-        </form>
-    </body>
-    </html>
-    HTML;
-            exit(0);
-            }
-        } else {
-            echo "Fehler beim Abrufen der Benutzerdaten.";
-            exit(1);
-        }
-    }
-
-    checkUserTable();
 ?>
 <body>
     <div id="logo_headline">
