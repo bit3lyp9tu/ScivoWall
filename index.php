@@ -39,8 +39,8 @@
         <title>Benutzer anlegen</title>
     </head>
     <body>
-        <h2>Erstelle einen Benutzer</h2>
-        <form method="POST" action="create_user.php">
+        <h2>Admin user and pw</h2>
+        <form method="POST" action="    .php">
             <label for="username">Benutzername:</label>
             <input type="text" id="username" name="username" required><br><br>
             <label for="password">Passwort:</label>
