@@ -640,5 +640,5 @@ class PythonOrgSearch(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
-    # TODO: test todo-to-issue test after giving permissions
+    # TODO: test todo-to-issue test after giving permissions 2
     #  labels: enhancement, help wanted
