@@ -2,7 +2,7 @@
 
 set -e
 
-# TODO: doesnt seem to work on other than poster_generator
+# TODO:   doesnt seem to work on other than poster_generator
 export DB_NAME="poster_generator"
 
 if [[ "$GITHUB_ACTIONS" != "true" ]]; then

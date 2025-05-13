@@ -140,7 +140,7 @@
 	test_equal("get two tables", implode(",", getTableNames("SELECT * FROM user, author WHERE id=1;")), 'user,author');
 	test_equal("get with subtable", implode(",", getTableNames("SELECT * FROM user, (SELECT * FROM poster, session) AS abc WHERE id=1;")), 'user');
 	test_equal("get tables with alias", implode(",", getTableNames("SELECT * FROM user AS a, session AS b, author;")), 'user,session,author');
-	//TODO: test get complex table with linebreaks
+	//TODO:   test get complex table with linebreaks
 	// test_equal("get complex table with linebreaks",
 	// 			implode(",", getTableNames(
 	// 				"SELECT *
@@ -177,7 +177,7 @@
 				getterQuery2("SELECT title, user_id FROM poster;", 1)["[ERROR]"],
 				"Found param-references '?' (0) in query does not match the amound of params (1) given.");
 
-	//TODO
+	//TODO:
 	// $result = json_encode(getterQuery2("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "Test-Name"), true);
 	// test_equal("select query get json result", $result,
 	// 	'{"user_id":[1],"name":["Test-Name"],"pass_sha":["0bf301312acc91474e96e1a07422a791"],"salt":["vAfcB\"$2NE[C}Rpw)9vhI\/-4YPS<}?@F"],"pepper":["a2d47c981889513c5e2ddbca71f414"],"access_level":[1]}'
@@ -226,12 +226,12 @@
 	test_equal("register with number as username", register(123, "1A_aaaaaaaaaa"), "success");
 	test_equal("register bad password msg", register("testing2", "123"), "Password not complex enough");
 
-	//TODO:	print_r(getterQuery2("SELECT LAST_INSERT_ID() AS id;"));
+	//TODO:  	print_r(getterQuery2("SELECT LAST_INSERT_ID() AS id;"));
 
 	test_equal("login unknown username", login("---", "---"), "Wrong Username or Password");
 	test_equal("login with wrong password", login("testing", "---"), "Wrong Username or Password");
 	test_equal("login successfully", login("testing", "1A_aaaaaaaaaa"), "Correct Password");
-	// //TODO: check after correct session during login
+	// //TODO:   check after correct session during login
 
 	test_equal("user does not exist", isAdmin(1), 'user_id does not exist');
 	test_equal("is user non-admin", isAdmin(86), false);
@@ -258,7 +258,7 @@
 
 	test_equal("fetch all projects", implode(",", json_decode(fetch_projects(19), true)["title"]), 'Climate Change Effects in the Arctic,AI in Modern Healthcare,The Future of Urban Farming');
 
-	// TODO
+	// TODO:
 	// test_equal("fetch authors user is working with", implode(',', fetch_authors(1)["name"]), '');
 
 	test_equal("delete project", implode(",", json_decode(delete_project(1, 19), true)["title"]), 'AI in Modern Healthcare,The Future of Urban Farming');
@@ -318,7 +318,7 @@
 	deleteBox(2, 3);
 	test_equal("delete box", implode(",", getBoxes(3)), '');
 
-	// TODO: rename_author
+	// TODO:   rename_author
 
 	removeAuthor(4, 351);
 	test_equal("remove author", implode(",", getAuthors(351)["name"]), 'ChatGPT,Alice Johnson,Lina Chen');
@@ -326,7 +326,7 @@
 	// test_equal("add list of authors", addAuthors(349, ["author1", "auhtor2", "author3"]), '[success|success],[success|success],[success|success],');
 	// test_equal("added list of authors correctly", implode(",", getAuthors(349)["name"]), 'Test-Name');
 
-	// TODO: fix return msg to: successfully deleted[success|success],[success|success],[success|success],
+	// TODO:   fix return msg to: successfully deleted[success|success],[success|success],[success|success],
 	// test_equal("overwrite Authors", overwriteAuthors(351, ["author2", "author3", "author4"]), 'successfully deleted[success|success],|success],[success|success],');
 	// test_equal("overwrite Authors check content", implode(",", getAuthors(3)["name"]), 'Test-Name');
 
@@ -338,7 +338,7 @@
 
 	// print_r(getBoxes(3));
 
-	//TODO removal of Boxes
+	//TODO:   removal of Boxes
 	// overwriteBoxes(3, array("Content C"));
 	// test_equal("overwrite boxes removal", implode(",", getBoxes(3)), 'Content C');
 	// overwriteBoxes(3, array());
@@ -371,7 +371,7 @@
 	// test_equal("update last edit date user 2", ($t1 + $sleep_time == $t2) ? 1 : 0, 1);
 
 
-	//image //TODO
+	//image //TODO:
 	// print_r(getDBHeader("image")["Field"]);
 	// $image_id = 1;
 	// test_equal("update last edit date image 1", updateEditDate("image", $image_id), 'successfully updated');

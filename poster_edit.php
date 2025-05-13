@@ -9,11 +9,11 @@
         return $data;
     }
 
-    // TODO: check for all functions using poster_id if id exists
-    // TODO: check for all functions using user_id if id exists
+    // TODO:   check for all functions using poster_id if id exists
+    // TODO:   check for all functions using user_id if id exists
 
     function getTitle($poster_id) {
-        //TODO: add test if id doesnt exists
+        //TODO:   add test if id doesnt exists
 
         $title = getterQuery2(
             "SELECT title
@@ -119,13 +119,13 @@
             // deleteBox(1, $poster_id);
         }
     }
-    function getImage($image_id) {  //TODO: untested
+    function getImage($image_id) {  //TODO:   untested
         return json_encode(getterQuery2(
             "SELECT data FROM image WHERE image_id=?",
             $image_id
         ), true)["data"][0];
     }
-    function getFullImage($name, $poster_id) {  //TODO: untested
+    function getFullImage($name, $poster_id) {  //TODO:   untested
         return json_encode(getterQuery2(
             "SELECT file_name, type, size, last_modified, data FROM image WHERE fk_poster=? AND file_name=? LIMIT 1",
             $poster_id, $name
@@ -220,7 +220,7 @@
         }
         return $results;
     }
-    function searchAuthor($name, $poster_id) {  //TODO: untested
+    function searchAuthor($name, $poster_id) {  //TODO:   untested
         $result = getterQuery2(
             "SELECT a.id AS author_id, a.name AS name, b.id AS id, b.poster_id AS poster_id
             FROM author AS a, author_to_poster AS b
@@ -229,7 +229,7 @@
         );
         return $result;
     }
-    // TODO: changes only author_to_poster, but not author
+    // TODO:   changes only author_to_poster, but not author
     function overwriteAuthors($poster_id, $authors) {
         $results = "";
 
@@ -327,7 +327,7 @@
         return $result;
     }
 
-    //TODO: function to change last_edit_date
+    //TODO:   function to change last_edit_date
     function updateEditDate($table, $id) {
         $attribute = array(
             "poster" => "last_edit_date",
@@ -348,7 +348,7 @@
         }
     }
 
-    function fetchPublicPosters() {  //TODO: untested
+    function fetchPublicPosters() {  //TODO:   untested
         $result = getterQuery2(
             "SELECT poster_id, title
             FROM poster
@@ -370,7 +370,7 @@
 
         $content->title = getTitle($poster_id);
         $content->authors = getAuthors($poster_id)["name"]; //direct from project
-        // $content->all_authors = ...      //other authors the user once wrote in a project// TODO: request list of all authors the user has a connection with
+        // $content->all_authors = ...      //other authors the user once wrote in a project// TODO:   request list of all authors the user has a connection with
         $content->boxes = getBoxes($poster_id);
         $content->visibility = getVisibility($poster_id);
         $content->vis_options = getVisibilityOptions();
@@ -393,7 +393,7 @@
             }
         }
         if ($_POST['action'] == 'content-upload') {
-            //TODO: check if mode=private + session-id correct
+            //TODO:   check if mode=private + session-id correct
 
             $data = json_decode((isset($_POST['data']) ? $_POST['data'] : ''), true);
 
@@ -429,7 +429,7 @@
         if ($_POST['action'] == 'image-upload') {
             $data = isset($_POST['data']) ? $_POST['data'] : '';
 
-            //TODO: check if user has edit permissions for poster
+            //TODO:   check if user has edit permissions for poster
             $poster_id = isset($_POST['id']) ? $_POST['id'] : '';
 
             echo addImage($data, $poster_id);

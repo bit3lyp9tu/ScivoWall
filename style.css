@@ -254,7 +254,7 @@ p[placeholder="plotly"] {
     /* object-fit: cover; */
 }
 
-/* TODO find a better way to prevent overflow*/
+/* TODO:   find a better way to prevent overflow*/
 p.js-plotly-plot>div>div {
     overflow: hidden;
     width: auto;

@@ -20,7 +20,7 @@
 		return "success";
     }
 
-    function editQuery($sql, $types, ...$param) {   //TODO: ??????????????????
+    function editQuery($sql, $types, ...$param) {   //TODO:   ??????????????????
         $stmt = $GLOBALS["conn"]->prepare($sql);
         $stmt->bind_param($types, ...$param);
         $stmt->execute();
@@ -29,7 +29,7 @@
 		return "successfully updated";
     }
 
-    # TODO: true/false zurückgeben
+    # TODO:   true/false zurückgeben
     function deleteQuery($sql, $types, ...$param) {
         $stmt = $GLOBALS["conn"]->prepare($sql);
         $stmt->bind_param($types, ...$param);
@@ -39,7 +39,7 @@
 		return "successfully deleted";
     }
 
-    // TODO: include matching after '*'
+    // TODO:   include matching after '*'
     function getCoulmnNames($query, $rm_kleene=true) {
         $colnames = [];
 
@@ -82,13 +82,13 @@
                 // }
             }
         }else{
-            //TODO: how to treat cases with kleene?
+            //TODO:   how to treat cases with kleene?
             $result = $colnames;
         }
-        return array_values(array_unique($result));//TODO: ???
+        return array_values(array_unique($result));//TODO:   ???
     }
 
-    // TODO: needs to be finished (for reference: test complex table with linebreaks)
+    // TODO:   needs to be finished (for reference: test complex table with linebreaks)
     function getTableNames($query) {
         $colnames = array();
 
@@ -149,7 +149,7 @@
         $pattern = "/\([\w*\d*\s\{\}\.\*\,\=\<\>]+\)/i";
 
         while (true) {
-            //TODO throw error if runs longer then 1 min
+            //TODO:   throw error if runs longer then 1 min
             if(str_contains($str, '(') && str_contains($str, ')')) {
                 if(preg_match_all($pattern, $str, $matches)) {
                     $result[] = $matches[0];
@@ -210,7 +210,7 @@
         return getterQuery2("DESC " . $table . ";");
     }
 
-    // TODO:    using from_unixtime(last_edit_date) AS 'last edit' as selector throws errors
+    // TODO:      using from_unixtime(last_edit_date) AS 'last edit' as selector throws errors
     function getterQuery2($sql, ...$param) {
         $out = array();
 

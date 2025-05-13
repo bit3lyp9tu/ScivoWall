@@ -255,7 +255,7 @@ class PythonOrgSearch(unittest.TestCase):
         time.sleep(self.wait_time)
         self.assertTrue(
             poster_list_element not in ["Test Title", "Test Title abc"]
-        )  # TODO: change to only expecting 'Test Title abc'
+        )  # TODO:   change to only expecting 'Test Title abc'
         # self.assertEqual("Test Title abc", poster_list_element)
 
         time.sleep(self.wait_time)
@@ -316,7 +316,7 @@ class PythonOrgSearch(unittest.TestCase):
         self.assertTrue(
             author_list_element4.get_attribute("value")
             in ["Lina Chen", "Lina Chen abc"]
-        )  # TODO: change to only expecting 'Lina Chen abc'
+        )  # TODO:   change to only expecting 'Lina Chen abc'
 
         time.sleep(self.wait_time)
         # check delete author
@@ -362,7 +362,7 @@ class PythonOrgSearch(unittest.TestCase):
 
         time.sleep(self.wait_time)
 
-        # check edit title # TODO
+        # TODO: check edit title
         # driver.find_element(By.CSS_SELECTOR, "div#titles>div>div#title").click()
         # WebDriverWait(driver, 5).until(
         #     EC.element_to_be_clickable((By.CSS_SELECTOR, "div#titles>div>div#title"))
@@ -421,7 +421,7 @@ class PythonOrgSearch(unittest.TestCase):
         )
 
         time.sleep(self.wait_time)
-        # TODO: check author list switch order
+        # TODO:   check author list switch order
         drag = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable(
                 (
@@ -517,8 +517,8 @@ class PythonOrgSearch(unittest.TestCase):
             )
         )
 
-        # TODO: check box plotly render   ???
-        # TODO: check box image render    ???
+        # TODO:   check box plotly render   ???
+        # TODO:   check box image render    ???
         #   + stored globally
 
         # check visibility
@@ -549,7 +549,7 @@ class PythonOrgSearch(unittest.TestCase):
         )
 
     def admin_user(self, driver, pw):
-        # TODO: ??? check posters set on public
+        # TODO:   ??? check posters set on public
 
         # go to projects page
         driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
@@ -623,6 +623,7 @@ class PythonOrgSearch(unittest.TestCase):
             [], driver.find_elements(By.CSS_SELECTOR, "div#posters>div>iframe")
         )
 
+    # TODO: test index page
     def index_page(self, driver):
         # check poster count
         # check poster#1 content
@@ -639,5 +640,3 @@ class PythonOrgSearch(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
-    # TODO: email notification test 2

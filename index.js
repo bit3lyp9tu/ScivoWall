@@ -17,7 +17,7 @@ async function fetchAvailablePosters() {
 
 window.onload = async function () {
 
-    //TODO: [BUG]   accessing index-view works,
+    //TODO:   [BUG]   accessing index-view works,
     //              but going to poster after and back to index
     //              resets the session validation and public content is deactivated???
 

@@ -36,7 +36,7 @@ function error_if_not_number(name, data) {
     }
 }
 
-//TODO: reloaded data after delete should include last edit time
+//TODO:   reloaded data after delete should include last edit time
 function deleteRow(local_id) {
     error_if_not_number("local_id", local_id)
 
@@ -239,7 +239,7 @@ function append_additional_columns(additional_columns, i, row) {
     });
 }
 
-// TODO: may need an overwork
+// TODO:   may need an overwork
 function createTableFromJSON(id, data, editable_columns, ...additional_columns) {
     const table = document.createElement("table");
     table.setAttribute("border", "1");
@@ -313,7 +313,7 @@ function loadTable(response) {
 
     if (response == "No results found") {
         // $('#table-container').html(response);
-        toastr["warning"]("No results found");  //TODO: bug? execute msg twice?
+        toastr["warning"]("No results found");  //TODO:   bug? execute msg twice?
 
     } else {
         var data = isJSON(response) ? JSON.parse(response) : response;
@@ -506,7 +506,7 @@ async function fetch_images() {
                         btn.className = "btn";
                         btn.value = "Delete";
                         btn.onclick = function () {
-                            // TODO: error if poster was preiously deleted
+                            // TODO:   error if poster was preiously deleted
                             // deleteRow(this.closest('tr').id.split("--nr-")[1]);
                             var parsed_id_name = parse_id_name(this);
 

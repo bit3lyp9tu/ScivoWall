@@ -190,7 +190,7 @@ async function typeset(container, code) {
 
 async function show(response) {
 
-    //TODO: load interactive elements only if mode=private + session-id valid
+    //TODO:   load interactive elements only if mode=private + session-id valid
 
     // document.getElementById("title").innerHTML = /*marked.marked*/(response.title);
     await typeset(document.getElementById("title"), () => marked.marked(response.title));
@@ -321,7 +321,7 @@ async function initEditBoxes() {
 async function edit_box_event(event) {
     const url = url_to_json();
 
-    //TODO: check if session-id valid
+    //TODO:   check if session-id valid
     if (url["mode"] != null && url["mode"] == 'private') {
         // Edit Title
         if (event.target.tagName === "DIV" && !event.target.id.startsWith("editBox") && event.target.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
@@ -355,7 +355,7 @@ async function edit_box_event(event) {
 
 document.addEventListener("click", edit_box_event);
 
-//TODO: check for invalid names during image upload
+//TODO:   check for invalid names during image upload
 function imgDragDrop() {
     const url = url_to_json();
 
@@ -367,7 +367,7 @@ function imgDragDrop() {
         return;
     }
     if (boxes.children.length == 0) {
-        console.error("boxes has no children"); // TODO: throws when boxes empty
+        console.error("boxes has no children"); // TODO:   throws when boxes empty
         return;
     }
 
@@ -415,7 +415,7 @@ function imgDragDrop() {
 
                     reader.readAsDataURL(file); // Read the file as base64
 
-                    //TODO: modify editBox and insert \includegraphics{name}
+                    //TODO:   modify editBox and insert \includegraphics{name}
                     insertImageMark(file.name, i);
                 }
             });
@@ -455,7 +455,7 @@ function createEditMenu() {
     save_btn.id = "save-content";
     save_btn.innerText = "Save";
 
-    // TODO: needs save?
+    // TODO:   needs save?
     const select_view_mode = document.createElement("select");
     select_view_mode.id = "view-mode";
     select_view_mode.name = "";
@@ -504,7 +504,7 @@ window.onload = async function () {
     // );
 
     if (response.status != 'error') {
-        //TODO: iterate single functions over a shared loop
+        //TODO:   iterate single functions over a shared loop
         await show(response);
         loadImages();
 
@@ -716,14 +716,14 @@ function buttonEvents() {
     }
 }
 
-//TODO make load on page reload
+//TODO:   make load on page reload
 async function loadImages() {
     const url = url_to_json();
 
     const boxes = document.getElementById("boxes");
 
     for (let i = 0; i < boxes.children.length; i++) {
-        //TODO: check for invalid names during image upload
+        //TODO:   check for invalid names during image upload
 
         const word = boxes.children[i].innerHTML.match(/\<p placeholder\=\"image\"\>includegraphics(\[.*\])?\{(\w|\s|-|_)+\.(png|jpg|gif)\}\<\/p\>/);
         if (word) {
@@ -757,7 +757,7 @@ function json_parse(data) {
 }
 
 function loadPlots() {
-    // TODO: plotly json with with breaks gets read but also converted into markdown
+    // TODO:   plotly json with with breaks gets read but also converted into markdown
 
     var boxes = document.getElementById("boxes");
 

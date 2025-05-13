@@ -37,7 +37,7 @@
         return $complexity_points;
     }
 
-    //TODO: move queries to own functions + tests
+    //TODO:   move queries to own functions + tests
     //      make queries more compact
     /*
         *    Validates current session
@@ -62,7 +62,7 @@
         )["user_id"][0];
     }
 
-    //TODO: make id not required
+    //TODO:   make id not required
     function isAdmin($user_id) {
         // if ($user_id == null) {
         //     $user_id = getValidUserFromSession();
@@ -85,7 +85,7 @@
         }
 
         $salt = generate_salt();
-        $pepper = "a2d47c981889513c5e2ddbca71f414"; //TODO: use pepper dependency
+        $pepper = "a2d47c981889513c5e2ddbca71f414"; //TODO:   use pepper dependency
         $hash = sha1($pw . ":" . $salt . ":" . $pepper);
 
         try {
@@ -104,7 +104,7 @@
 
     function login($name, $pw) {
 
-        # TODO: select user_id from user where username = ? and passwort = sha(?);
+        # TODO:   select user_id from user where username = ? and passwort = sha(?);
 
         $result = getterQuery2(
             "SELECT user_id, pass_sha, salt, pepper FROM user WHERE user.name=?",
@@ -124,7 +124,7 @@
 
             $session_time_h = 4;
 
-            if (md5($pw . ":" . $salt . ":" . $pepper) == $hash || sha1($pw . ":" . $salt . ":" . $pepper) == $hash) {  //TODO: remove md5 when test-phase finished
+            if (md5($pw . ":" . $salt . ":" . $pepper) == $hash || sha1($pw . ":" . $salt . ":" . $pepper) == $hash) {  //TODO:   remove md5 when test-phase finished
 
                 //Create new Session
                 $user_id = $result["user_id"][0];
@@ -135,14 +135,14 @@
                         VALUE (?, ?, UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL ? HOUR)))",
                         "isi", $user_id, $sid, $session_time_h);
 
-                // TODO: is expiration_date for sql and cookie async??? Bug?
+                // TODO:   is expiration_date for sql and cookie async??? Bug?
 
                 if ($insertion == "success") {
 			$isCLI = (php_sapi_name() == 'cli');
 			if(!$isCLI) {
-				setcookie("sessionID", $sid, time() + $session_time_h * 60 * 60, "/", "", false, true);   //TODO: placing additional time in variable
+				setcookie("sessionID", $sid, time() + $session_time_h * 60 * 60, "/", "", false, true);   //TODO:   placing additional time in variable
 			}
-                    //TODO: do the cookie settings need a rework? Update to PHP 7.3 and later might be required
+                    //TODO:   do the cookie settings need a rework? Update to PHP 7.3 and later might be required
                     //PHP 7.3 and later has additional parameter SameSide=Strict and SameSide=Lax
 
                     return "Correct Password";
@@ -156,7 +156,7 @@
 
     }
 
-    //TODO: editing after logout bug
+    //TODO:   editing after logout bug
     function logout($user_id) {
 
         $sid = getterQuery2(
@@ -165,7 +165,7 @@
         )["sessionID"][0];
 
         //set browser-session to expired
-        setcookie("sessionID", $sid, time() - 1, "/", "", false, true);   //TODO: placing additional time in variable
+        setcookie("sessionID", $sid, time() - 1, "/", "", false, true);   //TODO:   placing additional time in variable
 
         //set database-session to expired
         //get list of all currently valid sessions (from user)
@@ -307,7 +307,7 @@
         }
     }
 
-    // TODO: UNTESTED
+    // TODO:   UNTESTED
     function getGlobalIDAuthor($local_id, $user_id) {
         if ($user_id != null) {
 
@@ -328,7 +328,7 @@
         }
     }
 
-    // TODO: UNTESTED
+    // TODO:   UNTESTED
     function getGlobalIDImage($local_id, $user_id) {
         if ($user_id != null) {
 
@@ -349,7 +349,7 @@
         }
     }
 
-    // TODO: UNTESTED
+    // TODO:   UNTESTED
     function rename_author($name, $local_id, $user_id) {
 
         if ($user_id != null) {
@@ -370,7 +370,7 @@
         }
     }
 
-    // TODO: UNTESTED
+    // TODO:   UNTESTED
     function delete_author($local_id, $user_id) {
 
         if ($user_id != null) {
@@ -416,7 +416,7 @@
         }
     }
 
-    // TODO: UNTESTED
+    // TODO:   UNTESTED
     function delete_image($local_id, $user_id) {
 
         if ($user_id != null) {
@@ -474,7 +474,7 @@
                 $user_id
             );
             return json_encode($data, true);
-            # TODO: nach jedem ausgeben von json exit 0, damit nicht ausversehen 2 oder mehr jsons konkatiniert werden
+            # TODO:   nach jedem ausgeben von json exit 0, damit nicht ausversehen 2 oder mehr jsons konkatiniert werden
             # exit(0);
         }else{
             return "No or invalid session";
