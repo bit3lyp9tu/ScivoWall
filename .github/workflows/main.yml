@@ -221,6 +221,8 @@ jobs:
   todo-to-issue:
     runs-on: "ubuntu-latest"
     environment: Production
+    permissions:
+      issues: write
     steps:
       - uses: "actions/checkout@v4"
       - name: "TODO to Issue"
