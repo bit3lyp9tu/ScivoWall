@@ -31,6 +31,11 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html
 
 RUN docker-php-ext-install mysqli
 
+RUN a2enmod rewrite
+
+#RUN apt update
+#RUN apt install -y mariadb-client
+
 COPY . /var/www/html/
 
 #RUN echo $'Package: *\nPin: release o=LP-PPA-mozillateam\nPin-Priority: 1001' > /etc/apt/preferences.d/mozilla-firefox
@@ -51,5 +56,9 @@ COPY . /var/www/html/
 
 #RUN docker pull mariadb:latest \
 #    docker save -o $HOME/cache/.docker/image.tar mariadb:latest
+
+#RUN mariadb -hdbname -uroot -e "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
+#RUN mariadb -e "CREATE DATABASE IF NOT EXISTS poster_generator;"
+#RUN mariadb poster_generator < ./tests/test_config2.sql
 
 CMD ["apache2-foreground"]

@@ -99,9 +99,9 @@ if command -v php 2>/dev/null >/dev/null; then
 	SYNTAX_ERRORS=0
 	for i in $(ls *.php); do
 		if ! php -l $i 2>&1; then
-			SYNTAX_ERRORS=1; 
-		fi ; 
-	done 
+			SYNTAX_ERRORS=1;
+		fi ;
+	done
 
 	if [[ "$SYNTAX_ERRORS" -ne "0" ]]; then
 		echo "Tests failed";
@@ -122,3 +122,12 @@ if groups "$CURRENT_USER" | grep -q "\bdocker\b"; then
 else
 	sudo docker-compose build && sudo docker-compose up -d || echo "Failed to build container"
 fi
+
+#    mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword poster_generator < ./tests/test_config2.sql
+
+function maria_db_exec {
+	docker-compose exec dockerdb mariadb -uroot -ppassword -e "$1"
+}
+
+maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
+maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"

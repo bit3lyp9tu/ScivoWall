@@ -1,4 +1,14 @@
 services:
+  dockerdb:
+    image: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: 'password'
+      MARIADB_DATABASE: 'poster_generator'
+      MARIADB_USER: 'poster_generator'
+      MARIADB_PASSWORD: 'password'
+    networks:
+      - poster_generator_network
   poster_generator:
     build:
       context: .
@@ -14,16 +24,6 @@ services:
       - poster_generator_network
     tmpfs:
       - /tmp:rw
-  dockerdb:
-    image: mariadb
-    restart: always
-    environment:
-      MARIADB_ROOT_PASSWORD: 'password'
-      MARIADB_DATABASE: 'poster_generator'
-      MARIADB_USER: 'poster_generator'
-      MARIADB_PASSWORD: 'password'
-    networks:
-      - poster_generator_network
 volumes:
   json:
 networks:
