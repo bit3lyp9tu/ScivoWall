@@ -2,16 +2,21 @@
 	$db_path = "/etc/dbpw";
 
 	$servername = "localhost";
-    $port = 3800;
+	$port = 3800;
 
-    $database = "poster_generator";
+	$database = "poster_generator";
 
-    $username = "poster_generator";
-    $password = "password";
+	$username = "poster_generator";
+	$password = "password";
 
 	if (getenv("GITHUB_ACTIONS")) {
-        $servername = "127.0.0.1";
-    }
+		$servername = "127.0.0.1";
+	}
+
+	if (file_exists('/.dockerenv') || getenv('IS_DOCKER') === 'true') {
+		$servername = "dockerdb";
+		$port = 3306;
+	}
 
 	if (file_exists($db_path)) {
 		$password = file_get_contents($db_path);
