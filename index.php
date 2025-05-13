@@ -25,6 +25,8 @@
 
     include(__DIR__ . "/" . "poster_edit.php");
 
+    # TODO: Admin User/PW erstellen wenn nicht existiert (checkUserTable)
+
     function checkUserTable() {
         $sql = "SELECT COUNT(*) AS count FROM user";
         $result = $GLOBALS["conn"]->query($sql);
