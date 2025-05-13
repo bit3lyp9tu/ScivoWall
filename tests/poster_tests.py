@@ -411,7 +411,7 @@ class PythonOrgSearch(unittest.TestCase):
                 By.CSS_SELECTOR, "div#typeahead-container>div.author-item"
             )
         ]
-        print(changed_authors)
+        # print(changed_authors)
         self.assertTrue(
             changed_authors
             in [
@@ -597,31 +597,21 @@ class PythonOrgSearch(unittest.TestCase):
 
         time.sleep(self.wait_time)
 
-        print(
-            driver.find_elements(
-                By.CSS_SELECTOR,
-                "div#table-container>table>tr#table-container--nr-1>td:nth-child(3)>input",
-            )[0].get_attribute("value")
-        )
-
         visibility = driver.find_element(
             By.CSS_SELECTOR,
-            "div#table-container>table>tr#table-container--nr-1>td:nth-child(3)",
+            "div#table-container>table>tr#table-container--nr-1>td:nth-child(3)>input",
         )
 
-        print(visibility.is_selected())
+        # print(visibility.is_selected())
 
-        # TODO: make work!
-        visibility.click()
+        ActionChains(driver).move_to_element(visibility).click(visibility).perform()
 
-        print(visibility.is_selected())
-
-        print(
-            driver.find_elements(
-                By.CSS_SELECTOR,
-                "div#table-container>table>tr#table-container--nr-1>td:nth-child(3)>input",
-            )[0].get_attribute("value")
-        )
+        # print(
+        #     driver.find_element(
+        #         By.CSS_SELECTOR,
+        #         "div#table-container>table>tr#table-container--nr-1>td:nth-child(3)",
+        #     ).is_selected()
+        # )
 
         time.sleep(self.wait_time)
 
@@ -629,9 +619,9 @@ class PythonOrgSearch(unittest.TestCase):
 
         time.sleep(self.wait_time)
 
-        # print(driver.find_elements(By.CSS_SELECTOR, "div#posters>div>iframe"))
-
-        pass
+        self.assertEqual(
+            [], driver.find_elements(By.CSS_SELECTOR, "div#posters>div>iframe")
+        )
 
     def index_page(self, driver):
         # check poster count
