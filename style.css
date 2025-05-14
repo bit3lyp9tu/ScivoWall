@@ -280,3 +280,7 @@ div[data-content]:hover {
     border-color: #83d252;
     border-width: 1px;
 }
+
+div#poster {
+    height: 100%;
+}

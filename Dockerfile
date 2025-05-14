@@ -63,4 +63,12 @@ COPY . /var/www/html/
 #RUN mariadb -e "CREATE DATABASE IF NOT EXISTS poster_generator;"
 #RUN mariadb poster_generator < ./tests/test_config2.sql
 
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+RUN \. "$HOME/.nvm/nvm.sh"
+RUN nvm install 22
+
+RUN npm install -g bower
+
+RUN bower install carousel-3d
+
 CMD ["apache2-foreground"]
