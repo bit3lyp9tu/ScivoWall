@@ -20,6 +20,12 @@
 		return "success";
     }
 
+    function getLastInsertID() {
+        return getterQuery2(
+            "SELECT LAST_INSERT_ID()"
+        )["LAST_INSERT_ID()"][0];
+    }
+
     function editQuery($sql, $types, ...$param) {   //TODO:   ??????????????????
         $stmt = $GLOBALS["conn"]->prepare($sql);
         $stmt->bind_param($types, ...$param);

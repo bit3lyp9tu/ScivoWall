@@ -260,12 +260,6 @@
         return $results;
     }
 
-    function getLastInsertID() {
-        return getterQuery2(
-            "SELECT LAST_INSERT_ID()"
-        )["LAST_INSERT_ID()"][0];
-    }
-
     function addProject($user_id, $title) {
         //new poster
         $resultA = insertQuery(
