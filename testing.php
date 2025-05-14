@@ -19,7 +19,7 @@
 	} else if (getenv("dbname")) {
 		$GLOBALS["dbname"] = getenv("getenv");
 	} else {
-		$GLOBALS["dbname"] = "poster_generator_test";
+		$GLOBALS["dbname"] = "poster_generator";
 	}
 
 	include(__DIR__ . "/" . "queries.php");

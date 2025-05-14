@@ -1,6 +1,7 @@
 <?php
     include_once(__DIR__ . "/" . "install.php");
     include_once(__DIR__ . "/" . "queries.php");
+    include_once(__DIR__ . "/" . "poster_edit.php");
 
     $msgs = array(
         "success" => [],
@@ -89,17 +90,17 @@
         $hash = sha1($pw . ":" . $salt . ":" . $pepper);
 
         try {
-            $state = 0;
+            $is_first = 0;
             if(isEmpty() === 1) {
-                $state = 1;
+                $is_first = 1;
             }
 
-            $result = insertQuery("INSERT INTO user (`name`, `pass_sha`, `salt`, `pepper`)
-                VALUES (?, ?, ?, ?)",
-                "ssss", $name, $hash, $salt, $pepper);
+            $result = insertQuery("INSERT INTO user (`name`, `pass_sha`, `salt`, `pepper`) VALUES (?, ?, ?, ?)", "ssss", $name, $hash, $salt, $pepper);
 
-            if($state === 1) {
-                $r = editQuery("UPDATE user SET user.access_level=? WHERE user.user_id=?", "ii", 2, getLastInsertID());
+            $last_id = getLastInsertID();
+
+            if($is_first == 1) {
+                $r = editQuery("UPDATE user SET user.access_level=? WHERE user.user_id=?", "ii", 2, $last_id);
             }
 
             return $result;
