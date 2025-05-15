@@ -64,11 +64,11 @@ COPY . /var/www/html/
 #RUN mariadb poster_generator < ./tests/test_config2.sql
 
 
-RUN apt update && apt install -y -qq npm
+#RUN apt update && apt install -y -qq npm
 
-RUN npm install --global bower
+#RUN npm install --global bower
 
-RUN bower install carousel-3d
+#RUN bower install carousel-3d
 
 # ENTRYPOINT ["sh"]
 CMD ["apache2-foreground"]
