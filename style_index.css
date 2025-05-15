@@ -1,0 +1,23 @@
+/*
+div#poster {
+    height: 100%;
+} */
+
+[data-carousel-3d]#poster.poster-slide {
+    color: red;
+    height: 600;
+    width: 600;
+}
+
+[data-carousel-3d] {
+    border: 3px solid #e0e0e0;
+    height: 1200px;
+    width: 100%;
+}
+
+[data-carousel-3d]>iframe {}
+
+iframe {
+    height: 100%;
+    width: 100%;
+}
