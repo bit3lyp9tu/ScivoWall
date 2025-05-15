@@ -744,10 +744,19 @@ async function loadImages() {
     }
 }
 
+function loadJSON(file) {
+    return fetch(file)
+        .then((response) => response.json())
+        .then((json) => json);
+}
+
 function json_parse(data) {
     try {
-        var res = JSON.parse(data);
-        return res;
+        if (data !== "") {
+            return JSON.parse(data);
+        } else {
+            return {};
+        }
     } catch (e) {
         console.error(e);
         console.error("This JSON caused this to happen:", data)
@@ -756,7 +765,7 @@ function json_parse(data) {
     return null;
 }
 
-function loadPlots() {
+async function loadPlots() {
     // TODO:   plotly json with with breaks gets read but also converted into markdown
 
     var boxes = document.getElementById("boxes");
@@ -776,7 +785,16 @@ function loadPlots() {
             for (let j = 0; j < placeholder_list.length; j++) {
                 if (placeholder_list[j].getAttribute("placeholder") == "plotly") {
 
-                    var content = json_parse(repairJson(body[j]));
+                    var content = {};
+
+                    // TODO: load valid chart-types dynamically
+                    if (placeholder_list[j].hasAttribute("chart") && ["scatter", "line", "bar", "pie"].includes(placeholder_list[j].getAttribute("chart"))) {
+
+                        chart_type = "./plotly/" + placeholder_list[j].getAttribute("chart") + ".json";
+                        content = await loadJSON(chart_type);
+                    } else {
+                        content = json_parse(repairJson(body[j]));
+                    }
 
                     if (content && Object.keys(content).length != 0) {
                         placeholder_list[j].id = "plotly-" + i + "-" + j;

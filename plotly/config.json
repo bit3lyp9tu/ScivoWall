@@ -1,0 +1,28 @@
+{
+    "scrollZoom": true,
+    "editable": true,
+    "staticPlot": true,
+    // "toImageButtonOptions": {
+    //     "format": "svg", // one of png, svg, jpeg, webp
+    //     "filename": "custom_image",
+    //     "height": 500,
+    //     "width": 700,
+    //     "scale": 1
+    // },
+    "displayModeBar": false,
+    "modeBarButtonsToRemove": [
+        "toImage"
+    ],
+    // parser removes commens ( // )
+    {
+        "showLink": true,
+        "plotlyServerURL": "https://chart-studio.plotly.com",
+        "linkText": "This text is custom!"
+    },
+    {
+        "locale": "fr"
+    },
+    "displaylogo": false,
+    "responsive": true,
+    "doubleClickDelay": 1000
+}
