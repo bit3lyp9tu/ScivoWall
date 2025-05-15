@@ -40,6 +40,10 @@
                 // }
             ?>
         </div>
+        <div>
+            <input type="button" onclick="location.href='./login.php';" value="Login" />
+            <input type="button" onclick="location.href='./register.php';" value="Register" />
+        </div>
     </div>
 
     <div id="posters" class="poster-slide">
