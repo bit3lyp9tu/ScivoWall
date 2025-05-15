@@ -54,12 +54,21 @@
             return null;
         }
 
-        return getterQuery2(
+        $ret = getterQuery2(
             "SELECT user_id
             FROM session
             WHERE session.sessionID = ?",
             $sessionID
-        )["user_id"][0];
+	);
+	
+	if (isset($ret["user_id"][0])) {
+		return $ret["user_id"][0];
+	}
+
+	# TODO: Darum kümmern dass das hier richtig übergeben wird bzw. dieser fehler nie auftritt
+	error_log("WARNING: user_id not defined!!!!!!!!");
+
+	return null;
     }
 
     //TODO:   make id not required

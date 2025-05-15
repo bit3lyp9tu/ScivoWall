@@ -2,17 +2,42 @@
 
 set -e
 
+is_in_docker() {
+	# Methode 1: Check nach /.dockerenv (Datei existiert meist nur in Docker)
+	if [ -f "/.dockerenv" ]; then
+		return 0
+	fi
+
+	# Methode 2: cgroup enthält "docker" oder "kubepods"
+	if grep -qE 'docker|kubepods' /proc/1/cgroup 2>/dev/null; then
+		return 0
+	fi
+
+	return 1
+}
+
+if is_in_docker; then
+	echo "This test script cannot be run inside of a docker-container (for now)"
+	exit 1
+fi
+
 # TODO:   doesnt seem to work on other than poster_generator
 export DB_NAME="poster_generator"
 
 if [[ "$GITHUB_ACTIONS" != "true" ]]; then
-    sudo mariadb -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
-    sudo mariadb -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
-    sudo mariadb $DB_NAME < ./tests/test_config2.sql
+	if is_in_docker; then
+		mariadb -hdockerdb -uroot -ppassword -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
+		mariadb -hdockerdb -uroot -ppassword -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
+		mariadb -hdockerdb -uroot -ppassword $DB_NAME < ./tests/test_config2.sql
+	else
+		sudo mariadb -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
+		sudo mariadb -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
+		sudo mariadb $DB_NAME < ./tests/test_config2.sql
+	fi
 else
-    mariadb -h 127.0.0.1 -P 3800 -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO "poster_generator"@"%" IDENTIFIED BY "password"; FLUSH PRIVILEGES;'
-    mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
-    mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword $DB_NAME < ./tests/test_config2.sql
+	mariadb -h 127.0.0.1 -P 3800 -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO "poster_generator"@"%" IDENTIFIED BY "password"; FLUSH PRIVILEGES;'
+	mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
+	mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword $DB_NAME < ./tests/test_config2.sql
 fi
 
 echo Running Backend-Tests...
@@ -23,11 +48,16 @@ php testing.php $DB_NAME
 CODE=$?
 
 if [[ "$GITHUB_ACTIONS" != "true" ]]; then
-    sudo mariadb-dump $DB_NAME > ./tests/results_backend_test.sql
-    sudo mariadb -e "DROP DATABASE ${DB_NAME};"
+	if is_in_docker; then
+		mariadb-dump -hdockerdb -uroot -ppassword  $DB_NAME > ./tests/results_backend_test.sql
+		mariadb -hdockerdb -uroot -ppassword  -e "DROP DATABASE ${DB_NAME};"
+	else
+		sudo mariadb-dump $DB_NAME > ./tests/results_backend_test.sql
+		sudo mariadb -e "DROP DATABASE ${DB_NAME};"
+	fi
 else
-    mariadb-dump -h 127.0.0.1 -P 3800 -u poster_generator -ppassword $DB_NAME > ./tests/results_backend_test.sql
-    mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword -e "DROP DATABASE ${DB_NAME};"
+	mariadb-dump -h 127.0.0.1 -P 3800 -u poster_generator -ppassword $DB_NAME > ./tests/results_backend_test.sql
+	mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword -e "DROP DATABASE ${DB_NAME};"
 fi
 
 php -r 'foreach(get_defined_functions()["internal"] as $i) {echo $i . "\n";};' > ./tests/php_build_in_func
