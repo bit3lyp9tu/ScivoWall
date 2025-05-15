@@ -44,7 +44,7 @@
 
     <div id="posters" class="poster-slide">
         <!-- <iframe
-            src="poster.php?id=133&mode=public"
+            src="poster.php?mode=public"
             name="targetframe"
             allowTransparency="true"
             scrolling="yes"

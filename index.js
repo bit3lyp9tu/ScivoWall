@@ -36,8 +36,8 @@ window.onload = async function () {
         b.id = "iframe-" + elem;
 
         b.setAttribute("src", "poster.php?id=" + content.poster_id[elem] + "&mode=public");
-        // b.setAttribute("with", 600);
-        // b.setAttribute("height", 10);
+        b.setAttribute("width", 600);
+        b.setAttribute("height", 600);
 
         // a.appendChild(b);
         cont.appendChild(b);
@@ -48,7 +48,6 @@ window.onload = async function () {
     if (cont.children.length >= 1) {
         document.getElementById("iframe-0").setAttribute("selected", "");
     }
-    // await loadStyle("./bower_components/carousel-3d/dist/styles/jquery.carousel-3d.default.css");
 
     await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jquery.waitforimages/2.4.0/jquery.waitforimages.js');
     await loadScript('https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js');
@@ -56,6 +55,8 @@ window.onload = async function () {
     await loadScript('./bower_components/modernizr/modernizr.js');
     await loadScript('./bower_components/carousel-3d/dist/jquery.carousel-3d.js');
 
+    await loadStyle("./bower_components/carousel-3d/dist/styles/jquery.carousel-3d.default.css");
+    await loadStyle('./style_index.css');
 }
 
 function loadScript(src) {
@@ -71,7 +72,7 @@ function loadScript(src) {
 }
 function loadStyle(href) {
     return new Promise((resolve, reject) => {
-        style = document.createElement("script");
+        style = document.createElement("link");
         style.setAttribute("rel", "stylesheet");
         style.setAttribute("href", href);
 
