@@ -1,5 +1,7 @@
 # ScaDS poster generator (tbd)
 
+![Current build status](https://github.com/bit3lyp9tu/scientific_poster_generator/actions/workflows/main.yml/badge.svg?event=push)
+
 Idea is to have a centralized poster generator, which allows visual editing of
 scientific poster with LaTeX, images, lists and so on (almost full markdown support).
 
