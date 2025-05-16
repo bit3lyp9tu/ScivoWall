@@ -182,7 +182,7 @@ class PythonOrgSearch(unittest.TestCase):
         time.sleep(self.wait_time)
         self.assertTrue(
             poster_list_element.text
-            in ["2025-04-16 13:43:02 Edit", "2025-04-16 11:43:02 Edit"]
+            in ["2025-04-16 13:43:02 private Edit", "2025-04-16 11:43:02 private Edit"]
         )
 
         time.sleep(self.wait_time)
@@ -209,6 +209,22 @@ class PythonOrgSearch(unittest.TestCase):
         self.assertTrue(
             self.date_compair_day(date, poster_list_element.text.split(" ")[0])
         )
+
+        time.sleep(self.wait_time)
+
+        # TODO: check toggle visible (as non-admin)
+        print(
+            [
+                i.text
+                for i in driver.find_elements(
+                    By.CSS_SELECTOR,
+                    "div#table-container>table>tr:nth-child(3)>td:nth-child(3)",
+                )
+            ]
+        )
+        # TODO: check visible
+
+        # TODO: check change view_mode
 
         time.sleep(self.wait_time)
         # check edit poster title
@@ -622,6 +638,7 @@ class PythonOrgSearch(unittest.TestCase):
         self.assertEqual(
             [], driver.find_elements(By.CSS_SELECTOR, "div#posters>div>iframe")
         )
+        # TODO: check toggle visible (as admin)
 
     # TODO: test index page
     def index_page(self, driver):

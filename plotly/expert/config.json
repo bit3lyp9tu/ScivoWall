@@ -13,7 +13,7 @@
     "modeBarButtonsToRemove": [
         "toImage"
     ],
-    // parser removes commens ( // )
+    // TODO: prevent remove-parser from confusing commens ( // )
     {
         "showLink": true,
         "plotlyServerURL": "https://chart-studio.plotly.com",

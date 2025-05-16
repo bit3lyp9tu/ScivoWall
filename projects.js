@@ -120,6 +120,7 @@ function updateVisibility(id, value) {
             value: value
         },
         success: function (response) {
+            // TODO: returns ERROR msgs if non-admin tries to toggle
             console.log(response);
         },
         error: function (err) {
@@ -164,7 +165,7 @@ function rename_poster(_this, param) {
     });
 }
 
-function insert_visibility_column(_this, data, td, header, i) {
+async function insert_visibility_column(_this, data, td, header, i) {
     const elem = document.createElement("INPUT");
     elem.setAttribute("type", "checkbox");
     elem.checked = data[header][i];
@@ -173,6 +174,10 @@ function insert_visibility_column(_this, data, td, header, i) {
         if (found_id !== null) {
             updateVisibility(found_id, this.checked ? 1 : 0);
         }
+    }
+    // TODO: needs testing
+    if (!await isAdmin()) {
+        elem.toggleAttribute("disabled");
     }
     td.appendChild(elem);
 }
@@ -291,21 +296,19 @@ async function edit_translation(local_id) {
 }
 
 async function isAdmin() {
-    const result = await $.ajax({
-        type: "POST",
-        url: "account_management.php",
-        data: {
-            action: "is-admin"
-        },
-        success: function (response) {
-            return !!response;
-        },
-        error: function (err) {
-            err(`Error while checking isAdmin: ${err}`);
-            return false;
-        }
-    });
-    return result;
+    try {
+        const response = await $.ajax({
+            type: "POST",
+            url: "account_management.php",
+            data: {
+                action: "is-admin"
+            }
+        });
+        return !!response;
+    } catch (err) {
+        console.error(`Error while checking isAdmin: ${err}`);
+        return false;
+    }
 }
 
 function loadTable(response) {

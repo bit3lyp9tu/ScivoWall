@@ -60,7 +60,7 @@
             WHERE session.sessionID = ?",
             $sessionID
 	);
-	
+
 	if (isset($ret["user_id"][0])) {
 		return $ret["user_id"][0];
 	}
@@ -227,7 +227,8 @@
                     ), true);
                 }else{
                     return json_encode(getterQuery2(
-                        "SELECT title, from_unixtime(last_edit_date) AS last_edit FROM poster WHERE poster.user_id=?",
+                        // TODO: feature needs js support as well
+                        "SELECT title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode FROM poster, view_modes WHERE poster.user_id=? AND poster.fk_view_mode = view_modes.ID",
                         $user_id
                     ), true);
                 }
@@ -668,7 +669,7 @@
 
                 echo $value . " " . updateVisibility($local_id, $value);
             }else{
-                echo "ERROR";
+                echo "User not an Admin";
             }
         }
 
