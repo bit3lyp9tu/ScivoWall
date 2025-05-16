@@ -788,12 +788,29 @@ async function loadPlots() {
                     var content = {};
 
                     // TODO: load valid chart-types dynamically
-                    if (placeholder_list[j].hasAttribute("chart") && ["scatter", "line", "bar", "pie"].includes(placeholder_list[j].getAttribute("chart"))) {
+                    if (placeholder_list[j].hasAttribute("chart") && placeholder_list[j].getAttribute("chart") !== "" && ["scatter", "line", "bar", "pie"].includes(placeholder_list[j].getAttribute("chart"))) {
+                        chart_path = "./plotly/" + placeholder_list[j].getAttribute("chart") + ".json";
 
-                        chart_type = "./plotly/" + placeholder_list[j].getAttribute("chart") + ".json";
-                        content = await loadJSON(chart_type);
+                        // console.log("type", placeholder_list[j].getAttribute("chart"));
+                        // console.log("body", body[j]);
+
+                        var template_content = simple_plot(placeholder_list[j].getAttribute("chart"), body[j]);
+
+                        content = template_content;
+                        // placeholder_list[j].innerHTML = JSON.stringify(template_content);
+                        // placeholder_list[j].setAttribute("data-content", JSON.stringify(template_content));
+
+                        console.log("templete", template_content);
+                        // console.log("p-element", placeholder_list[j].innerHTML);
+
                     } else {
-                        content = json_parse(repairJson(body[j]));
+                        if (body[j] != "") {
+                            console.log(body[j]);
+
+                            content = json_parse(repairJson(body[j]));
+                        } else {
+                            content = {};
+                        }
                     }
 
                     if (content && Object.keys(content).length != 0) {
@@ -805,6 +822,84 @@ async function loadPlots() {
             }
         }
     }
+}
+
+function simple_plot(type, content) {
+    var template_content = {};//await loadJSON("./plotly/" + type + ".json");
+
+    if (true) {
+        var data = CSVtoJSON(content);
+
+        if (Object.keys(data).length % 2 === 0) {
+
+            var list = [];
+            var header = content.replace(/^\n/, '').replace(/\n$/, '').replace(" ", "").split("\n")[0].split(",")
+
+            for (let i = 0; i < header.length; i += 2) {
+                var point_group = {};
+
+                point_group["x"] = data[header[i]];
+                point_group["y"] = data[header[i + 1]];
+
+                point_group["name"] = header[i + 1];
+
+                if (type === "scatter") {
+                    point_group["mode"] = "markers";
+                    point_group["type"] = "scatter";
+
+                } else if (type === "line") {
+                    point_group["mode"] = "lines";
+                    point_group["type"] = "scatter";
+
+                } else if (type === "bar") {
+                    point_group["type"] = "bar";
+
+                } else if (type === "pie") {
+
+                    delete point_group["x"];
+                    delete point_group["y"];
+
+                    point_group["labels"] = data[header[i]];
+                    point_group["values"] = data[header[i + 1]];
+
+                    point_group["type"] = "pie";
+                } else {
+
+                    console.warn("Unsupported chart type: [" + type + "]");
+                }
+
+                list.push(point_group);
+            }
+            template_content["data"] = list;
+        } else {
+            console.warn("Unsupported input", content);
+        }
+    }
+    return template_content;
+}
+
+function CSVtoJSON(csv_string) {
+
+    var result = {};
+    var lines = csv_string.replace(/^\n/, '').replace(/\n$/, '').replace(" ", "").split("\n");
+
+    var keys = lines[0].split(",");
+
+    for (let i = 0; i < keys.length; i++) {
+        var l = [];
+        for (let j = 1; j < lines.length; j++) {
+
+            var cell = lines[j].split(",")[i];
+
+            if (!isNaN(cell)) {
+                l.push(parseFloat(cell));
+            } else {
+                l.push(cell);
+            }
+        }
+        result[keys[i]] = l;
+    }
+    return result;
 }
 
 function header_data_to_json(content) {
