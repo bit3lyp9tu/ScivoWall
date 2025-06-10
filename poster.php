@@ -74,7 +74,7 @@
             <img src="img/leipzig.png" class="small_logo" alt="logo" draggable="false">
         </div>
         <div class="small-div">
-            <img src="img/cbg.png" class="small_logo" alt="logo" draggable="false">
+            <img src="img/CBGlogo.jpg" class="small_logo" alt="logo" draggable="false">
         </div>
         <div class="small-div">
             <img src="img/leibnitz.png" class="small_logo" alt="logo" draggable="false">
