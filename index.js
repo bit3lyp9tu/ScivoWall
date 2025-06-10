@@ -82,3 +82,93 @@ function loadStyle(href) {
         document.head.appendChild(style);
     });
 }
+
+// TODO: Set Un-Toggle as initial state
+var toggle_login = document.getElementById("toggle_login_box");
+toggle_login.addEventListener("click", function () {
+    console.log("click");
+
+    var box = document.getElementById("login-box");
+
+    if (box.style.display == "none") {
+
+        box.style.display = "block";
+        toggle_login.style.color = "#83d252";
+    } else {
+        box.style.display = "none";
+        toggle_login.style.color = "black";
+    }
+});
+
+document.getElementById("login-btn").addEventListener("click", function () {
+    let username = document.getElementById("name");
+    let password = document.getElementById("pw");
+
+    if (username.value == "" || password.value == "") {
+        toastr["warning"]("Ensure you input a value in both fields!");
+    } else {
+        $.ajax({
+            type: "POST",
+            url: "account_management.php",
+            data: {
+                action: 'login',
+                name: username.value,
+                pw: password.value
+            },
+            success: function (response) {
+                if (response == "Correct Password") {
+                    toastr["success"]("Logged in");
+                    window.location.href = "projects.php";
+                } else {
+                    toastr["warning"](response);
+                }
+            },
+            error: function () {
+                toastr["error"]("An error occurred...");
+            }
+        });
+    }
+});
+
+var toggle_register = document.getElementById("toggle_register_box");
+toggle_register.addEventListener("click", function () {
+    console.log("click");
+
+    var box = document.getElementById("register-box");
+
+    if (box.style.display == "none") {
+
+        box.style.display = "block";
+        toggle_register.style.color = "#83d252";
+    } else {
+        box.style.display = "none";
+        toggle_register.style.color = "black";
+    }
+});
+
+document.getElementById("register-btn").addEventListener("click", function () {
+    let username = document.getElementById("username");
+    let password = document.getElementById("password");
+    let password2 = document.getElementById("password2");
+
+    if (username.value == "" || password.value == "" || password2.value == "" || password.value != password2.value) {
+        toastr["warning"]("Ensure you input a value in all fields!");
+    } else {
+        $.ajax({
+            type: "POST",
+            url: "account_management.php",
+            data: {
+                action: 'register',
+                name: username.value,
+                pw: password.value
+            },
+            success: function (response) {
+                toastr["warning"](response);
+                window.location.href = "login.php";
+            },
+            error: function () {
+                toastr["error"]("An error occurred");
+            }
+        });
+    }
+});

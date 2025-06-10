@@ -41,8 +41,32 @@
             ?>
         </div>
         <div>
-            <input type="button" onclick="location.href='./login.php';" value="Login" />
-            <input type="button" onclick="location.href='./register.php';" value="Register" />
+            <!-- TODO: Testing for Index-Login/Register -->
+            <input id="toggle_login_box" class="toggle-btn" type="button" value="Login" />
+            <div id="login-box" class="account-box">
+                Login
+                <input type="text" id="name" class="form-control" placeholder="Enter your Username...">
+                <input type="password" id="pw" class="form-control" placeholder="Enter your Password...">
+
+                <input id="login-btn" type="button" value="Submit"/>
+
+                <p id="login-response"></p>
+            </div>
+
+            <input id="toggle_register_box" class="toggle-btn" type="button" value="Register" />
+            <div id="register-box" class="account-box">
+                Register
+                <input type="text" id="username" class="form-control" placeholder="Enter your Username...">
+                <input type="password" id="password" class="form-control" placeholder="Enter your Password...">
+                <input type="password" id="password2" class="form-control" placeholder="Repeat your Password...">
+
+                <input id="register-btn" type="button" value="Submit"/>
+
+                <p id="register-response"></p>
+            </div>
+
+            <!-- <input type="button" onclick="location.href='./login.php';" value="Login" />
+            <input type="button" onclick="location.href='./register.php';" value="Register" /> -->
         </div>
     </div>
 

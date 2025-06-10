@@ -322,3 +322,19 @@ div[data-content]:hover {
     border-color: #83d252;
     border-width: 1px;
 }
+
+.toggle-btn {
+    color: #83d252;
+}
+
+div#toggle_login_box,
+div#toggle_register_box {
+    display: flex;
+    flex-direction: row;
+
+    display: none;
+
+    border-bottom: 2px solid #83d252;
+
+    padding-right: 5px;
+}
