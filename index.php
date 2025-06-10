@@ -66,52 +66,52 @@
         <div class="large-div">
             <img src="img/qrcode.png" class="large_logo" alt="logo" draggable="false">
         </div>
-        <div class="small-div">
+        <div class="item">
             <img src="img/tudlogo.png" class="small_logo" alt="logo" draggable="false">
         </div>
-        <div class="small-div">
+        <div class="item">
             <img src="img/leipzig.png" class="small_logo" alt="logo" draggable="false">
         </div>
-        <div class="small-div">
+        <div class="item">
             <img src="img/CBGlogo.jpg" class="small_logo" alt="logo" draggable="false">
         </div>
-        <div class="small-div">
+        <div class="item">
             <img src="img/leibnitz.png" class="small_logo" alt="logo" draggable="false">
         </div>
-        <div class="small-div">
+        <div class="item">
             <img src="img/helmholtz.png" class="small_logo" alt="logo" draggable="false">
         </div>
-        <div class="small-div">
+        <div class="item">
             <img src="img/hzdr.png" class="small_logo" alt="logo" draggable="false">
         </div>
-        <div class="small-div">
+        <div class="item">
             <img src="img/infai.png" class="small_logo" alt="logo" draggable="false">
         </div>
-        <div class="small-div">
+        <div class="item">
             <img src="img/maxplanck2.png" class="small_logo" alt="logo" draggable="false">
         </div>
-        <div class="small-div">
+        <div class="item">
             <img src="img/fraunhofer1.jpg" class="small_logo" alt="logo" draggable="false">
         </div>
-        <div class="small-div">
+        <div class="item">
             <img src="img/fraunhofer2.jpg" class="small_logo" alt="logo" draggable="false">
         </div>
-        <div class="small-div">
+        <div class="item">
             <img src="img/dlr.png" class="small_logo" alt="logo" draggable="false">
         </div>
-        <div class="small-div">
+        <div class="item">
             <img src="img/maxplanck3.jpeg" class="small_logo" alt="logo" draggable="false">
         </div>
+    </div>
 
-        <div class="bottom-div">
-            <?php
-                // if(!get_get("disable_video")) {
-            ?>
-                <video id="bottom_video" autoplay="true" loop="true" muted="muted" [muted]="'muted'" class="bottompattern" src="img/footer.mp4" draggable="false"></video>
-            <?php
-                // }
-            ?>
-        </div>
+    <div class="bottom-div">
+        <?php
+            // if(!get_get("disable_video")) {
+        ?>
+            <video id="bottom_video" autoplay="true" loop="true" muted="muted" [muted]="'muted'" class="bottompattern" src="img/footer.mp4" draggable="false"></video>
+        <?php
+            // }
+        ?>
     </div>
 </footer>
 </html>
