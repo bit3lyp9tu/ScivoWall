@@ -217,14 +217,68 @@ function make_column_editable(data, header, i, td) {
     td.appendChild(elem);
 }
 
-function make_headers_editable(editable_columns, headers, data, i, row) {
-    headers.forEach(header => {
+async function getViewOptions() {
+    try {
+        const response = await $.ajax({
+            type: "POST",
+            url: "poster_edit.php",
+            data: {
+                action: "list-view-options"
+            }
+        });
+        return response;
+    } catch (err) {
+        console.error(`view list: ${err}`);
+        return `[ERROR] ${err}`;
+    }
+}
+
+async function setViewOption(poster_id, view_id) {
+    try {
+        const response = await $.ajax({
+            type: "POST",
+            url: "poster_edit.php",
+            data: {
+                action: "set-view-option",
+                local_id: poster_id,
+                view_id: (view_id + 1)
+            }
+        });
+        return response;
+    } catch (err) {
+        console.error(`set view mode: ${err}`);
+        return `[ERROR] ${err}`;
+    }
+}
+
+async function make_headers_editable(editable_columns, headers, data, i, row) {
+    for (const header of headers) {
         const td = document.createElement("td");
 
         if (header == "visible") {
             insert_visibility_column(this, data, td, header, i);
         } else if (header == "image_data") {
             create_and_append_image_container(td);
+        } else if (header == "view_mode") {
+            const selection = document.createElement("select");
+            const children = JSON.parse(await getViewOptions());
+
+            for (let j = 0; j < children.length; j++) {
+                const option = document.createElement("option");
+                option.value = j;
+                option.text = children[j];
+                selection.appendChild(option);
+            }
+
+            selection.value = children.indexOf(data[header][i]);
+
+            selection.onchange = async function () {
+                console.log("change", this.value, this.closest('tr').id.split("--nr-")[1]);
+                setViewOption(this.closest('tr').id.split("--nr-")[1], this.value);
+            };
+
+            td.appendChild(selection);
+
         } else {
             if (editable_columns.includes(headers.indexOf(header))) {
                 make_column_editable(data, header, i, td);
@@ -233,7 +287,7 @@ function make_headers_editable(editable_columns, headers, data, i, row) {
             }
         }
         row.appendChild(td);
-    });
+    }
 }
 
 function append_additional_columns(additional_columns, i, row) {
@@ -245,7 +299,7 @@ function append_additional_columns(additional_columns, i, row) {
 }
 
 // TODO:   may need an overwork
-function createTableFromJSON(id, data, editable_columns, ...additional_columns) {
+async function createTableFromJSON(id, data, editable_columns, ...additional_columns) {
     const table = document.createElement("table");
     table.setAttribute("border", "1");
 
@@ -264,7 +318,7 @@ function createTableFromJSON(id, data, editable_columns, ...additional_columns) 
         const row = document.createElement("tr");
         row.id = id + "--nr-" + (i + 1);
 
-        make_headers_editable(editable_columns, headers, data, i, row);
+        await make_headers_editable(editable_columns, headers, data, i, row);
 
         append_additional_columns(additional_columns, i, row);
 
@@ -323,19 +377,17 @@ function loadTable(response) {
 
         const editColumn = (index) => {
             const td = document.createElement("td");
-            const link = document.createElement("a");
 
-            var linkText = document.createTextNode("Edit");
-            link.appendChild(linkText);
-            // link.title = "Edit";
-
-            link.onclick = async function () {
+            const elem = document.createElement("INPUT");
+            elem.type = "button";
+            elem.value = "Edit";
+            elem.onclick = async function () {
                 var local_id = get_found_id(this);
                 const poster_id = await edit_translation(local_id);
                 window.location.href = "poster.php?id=" + poster_id + "&mode=private";
             }
+            td.appendChild(elem);
 
-            td.appendChild(link);
             return td;
         };
         const deleteColumn = (index) => {
@@ -353,6 +405,7 @@ function loadTable(response) {
             td.appendChild(btn);
             return td;
         };
+        console.log(data);
 
         createTableFromJSON("table-container", data, [0], editColumn, deleteColumn);
     }

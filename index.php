@@ -41,7 +41,6 @@
             ?>
         </div>
         <div>
-            <!-- TODO: Testing for Index-Login/Register -->
             <input id="toggle_login_box" class="toggle-btn" type="button" value="Login" />
             <div id="login-box" class="account-box" style="display: none;">
                 Login

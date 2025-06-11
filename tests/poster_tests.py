@@ -642,6 +642,8 @@ class PythonOrgSearch(unittest.TestCase):
 
     # TODO: test index page
     def index_page(self, driver):
+        # check register
+        # check login
         # check poster count
         # check poster#1 content
         # check prevent editing:

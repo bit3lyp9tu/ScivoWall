@@ -321,6 +321,23 @@
         return $result;
     }
 
+    function setViewMode($user_id, $local_id, $view_id) {
+        $result = editQuery(
+            "UPDATE poster SET fk_view_mode=?
+            WHERE poster_id=(
+                SELECT poster_id
+                FROM (
+                    SELECT ROW_NUMBER() OVER(ORDER BY poster_id) AS local_id, poster_id
+                    FROM poster
+                    WHERE user_id=?
+                ) AS ranked_posters
+                WHERE local_id=?
+            )",
+            "iii", $view_id, $user_id, $local_id
+        );
+        return $result;
+    }
+
     //TODO:   function to change last_edit_date
     function updateEditDate($table, $id) {
         $attribute = array(
@@ -435,6 +452,29 @@
 
             // echo getImage(169);
             echo getFullImage($name, $poster_id);
+        }
+
+        if($_POST['action'] == 'list-view-options') {
+
+            $user_id = getValidUserFromSession();
+            if ($user_id != null) {
+                echo json_encode(getVisibilityOptions());
+            }else{
+                echo "No or invalid session";
+            }
+        }
+
+        if($_POST['action'] == 'set-view-option') {
+
+            $local_id = isset($_POST['local_id']) ? $_POST['local_id'] : '';
+            $view_option = isset($_POST['view_id']) ? $_POST['view_id'] : '';
+
+            $user_id = getValidUserFromSession();
+            if ($user_id != null) {
+                echo setViewMode($user_id, $local_id, $view_option);
+            }else{
+                echo "No or invalid session";
+            }
         }
     }
 

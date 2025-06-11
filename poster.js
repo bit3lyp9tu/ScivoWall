@@ -660,6 +660,32 @@ function getAuthorItems() {
     return list;
 }
 
+async function save_content() {
+    const header = url_to_json();
+
+    const content = [];
+    const title = document.getElementById("title").getAttribute("data-content");//innerText;
+    const authors = getAuthorItems();
+
+    const container = document.getElementById("boxes");
+    for (let i = 0; i < container.children.length; i++) {
+        const element = container.children[i];
+
+        content[i] = element.getAttribute("data-content");
+    }
+    const visibility = document.getElementById("view-mode").value;
+    const response = await upload(header.id, JSON.stringify(prepareJSON(title, authors, content, visibility)));
+
+    if (response == -1) {
+
+    } else if (response != "ERROR") {
+        console.log(response);
+    } else {
+        console.error(response);
+        toastr["error"]("An error occurred");
+    }
+}
+
 function buttonEvents() {
 
     if (!document.getElementById("save-content")) {
@@ -668,29 +694,7 @@ function buttonEvents() {
     document.getElementById("save-content").onclick = async function () {
         console.log("save");
 
-        const header = url_to_json();
-
-        const content = [];
-        const title = document.getElementById("title").getAttribute("data-content");//innerText;
-        const authors = getAuthorItems();
-
-        const container = document.getElementById("boxes");
-        for (let i = 0; i < container.children.length; i++) {
-            const element = container.children[i];
-
-            content[i] = element.getAttribute("data-content");
-        }
-        const visibility = document.getElementById("view-mode").value;
-        const response = await upload(header.id, JSON.stringify(prepareJSON(title, authors, content, visibility)));
-
-        if (response == -1) {
-
-        } else if (response != "ERROR") {
-            console.log(response);
-        } else {
-            console.error(response);
-            toastr["error"]("An error occurred");
-        }
+        await save_content();
     };
     if (!document.getElementById("add-box")) {
         return;

@@ -354,6 +354,10 @@
 	test_equal("get visibility options", implode(",", getVisibilityOptions()), 'public,private');
 	test_equal("get poster visibility", getVisibility(355), 2);
 
+	test_equal("get poster visibility", getVisibility(351), 1);
+	test_equal("set visibility mode", setViewMode(19, 2, 2), 'successfully updated');
+	test_equal("get poster visibility", getVisibility(351), 2);
+
 	//update last edit date
 	$sleep_time = 1;
 	//poster
