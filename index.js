@@ -83,7 +83,6 @@ function loadStyle(href) {
     });
 }
 
-// TODO: Set Un-Toggle as initial state
 var toggle_login = document.getElementById("toggle_login_box");
 toggle_login.addEventListener("click", function () {
 
