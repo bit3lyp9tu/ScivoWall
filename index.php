@@ -43,7 +43,7 @@
         <div>
             <!-- TODO: Testing for Index-Login/Register -->
             <input id="toggle_login_box" class="toggle-btn" type="button" value="Login" />
-            <div id="login-box" class="account-box">
+            <div id="login-box" class="account-box" style="display: none;">
                 Login
                 <input type="text" id="name" class="form-control" placeholder="Enter your Username...">
                 <input type="password" id="pw" class="form-control" placeholder="Enter your Password...">
@@ -54,7 +54,7 @@
             </div>
 
             <input id="toggle_register_box" class="toggle-btn" type="button" value="Register" />
-            <div id="register-box" class="account-box">
+            <div id="register-box" class="account-box" style="display: none;">
                 Register
                 <input type="text" id="username" class="form-control" placeholder="Enter your Username...">
                 <input type="password" id="password" class="form-control" placeholder="Enter your Password...">

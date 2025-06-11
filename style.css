@@ -324,7 +324,7 @@ div[data-content]:hover {
 }
 
 .toggle-btn {
-    color: #83d252;
+    /* color: #83d252; */
 }
 
 div#toggle_login_box,

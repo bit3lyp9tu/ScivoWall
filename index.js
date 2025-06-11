@@ -86,7 +86,6 @@ function loadStyle(href) {
 // TODO: Set Un-Toggle as initial state
 var toggle_login = document.getElementById("toggle_login_box");
 toggle_login.addEventListener("click", function () {
-    console.log("click");
 
     var box = document.getElementById("login-box");
 
@@ -132,7 +131,6 @@ document.getElementById("login-btn").addEventListener("click", function () {
 
 var toggle_register = document.getElementById("toggle_register_box");
 toggle_register.addEventListener("click", function () {
-    console.log("click");
 
     var box = document.getElementById("register-box");
 
