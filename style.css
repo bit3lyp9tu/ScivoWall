@@ -107,6 +107,26 @@
     border-bottom: 1px solid;
 }
 
+.box-menu {
+    /* background-color: #83d252; */
+
+    display: flex;
+    align-self: flex-start;
+    /* height: 1.2rem; */
+    width: 4.35rem;
+    /* border-radius: 1.2rem; */
+
+    position: absolute;
+    top: 0;
+    right: 0rem;
+
+    /* display: none; */
+}
+
+div#boxes>div {
+    position: relative;
+}
+
 h1 {
     font-family: "Barlow", sans-serif;
     margin: 0;
@@ -323,6 +343,10 @@ div[data-content]:hover:not([in-iframe]) {
     border-width: 1px;
 }
 
+div[data-content]:hover:not([in-iframe]) .box-menu {
+    display: block;
+}
+
 .toggle-btn {
     /* color: #83d252; */
 }
@@ -340,10 +364,10 @@ div#toggle_register_box {
 }
 
 #iframe-0 {
-	//border: 0px;
-	border: 1px solid red;
+    /* border: 0px; */
+    border: 1px solid red;
 }
 
 #posters {
-	border: unset !important;
+    border: unset !important;
 }

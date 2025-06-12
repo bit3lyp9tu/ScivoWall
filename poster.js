@@ -196,6 +196,18 @@ async function typeset(container, code) {
     await MathJax.typesetPromise([container]);
 }
 
+function createMenu() {
+    var menu = document.createElement("input");
+    menu.type = "file";
+    // menu.value = "*";
+    menu.accept = "image/png, image/jpeg, .csv, text/csv";
+    menu.classList.add("box-menu");
+    menu.onclick = function () {
+        console.log("box menu");
+    }
+    return menu;
+}
+
 async function show(response) {
 
     //TODO:   load interactive elements only if mode=private + session-id valid
@@ -223,6 +235,8 @@ async function show(response) {
 
             if (isInIframe()) {
                 obj.setAttribute("in-iframe", "");
+            } else {
+                obj.appendChild(createMenu());
             }
 
             boxes.appendChild(obj);
@@ -262,6 +276,52 @@ function edit_box_if_no_other_was_selected(_target) {
     selected_box = element;
 }
 
+function importFile(output, file) {
+
+    if (!file) return;
+
+    if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const text = `<p placeholder="plotly" chart="points">\n` + e.target.result + `</p>`;
+
+            console.log(text);
+            output.innerHTML = text;
+        };
+        reader.readAsText(file);
+    } else if (file.type.startsWith('image/')) {
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.maxWidth = '300px';
+            output.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+
+    } else if (file.type === 'application/json' || file.name.endsWith('.json')) {
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            try {
+                const json = JSON.parse(e.target.result);
+                output.innerHTML = `<p placeholder="plotly">\n` + JSON.stringify(json, null, 2) + `</p>`;
+                console.log(json);
+
+            } catch (error) {
+                output.innerHTML = "Error parsing JSON: " + error.message;
+            }
+        };
+        reader.readAsText(file);
+
+    } else {
+        output.textContent = 'Unsupported file type.';
+    }
+
+    console.log(file.name);
+}
+
 async function unedit_box() {
     //console.log("TESTETSTSTTSTTS", selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``));
     // selected_box = selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``);
@@ -276,6 +336,15 @@ async function unedit_box() {
         if (selected_box && selected_box.parentNode) {
             selected_box.parentNode.replaceChild(element, selected_box);
         }
+
+        element.appendChild(createMenu());
+
+        var inbtn = document.querySelector('#' + selected_box.id + '>input[type="file"]');
+        console.log(inbtn);
+        inbtn.addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            importFile(selected_box, file);
+        });
 
         loadImages();
 
