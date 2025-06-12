@@ -1,3 +1,4 @@
+// TODO: change carousel to https://www.jqueryscript.net/demo/image-cover-flow-flipster/
 async function fetchAvailablePosters() {
     return await $.ajax({
         type: "POST",
