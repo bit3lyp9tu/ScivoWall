@@ -182,7 +182,10 @@ class PythonOrgSearch(unittest.TestCase):
         time.sleep(self.wait_time)
         self.assertTrue(
             poster_list_element.text
-            in ["2025-04-16 13:43:02 private Edit", "2025-04-16 11:43:02 private Edit"]
+            in [
+                "2025-04-16 13:43:02\npublic\nprivate",
+                "2025-04-16 11:43:02\npublic\nprivate",
+            ]
         )
 
         time.sleep(self.wait_time)
@@ -278,7 +281,7 @@ class PythonOrgSearch(unittest.TestCase):
         # check access poster
         driver.find_element(
             By.CSS_SELECTOR,
-            "#table-container>table>tr#table-container--nr-3>td:nth-last-child(2)>td>a",
+            "#table-container>table>tr#table-container--nr-3>td:nth-last-child(2)>td>input",
         ).click()
         time.sleep(self.wait_time)
         self.assertEqual(
@@ -367,7 +370,7 @@ class PythonOrgSearch(unittest.TestCase):
 
         driver.find_element(
             By.CSS_SELECTOR,
-            f"#table-container>table>tr#table-container--nr-{local_index}>td:nth-last-child(2)>td>a",
+            f"#table-container>table>tr#table-container--nr-{local_index}>td:nth-last-child(2)>td>input",
         ).click()
 
         # check right title
