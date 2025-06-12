@@ -267,7 +267,7 @@ input#typeahead.tt-input {
     width: 7rem;
 }
 
-.author-item:hover {
+.author-item:hover:not([in-iframe]) {
     background-color: #83d2522d;
 }
 
@@ -317,7 +317,7 @@ img.table-img:hover {
     overflow: visible;
 }
 
-div[data-content]:hover {
+div[data-content]:hover:not([in-iframe]) {
     border: solid;
     border-color: #83d252;
     border-width: 1px;

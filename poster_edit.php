@@ -477,7 +477,6 @@
                 }else{
                     echo "User is Admin";
                 }
-                // echo setViewMode($user_id, $local_id, $view_option);
             }else{
                 echo "No or invalid session";
             }

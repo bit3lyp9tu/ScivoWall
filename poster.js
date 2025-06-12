@@ -3,6 +3,14 @@ var author_names = [];
 
 var log = console.log;
 
+function isInIframe() {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
+}
+
 function url_to_json() {
     const result = {};
 
@@ -166,7 +174,7 @@ async function isEditView() {
     const data = url_to_json();
     const isValid = await hasValidUserSession();
 
-    console.log(data["mode"], isValid);
+    // console.log(data["mode"], isValid);
 
     return (data["mode"] != null && data["mode"] == 'private' && isValid == 1);
 }
@@ -211,6 +219,10 @@ async function show(response) {
                 // obj.setAttribute("data-original", toMarkdown(response.boxes[key]));
                 // obj.innerText = toMarkdown(response.boxes[key]);
                 await typeset(obj, () => marked.marked(response.boxes[key]));
+            }
+
+            if (isInIframe()) {
+                obj.setAttribute("in-iframe", "");
             }
 
             boxes.appendChild(obj);
@@ -470,6 +482,16 @@ window.onload = async function () {
     const data = url_to_json();
     let response = {};
 
+    if (isInIframe()) {
+        console.log("in IFrame");
+
+        document.getElementById("typeahead").style.display = "none";
+
+        document.getElementById("img-load").style.display = "none";
+
+        document.getElementsByTagName("footer")[0].style.display = "none";
+    }
+
     const state = await isEditView();
     if (state) {
         console.log("logged in");
@@ -485,23 +507,6 @@ window.onload = async function () {
     } catch (error) {
         console.error("content head request failed " + error);
     }
-
-    // loadPlot(
-    //     "tester",
-    //     [
-    //         {
-    //             x: [1, 2, 3, 4, 5],
-    //             y: [1, 2, 4, 8, 16]
-    //         },
-    //         {
-    //             x: [1, 2, 3, 4, 5],
-    //             y: [2, 2, 1, 11, 15]
-    //         }
-    //     ],
-    //     {
-    //         margin: { t: 1 }
-    //     }
-    // );
 
     if (response.status != 'error') {
         //TODO:   iterate single functions over a shared loop
@@ -550,14 +555,16 @@ window.onload = async function () {
     //     this.closest("div").remove();
     // }
 
-    const inputElement = document.getElementById("typeahead");
+    if (!isInIframe()) {
+        const inputElement = document.getElementById("typeahead");
 
-    const instance = typeahead({
-        input: inputElement,
-        source: {
-            local: author_names,
-        }
-    });
+        const instance = typeahead({
+            input: inputElement,
+            source: {
+                local: author_names,
+            }
+        });
+    }
 
     initEditBoxes();
     initUneditHandler();
@@ -567,19 +574,26 @@ function author_item(value) {
     const p = document.createElement("p");
     p.innerText = value
 
-    const btn = document.createElement("button");
-    btn.id = "remove-element";
-    btn.classList.add("author-item-btn");
-    btn.innerText = "X";
-    btn.onclick = function () {
-        this.closest("div").remove();
-    };
-
     const item = document.createElement("div");
     item.classList.add("author-item");
     item.setAttribute("draggable", "true");
     item.appendChild(p);
-    item.appendChild(btn);
+
+    if (!isInIframe()) {
+
+        const btn = document.createElement("button");
+        btn.id = "remove-element";
+        btn.classList.add("author-item-btn");
+        btn.innerText = "X";
+        btn.onclick = function () {
+            this.closest("div").remove();
+        };
+
+        item.appendChild(btn);
+    } else {
+        item.setAttribute("draggable", "false");
+        item.setAttribute("in-iframe", "");
+    }
 
     return item;
 }
