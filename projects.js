@@ -273,9 +273,13 @@ async function make_headers_editable(editable_columns, headers, data, i, row) {
             selection.value = children.indexOf(data[header][i]);
 
             selection.onchange = async function () {
-                console.log("change", this.value, this.closest('tr').id.split("--nr-")[1]);
-                setViewOption(this.closest('tr').id.split("--nr-")[1], this.value);
+                // console.log("change", this.value, this.closest('tr').id.split("--nr-")[1]);
+                await setViewOption(this.closest('tr').id.split("--nr-")[1], Number(this.value));
             };
+
+            if (await isAdmin()) {
+                selection.toggleAttribute("disabled");
+            }
 
             td.appendChild(selection);
 

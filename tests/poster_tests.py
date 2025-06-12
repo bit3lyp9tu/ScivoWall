@@ -215,7 +215,12 @@ class PythonOrgSearch(unittest.TestCase):
 
         time.sleep(self.wait_time)
 
-        # TODO: check toggle visible (as non-admin)
+        # check toggle visible (as non-admin)
+        check_btn = driver.find_element(
+            By.CSS_SELECTOR,
+            "div#table-container>table>tr:nth-child(3)>td:nth-child(3)>input",
+        )
+        self.assertIsNotNone(check_btn.get_attribute("disabled"))
         print(
             [
                 i.text
@@ -225,9 +230,31 @@ class PythonOrgSearch(unittest.TestCase):
                 )
             ]
         )
-        # TODO: check visible
 
-        # TODO: check change view_mode
+        time.sleep(self.wait_time)
+
+        # check visibility (view modes)
+        select_element = driver.find_element(
+            By.CSS_SELECTOR,
+            "div#table-container>table>tr:nth-child(3)>td:nth-child(4)>select",
+        )
+        select = Select(select_element)
+        # print([i.text for i in select.options])
+        #   - private
+        self.assertEqual("private", select.all_selected_options[0].text)
+        #   - public
+        select.select_by_visible_text("public")
+        self.assertEqual(
+            "public",
+            Select(
+                driver.find_element(
+                    By.CSS_SELECTOR,
+                    "div#table-container>table>tr:nth-child(3)>td:nth-child(4)>select",
+                )
+            )
+            .all_selected_options[0]
+            .text,
+        )
 
         time.sleep(self.wait_time)
         # check edit poster title
@@ -589,7 +616,7 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check login successfully
         self.assertEqual(
-            5,
+            6,
             len(
                 driver.find_elements(
                     By.CSS_SELECTOR,
@@ -634,6 +661,15 @@ class PythonOrgSearch(unittest.TestCase):
 
         time.sleep(self.wait_time)
 
+        # check if view mode disabeld
+        selector = driver.find_element(
+            By.CSS_SELECTOR,
+            "div#table-container>table>tr:nth-child(3)>td:nth-child(4)>select",
+        )
+        self.assertIsNotNone(selector.get_attribute("disabled"))
+
+        time.sleep(self.wait_time)
+
         driver.get(f"http://{self.address}/scientific_poster_generator/index.php")
 
         time.sleep(self.wait_time)
@@ -641,7 +677,6 @@ class PythonOrgSearch(unittest.TestCase):
         self.assertEqual(
             [], driver.find_elements(By.CSS_SELECTOR, "div#posters>div>iframe")
         )
-        # TODO: check toggle visible (as admin)
 
     # TODO: test index page
     def index_page(self, driver):

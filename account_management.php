@@ -222,7 +222,7 @@
             }else{
                 if (!$priv_acc && isAdmin($user_id)) {
                     return json_encode(getterQuery2(
-                        "SELECT title, from_unixtime(last_edit_date) AS last_edit, visible FROM poster WHERE fk_view_mode=?",
+                        "SELECT title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode FROM poster, view_modes WHERE fk_view_mode=? AND poster.fk_view_mode = view_modes.ID",
                         1
                     ), true);
                 }else{
@@ -298,7 +298,7 @@
 
                 //refresh list
                 $data = getterQuery2(
-                    "SELECT title, from_unixtime(last_edit_date) AS last_edit FROM poster WHERE poster.user_id=?",
+                    "SELECT title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode FROM poster, view_modes WHERE poster.user_id=? AND fk_view_mode=view_modes.ID;",
                     $user_id
                 );
                 return json_encode($data, false);
@@ -499,7 +499,7 @@
             // res  checken: wenn deleteQuery true/false (boolean) zurückgibt chekcen, also fehlerbehandlung
             //refresh list
             $data = getterQuery2(
-                "SELECT title, from_unixtime(last_edit_date) AS last_edit FROM poster WHERE poster.user_id=?",
+                "SELECT title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode FROM poster, view_modes WHERE poster.user_id=? AND fk_view_mode=view_modes.ID",
                 $user_id
             );
             return json_encode($data, true);

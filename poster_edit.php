@@ -471,7 +471,13 @@
 
             $user_id = getValidUserFromSession();
             if ($user_id != null) {
-                echo setViewMode($user_id, $local_id, $view_option);
+                if (!isAdmin($user_id)) {
+
+                    echo setViewMode($user_id, $local_id, $view_option);
+                }else{
+                    echo "User is Admin";
+                }
+                // echo setViewMode($user_id, $local_id, $view_option);
             }else{
                 echo "No or invalid session";
             }
