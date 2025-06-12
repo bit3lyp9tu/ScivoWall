@@ -338,3 +338,12 @@ div#toggle_register_box {
 
     padding-right: 5px;
 }
+
+#iframe-0 {
+	//border: 0px;
+	border: 1px solid red;
+}
+
+#posters {
+	border: unset !important;
+}
