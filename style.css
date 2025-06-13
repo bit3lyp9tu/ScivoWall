@@ -120,7 +120,12 @@
     top: 0;
     right: 0rem;
 
-    /* display: none; */
+    display: none;
+}
+
+.box-img {
+    width: 100%;
+    object-fit: cover;
 }
 
 div#boxes>div {

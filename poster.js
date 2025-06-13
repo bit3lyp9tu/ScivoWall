@@ -116,7 +116,7 @@ function style_parser(element, style) {
 
     for (let i = 0; i < styles.length; i++) {
         const elem = styles[i];
-        console.log(elem);
+        // console.log(elem);
         // converter(element, elem.split("=")[0], elem.split("=")[1]);
     }
 }
@@ -143,9 +143,8 @@ async function getLoadedImg(poster_id, img_name, style) {
 
     const container = document.createElement("div");
     const img = document.createElement("img");
+    img.classList.add("box-img");
     img.src = JSON.parse(resp).data;
-    img.style.width = '100%';
-    img.style.objectFit = 'cover';
 
     container.appendChild(img);
     return container;
@@ -200,7 +199,7 @@ function createMenu() {
     var menu = document.createElement("input");
     menu.type = "file";
     // menu.value = "*";
-    menu.accept = "image/png, image/jpeg, .csv, text/csv";
+    menu.accept = "image/png, image/jpeg, image/jpg, image/gif, .csv, text/csv, application/json, .json";
     menu.classList.add("box-menu");
     menu.onclick = function () {
         console.log("box menu");
@@ -276,27 +275,40 @@ function edit_box_if_no_other_was_selected(_target) {
     selected_box = element;
 }
 
-function importFile(output, file) {
+async function importFile(output, file) {
 
     if (!file) return;
 
     if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
         const reader = new FileReader();
         reader.onload = function (e) {
-            const text = `<p placeholder="plotly" chart="points">\n` + e.target.result + `</p>`;
+            const text = `\n<p placeholder="plotly" chart="scatter">\n` + e.target.result + `</p>`;
 
-            console.log(text);
-            output.innerHTML = text;
+            output.setAttribute("data-content", output.getAttribute("data-content") + text);
+            output.value = output.value + text;
         };
         reader.readAsText(file);
     } else if (file.type.startsWith('image/')) {
 
+        const url = url_to_json();
+
         const reader = new FileReader();
-        reader.onload = function (e) {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.style.maxWidth = '300px';
-            output.appendChild(img);
+        reader.onload = async function (e) {
+            const data = {
+                "name": file.name,
+                "type": file.type,
+                "size": file.size,
+                "last_modified": 0,//file.lastModified,
+                "webkit_relative_path": file.webkitRelativePath,
+                "data": e.target.result
+            };
+
+            await imageUpload(data, url["id"]);
+
+            const text = '\n<p placeholder="image">\includegraphics{' + file.name + "}</p>";
+            output.setAttribute("data-content", output.getAttribute("data-content") + text);
+            output.value = output.value + text;
+
         };
         reader.readAsDataURL(file);
 
@@ -306,20 +318,19 @@ function importFile(output, file) {
         reader.onload = function (e) {
             try {
                 const json = JSON.parse(e.target.result);
-                output.innerHTML = `<p placeholder="plotly">\n` + JSON.stringify(json, null, 2) + `</p>`;
-                console.log(json);
+                const text = `\n<p placeholder="plotly">\n` + JSON.stringify(json, null, 2) + `\n</p>`;
+                output.setAttribute("data-content", output.getAttribute("data-content") + text);
+                output.value = output.value + text;
 
             } catch (error) {
-                output.innerHTML = "Error parsing JSON: " + error.message;
+                console.error("Error parsing JSON: " + error.message);
             }
         };
         reader.readAsText(file);
 
     } else {
-        output.textContent = 'Unsupported file type.';
+        console.error('Unsupported file type.');
     }
-
-    console.log(file.name);
 }
 
 async function unedit_box() {
@@ -340,8 +351,11 @@ async function unedit_box() {
         element.appendChild(createMenu());
 
         var inbtn = document.querySelector('#' + selected_box.id + '>input[type="file"]');
-        console.log(inbtn);
+        // console.log(inbtn);
+
+        // TODO: [BUG] editBox needs to be selected previously at least once for the change event to be detected
         inbtn.addEventListener('change', function (event) {
+
             const file = event.target.files[0];
             importFile(selected_box, file);
         });
@@ -803,6 +817,10 @@ function buttonEvents() {
     }
 }
 
+function match_placeholder_image(str) {
+    return str.replace("\n", "").match(/\<p\splaceholder\=\"image\"\>includegraphics\{[\w+,\/,\-]+\.(png|jpg|gif)\}\<\/p\>/g);
+}
+
 //TODO:   make load on page reload
 async function loadImages() {
     const url = url_to_json();
@@ -812,19 +830,15 @@ async function loadImages() {
     for (let i = 0; i < boxes.children.length; i++) {
         //TODO:   check for invalid names during image upload
 
-        const word = boxes.children[i].innerHTML.match(/\<p placeholder\=\"image\"\>includegraphics(\[.*\])?\{(\w|\s|-|_)+\.(png|jpg|gif)\}\<\/p\>/);
+        const word = match_placeholder_image(boxes.children[i].innerHTML);
         if (word) {
-            const name = word[0].slice(word[0].indexOf('{') + 1, word[0].indexOf('}'));
-            const settings = word[0].includes('[') && word[0].includes(']') ? word[0].slice(word[0].indexOf('[') + 1, word[0].indexOf(']')) : "";
-
-            // console.log(settings);
-            style_parser(null, settings);
-
             const box_images = boxes.children[i].querySelectorAll("p[placeholder]");
-            for (let j = 0; j < box_images.length; j++) {
-                if (box_images[j].getAttribute("placeholder") == "image") {
+            for (let k = 0; k < word.length; k++) {
+                var name = word[k].match(/[\w+,\/,\-]+?\.(png|jpg|gif)/)[0];
 
-                    boxes.children[i].replaceChild(await getLoadedImg(url["id"], name), box_images[j], settings);
+                if (box_images[k].getAttribute("placeholder") == "image") {
+                    const el = await getLoadedImg(url["id"], name);
+                    boxes.children[i].replaceChild(el, box_images[k], "");
                 }
             }
         }
@@ -891,12 +905,18 @@ async function loadPlots() {
                         // console.log("p-element", placeholder_list[j].innerHTML);
 
                     } else {
-                        if (body[j] != "") {
-                            console.log(body[j]);
 
-                            content = json_parse(repairJson(body[j]));
+                        if (placeholder_list[j].hasAttribute("chart") && !["scatter", "line", "bar", "pie"].includes(placeholder_list[j].getAttribute("chart"))) {
+                            console.error("Unknown Chart Type");
                         } else {
-                            content = {};
+
+                            if (body[j] != "") {
+                                // console.log(body[j]);
+
+                                content = json_parse(repairJson(body[j]));
+                            } else {
+                                content = {};
+                            }
                         }
                     }
 
