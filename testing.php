@@ -107,9 +107,9 @@
 	*/
 
 	// check query to attribute filter
-	test_equal("get column name A", implode(",", getCoulmnNames("SELECT id, name FROM author AS t;")), 'id,name');
-	test_equal("get column name B", implode(",", getCoulmnNames("SELECT id AS a, name FROM author;")), 'a,name');
-	// test_equal("get column name C", implode(",", getCoulmnNames(
+	test_equal("get column name A", implode(",", getColumnNames("SELECT id, name FROM author AS t;")), 'id,name');
+	test_equal("get column name B", implode(",", getColumnNames("SELECT id AS a, name FROM author;")), 'a,name');
+	// test_equal("get column name C", implode(",", getColumnNames(
 	// 	"SELECT e.name,
 	//        (SELECT MAX(salary)
 	// 	   FROM employees
@@ -117,21 +117,21 @@
 	// 	   ) AS highest_salary_in_dept
 	// 	FROM employees e;
 	// ")), 'e.name,highest_salary_in_dept');
-	test_equal("get column name error", implode(",", getCoulmnNames("SELECT id AS")), '[ERROR]: SELECT id AS does not match');
+	test_equal("get column name error", implode(",", getColumnNames("SELECT id AS")), '[ERROR]: SELECT id AS does not match');
 	$sql2 = "SELECT id, name FROM author, (SELECT author_id FROM author_to_poster WHERE author_to_poster.poster_id=?) AS sub WHERE sub.author_id=author.id";
-	test_equal("A", implode(",", getCoulmnNames($sql2)), "id,name,author_id");
+	test_equal("A", implode(",", getColumnNames($sql2)), "id,name,author_id");
 	$str2 = "SELECT e.name, MAX(sa.lary) AS ttt
 		FROM employees
 		WHERE department_id = e.department_id
 		) AS highest_salary_in_dept
 		FROM employees e;";
-	test_equal("B", implode(",", getCoulmnNames($str2)), 'e.name,ttt');
+	test_equal("B", implode(",", getColumnNames($str2)), 'e.name,ttt');
 	$str3 = "SELECT title, from_unixtime(last_edit_date) AS last_edit, visible FROM poster WHERE fk_view_mode=?";
-	test_equal("C", implode(",", getCoulmnNames($str3)), "title,last_edit,visible");
-	test_equal("get difficult column", implode(",", getCoulmnNames("SELECT title, from_unixtime(last_edit_date) AS last_edit, visible FROM poster WHERE fk_view_mode=?", 1)), "title,last_edit,visible");
+	test_equal("C", implode(",", getColumnNames($str3)), "title,last_edit,visible");
+	test_equal("get difficult column", implode(",", getColumnNames("SELECT title, from_unixtime(last_edit_date) AS last_edit, visible FROM poster WHERE fk_view_mode=?", 1)), "title,last_edit,visible");
 
 
-	// test_equal("", implode(",", getCoulmnNames("SELECT * FROM author;")), 'id,name');
+	// test_equal("", implode(",", getColumnNames("SELECT * FROM author;")), 'id,name');
 
 
 	// check get tables of query

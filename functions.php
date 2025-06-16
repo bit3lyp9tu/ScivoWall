@@ -58,4 +58,12 @@
 
 		file_put_contents("json/write_test.json", $json);
 	}
+
+	function dier($msg) {
+		$msg = print_r($msg, true);
+
+		print_r($msg);
+
+		exit(1);
+	}
 ?>

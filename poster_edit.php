@@ -1,6 +1,7 @@
 <?php
     include_once(__DIR__ . "/" . "queries.php");
     include_once(__DIR__ . "/" . "install.php");
+    include_once(__DIR__ . "/" . "functions.php");
     include_once(__DIR__ . "/" . "account_management.php");
 
     function getData() {
@@ -142,13 +143,30 @@
 
     function addImage($json_data, $poster_id) {
 
-        $result = insertQuery(
-            "INSERT INTO image (file_name, type, size, last_modified, webkit_relative_path, data, fk_poster)
-            VALUE (?, ?, ?, ?, ?, ?, ?)", "ssiissi",
-            $json_data["name"], $json_data["type"], $json_data["size"],
-            $json_data["last_modified"], $json_data["webkit_relative_path"], $json_data["data"], $poster_id
-        );
-        return $result;
+
+        $count = getterQuery2("SELECT COUNT(image_id) FROM image WHERE file_name=? AND fk_poster=?", $json_data["name"], $poster_id);
+
+        #dier($count);
+
+        #error_log(print_r(array($count), true));
+
+        if($count > 0) {
+            $result = editQuery(
+                "UPDATE image
+                SET file_name = ?, type = ?, size = ?, last_modified = ?, webkit_relative_path = ?, data = ?, fk_poster = ?
+                WHERE file_name = ? AND fk_poster = ?",
+                "ssiissisi", $json_data["name"], $json_data["type"], $json_data["size"], $json_data["last_modified"], $json_data["webkit_relative_path"], $json_data["data"], $poster_id, $json_data["name"], $poster_id
+            );
+            return $result;
+        }else{
+            $result = insertQuery(
+                "INSERT INTO image (file_name, type, size, last_modified, webkit_relative_path, data, fk_poster)
+                VALUE (?, ?, ?, ?, ?, ?, ?)", "ssiissi",
+                $json_data["name"], $json_data["type"], $json_data["size"],
+                $json_data["last_modified"], $json_data["webkit_relative_path"], $json_data["data"], $poster_id
+            );
+            return $result;
+        }
     }
 
     function deleteBox($local_id, $poster_id) {
