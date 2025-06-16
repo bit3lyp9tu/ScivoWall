@@ -144,13 +144,12 @@
     function addImage($json_data, $poster_id) {
 
 
-        $count = getterQuery2("SELECT COUNT(image_id) FROM image WHERE file_name=? AND fk_poster=?", $json_data["name"], $poster_id);
-
-        #dier($count);
+        $count = getterQuery2("SELECT COUNT(image_id) as cnt_image_id FROM image WHERE file_name=? AND fk_poster=?", $json_data["name"], $poster_id);
+        #dier($count["cnt_image_id"][0]);
 
         #error_log(print_r(array($count), true));
 
-        if($count > 0) {
+        if($count["cnt_image_id"][0] > 0) {
             $result = editQuery(
                 "UPDATE image
                 SET file_name = ?, type = ?, size = ?, last_modified = ?, webkit_relative_path = ?, data = ?, fk_poster = ?

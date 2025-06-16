@@ -52,7 +52,7 @@
         $n = str_replace("\n", " ", $query);
         $n = str_replace("\t", " ", $n);
 
-	$n = preg_replace("/\s?(\w+\([\w\.]+\))(?=( AS \w+)?\,?)/i", " FILLER ", $n);
+	$n = preg_replace("/\s?(\w+\([\w\.]+\))(?=( AS \w+)?\,?)/i", " FILLER ", $n); # bei COUNT() kommt FILLER
 
 	if(preg_match_all("/(?<=SELECT )[\w\d\s\,\*\-\.]+(?= FROM)/i", $n, $matches)) {
 		foreach ($matches[0] as $j) {
