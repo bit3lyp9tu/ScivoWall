@@ -590,6 +590,7 @@ async function fetch_images() {
 }
 
 function load_project_page_data() {
+    // TODO: [BUG] occasionally projects are loaded in wrong order (wrong title/link)
     fetch_all_projects();
     fetch_authors_list();
     fetch_images();
