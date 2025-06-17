@@ -399,6 +399,140 @@
 	// print_r($DB_NAME);
 
 
+	// admin filter
+	test_equal("filter min empty", solve_min("name", json_decode(
+		'{
+			"attributes": {
+				"name": {
+					"min": "",
+					"max": "",
+					"list": [
+						"max5"
+					]
+				}
+			}
+		}', true
+	)), "");
+	test_equal("filter min", solve_min("name", json_decode(
+		'{
+			"attributes": {
+				"name": {
+					"min": "1",
+					"max": "",
+					"list": [
+						"max5"
+					]
+				}
+			}
+		}', true
+	)), " name >= 1 ");
+	test_equal("filter max empty", solve_max("name", json_decode(
+		'{
+			"attributes": {
+				"name": {
+					"min": "",
+					"max": "",
+					"list": [
+						"max5"
+					]
+				}
+			}
+		}', true
+	)), "");
+	test_equal("filter max", solve_max("name", json_decode(
+		'{
+			"attributes": {
+				"name": {
+					"min": "1",
+					"max": "5",
+					"list": [
+						"max5"
+					]
+				}
+			}
+		}', true
+	)), " name <= 5 ");
+
+	test_equal("filter list", solve_list("name", json_decode(
+		'{
+			"attributes": {
+				"name": {
+					"min": "1",
+					"max": "5",
+					"list": [
+					]
+				}
+			}
+		}', true
+	)), "");
+	test_equal("filter list", solve_list("name", json_decode(
+		'{
+			"attributes": {
+				"name": {
+					"min": "1",
+					"max": "5",
+					"list": [
+						"max5",
+						"Admin"
+					]
+				}
+			}
+		}', true
+	)), " name IN ('max5', 'Admin') ");
+
+	$json = '{
+		"attributes": {
+			"user.name": {
+				"min": "",
+				"max": "",
+				"list": [
+					"max5"
+				]
+			},
+			"poster.title": {
+				"min": "",
+				"max": "",
+				"list": [
+					"The Future of Urban Farming"
+				]
+			},
+			"last_edit_date": {
+				"min": "",
+				"max": "",
+				"list": [
+				]
+			},
+			"visible": {
+				"min": "",
+				"max": "",
+				"list": [
+				]
+			},
+			"view_modes.name": {
+				"min": "",
+				"max": "",
+				"list": [
+					"private",
+					"public"
+				]
+			}
+		}
+	}';
+	test_equal("filter projects empty", filter_projects('{}'), "");
+	test_equal(
+		"filter projects",
+		filter_projects($json),
+		" AND  user.name IN ('max5') AND poster.title IN ('The Future of Urban Farming') AND view_modes.name IN ('private', 'public') "
+	);
+
+	login("Admin", "PwScaDS-2025");
+	test_equal(
+		"fetch filtered projects",
+		fetch_projects_all(85, $json),
+		'{"user.name":["max5"],"title":["The Future of Urban Farming"],"last_edit":["2025-04-16 13:43:02"],"visible":[1],"view_mode":["private"]}'
+	);
+	test_equal("fetch filtered projects not admin", fetch_projects_all(86, $json), 'Not Admin');
+
 	/*
 	name:	bug
 	pw:

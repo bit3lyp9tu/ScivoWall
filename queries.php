@@ -270,9 +270,24 @@
             while ($row = $result->fetch_assoc()) {
                 try {
                     for ($i = 0; $i < count($target_values); $i++) {
-                        if(array_key_exists($target_values[$i], $row)) {
-                            $out[$target_values[$i]][] = $row[$target_values[$i]];
-                        }
+
+						if(str_contains($target_values[$i], '.')) {
+							$col_parts = explode(".", $target_values[$i]);
+							$element = end($col_parts);
+						}else {
+							$element = $target_values[$i];
+						}
+
+                        if(array_key_exists($element, $row) || array_key_exists($target_values[$i], $row)) {
+                            $out[$target_values[$i]][] = $row[$element];
+                        }else{
+							// TODO: elements of $target_values is unequal to keys of $out - bug or feature???
+							// print_r("\n-------------- ERROR: ");
+							// print_r($target_values);
+							// print_r($out);
+							// print_r($row);
+							// print_r("--------------\n");
+						}
                     }
                 } catch (mysqli_sql_exception $th) {
                     $out["[ERROR]"] = $th->getMessage() . " " . $th->getLine();

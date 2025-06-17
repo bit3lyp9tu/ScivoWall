@@ -209,8 +209,91 @@
         return $edit;
     }
 
-    function fetchAsAdmin($user_id) {
+    function solve_list($attribute, $rules) {
 
+        // $field = array();
+        // for ($i=0; $i < sizeof($rules["attributes"][$attribute]["list"]); $i++) {
+        //     $field[] = '?';
+        // }
+        // return " " . $attribute . " IN (" . implode(', ', $field) . ") ";
+
+        if (sizeof($rules["attributes"][$attribute]["list"]) > 0) {
+
+            $list = array();
+            for ($i=0; $i < sizeof($rules["attributes"][$attribute]["list"]); $i++) {
+                $list[] = "'" . $rules["attributes"][$attribute]["list"][$i] . "'";
+            }
+            return " " . $attribute . " IN (" . implode(", ", $list) . ") ";
+        } else {
+            return "";
+        }
+
+    }
+
+    function solve_min($attribute, $rules) {
+        if ($rules["attributes"][$attribute]["min"] !== "") {
+            return " " . $attribute . " >= " . $rules["attributes"][$attribute]["min"] . " ";
+        }else{
+            return "";
+        }
+    }
+
+    function solve_max($attribute, $rules) {
+        if ($rules["attributes"][$attribute]["max"] !== "") {
+            return " " . $attribute . " <= " . $rules["attributes"][$attribute]["max"] . " ";
+        }else{
+            return "";
+        }
+    }
+
+    function filter_projects($json) {
+
+        $rules = json_decode($json, true);
+
+        if (isset($rules["attributes"])) {
+
+            if (sizeof(array_keys($rules["attributes"])) > 0) {
+
+                $keys = array_keys($rules["attributes"]);
+                $list = array();
+                for ($i=0; $i < sizeof($keys); $i++) {
+                    if (solve_min($keys[$i], $rules) !== "") {
+                        $list[] = solve_min($keys[$i], $rules);
+                    }
+                    if (solve_max($keys[$i], $rules) !== "") {
+                        $list[] = solve_max($keys[$i], $rules);
+                    }
+                    if (solve_list($keys[$i], $rules) !== "") {
+                        $list[] = solve_list($keys[$i], $rules);
+                    }
+                }
+                return " AND " . implode("AND", $list);
+            }else{
+                return "";
+            }
+        }else{
+            return "";
+        }
+    }
+
+    function fetch_projects_all($user_id, $rules) {
+        if ($user_id != null) {
+            if (isAdmin($user_id)) {
+
+                $sql =  (
+                    "SELECT user.name, title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode
+                    FROM poster, view_modes, user
+                    WHERE poster.fk_view_mode = view_modes.ID AND poster.user_id = user.user_id"
+                ) . filter_projects($rules);
+
+                return json_encode(getterQuery2($sql), true);
+
+            } else {
+                return "Not Admin";
+            }
+        } else {
+            return "No or invalid session";
+        }
     }
 
     function fetch_projects($user_id, $priv_acc=true) {
