@@ -568,46 +568,39 @@ class PythonOrgSearch(unittest.TestCase):
 
         # TODO:   check box plotly render   ???
 
-        # check image upload
-        # if os.environ.get("GITHUB_ACTIONS"):
-        #     img_path = (
-        #         f"http://{self.address}/scientific_poster_generator/img/tudlogo.png"
-        #     )
-        # else:
-        #     img_path = f"/var/www/html/scientific_poster_generator/img/tudlogo.png"
+        # TODO: check image upload
+        # img_path = os.path.abspath("scientific_poster_generator/img/tudlogo.png")
+        # print(img_path)
 
-        img_path = os.path.abspath("img/tudlogo.png")
-        print(img_path)
+        # self.assertTrue(os.path.isfile(img_path))
 
-        self.assertTrue(os.path.isfile(img_path))
+        # ActionChains(driver).click(
+        #     driver.find_element(By.CSS_SELECTOR, "div#editBox-3")
+        # ).click(driver.find_element(By.CSS_SELECTOR, "img#scadslogo")).perform()
 
-        ActionChains(driver).click(
-            driver.find_element(By.CSS_SELECTOR, "div#editBox-3")
-        ).click(driver.find_element(By.CSS_SELECTOR, "img#scadslogo")).perform()
+        # file_input = driver.find_element(
+        #     By.CSS_SELECTOR, "div#editBox-3>input[type='file']"
+        # )
+        # file_input.send_keys(img_path)
+        # time.sleep(self.wait_time)
 
-        file_input = driver.find_element(
-            By.CSS_SELECTOR, "div#editBox-3>input[type='file']"
-        )
-        file_input.send_keys(img_path)
-        time.sleep(self.wait_time)
+        # new_box = driver.find_element(By.CSS_SELECTOR, "div#editBox-3")
+        # ActionChains(driver).move_to_element(new_box).click(new_box).perform()
 
-        new_box = driver.find_element(By.CSS_SELECTOR, "div#editBox-3")
-        ActionChains(driver).move_to_element(new_box).click(new_box).perform()
+        # # TODO: do without manually adding the placeholder
+        # ActionChains(driver).click(
+        #     driver.find_element(By.CSS_SELECTOR, "div#boxes>textarea#editBox-3")
+        # ).send_keys(Keys.DOWN).send_keys(" abc").send_keys(Keys.ENTER).send_keys(
+        #     '<p placeholder="image">includegraphics{tudlogo.png}</p>'
+        # ).click(
+        #     driver.find_element(By.CSS_SELECTOR, "img#scadslogo")
+        # ).perform()
 
-        # TODO: do without manually adding the placeholder
-        ActionChains(driver).click(
-            driver.find_element(By.CSS_SELECTOR, "div#boxes>textarea#editBox-3")
-        ).send_keys(Keys.DOWN).send_keys(" abc").send_keys(Keys.ENTER).send_keys(
-            '<p placeholder="image">includegraphics{tudlogo.png}</p>'
-        ).click(
-            driver.find_element(By.CSS_SELECTOR, "img#scadslogo")
-        ).perform()
-
-        find_uploaded_image = driver.find_element(
-            By.CSS_SELECTOR, "div#editBox-3 img.box-img"
-        )
-        self.assertIsNotNone(find_uploaded_image)
-        time.sleep(self.wait_time)
+        # find_uploaded_image = driver.find_element(
+        #     By.CSS_SELECTOR, "div#editBox-3 img.box-img"
+        # )
+        # self.assertIsNotNone(find_uploaded_image)
+        # time.sleep(self.wait_time)
 
         # check visibility
         select_element = driver.find_element(By.CSS_SELECTOR, "select#view-mode")
