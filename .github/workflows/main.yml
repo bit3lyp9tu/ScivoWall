@@ -192,6 +192,8 @@ jobs:
     - name: Run test script
       continue-on-error: false
       run: |
+        ls -la /var/www/html/scientific_poster_generator/img/
+        echo ----------------------
         ./tests/test_env >> $GITHUB_STEP_SUMMARY
 
     # mariadb -h 127.0.0.1 -P 3800 -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO "poster_generator"@"%" IDENTIFIED BY "password"; FLUSH PRIVILEGES;'
