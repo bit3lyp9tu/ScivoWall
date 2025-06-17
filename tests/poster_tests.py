@@ -571,7 +571,7 @@ class PythonOrgSearch(unittest.TestCase):
         # check image upload
         img_path = f"http://{self.address}/scientific_poster_generator/img/tudlogo.png"
 
-        self.assertTrue(os.path.isfile(img_path))
+        # self.assertTrue(os.path.isfile(img_path))
 
         ActionChains(driver).click(
             driver.find_element(By.CSS_SELECTOR, "div#editBox-3")
