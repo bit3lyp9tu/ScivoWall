@@ -569,7 +569,7 @@ class PythonOrgSearch(unittest.TestCase):
         # TODO:   check box plotly render   ???
 
         # check image upload
-        img_path = "/var/www/html/scientific_poster_generator/img/tudlogo.png"
+        img_path = f"http://{self.address}/scientific_poster_generator/img/tudlogo.png"
 
         self.assertTrue(os.path.isfile(img_path))
 
