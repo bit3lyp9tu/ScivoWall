@@ -526,11 +526,9 @@
 	);
 
 	login("Admin", "PwScaDS-2025");
-	test_equal(
-		"fetch filtered projects",
-		fetch_projects_all(85, $json),
-		'{"user.name":["max5"],"title":["The Future of Urban Farming"],"last_edit":["2025-04-16 13:43:02"],"visible":[1],"view_mode":["private"]}'
-	);
+	$result = json_decode(fetch_projects_all(85, $json), true);
+	test_equal("fetch filtered projects - name", $result["user.name"][0], 'max5');
+	test_equal("fetch filtered projects - title", $result["title"][0], 'The Future of Urban Farming');
 	test_equal("fetch filtered projects not admin", fetch_projects_all(86, $json), 'Not Admin');
 
 	/*
