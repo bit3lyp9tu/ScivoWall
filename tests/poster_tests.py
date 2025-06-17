@@ -569,9 +569,14 @@ class PythonOrgSearch(unittest.TestCase):
         # TODO:   check box plotly render   ???
 
         # check image upload
-        img_path = f"http://{self.address}/scientific_poster_generator/img/tudlogo.png"
+        if os.environ.get("GITHUB_ACTIONS"):
+            img_path = (
+                f"http://{self.address}/scientific_poster_generator/img/tudlogo.png"
+            )
+        else:
+            img_path = f"/var/www/html/scientific_poster_generator/img/tudlogo.png"
 
-        # self.assertTrue(os.path.isfile(img_path))
+        self.assertTrue(os.path.isfile(img_path))
 
         ActionChains(driver).click(
             driver.find_element(By.CSS_SELECTOR, "div#editBox-3")
