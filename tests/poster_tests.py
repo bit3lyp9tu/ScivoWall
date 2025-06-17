@@ -377,7 +377,9 @@ class PythonOrgSearch(unittest.TestCase):
         )
         self.assertIsNot("Alice johnson", author_list_element5.get_attribute("value"))
 
-        # check image list  ???
+        # TODO: check image list
+        #   + rename
+        #   + delete
         pass
 
     def date_compair_day(self, date1, date2):
@@ -562,10 +564,42 @@ class PythonOrgSearch(unittest.TestCase):
                 By.CSS_SELECTOR, "div#boxes>div:nth-child(3)>p>mjx-container"
             )
         )
+        time.sleep(self.wait_time)
 
         # TODO:   check box plotly render   ???
-        # TODO:   check box image render    ???
-        #   + stored globally
+
+        # check image upload
+        img_path = "/var/www/html/scientific_poster_generator/img/tudlogo.png"
+
+        self.assertTrue(os.path.isfile(img_path))
+
+        ActionChains(driver).click(
+            driver.find_element(By.CSS_SELECTOR, "div#editBox-3")
+        ).click(driver.find_element(By.CSS_SELECTOR, "img#scadslogo")).perform()
+
+        file_input = driver.find_element(
+            By.CSS_SELECTOR, "div#editBox-3>input[type='file']"
+        )
+        file_input.send_keys(img_path)
+        time.sleep(self.wait_time)
+
+        new_box = driver.find_element(By.CSS_SELECTOR, "div#editBox-3")
+        ActionChains(driver).move_to_element(new_box).click(new_box).perform()
+
+        # TODO: do without manually adding the placeholder
+        ActionChains(driver).click(
+            driver.find_element(By.CSS_SELECTOR, "div#boxes>textarea#editBox-3")
+        ).send_keys(Keys.DOWN).send_keys(" abc").send_keys(Keys.ENTER).send_keys(
+            '<p placeholder="image">includegraphics{tudlogo.png}</p>'
+        ).click(
+            driver.find_element(By.CSS_SELECTOR, "img#scadslogo")
+        ).perform()
+
+        find_uploaded_image = driver.find_element(
+            By.CSS_SELECTOR, "div#editBox-3 img.box-img"
+        )
+        self.assertIsNotNone(find_uploaded_image)
+        time.sleep(self.wait_time)
 
         # check visibility
         select_element = driver.find_element(By.CSS_SELECTOR, "select#view-mode")

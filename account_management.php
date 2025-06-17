@@ -59,16 +59,16 @@
             FROM session
             WHERE session.sessionID = ?",
             $sessionID
-	);
+        );
 
-	if (isset($ret["user_id"][0])) {
-		return $ret["user_id"][0];
-	}
+        if (isset($ret["user_id"][0])) {
+            return $ret["user_id"][0];
+        }
 
-	# TODO: Darum kümmern dass das hier richtig übergeben wird bzw. dieser fehler nie auftritt
-	error_log("WARNING: user_id not defined!!!!!!!!");
+        # TODO: making sure that this error never occurs
+        error_log("WARNING: user_id not defined!");
 
-	return null;
+	    return null;
     }
 
     //TODO:   make id not required
