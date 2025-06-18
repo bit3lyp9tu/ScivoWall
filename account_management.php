@@ -223,7 +223,7 @@
             for ($i=0; $i < sizeof($rules["attributes"][$attribute]["list"]); $i++) {
                 $list[] = "'" . $rules["attributes"][$attribute]["list"][$i] . "'";
             }
-            return " " . $attribute . " IN (" . implode(", ", $list) . ") ";
+            return " " . $attribute . " IN (" . implode(",", $list) . ") ";
         } else {
             return "";
         }
@@ -276,17 +276,76 @@
         }
     }
 
+    function sanitize_filter($sql) {
+        $result = array();
+
+        $inputs = array();
+        $parts = explode("AND", $sql);
+        for ($i=0; $i < sizeof($parts); $i++) {
+            preg_match_all("/(?<=\').*?(?=\')/m", $parts[$i], $matches);
+
+            for ($j=0; $j < sizeof($matches); $j++) {
+                if (is_array($matches[$j])) {
+
+                    for ($k=0; $k < sizeof($matches[$j]); $k++) {
+                        if ($matches[$j][$k] !== "" && $matches[$j][$k] !== ",") {
+                            $inputs[] = $matches[$j][$k];
+                        }
+                    }
+                }else {
+                    if ($matches[$j] !== "" && $matches[$j] !== ",") {
+                        $inputs[] = $matches[$j];
+                    }
+                }
+            }
+
+            preg_match("/(?<=\=\s)\d+(.\d+)?(?=\s)/", $parts[$i], $matchesB);
+
+            for ($j=0; $j < sizeof($matchesB); $j++) {
+                if (substr($matchesB[$j], 0, 1) !== ".") {
+
+                    $inputs[] = $matchesB[$j];
+                }
+            }
+        }
+        $result["var"] = $inputs;
+
+        while (sizeof($inputs) > 0) {
+
+            $start = strpos($sql, $inputs[0]);
+            $end = strlen($inputs[0]);
+
+            if(is_numeric($inputs[0])) {
+                $sql = substr_replace($sql, '?', $start, $end);
+            }else{
+                $sql = substr_replace($sql, '?', $start - 1, $end + 2);
+            }
+
+            array_shift($inputs);
+
+            print_r($sql);
+            print_r($inputs);
+        }
+
+        $result["sql"] = $sql;
+
+        return $result;
+    }
+
     function fetch_projects_all($user_id, $rules) {
         if ($user_id != null) {
             if (isAdmin($user_id)) {
+
+                $filtered = filter_projects($rules);
+                $sanitized = sanitize_filter($filtered);
 
                 $sql =  (
                     "SELECT user.name, title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode
                     FROM poster, view_modes, user
                     WHERE poster.fk_view_mode = view_modes.ID AND poster.user_id = user.user_id"
-                ) . filter_projects($rules);
+                ) . $sanitized["sql"];
 
-                return json_encode(getterQuery2($sql), true);
+                return json_encode(getterQuery2($sql, ...$sanitized["var"]), true);
 
             } else {
                 return "Not Admin";

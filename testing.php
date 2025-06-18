@@ -478,7 +478,7 @@
 				}
 			}
 		}', true
-	)), " name IN ('max5', 'Admin') ");
+	)), " name IN ('max5','Admin') ");
 
 	$json = '{
 		"attributes": {
@@ -522,7 +522,40 @@
 	test_equal(
 		"filter projects",
 		filter_projects($json),
-		" AND  user.name IN ('max5') AND poster.title IN ('The Future of Urban Farming') AND view_modes.name IN ('private', 'public') "
+		" AND  user.name IN ('max5') AND poster.title IN ('The Future of Urban Farming') AND view_modes.name IN ('private','public') "
+	);
+
+	$sanitized = sanitize_filter(" AND  user.name IN ('max5') AND poster.title IN ('The Future of Urban Farming') AND last_edit_date >= 1.5 AND last_edit_date <= 5 AND view_modes.name IN ('private','public') ");
+	test_equal(
+		"sanitize filtered input - var",
+		implode(",", $sanitized["var"]),
+		"max5,The Future of Urban Farming,1.5,5,private,public"
+	);
+
+	test_equal(
+		"sanitize filtered input - sql 0",
+		sanitize_filter("")["sql"],
+		""
+	);
+	test_equal(
+		"sanitize filtered input - sql 1",
+		sanitize_filter(" AND  user.name IN ('max5') ")["sql"],
+		" AND  user.name IN (?) "
+	);
+	test_equal(
+		"sanitize filtered input - sql 2",
+		sanitize_filter(" AND  user.name IN ('max5','Admin') ")["sql"],
+		" AND  user.name IN (?,?) "
+	);
+	test_equal(
+		"sanitize filtered input - sql 3",
+		sanitize_filter(" AND last_edit_date >= 1.5 AND last_edit_date <= 5 ")["sql"],
+		" AND last_edit_date >= ? AND last_edit_date <= ? "
+	);
+	test_equal(
+		"sanitize filtered input - sql 4",
+		sanitize_filter(" AND last_edit_date >= 1.5 AND last_edit_date <= 5 AND user.name IN ('max5','Admin') ")["sql"],
+		" AND last_edit_date >= ? AND last_edit_date <= ? AND user.name IN (?,?) "
 	);
 
 	login("Admin", "PwScaDS-2025");
