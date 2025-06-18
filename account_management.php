@@ -322,9 +322,6 @@
             }
 
             array_shift($inputs);
-
-            print_r($sql);
-            print_r($inputs);
         }
 
         $result["sql"] = $sql;
