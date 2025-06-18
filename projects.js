@@ -501,6 +501,48 @@ async function fetch_all_projects() {
     });
 }
 
+async function get_selectable_filters() {
+    try {
+        const response = await $.ajax({
+            type: "POST",
+            url: "account_management.php",
+            data: {
+                action: 'selectable_filters'
+            }
+        });
+        return response;
+    } catch (err) {
+        console.error(`filter selectables: ${err}`);
+        return `[ERROR] ${err}`;
+    }
+}
+
+async function fetch_projects_filtered(filter) {
+    $.ajax({
+        type: "POST",
+        url: "account_management.php",
+        data: {
+            action: 'fetch_filtered_projects',
+            filter: filter
+        },
+        success: function (response) {
+            if (response != "No or invalid session") {
+                if (response != "No results found") {
+                    loadTable(response);
+                    toastr["success"]("Loading Projects");
+                } else {
+                    toastr["warning"]("No results found");
+                }
+            } else {
+                toastr["warning"]("Not logged in");
+            }
+        },
+        error: function () {
+            toastr["error"]("An error occurred");
+        }
+    });
+}
+
 async function fetch_authors_list() {
     document.getElementById("author-list").replaceChildren();
 
@@ -589,9 +631,188 @@ async function fetch_images() {
     });
 }
 
-function load_project_page_data() {
-    // TODO: [BUG] occasionally projects are loaded in wrong order (wrong title/link)
-    fetch_all_projects();
+function unixToDate(number) {
+    const date = new Date(number);
+    return date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
+}
+
+function filter_to_json(user, poster, view_mode, last_edit, visiblitly) {
+    var json = JSON.parse(`{
+		"attributes": {
+			"user.name": {
+				"min": "",
+				"max": "",
+				"list": [
+					"max5"
+				]
+			},
+			"poster.title": {
+				"min": "",
+				"max": "",
+				"list": [
+					"The Future of Urban Farming"
+				]
+			},
+			"last_edit_date": {
+				"min": "",
+				"max": "",
+				"list": [
+				]
+			},
+			"visible": {
+				"min": "",
+				"max": "",
+				"list": [
+					"1"
+				]
+			},
+			"view_modes.name": {
+				"min": "",
+				"max": "",
+				"list": [
+					"private",
+					"public"
+				]
+			}
+		}
+	}`);
+
+    json["attributes"]["user.name"]["list"] = user;
+    json["attributes"]["poster.title"]["list"] = poster;
+    // json["attributes"]["last_edit_date"] = "{}";
+    json["attributes"]["visible"]["list"] = visiblitly;
+    json["attributes"]["view_modes.name"]["list"] = view_mode;
+
+    console.log(json);
+
+    return JSON.stringify(json);
+}
+
+async function createFilter() {
+    const filter = document.getElementById("filter");
+
+    var selectables = JSON.parse(await get_selectable_filters());
+    console.log(selectables);
+
+    const json = ["user", "title", "view_mode"];
+    const db = ["name", "title", "name"];
+
+    for (let i = 0; i < json.length; i++) {
+        const select = document.createElement("select");
+        select.id = "select_" + json[i];
+
+        const option = document.createElement("option");
+        option.value = -1;
+        option.text = "-";
+        select.appendChild(option);
+
+        for (let j = 0; j < selectables[json[i]][db[i]].length; j++) {
+            const option = document.createElement("option");
+            option.value = j;
+            option.text = selectables[json[i]][db[i]][j];
+            select.appendChild(option);
+        }
+        filter.appendChild(select);
+    }
+
+    const last_edit = document.createElement("input");
+    last_edit.id = "last_edit";
+    last_edit.type = "date";
+    last_edit.min = unixToDate(selectables["last_edit"]["min"]);
+    last_edit.max = unixToDate(selectables["last_edit"]["max"]);
+    filter.appendChild(last_edit);
+
+    // const visibility_btn = document.createElement("input");
+    // visibility_btn.id = "visibility";
+    // visibility_btn.type = "checkbox";
+    // visibility_btn.indeterminate = true;
+    // filter.appendChild(visibility_btn);
+
+    const visibility_select = document.createElement("select");
+    visibility_select.id = "visibility";
+    const mode_optionA = document.createElement("option");
+    mode_optionA.value = -1;
+    mode_optionA.text = "-";
+    visibility_select.appendChild(mode_optionA);
+    const mode_optionB = document.createElement("option");
+    mode_optionB.value = 0;
+    mode_optionB.text = "0";
+    visibility_select.appendChild(mode_optionB);
+    const mode_optionC = document.createElement("option");
+    mode_optionC.value = 1;
+    mode_optionC.text = "1";
+    visibility_select.appendChild(mode_optionC);
+    filter.appendChild(visibility_select);
+
+    const submit = document.createElement("input");
+    submit.type = "button";
+    submit.id = "submit-filter";
+    submit.value = "Submit";
+    submit.onclick = async function () {
+        console.log("click");
+
+        // TODO: fix filter data request
+        const user = document.getElementById("select_user").text;
+        const poster = document.getElementById("select_title").text;
+        const view_mode = document.getElementById("select_view_mode").text;
+        // const last_edit = document.getElementById("last_edit").text;
+        const visibility = document.getElementById("visibility").text;
+
+        await fetch_projects_filtered(filter_to_json(user, poster, view_mode, last_edit, visibility));
+    }
+    filter.appendChild(submit);
+}
+
+async function load_project_page_data() {
+
+    if (await isAdmin()) {
+
+        var filter = JSON.parse(`{
+            "attributes": {
+                "user.name": {
+                    "min": "",
+                    "max": "",
+                    "list": [
+                        "max5"
+                    ]
+                },
+                "poster.title": {
+                    "min": "",
+                    "max": "",
+                    "list": [
+                    ]
+                },
+                "last_edit_date": {
+                    "min": "",
+                    "max": "",
+                    "list": [
+                    ]
+                },
+                "visible": {
+                    "min": "",
+                    "max": "",
+                    "list": [
+                        "1"
+                    ]
+                },
+                "view_modes.name": {
+                    "min": "",
+                    "max": "",
+                    "list": [
+                        "public"
+                    ]
+                }
+            }
+        }`);
+
+        createFilter();
+
+        fetch_projects_filtered(JSON.stringify(filter));
+    } else {
+        // TODO: [BUG] occasionally projects are loaded in wrong order (wrong title/link)
+        fetch_all_projects();
+    }
+
     fetch_authors_list();
     fetch_images();
 }

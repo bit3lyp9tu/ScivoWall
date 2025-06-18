@@ -221,7 +221,12 @@
 
             $list = array();
             for ($i=0; $i < sizeof($rules["attributes"][$attribute]["list"]); $i++) {
-                $list[] = "'" . $rules["attributes"][$attribute]["list"][$i] . "'";
+                $value =  $rules["attributes"][$attribute]["list"][$i];
+                if (is_numeric($value)) {
+                    $list[] = "" . $value . "";
+                }else{
+                    $list[] = "'" . $value . "'";
+                }
             }
             return " " . $attribute . " IN (" . implode(",", $list) . ") ";
         } else {
@@ -320,7 +325,6 @@
             }else{
                 $sql = substr_replace($sql, '?', $start - 1, $end + 2);
             }
-
             array_shift($inputs);
         }
 
@@ -343,6 +347,30 @@
                 ) . $sanitized["sql"];
 
                 return json_encode(getterQuery2($sql, ...$sanitized["var"]), true);
+
+            } else {
+                return "Not Admin";
+            }
+        } else {
+            return "No or invalid session";
+        }
+    }
+
+    function getFilterSelectables($user_id) {
+        if ($user_id != null) {
+            if (isAdmin($user_id)) {
+
+                $result = array();
+
+                $result["user"] = getterQuery2("SELECT name FROM user");
+                $result["title"] = getterQuery2("SELECT title FROM poster");
+                $result["last_edit"]["min"] = 0;
+                $result["last_edit"]["max"] = 2147483647;
+                $result["visible"]["min"] = 0;
+                $result["visible"]["max"] = 1;
+                $result["view_mode"] = getterQuery2("SELECT name FROM view_modes");
+
+                return json_encode($result, true);
 
             } else {
                 return "Not Admin";
@@ -682,6 +710,20 @@
 
             $user_id = getValidUserFromSession();
             echo fetch_projects($user_id, false);
+        }
+
+        if ($_POST['action'] == 'selectable_filters') {
+
+            $user_id = getValidUserFromSession();
+            echo getFilterSelectables($user_id);
+        }
+
+        if ($_POST['action'] == 'fetch_filtered_projects') {
+
+            $filter = isset($_POST['filter']) ? $_POST['filter'] : '';
+            $user_id = getValidUserFromSession();
+
+            echo fetch_projects_all($user_id, $filter);
         }
 
         if ($_POST['action'] == 'fetch_authors') {

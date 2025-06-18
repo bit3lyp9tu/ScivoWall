@@ -17,6 +17,8 @@
         <button onclick="createProject()" >Create New Project</button>
     </div>
     <br>
+    <div id="filter"></div>
+
     <div id="table-container"></div>
 
     <!-- List Authors the User worked with + add new Authors -->

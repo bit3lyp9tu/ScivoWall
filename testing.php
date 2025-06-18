@@ -506,6 +506,7 @@
 				"min": "",
 				"max": "",
 				"list": [
+					"1"
 				]
 			},
 			"view_modes.name": {
@@ -522,7 +523,7 @@
 	test_equal(
 		"filter projects",
 		filter_projects($json),
-		" AND  user.name IN ('max5') AND poster.title IN ('The Future of Urban Farming') AND view_modes.name IN ('private','public') "
+		" AND  user.name IN ('max5') AND poster.title IN ('The Future of Urban Farming') AND visible IN (1) AND view_modes.name IN ('private','public') "
 	);
 
 	$sanitized = sanitize_filter(" AND  user.name IN ('max5') AND poster.title IN ('The Future of Urban Farming') AND last_edit_date >= 1.5 AND last_edit_date <= 5 AND view_modes.name IN ('private','public') ");
@@ -563,6 +564,12 @@
 	test_equal("fetch filtered projects - name", $result["user.name"][0], 'max5');
 	test_equal("fetch filtered projects - title", $result["title"][0], 'The Future of Urban Farming');
 	test_equal("fetch filtered projects not admin", fetch_projects_all(86, $json), 'Not Admin');
+
+	test_equal(
+		"filter interface content",
+		getFilterSelectables(85),
+		'{"user":{"name":["123","Admin","Anne Beispielfrau","bug","Max Mustermann","max5","Test-Name","testing"]},"title":{"title":["ABC","test4","dxfgbfdffdbdfxbfbxbf","AI in Modern Healthcare","The Future of Urban Farming","TestingTitle","new Project","First Project"]},"last_edit":{"min":0,"max":2147483647},"visible":{"min":0,"max":1},"view_mode":{"name":["public","private"]}}'
+	);
 
 	/*
 	name:	bug
