@@ -277,10 +277,6 @@ async function make_headers_editable(editable_columns, headers, data, i, row) {
                 await setViewOption(this.closest('tr').id.split("--nr-")[1], Number(this.value));
             };
 
-            if (await isAdmin()) {
-                selection.toggleAttribute("disabled");
-            }
-
             td.appendChild(selection);
 
         } else {
