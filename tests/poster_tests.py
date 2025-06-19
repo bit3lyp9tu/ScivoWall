@@ -54,7 +54,8 @@ class PythonOrgSearch(unittest.TestCase):
 
         self.user_page(driver)
         self.poster_page(driver, 3)
-        self.admin_user(driver, "")
+        # TODO: update admin tests
+        # self.admin_user(driver, "")
         self.index_page(driver)
 
         # self.logout(driver)

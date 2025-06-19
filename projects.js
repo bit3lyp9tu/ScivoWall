@@ -643,14 +643,12 @@ function filter_to_json(user, poster, view_mode, last_edit, visiblitly) {
 				"min": "",
 				"max": "",
 				"list": [
-					"max5"
 				]
 			},
 			"poster.title": {
 				"min": "",
 				"max": "",
 				"list": [
-					"The Future of Urban Farming"
 				]
 			},
 			"last_edit_date": {
@@ -663,27 +661,34 @@ function filter_to_json(user, poster, view_mode, last_edit, visiblitly) {
 				"min": "",
 				"max": "",
 				"list": [
-					"1"
 				]
 			},
 			"view_modes.name": {
 				"min": "",
 				"max": "",
 				"list": [
-					"private",
-					"public"
 				]
 			}
 		}
 	}`);
 
-    json["attributes"]["user.name"]["list"] = user;
-    json["attributes"]["poster.title"]["list"] = poster;
-    // json["attributes"]["last_edit_date"] = "{}";
-    json["attributes"]["visible"]["list"] = visiblitly;
-    json["attributes"]["view_modes.name"]["list"] = view_mode;
+    if (user !== "-") {
+        json["attributes"]["user.name"]["list"].push(user);
+    }
+    if (poster !== "-") {
+        json["attributes"]["poster.title"]["list"].push(poster);
+    }
+    // if (last_edit !== "-") {
+    //     json["attributes"]["last_edit_date"].push("{}");
+    // }
+    if (visiblitly !== "-") {
+        json["attributes"]["visible"]["list"].push(visiblitly);
+    }
+    if (view_mode !== "-") {
+        json["attributes"]["view_modes.name"]["list"].push(view_mode);
+    }
 
-    console.log(json);
+    console.log("request: ", json);
 
     return JSON.stringify(json);
 }
@@ -749,16 +754,21 @@ async function createFilter() {
     submit.id = "submit-filter";
     submit.value = "Submit";
     submit.onclick = async function () {
-        console.log("click");
+        const user = document.getElementById("select_user");
+        const poster = document.getElementById("select_title");
+        const view_mode = document.getElementById("select_view_mode");
+        // const last_edit = document.getElementById("last_edit");
+        const visibility = document.getElementById("visibility");
 
-        // TODO: fix filter data request
-        const user = document.getElementById("select_user").text;
-        const poster = document.getElementById("select_title").text;
-        const view_mode = document.getElementById("select_view_mode").text;
-        // const last_edit = document.getElementById("last_edit").text;
-        const visibility = document.getElementById("visibility").text;
-
-        await fetch_projects_filtered(filter_to_json(user, poster, view_mode, last_edit, visibility));
+        await fetch_projects_filtered(
+            filter_to_json(
+                user.options[user.selectedIndex].text,
+                poster.options[poster.selectedIndex].text,
+                view_mode.options[view_mode.selectedIndex].text,
+                "",
+                visibility.options[visibility.selectedIndex].text
+            )
+        );
     }
     filter.appendChild(submit);
 }
@@ -766,48 +776,9 @@ async function createFilter() {
 async function load_project_page_data() {
 
     if (await isAdmin()) {
-
-        var filter = JSON.parse(`{
-            "attributes": {
-                "user.name": {
-                    "min": "",
-                    "max": "",
-                    "list": [
-                        "max5"
-                    ]
-                },
-                "poster.title": {
-                    "min": "",
-                    "max": "",
-                    "list": [
-                    ]
-                },
-                "last_edit_date": {
-                    "min": "",
-                    "max": "",
-                    "list": [
-                    ]
-                },
-                "visible": {
-                    "min": "",
-                    "max": "",
-                    "list": [
-                        "1"
-                    ]
-                },
-                "view_modes.name": {
-                    "min": "",
-                    "max": "",
-                    "list": [
-                        "public"
-                    ]
-                }
-            }
-        }`);
-
         createFilter();
 
-        fetch_projects_filtered(JSON.stringify(filter));
+        // fetch_projects_filtered(JSON.stringify(filter));
     } else {
         // TODO: [BUG] occasionally projects are loaded in wrong order (wrong title/link)
         fetch_all_projects();
