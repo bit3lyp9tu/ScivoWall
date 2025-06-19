@@ -376,3 +376,7 @@ div#toggle_register_box {
 #posters {
     border: unset !important;
 }
+
+.filter-container {}
+
+.filter-select {}

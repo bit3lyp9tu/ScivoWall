@@ -703,6 +703,8 @@ async function createFilter() {
     const db = ["name", "title", "name"];
 
     for (let i = 0; i < json.length; i++) {
+        const container = document.createElement("div");
+        container.classList.add("filter-select");
         const select = document.createElement("select");
         select.id = "select_" + json[i];
 
@@ -717,15 +719,19 @@ async function createFilter() {
             option.text = selectables[json[i]][db[i]][j];
             select.appendChild(option);
         }
-        filter.appendChild(select);
+        container.appendChild(select);
+        filter.appendChild(container);
     }
 
+    const containerB = document.createElement("div");
+    containerB.classList.add("filter-select");
     const last_edit = document.createElement("input");
     last_edit.id = "last_edit";
     last_edit.type = "date";
     last_edit.min = unixToDate(selectables["last_edit"]["min"]);
     last_edit.max = unixToDate(selectables["last_edit"]["max"]);
-    filter.appendChild(last_edit);
+    containerB.appendChild(last_edit);
+    filter.appendChild(containerB);
 
     // const visibility_btn = document.createElement("input");
     // visibility_btn.id = "visibility";
@@ -733,6 +739,8 @@ async function createFilter() {
     // visibility_btn.indeterminate = true;
     // filter.appendChild(visibility_btn);
 
+    const containerC = document.createElement("div");
+    containerC.classList.add("filter-select");
     const visibility_select = document.createElement("select");
     visibility_select.id = "visibility";
     const mode_optionA = document.createElement("option");
@@ -748,7 +756,10 @@ async function createFilter() {
     mode_optionC.text = "1";
     visibility_select.appendChild(mode_optionC);
     filter.appendChild(visibility_select);
+    containerC.appendChild(visibility_select);
+    filter.appendChild(containerC);
 
+    const containerD = document.createElement("div");
     const submit = document.createElement("input");
     submit.type = "button";
     submit.id = "submit-filter";
@@ -770,7 +781,8 @@ async function createFilter() {
             )
         );
     }
-    filter.appendChild(submit);
+    containerD.appendChild(submit);
+    filter.appendChild(containerD);
 }
 
 async function load_project_page_data() {

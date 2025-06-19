@@ -17,7 +17,7 @@
         <button onclick="createProject()" >Create New Project</button>
     </div>
     <br>
-    <div id="filter"></div>
+    <div id="filter" class="filter-container"></div>
 
     <div id="table-container"></div>
 
