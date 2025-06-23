@@ -268,9 +268,10 @@
 	// TODO:
 	// test_equal("fetch authors user is working with", implode(',', fetch_authors(1)["name"]), '');
 
+	// TODO: delete_project needs more testing
 	test_equal("delete project", implode(",", json_decode(delete_project(1, 19), true)["title"]), 'AI in Modern Healthcare,The Future of Urban Farming');
 	test_equal("delete project db check", json_encode(getterQuery2("SELECT poster_id, title FROM poster"), true), '{"poster_id":[108,112,132,350,351,353,354],"title":["test1","test4","dxfgbfdffdbdfxbfbxbf","AI in Modern Healthcare","The Future of Urban Farming","TestingTitle","new Project"]}');
-
+	// TODO: test delete_project2
 
 	test_equal("Password complexity empty", getPwComplexityLevel(""), 0);
 	test_equal("Password complexity length", getPwComplexityLevel("aaaaaaaaaaaaa"), 1);

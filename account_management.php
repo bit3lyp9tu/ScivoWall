@@ -341,7 +341,7 @@
                 $sanitized = sanitize_filter($filtered);
 
                 $sql =  (
-                    "SELECT user.name, title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode
+                    "SELECT poster_id AS id, user.name, title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode
                     FROM poster, view_modes, user
                     WHERE poster.fk_view_mode = view_modes.ID AND poster.user_id = user.user_id"
                 ) . $sanitized["sql"];
@@ -626,6 +626,13 @@
         }
     }
 
+    function delete_project2($poster_id) {
+        return deleteQuery(
+            "DELETE FROM poster WHERE poster_id=?",
+            "i", $poster_id
+        );
+    }
+
     function delete_project($local_id, $user_id) {
 
         if ($user_id != null) {
@@ -648,10 +655,7 @@
                 "i", $poster_id
             );
 
-            $res .= deleteQuery(
-                "DELETE FROM poster WHERE poster_id=?",
-                "i", $poster_id
-            );
+            $res .= delete_project2($poster_id);
 
             /*
             if(!$res) {
@@ -765,10 +769,28 @@
         }
 
         if ($_POST['action'] == 'delete_project') {
-            $local_id = isset($_POST['local_id']) ? $_POST['local_id'] : '';
+            $id = isset($_POST['id']) ? $_POST['id'] : '';
+            $is_global = isset($_POST['is_global']) ? $_POST['is_global'] : '';
+            $filter = isset($_POST['filter']) ? $_POST['filter'] : '';;
 
             $user_id = getValidUserFromSession();
-            echo delete_project($local_id, $user_id);
+            if ($is_global) {
+
+                if (isAdmin($user_id) && $filter !== "") {
+
+                    $result = delete_project2($id);
+                    if ($result == "successfully deleted") {
+                        echo fetch_projects_all($user_id, $filter);
+                    }else{
+                        echo "[ERROR] " . $result;
+                    }
+
+                }else{
+                    echo delete_project($id, $user_id);
+                }
+            }else{
+                echo delete_project($id, $user_id);
+            }
         }
 
         if ($_POST['action'] == 'create_project') {

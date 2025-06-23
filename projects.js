@@ -37,15 +37,17 @@ function error_if_not_number(name, data) {
 }
 
 //TODO:   reloaded data after delete should include last edit time
-function deleteRow(local_id) {
-    error_if_not_number("local_id", local_id)
+function deleteRow(id, is_global, filter) {
+    error_if_not_number("id", id)
 
     $.ajax({
         type: "POST",
         url: "account_management.php",
         data: {
             action: 'delete_project',
-            local_id: Number(local_id)
+            id: Number(id),
+            is_global: !!is_global,
+            filter: filter
         },
         success: function (response) {
             loadTable(response);
@@ -193,13 +195,13 @@ function create_and_append_image_container(td) {
 
 async function change_action() {
     var param = parse_id_name(this);
-    console.log(this.value, ...param);
+    // console.log(this.value, ...param);
 
     if (param[0] == 'author-list') {
         rename_author(this, param);
     }
     if (param[0] == 'table-container') {
-        console.log("poster rename");
+        // console.log("poster rename");
 
         rename_poster(this, param);
     }
@@ -299,7 +301,7 @@ function append_additional_columns(additional_columns, i, row) {
 }
 
 // TODO:   may need an overwork
-async function createTableFromJSON(id, data, editable_columns, ...additional_columns) {
+async function createTableFromJSON(id, pk_ids, data, editable_columns, ...additional_columns) {
     const table = document.createElement("table");
     table.setAttribute("border", "1");
 
@@ -317,6 +319,10 @@ async function createTableFromJSON(id, data, editable_columns, ...additional_col
     for (let i = 0; i < data[headers[0]].length; i++) {
         const row = document.createElement("tr");
         row.id = id + "--nr-" + (i + 1);
+
+        if (pk_ids && pk_ids.length == data[headers[0]].length) {
+            row.setAttribute("pk_id", pk_ids[i]);
+        }
 
         await make_headers_editable(editable_columns, headers, data, i, row);
 
@@ -374,6 +380,12 @@ function loadTable(response) {
 
     } else {
         var data = isJSON(response) ? JSON.parse(response) : response;
+        var pk_ids = null;
+
+        if (Object.keys(data).includes("id")) {
+            pk_ids = data["id"];
+            delete data["id"];
+        }
 
         const editColumn = (index) => {
             const td = document.createElement("td");
@@ -397,17 +409,37 @@ function loadTable(response) {
             btn.className = "btn";
             btn.value = "Delete";
             btn.onclick = function () {
-                let found_id = get_found_id(this);
-                if (found_id !== null) {
-                    deleteRow(found_id);
+                if (pk_ids) {
+                    var id = $(this).closest("tr")[0].getAttribute("pk_id");
+                    if (id !== null) {
+                        var filter_elements = getFilterElements();
+
+                        deleteRow(
+                            Number(id),
+                            true,
+                            (filter_to_json(
+                                filter_elements["user"],
+                                filter_elements["poster"],
+                                filter_elements["view_mode"],
+                                filter_elements["last_edit"],
+                                filter_elements["visibility"]
+                            ))
+                        );
+                    }
+
+                } else {
+                    let found_id = get_found_id(this);
+                    if (found_id !== null) {
+                        deleteRow(found_id, false, "");
+                    }
                 }
             }
             td.appendChild(btn);
             return td;
         };
-        console.log(data);
+        // console.log(data);
 
-        createTableFromJSON("table-container", data, [0], editColumn, deleteColumn);
+        createTableFromJSON("table-container", pk_ids, data, [0], editColumn, deleteColumn);
     }
 }
 
@@ -563,7 +595,7 @@ async function fetch_authors_list() {
                         btn.onclick = function () {
                             var param = parse_id_name(this);
 
-                            console.log(param[0], param[1], this.value);
+                            // console.log(param[0], param[1], this.value);
 
                             deleteItem(...param);
                         }
@@ -571,7 +603,7 @@ async function fetch_authors_list() {
                         return td;
                     };
 
-                    createTableFromJSON("author-list", JSON.parse(response), [0], deleteColumn);
+                    createTableFromJSON("author-list", null, JSON.parse(response), [0], deleteColumn);
                 }
             }
         },
@@ -608,14 +640,14 @@ async function fetch_images() {
                             // deleteRow(this.closest('tr').id.split("--nr-")[1]);
                             var parsed_id_name = parse_id_name(this);
 
-                            console.log(parsed_id_name);
+                            // console.log(parsed_id_name);
 
                             deleteItem(parsed_id_name);
                         }
                         td.appendChild(btn);
                         return td;
                     };
-                    createTableFromJSON("image-list", JSON.parse(response), [1], deleteColumn);
+                    createTableFromJSON("image-list", null, JSON.parse(response), [1], deleteColumn);
 
                     loadImgsInTable("image-list");
                 }
@@ -689,11 +721,27 @@ function filter_to_json(user, poster, view_mode, last_edit, visiblitly) {
     return JSON.stringify(json);
 }
 
+function getFilterElements() {
+    const user = document.getElementById("select_user");
+    const poster = document.getElementById("select_title");
+    const view_mode = document.getElementById("select_view_mode");
+    // const last_edit = document.getElementById("last_edit");
+    const visibility = document.getElementById("visibility");
+
+    return {
+        "user": user.options[user.selectedIndex].text,
+        "poster": poster.options[poster.selectedIndex].text,
+        "view_mode": view_mode.options[view_mode.selectedIndex].text,
+        "last_edit": "",
+        "visibility": visibility.options[visibility.selectedIndex].text
+    };
+}
+
 async function createFilter() {
     const filter = document.getElementById("filter");
 
     var selectables = JSON.parse(await get_selectable_filters());
-    console.log(selectables);
+    // console.log(selectables);
 
     const json = ["user", "title", "view_mode"];
     const db = ["name", "title", "name"];
@@ -761,19 +809,15 @@ async function createFilter() {
     submit.id = "submit-filter";
     submit.value = "Submit";
     submit.onclick = async function () {
-        const user = document.getElementById("select_user");
-        const poster = document.getElementById("select_title");
-        const view_mode = document.getElementById("select_view_mode");
-        // const last_edit = document.getElementById("last_edit");
-        const visibility = document.getElementById("visibility");
 
+        var filter_elements = getFilterElements();
         await fetch_projects_filtered(
             filter_to_json(
-                user.options[user.selectedIndex].text,
-                poster.options[poster.selectedIndex].text,
-                view_mode.options[view_mode.selectedIndex].text,
-                "",
-                visibility.options[visibility.selectedIndex].text
+                filter_elements["user"],
+                filter_elements["poster"],
+                filter_elements["view_mode"],
+                filter_elements["last_edit"],
+                filter_elements["visibility"]
             )
         );
     }
