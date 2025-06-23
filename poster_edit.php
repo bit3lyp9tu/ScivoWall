@@ -4,11 +4,6 @@
     include_once(__DIR__ . "/" . "functions.php");
     include_once(__DIR__ . "/" . "account_management.php");
 
-    function getData() {
-        $data = isset($_GET['id']) ? $_GET['id'] : '';
-
-        return $data;
-    }
 
     // TODO:   check for all functions using poster_id if id exists
     // TODO:   check for all functions using user_id if id exists
@@ -108,41 +103,40 @@
                 }
             }else if ($old_size > $new_size) {
 
-                for ($i = $new_size; $i < $old_size; $i++) {
+                for ($i = $old_size - 1; $i > $new_size - 1; $i--) {
                     deleteBox($i+1, $poster_id);
                 }
             }
         }else{
-            for ($i=$old_size; $i > 1; $i--) {
+            for ($i=$old_size; $i > 0; $i--) {
                 // print_r($i . "\n");
                 deleteBox($i, $poster_id);
             }
             // deleteBox(1, $poster_id);
         }
     }
-    function getImage($image_id) {  //TODO:   untested
+    function getImage($image_id) {
         return json_encode(getterQuery2(
             "SELECT data FROM image WHERE image_id=?",
             $image_id
         ), true)["data"][0];
     }
-    function getFullImage($name, $poster_id) {  //TODO:   untested
+    function getFullImage($name, $poster_id) {
         return json_encode(getterQuery2(
             "SELECT file_name, type, size, last_modified, data FROM image WHERE fk_poster=? AND file_name=? LIMIT 1",
             $poster_id, $name
         ), true);
     }
 
-    function str2bin($str) {
-        $binary = '';
-        for ($i = 0; $i < strlen($str); $i++) {
-            $binary .= sprintf("%08b", ord($str[$i]));  // Converts each character to 8-bit binary
-        }
-        return  b'' . $binary;
-    }
+    // function str2bin($str) {
+    //     $binary = '';
+    //     for ($i = 0; $i < strlen($str); $i++) {
+    //         $binary .= sprintf("%08b", ord($str[$i]));  // Converts each character to 8-bit binary
+    //     }
+    //     return  b'' . $binary;
+    // }
 
     function addImage($json_data, $poster_id) {
-
 
         $count = getterQuery2("SELECT COUNT(image_id) as cnt_image_id FROM image WHERE file_name=? AND fk_poster=?", $json_data["name"], $poster_id);
         #dier($count["cnt_image_id"][0]);
@@ -237,16 +231,16 @@
         }
         return $results;
     }
-    function searchAuthor($name, $poster_id) {  //TODO:   untested
-        $result = getterQuery2(
-            "SELECT a.id AS author_id, a.name AS name, b.id AS id, b.poster_id AS poster_id
-            FROM author AS a, author_to_poster AS b
-            WHERE a.id=b.author_id AND a.name=? AND b.poster_id=?",
-            $name, $poster_id
-        );
-        return $result;
-    }
-    // TODO:   changes only author_to_poster, but not author
+    // function searchAuthor($name, $poster_id) {
+    //     $result = getterQuery2(
+    //         "SELECT a.id AS author_id, a.name AS name, b.id AS id, b.poster_id AS poster_id
+    //         FROM author AS a, author_to_poster AS b
+    //         WHERE a.id=b.author_id AND a.name=? AND b.poster_id=?",
+    //         $name, $poster_id
+    //     );
+    //     return $result;
+    // }
+    //  changes only author_to_poster, but not author
     function overwriteAuthors($poster_id, $authors) {
         $results = "";
 
@@ -376,7 +370,7 @@
         }
     }
 
-    function fetchPublicPosters() {  //TODO:   untested
+    function fetchPublicPosters() {
         $result = getterQuery2(
             "SELECT poster_id, title
             FROM poster
@@ -396,12 +390,21 @@
     function load_content($poster_id) {
         $content = new stdClass();
 
-        $content->title = getTitle($poster_id);
-        $content->authors = getAuthors($poster_id)["name"]; //direct from project
-        // $content->all_authors = ...      //other authors the user once wrote in a project// TODO:   request list of all authors the user has a connection with
-        $content->boxes = getBoxes($poster_id);
-        $content->visibility = getVisibility($poster_id);
+        $content->title = null;
+        $content->authors = array();
+        $content->boxes = array();
+        $content->visibility = null;
         $content->vis_options = getVisibilityOptions();
+
+        $count = getterQuery2("SELECT COUNT(poster_id) as cnt_poster_id FROM poster WHERE poster_id = ?", $poster_id);
+        if($count["cnt_poster_id"][0] > 0) {
+            $content->title = getTitle($poster_id);
+            $content->authors = getAuthors($poster_id)["name"]; //direct from project
+            // $content->all_authors = ...      //other authors the user once wrote in a project// TODO:   request list of all authors the user has a connection with
+            $content->boxes = getBoxes($poster_id);
+            $content->visibility = getVisibility($poster_id);
+            $content->vis_options = getVisibilityOptions();
+        }
 
         return json_encode($content);
     }

@@ -398,6 +398,122 @@
 
 	// print_r($DB_NAME);
 
+	// from poster_edit.php
+	// addAuthors
+	test_equal(
+		"add authors - get init - state",
+		implode(
+			",",
+			getterQuery2("SELECT author_id, name, poster_id FROM author_to_poster, author WHERE author_to_poster.poster_id = 351 AND author.id = author_to_poster.author_id")["name"]
+		),
+		"ChatGPT,Alice Johnson,Lina Chen"
+	);
+	addAuthors(351, array());
+	test_equal(
+		"add authors - empty",
+		implode(
+			",",
+			getterQuery2("SELECT author_id, name, poster_id FROM author_to_poster, author WHERE author_to_poster.poster_id = 351 AND author.id = author_to_poster.author_id")["name"]
+		),
+		"ChatGPT,Alice Johnson,Lina Chen"
+	);
+	addAuthors(351, array("author1", "author2"));
+	test_equal(
+		"add authors",
+		implode(
+			",",
+			getterQuery2("SELECT author_id, name, poster_id FROM author_to_poster, author WHERE author_to_poster.poster_id = 351 AND author.id = author_to_poster.author_id")["name"]
+		),
+		"ChatGPT,Alice Johnson,Lina Chen,author1,author2"
+	);
+
+	// overwriteAuthors
+	// TODO: changes only author_to_poster, but not author
+	overwriteAuthors(351, array("user1", "user2"));
+	test_equal(
+		"overwrite authors - less",
+		implode(
+			",",
+			getterQuery2("SELECT author_id, name, poster_id FROM author_to_poster, author WHERE author_to_poster.poster_id = 351 AND author.id = author_to_poster.author_id")["name"]
+		),
+		"user1,user2"
+	);
+	overwriteAuthors(351, array("user1B", "user2B"));
+	test_equal(
+		"overwrite authors - equal",
+		implode(
+			",",
+			getterQuery2("SELECT author_id, name, poster_id FROM author_to_poster, author WHERE author_to_poster.poster_id = 351 AND author.id = author_to_poster.author_id")["name"]
+		),
+		"user1B,user2B"
+	);
+	overwriteAuthors(351, array("user1C", "user2C", "user3C"));
+	test_equal(
+		"overwrite authors - greater",
+		implode(
+			",",
+			getterQuery2("SELECT author_id, name, poster_id FROM author_to_poster, author WHERE author_to_poster.poster_id = 351 AND author.id = author_to_poster.author_id")["name"]
+		),
+		"user1C,user2C,user3C"
+	);
+
+	// overwriteBoxes
+	overwriteBoxes(351, array());
+	test_equal("overwrite Boxes - all", implode(",", getterQuery2("SELECT content FROM box WHERE poster_id = 351")["content"]), "");
+	overwriteBoxes(351, array("A", "B", "C", "D", "E", "F"));
+	test_equal("overwrite Boxes - less", implode(",", getterQuery2("SELECT content FROM box WHERE poster_id = 351")["content"]), "A,B,C,D,E,F");
+	//	- test with <4
+	overwriteBoxes(351, array("ATest1", "ATest2"));
+	test_equal("overwrite Boxes - less", implode(",", getterQuery2("SELECT content FROM box WHERE poster_id = 351")["content"]), "ATest1,ATest2");
+	//	- test with ==4
+	overwriteBoxes(351, array("Test1", "Test2"));
+	test_equal("overwrite Boxes - equal", implode(",", getterQuery2("SELECT content FROM box WHERE poster_id = 351")["content"]), "Test1,Test2");
+	// 	- test with >4
+	overwriteBoxes(351, array("CTest1", "CTest2",  "CTest3", "CTest4", "CTest5"));
+	test_equal("overwrite Boxes - greater", implode(",", getterQuery2("SELECT content FROM box WHERE poster_id = 351")["content"]), "CTest1,CTest2,CTest3,CTest4,CTest5");
+
+	// TODO: test addImage
+
+	// TODO: test getImage
+
+	// TODO: test getFullImage
+
+	// setVisibility
+	test_equal("set visibilty", getterQuery2("SELECT fk_view_mode FROM poster WHERE poster_id = 351")["fk_view_mode"][0], 2);
+	setVisibility(351, 0);
+	test_equal("set visibilty", getterQuery2("SELECT fk_view_mode FROM poster WHERE poster_id = 351")["fk_view_mode"][0], 1);
+	setVisibility(351, 1);
+	test_equal("set visibilty", getterQuery2("SELECT fk_view_mode FROM poster WHERE poster_id = 351")["fk_view_mode"][0], 2);
+
+	// fetchPublicPosters
+	test_equal(
+		"fetch public posters",
+		implode(
+			",",
+			json_decode(fetchPublicPosters(), true)["title"]
+		),
+		"ABC,test4,dxfgbfdffdbdfxbfbxbf,AI in Modern Healthcare,TestingTitle"
+	);
+	setVisibility(349, 0);
+	setVisibility(351, 0);
+	test_equal(
+		"fetch public posters - post change",
+		implode(
+			",",
+			json_decode(fetchPublicPosters(), true)["title"]
+		),
+		"ABC,test4,dxfgbfdffdbdfxbfbxbf,AI in Modern Healthcare,The Future of Urban Farming,TestingTitle"
+	);
+
+	// load_content
+	test_equal("load content - does not exists", load_content(1), '{"title":null,"authors":[],"boxes":[],"visibility":null,"vis_options":["public","private"]}');
+	$content = json_decode(load_content(351), true);
+	test_equal("load content - title", $content["title"], "The Future of Urban Farming");
+	test_equal("load content - authors", implode(",", $content["authors"]), "user1C,user2C,user3C");
+	test_equal("load content - boxes", implode(",", $content["boxes"]), "CTest1,CTest2,CTest3,CTest4,CTest5");
+	test_equal("load content - visibility", $content["visibility"], 1);
+	test_equal("load content - vis_options", implode(",", $content["vis_options"]), "public,private");
+
 
 	// admin filter
 	test_equal("filter min empty", solve_min("name", json_decode(
@@ -570,6 +686,30 @@
 		getFilterSelectables(85),
 		'{"user":{"name":["123","Admin","Anne Beispielfrau","bug","Max Mustermann","max5","Test-Name","testing"]},"title":{"title":["ABC","test4","dxfgbfdffdbdfxbfbxbf","AI in Modern Healthcare","The Future of Urban Farming","TestingTitle","new Project","First Project"]},"last_edit":{"min":0,"max":2147483647},"visible":{"min":0,"max":1},"view_mode":{"name":["public","private"]}}'
 	);
+
+
+	// from account_management.php
+	// TODO: test getGlobalIDAuthor
+
+	// TODO: test rename_poster
+
+	// TODO: test rename_author
+
+	// TODO: test rename_image
+
+	// TODO: test delete_author
+
+	// TODO: test delete_image
+
+	// TODO: test getGlobalIDImage
+
+	// TODO: test fetch_images
+
+	// TODO: test fetch_img_data
+
+	// TODO: test logout
+	//	- check if session cookie is expired
+	//	- check if session in db is expired
 
 	/*
 	name:	bug

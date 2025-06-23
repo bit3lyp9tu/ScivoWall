@@ -503,7 +503,6 @@
         }
     }
 
-    // TODO:   UNTESTED
     function getGlobalIDAuthor($local_id, $user_id) {
         if ($user_id != null) {
 
@@ -524,7 +523,6 @@
         }
     }
 
-    // TODO:   UNTESTED
     function getGlobalIDImage($local_id, $user_id) {
         if ($user_id != null) {
 
@@ -545,7 +543,6 @@
         }
     }
 
-    // TODO:   UNTESTED
     function rename_author($name, $local_id, $user_id) {
 
         if ($user_id != null) {
@@ -566,7 +563,6 @@
         }
     }
 
-    // TODO:   UNTESTED
     function delete_author($local_id, $user_id) {
 
         if ($user_id != null) {
@@ -612,7 +608,6 @@
         }
     }
 
-    // TODO:   UNTESTED
     function delete_image($local_id, $user_id) {
 
         if ($user_id != null) {
