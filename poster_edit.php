@@ -348,6 +348,15 @@
         );
         return $result;
     }
+    // TODO: needs testing
+    function setViewMode2($poster_id, $view_id) {
+        $result = editQuery(
+            "UPDATE poster SET fk_view_mode = ?
+            WHERE poster_id = ?",
+            "ii", $view_id, $poster_id
+        );
+        return $result;
+    }
 
     //TODO:   function to change last_edit_date
     function updateEditDate($table, $id) {
@@ -409,6 +418,7 @@
         return json_encode($content);
     }
 
+    // TODO: use for every poster change event
     // TODO: needs testing
     function hasPermissionToChange($user_id, $poster_id) {
         if (isAdmin($user_id) === true) {
@@ -503,12 +513,23 @@
 
         if($_POST['action'] == 'set-view-option') {
 
-            $local_id = isset($_POST['local_id']) ? $_POST['local_id'] : '';
+            $poster_id = isset($_POST['poster_id']) ? $_POST['poster_id'] : '';
             $view_option = isset($_POST['view_id']) ? $_POST['view_id'] : '';
+            $is_global = isset($_POST['is_global']) ? $_POST['is_global'] : '';
 
             $user_id = getValidUserFromSession();
             if ($user_id != null) {
-                echo setViewMode($user_id, $local_id, $view_option);
+                // if (hasPermissionToChange($user_id, $poster_id) === true) {
+
+                if ($is_global && isAdmin($user_id)) {
+                    echo setViewMode2($poster_id, $view_option);
+                } else {
+                    echo setViewMode($user_id, $poster_id, $view_option);
+                }
+                // }else{
+                //     echo "Insufficient permission";
+                // }
+
             }else{
                 echo "No or invalid session";
             }

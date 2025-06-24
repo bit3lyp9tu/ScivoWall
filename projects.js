@@ -235,15 +235,16 @@ async function getViewOptions() {
     }
 }
 
-async function setViewOption(poster_id, view_id) {
+async function setViewOption(poster_id, view_id, is_global) {
     try {
         const response = await $.ajax({
             type: "POST",
             url: "poster_edit.php",
             data: {
                 action: "set-view-option",
-                local_id: poster_id,
-                view_id: (view_id + 1)
+                poster_id: poster_id,
+                view_id: (view_id + 1),
+                is_global: is_global
             }
         });
         return response;
@@ -275,8 +276,15 @@ async function make_headers_editable(editable_columns, headers, data, i, row) {
             selection.value = children.indexOf(data[header][i]);
 
             selection.onchange = async function () {
+                var id = null;
+                var is_global = $(this).closest("tr")[0].hasAttribute("pk_id");
+                if (is_global) {
+                    id = $(this).closest("tr")[0].getAttribute("pk_id");
+                } else {
+                    id = this.closest('tr').id.split("--nr-")[1];
+                }
                 // console.log("change", this.value, this.closest('tr').id.split("--nr-")[1]);
-                await setViewOption(this.closest('tr').id.split("--nr-")[1], Number(this.value));
+                await setViewOption(id, Number(this.value), is_global);
             };
 
             td.appendChild(selection);
