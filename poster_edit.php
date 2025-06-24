@@ -522,8 +522,10 @@
                 // if (hasPermissionToChange($user_id, $poster_id) === true) {
 
                 if ($is_global && isAdmin($user_id)) {
+                    updateEditDate("poster", $poster_id);
                     echo setViewMode2($poster_id, $view_option);
                 } else {
+                    // updateEditDate("poster", $poster_id); -> needs local_id
                     echo setViewMode($user_id, $poster_id, $view_option);
                 }
                 // }else{

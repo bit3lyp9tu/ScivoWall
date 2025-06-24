@@ -689,6 +689,27 @@
         return $result;
     }
 
+    //TODO:   duplicate in poster_edit.php
+    function updateEditDate2($table, $id) {
+        $attribute = array(
+            "poster" => "last_edit_date",
+            "user" => "last_login_date",
+            "image" => "upload_date"
+        );
+        $query = "UPDATE " . $table . " SET " . $table . "." . $attribute[$table] . "=UNIX_TIMESTAMP() WHERE " . $table . "." . $table . "_id=?";
+
+        if ($table="user" || $table="poster" || $table="image") {
+
+            $result = editQuery(
+                $query,
+                "i", $id
+            );
+            return $result;
+        }else{
+            return null;
+        }
+    }
+
     if(isset($_POST['action'])) {
         # evtl noch checken dass der name mindestens 3 zeichen hat (oder so)
         if ($_POST['action'] == 'register') {
@@ -864,7 +885,7 @@
             // echo "test";//$local_id . " " . $value . " " . $user_id;
 
             if ($user_id != null && isAdmin($user_id)) {
-
+                // updateEditDate2("poster", $poster_id); -> needs global poster id
                 echo $value . " " . updateVisibility($local_id, $value);
             }else{
                 echo "User not an Admin";

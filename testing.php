@@ -712,6 +712,9 @@
 	//	- check if session cookie is expired
 	//	- check if session in db is expired
 
+	// TODO: at setVisibility, setViewMode, setViewMode2 check if date gets really changed
+
+
 	/*
 	name:	bug
 	pw:
