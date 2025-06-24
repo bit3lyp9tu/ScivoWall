@@ -629,6 +629,7 @@ class PythonOrgSearch(unittest.TestCase):
                 "div#table-container>table>tr#table-container--nr-3",
             ).text.split(" ")[0],
         )
+        # TODO: check if other user cannot change
 
     def admin_user(self, driver, pw):
         # TODO:   ??? check posters set on public
@@ -713,6 +714,7 @@ class PythonOrgSearch(unittest.TestCase):
         self.assertEqual(
             [], driver.find_elements(By.CSS_SELECTOR, "div#posters>div>iframe")
         )
+        # TODO: check if admin can change other posters
 
     # TODO: test index page
     def index_page(self, driver):

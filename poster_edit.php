@@ -409,6 +409,18 @@
         return json_encode($content);
     }
 
+    // TODO: needs testing
+    function hasPermissionToChange($user_id, $poster_id) {
+        if (isAdmin($user_id) === true) {
+            return true;
+        }
+        if (getterQuery2("SELECT user_id FROM poster WHERE poster_id = ?", $poster_id)["user_id"][0] == $user_id) {
+            return true;
+        }
+
+        return false;
+    }
+
     if(isset($_POST['action'])) {
         if ($_POST['action'] == 'get-content') {
 
@@ -435,19 +447,24 @@
 
             if ($user_id != null/* && $mode == 'edit'*/) {
 
-                $title = $data["title"];
-                $authors = $data["authors"];
-                $content = $data["content"];
-                $visibility = $data["visibility"];
+                if (hasPermissionToChange($user_id, $poster_id) === true) {
 
-                setTitle($poster_id, $title);
-                updateEditDate("poster", $poster_id);
-                // addAuthors($poster_id, $authors);
-                overwriteAuthors($poster_id, $authors);
-                overwriteBoxes($poster_id, $content);
-                setVisibility($poster_id, $visibility);
+                    $title = $data["title"];
+                    $authors = $data["authors"];
+                    $content = $data["content"];
+                    $visibility = $data["visibility"];
 
-                echo "success?";
+                    setTitle($poster_id, $title);
+                    updateEditDate("poster", $poster_id);
+                    // addAuthors($poster_id, $authors);
+                    overwriteAuthors($poster_id, $authors);
+                    overwriteBoxes($poster_id, $content);
+                    setVisibility($poster_id, $visibility);
+
+                    echo "success?";
+                } else {
+                    echo "Insufficient permission";
+                }
 
             }else{
                 echo "ERROR";

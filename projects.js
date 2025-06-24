@@ -395,7 +395,7 @@ function loadTable(response) {
             elem.value = "Edit";
             elem.onclick = async function () {
                 var local_id = get_found_id(this);
-                const poster_id = await edit_translation(local_id);
+                const poster_id = pk_ids ? $(this).closest("tr")[0].getAttribute("pk_id") : await edit_translation(local_id);
                 window.location.href = "poster.php?id=" + poster_id + "&mode=private";
             }
             td.appendChild(elem);
@@ -411,7 +411,7 @@ function loadTable(response) {
             btn.onclick = function () {
                 if (pk_ids) {
                     var id = $(this).closest("tr")[0].getAttribute("pk_id");
-                    if (id !== null) {
+                    if (id) {
                         var filter_elements = getFilterElements();
 
                         deleteRow(
