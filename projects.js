@@ -823,6 +823,7 @@ async function createFilter() {
     submit.onclick = async function () {
 
         var filter_elements = getFilterElements();
+
         await fetch_projects_filtered(
             filter_to_json(
                 filter_elements["user"],
@@ -832,6 +833,15 @@ async function createFilter() {
                 filter_elements["visibility"]
             )
         );
+        // await fetch_authors_filtered(
+        //     filter_to_json(
+        //         filter_elements["user"],
+        //         filter_elements["poster"],
+        //         filter_elements["view_mode"],
+        //         filter_elements["last_edit"],
+        //         filter_elements["visibility"]
+        //     )
+        // );
     }
     containerD.appendChild(submit);
     filter.appendChild(containerD);

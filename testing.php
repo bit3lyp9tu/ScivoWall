@@ -275,7 +275,6 @@
 	delete_project_simple(349, 19);
 	test_equal("delete project simple", json_encode(getterQuery2("SELECT poster_id FROM poster"), true), '{"poster_id":[108,112,132,350,351,353,354]}');
 
-	// TODO: wrong test!
 	test_equal("delete project advanced", json_encode(getterQuery2("SELECT poster_id FROM poster"), true), '{"poster_id":[108,112,132,350,351,353,354]}');
 	create_project("del after cre", 87);
 	test_equal("delete project advanced", json_encode(getterQuery2("SELECT poster_id FROM poster"), true), '{"poster_id":[108,112,132,350,351,353,354,355]}');
@@ -526,7 +525,7 @@
 	test_equal("load content - vis_options", implode(",", $content["vis_options"]), "public,private");
 
 
-	// admin filter
+	// admin filter poster
 	test_equal("filter min empty", solve_min("name", json_decode(
 		'{
 			"attributes": {
@@ -695,6 +694,19 @@
 		WHERE poster.fk_view_mode = view_modes.ID AND poster.user_id = user.user_id"
 	) . $san["sql"];
 	test_equal("filter integrationstest - all", implode(",", getterQuery2($sql, ...$san["var"])["id"]), "108,112,132,350,351,353,354,356");
+
+	// author filter
+	test_equal(
+		"author filter - integration - all",
+		implode(",", json_decode(fetch_authors_all(85, $data), true)["author"]),
+		"Author8,Author5,ChatGPT,Lina Chen,Marcus Lee,Anne Beispielfrau,user1C,user2C,user3C"
+	);
+	test_equal(
+		"author filter - integration - single",
+		fetch_authors_all(85, $json),
+		'{"user":["max5","max5","max5"],"poster.title":["The Future of Urban Farming","The Future of Urban Farming","The Future of Urban Farming"],"author":["user1C","user2C","user3C"]}'
+	);
+
 
 	login("Admin", "PwScaDS-2025");
 	$result = json_decode(fetch_projects_all(85, $json), true);

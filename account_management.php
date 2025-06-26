@@ -442,6 +442,36 @@
         }
     }
 
+    function fetch_authors_all($user_id, $rules) {
+        if ($user_id != null) {
+            if (isAdmin($user_id)) {
+
+                $filtered = filter_projects($rules);
+                $sanitized = sanitize_filter($filtered);
+
+                $sql =  (
+                    "SELECT user.name AS user, poster.title, author.name AS author
+                    FROM author
+                    INNER JOIN author_to_poster ON author.id=author_to_poster.author_id
+                    INNER JOIN poster ON author_to_poster.poster_id=poster.poster_id
+                    INNER JOIN user ON poster.user_id=user.user_id
+                    INNER JOIN view_modes ON poster.fk_view_mode=view_modes.ID"
+                );
+
+                if (sizeof($sanitized["var"]) > 0) {
+                    $sql .= " WHERE " . substr($sanitized["sql"], 4, -1);
+                }
+
+                return json_encode(getterQuery2($sql, ...$sanitized["var"]), true);
+
+            } else {
+                return "Not Admin";
+            }
+        } else {
+            return "No or invalid session";
+        }
+    }
+
     function fetch_authors($user_id) {
         if ($user_id) {
 
@@ -700,8 +730,14 @@
 
         if ($_POST['action'] == 'fetch_authors') {
 
+            $filter = isset($_POST['filter']) ? $_POST['filter'] : '';
             $user_id = getValidUserFromSession();
-            echo fetch_authors($user_id);
+
+            if (isAdmin()) {
+                echo fetch_authors_all($user_id, $filter);
+            }else{
+                echo fetch_authors($user_id);
+            }
         }
 
         if ($_POST['action'] == 'rename-author') {
