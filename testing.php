@@ -637,6 +637,8 @@
 		}
 	}';
 	test_equal("filter projects empty", filter_projects('{}'), "");
+	$data = '{"attributes":{"user.name":{"min":"","max":"","list":[]},"poster.title":{"min":"","max":"","list":[]},"last_edit_date":{"min":"","max":"","list":[]},"visible":{"min":"","max":"","list":[]},"view_modes.name":{"min":"","max":"","list":[]}}}';
+	test_equal("filter projects no selection", filter_projects($data), "");
 	test_equal(
 		"filter projects",
 		filter_projects($json),
@@ -675,6 +677,14 @@
 		sanitize_filter(" AND last_edit_date >= 1.5 AND last_edit_date <= 5 AND user.name IN ('max5','Admin') ")["sql"],
 		" AND last_edit_date >= ? AND last_edit_date <= ? AND user.name IN (?,?) "
 	);
+
+	$san = sanitize_filter(filter_projects($data));
+	$sql =  (
+		"SELECT poster_id AS id, user.name, title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode
+		FROM poster, view_modes, user
+		WHERE poster.fk_view_mode = view_modes.ID AND poster.user_id = user.user_id"
+	) . $san["sql"];
+	test_equal("filter integrationstest - all", implode(",", getterQuery2($sql, ...$san["var"])["id"]), "108,112,132,350,351,353,354,355");
 
 	login("Admin", "PwScaDS-2025");
 	$result = json_decode(fetch_projects_all(85, $json), true);

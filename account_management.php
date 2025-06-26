@@ -272,7 +272,13 @@
                         $list[] = solve_list($keys[$i], $rules);
                     }
                 }
-                return " AND " . implode("AND", $list);
+
+                if (sizeof($list) > 0) {
+                    return " AND " . implode("AND", $list);
+                }else{
+                    return "";
+                }
+
             }else{
                 return "";
             }
