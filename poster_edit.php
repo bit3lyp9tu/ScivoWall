@@ -332,23 +332,6 @@
         return $result;
     }
 
-    function setViewMode($user_id, $local_id, $view_id) {
-        $result = editQuery(
-            "UPDATE poster SET fk_view_mode=?
-            WHERE poster_id=(
-                SELECT poster_id
-                FROM (
-                    SELECT ROW_NUMBER() OVER(ORDER BY poster_id) AS local_id, poster_id
-                    FROM poster
-                    WHERE user_id=?
-                ) AS ranked_posters
-                WHERE local_id=?
-            )",
-            "iii", $view_id, $user_id, $local_id
-        );
-        return $result;
-    }
-    // TODO: needs testing
     function setViewMode2($poster_id, $view_id) {
         $result = editQuery(
             "UPDATE poster SET fk_view_mode = ?
@@ -515,22 +498,16 @@
 
             $poster_id = isset($_POST['poster_id']) ? $_POST['poster_id'] : '';
             $view_option = isset($_POST['view_id']) ? $_POST['view_id'] : '';
-            $is_global = isset($_POST['is_global']) ? $_POST['is_global'] : '';
 
             $user_id = getValidUserFromSession();
             if ($user_id != null) {
-                // if (hasPermissionToChange($user_id, $poster_id) === true) {
 
-                if ($is_global && isAdmin($user_id)) {
+                if (hasPermissionToChange($user_id, $poster_id) === true) {
                     updateEditDate("poster", $poster_id);
                     echo setViewMode2($poster_id, $view_option);
-                } else {
-                    // updateEditDate("poster", $poster_id); -> needs local_id
-                    echo setViewMode($user_id, $poster_id, $view_option);
+                }else{
+                    echo "Insufficient permission";
                 }
-                // }else{
-                //     echo "Insufficient permission";
-                // }
 
             }else{
                 echo "No or invalid session";

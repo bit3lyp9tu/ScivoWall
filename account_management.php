@@ -401,7 +401,7 @@
                 }else{
                     return json_encode(getterQuery2(
                         // TODO: feature needs js support as well
-                        "SELECT title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode FROM poster, view_modes WHERE poster.user_id=? AND poster.fk_view_mode = view_modes.ID",
+                        "SELECT poster_id AS id, title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode FROM poster, view_modes WHERE poster.user_id=? AND poster.fk_view_mode = view_modes.ID",
                         $user_id
                     ), true);
                 }
@@ -471,7 +471,7 @@
 
                 //refresh list
                 $data = getterQuery2(
-                    "SELECT title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode FROM poster, view_modes WHERE poster.user_id=? AND fk_view_mode=view_modes.ID;",
+                    "SELECT poster_id as id, title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode FROM poster, view_modes WHERE poster.user_id=? AND fk_view_mode=view_modes.ID;",
                     $user_id
                 );
                 return json_encode($data, false);
@@ -485,30 +485,6 @@
         }
     }
 
-    function rename_poster($name, $local_id, $user_id) {
-        if ($user_id != null) {
-
-            $poster_id = getterQuery2(
-                "SELECT poster_id
-                FROM (
-                    SELECT ROW_NUMBER() OVER (ORDER BY poster_id) AS local_id, poster_id
-                    FROM poster
-                    WHERE user_id=?
-                ) AS ranked_posters
-                WHERE local_id=?",
-                $user_id, $local_id
-            )["poster_id"][0];
-
-            return editQuery(
-                "UPDATE poster SET title=? WHERE poster_id=?",
-                "si", $name, $poster_id
-            );
-
-        }else{
-            return "No or invalid session";
-        }
-    }
-    // TODO: needs testing
     function rename_poster2($name, $poster_id, $user_id) {
         if ($user_id != null) {
 
@@ -643,66 +619,24 @@
             return "No or invalid session";
         }
     }
-
-    function delete_project2($poster_id) {
+    function delete_project_simple($poster_id, $user_id) {
+        return deleteQuery(
+            "DELETE FROM poster WHERE poster_id=? AND user_id=?",
+            "ii", $poster_id, $user_id
+        );
+    }
+    function delete_project_advanced($poster_id) {
         return deleteQuery(
             "DELETE FROM poster WHERE poster_id=?",
             "i", $poster_id
         );
     }
 
-    function delete_project($local_id, $user_id) {
-
-        if ($user_id != null) {
-
-            # evtl aus der ranked_posters view herausholen statt aus der subquery
-            $poster_id = getterQuery2(
-                "SELECT poster_id
-                FROM (
-                    SELECT ROW_NUMBER() OVER (ORDER BY poster_id) AS local_id, poster_id
-                    FROM poster
-                    WHERE poster.user_id = ?
-                ) AS ranked_posters
-                WHERE local_id = ?",
-                $user_id, $local_id
-            )["poster_id"][0];
-
-            //delete all images of poster
-            $res = deleteQuery(
-                "DELETE FROM image WHERE fk_poster=?",
-                "i", $poster_id
-            );
-
-            $res .= delete_project2($poster_id);
-
-            /*
-            if(!$res) {
-                $msgs["error"][] = "deleteQuery failed...";
-            }
-            */
-            // res  checken: wenn deleteQuery true/false (boolean) zurückgibt chekcen, also fehlerbehandlung
-            //refresh list
-            $data = getterQuery2(
-                "SELECT title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode FROM poster, view_modes WHERE poster.user_id=? AND fk_view_mode=view_modes.ID",
-                $user_id
-            );
-            return json_encode($data, true);
-            # TODO:   nach jedem ausgeben von json exit 0, damit nicht ausversehen 2 oder mehr jsons konkatiniert werden
-            # exit(0);
-        }else{
-            return "No or invalid session";
-        }
-    }
-
-    function updateVisibility($id, $value) {
+    function updateVisibility2($id, $value) {
         $result = editQuery(
             "UPDATE poster SET visible=?
-            WHERE poster_id=(
-                SELECT poster_id FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY poster_id) AS local_id
-                FROM poster
-                WHERE fk_view_mode = ?
-            ) AS inner_query
-            WHERE local_id = ?)", "iii", $value, 1, $id
+            WHERE poster_id=?",
+            "ii", $value, $id
         );
         return $result;
     }
@@ -809,15 +743,14 @@
 
         if ($_POST['action'] == 'delete_project') {
             $id = isset($_POST['id']) ? $_POST['id'] : '';
-            $is_global = isset($_POST['is_global']) ? $_POST['is_global'] : '';
-            $filter = isset($_POST['filter']) ? $_POST['filter'] : '';;
+            $filter = isset($_POST['filter']) ? $_POST['filter'] : '';
 
             $user_id = getValidUserFromSession();
-            if ($is_global) {
+            if ($user_id != null) {
 
                 if (isAdmin($user_id) && $filter !== "") {
 
-                    $result = delete_project2($id);
+                    $result = delete_project_advanced($id);
                     if ($result == "successfully deleted") {
                         echo fetch_projects_all($user_id, $filter);
                     }else{
@@ -825,10 +758,15 @@
                     }
 
                 }else{
-                    echo delete_project($id, $user_id);
+                    $result = delete_project_simple($id, $user_id);
+                    if ($result == "successfully deleted") {
+                        echo fetch_projects($user_id, false);
+                    }else{
+                        echo "[ERROR] " . $result;
+                    }
                 }
             }else{
-                echo delete_project($id, $user_id);
+                echo "No or invalid session";
             }
         }
 
@@ -843,15 +781,10 @@
 
             $name = isset($_POST['name']) ? $_POST['name'] : '';
             $id = isset($_POST['id']) ? $_POST['id'] : '';
-            $is_global = isset($_POST['is_global']) ? $_POST['is_global'] : '';
 
             $user_id = getValidUserFromSession();
-
-            if ($is_global === "true") {
-                echo rename_poster2($name, $id, $user_id);
-            }else{
-                echo rename_poster($name, $id, $user_id);
-            }
+            updateEditDate2("poster", $id);
+            echo rename_poster2($name, $id, $user_id);
         }
 
         if ($_POST['action'] == 'logout') {
@@ -901,7 +834,7 @@
         }
 
         if ($_POST['action'] == 'update-visibility') {
-            $local_id = isset($_POST['id']) ? $_POST['id'] : '';
+            $id = isset($_POST['id']) ? $_POST['id'] : '';
             $value = isset($_POST['value']) ? $_POST['value'] : '';
 
             $user_id = getValidUserFromSession();
@@ -909,8 +842,8 @@
             // echo "test";//$local_id . " " . $value . " " . $user_id;
 
             if ($user_id != null && isAdmin($user_id)) {
-                // updateEditDate2("poster", $poster_id); -> needs global poster id
-                echo $value . " " . updateVisibility($local_id, $value);
+                updateEditDate2("poster", $id);
+                echo $value . " " . updateVisibility2($id, $value);
             }else{
                 echo "User not an Admin";
             }

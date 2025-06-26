@@ -37,7 +37,7 @@ function error_if_not_number(name, data) {
 }
 
 //TODO:   reloaded data after delete should include last edit time
-function deleteRow(id, is_global, filter) {
+function deleteRow(id, filter) {
     error_if_not_number("id", id)
 
     $.ajax({
@@ -46,7 +46,6 @@ function deleteRow(id, is_global, filter) {
         data: {
             action: 'delete_project',
             id: Number(id),
-            is_global: !!is_global,
             filter: filter
         },
         success: function (response) {
@@ -149,15 +148,14 @@ function rename_author(_this, id) {
     });
 }
 
-function rename_poster(_this, id, is_global) {
+function rename_poster(_this, id) {
     $.ajax({
         type: "POST",
         url: "account_management.php",
         data: {
             action: "rename_poster",
             name: _this.value,
-            id: id,
-            is_global: is_global
+            id: id
         },
         success: function (response) {
             console.log(response);
@@ -173,9 +171,11 @@ async function insert_visibility_column(_this, data, td, header, i) {
     elem.setAttribute("type", "checkbox");
     elem.checked = data[header][i];
     elem.onclick = function () {
-        let found_id = get_found_id(this);
-        if (found_id !== null) {
-            updateVisibility(found_id, this.checked ? 1 : 0);
+        var id = $(this).closest("tr")[0].getAttribute("pk_id");
+        if (id) {
+            updateVisibility(id, this.checked ? 1 : 0);
+        } else {
+            console.error("pk id not found");
         }
     }
     // TODO: needs testing
@@ -210,7 +210,7 @@ async function change_action() {
     }
 
     if (param[0] == 'table-container') {
-        rename_poster(this, id, is_global);
+        rename_poster(this, id);
     }
     load_project_page_data();
 }
@@ -250,8 +250,7 @@ async function setViewOption(poster_id, view_id, is_global) {
             data: {
                 action: "set-view-option",
                 poster_id: poster_id,
-                view_id: (view_id + 1),
-                is_global: is_global
+                view_id: (view_id + 1)
             }
         });
         return response;
@@ -386,7 +385,7 @@ async function isAdmin() {
     }
 }
 
-function loadTable(response) {
+async function loadTable(response) {
     $('#table-container').empty();
 
     if (response == "No results found") {
@@ -423,30 +422,26 @@ function loadTable(response) {
             btn.type = "button";
             btn.className = "btn";
             btn.value = "Delete";
-            btn.onclick = function () {
+            btn.onclick = async function () {
                 if (pk_ids) {
                     var id = $(this).closest("tr")[0].getAttribute("pk_id");
-                    if (id) {
+
+                    var filter = "";
+
+                    if (await isAdmin()) {
                         var filter_elements = getFilterElements();
 
-                        deleteRow(
-                            Number(id),
-                            true,
-                            (filter_to_json(
-                                filter_elements["user"],
-                                filter_elements["poster"],
-                                filter_elements["view_mode"],
-                                filter_elements["last_edit"],
-                                filter_elements["visibility"]
-                            ))
-                        );
+                        filter = (filter_to_json(
+                            filter_elements["user"],
+                            filter_elements["poster"],
+                            filter_elements["view_mode"],
+                            filter_elements["last_edit"],
+                            filter_elements["visibility"]
+                        ));
                     }
-
+                    deleteRow(Number(id), filter);
                 } else {
-                    let found_id = get_found_id(this);
-                    if (found_id !== null) {
-                        deleteRow(found_id, false, "");
-                    }
+                    console.error("no pk_ids");
                 }
             }
             td.appendChild(btn);
@@ -454,7 +449,7 @@ function loadTable(response) {
         };
         // console.log(data);
 
-        createTableFromJSON("table-container", pk_ids, data, pk_ids ? [1] : [0], editColumn, deleteColumn);
+        createTableFromJSON("table-container", pk_ids, data, await isAdmin() ? [1] : [0], editColumn, deleteColumn);
     }
 }
 
@@ -530,6 +525,8 @@ async function fetch_all_projects() {
             if (response != "No or invalid session") {
                 if (response != "No results found") {
                     loadTable(response);
+                    console.log(JSON.parse(response));
+
                     toastr["success"]("Loading Projects");
                 } else {
                     toastr["warning"]("No results found");

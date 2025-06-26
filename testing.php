@@ -246,9 +246,9 @@
 	test_equal("is user admin", isAdmin(85), true);
 
 	editQuery("UPDATE poster SET fk_view_mode=?", "i", 1);
-	updateVisibility(1, true);
+	updateVisibility2(108, true);
 	test_equal("update visibility", json_encode(getterQuery2("SELECT visible FROM poster"), true), '{"visible":[1,0,0,0,1,1,0]}');
-	updateVisibility(1, false);
+	updateVisibility2(108, false);
 	test_equal("update visibility", json_encode(getterQuery2("SELECT visible FROM poster"), true), '{"visible":[0,0,0,0,1,1,0]}');
 
 	test_equal("poster does not exist", isPublic(1), 0);
@@ -268,10 +268,20 @@
 	// TODO:
 	// test_equal("fetch authors user is working with", implode(',', fetch_authors(1)["name"]), '');
 
-	// TODO: delete_project needs more testing
-	test_equal("delete project", implode(",", json_decode(delete_project(1, 19), true)["title"]), 'AI in Modern Healthcare,The Future of Urban Farming');
-	test_equal("delete project db check", json_encode(getterQuery2("SELECT poster_id, title FROM poster"), true), '{"poster_id":[108,112,132,350,351,353,354],"title":["test1","test4","dxfgbfdffdbdfxbfbxbf","AI in Modern Healthcare","The Future of Urban Farming","TestingTitle","new Project"]}');
-	// TODO: test delete_project2
+
+	$pre_delete = json_encode(getterQuery2("SELECT poster_id FROM poster"), true);
+	delete_project_simple(108, 19);
+	test_equal("delete project simple - no change", json_encode(getterQuery2("SELECT poster_id FROM poster"), true), $pre_delete);
+	delete_project_simple(349, 19);
+	test_equal("delete project simple", json_encode(getterQuery2("SELECT poster_id FROM poster"), true), '{"poster_id":[108,112,132,350,351,353,354]}');
+
+	// TODO: wrong test!
+	test_equal("delete project advanced", json_encode(getterQuery2("SELECT poster_id FROM poster"), true), '{"poster_id":[108,112,132,350,351,353,354]}');
+	create_project("del after cre", 87);
+	test_equal("delete project advanced", json_encode(getterQuery2("SELECT poster_id FROM poster"), true), '{"poster_id":[108,112,132,350,351,353,354,355]}');
+	delete_project_advanced(355);
+	test_equal("delete project advanced", json_encode(getterQuery2("SELECT poster_id FROM poster"), true), '{"poster_id":[108,112,132,350,351,353,354]}');
+
 
 	test_equal("Password complexity empty", getPwComplexityLevel(""), 0);
 	test_equal("Password complexity length", getPwComplexityLevel("aaaaaaaaaaaaa"), 1);
@@ -287,13 +297,13 @@
 	test_equal("new project creation success", $new_proj, "success success success");
 
 	$check_poster = getterQuery2("SELECT poster_id, title FROM poster");
-	test_equal("new project check poster", json_encode($check_poster, true), '{"poster_id":[108,112,132,350,351,353,354,355],"title":["test1","test4","dxfgbfdffdbdfxbfbxbf","AI in Modern Healthcare","The Future of Urban Farming","TestingTitle","new Project","First Project"]}');
+	test_equal("new project check poster", json_encode($check_poster, true), '{"poster_id":[108,112,132,350,351,353,354,356],"title":["test1","test4","dxfgbfdffdbdfxbfbxbf","AI in Modern Healthcare","The Future of Urban Farming","TestingTitle","new Project","First Project"]}');
 
 	$check_author = getterQuery2("SELECT id, name FROM author");
 	test_equal("new project heck author", json_encode($check_author, true), '{"id":[35,38,348,349,351,352,353,354,355,356,357],"name":["Author5","Author8","Du","Max","BlaBla","ChatGPT","Alice Johnson","Dr. Rahul Mehta","Lina Chen","Marcus Lee","Anne Beispielfrau"]}');
 
 	$check_a_to_p = getterQuery2("SELECT id, author_id, poster_id FROM author_to_poster");
-	test_equal("new project heck author_to_poster", json_encode($check_a_to_p, true), '{"id":[16,18,370,371,372,376,377,378,379],"author_id":[38,35,352,355,356,352,353,355,357],"poster_id":[108,108,350,350,350,351,351,351,355]}');
+	test_equal("new project heck author_to_poster", json_encode($check_a_to_p, true), '{"id":[16,18,370,371,372,376,377,378,379],"author_id":[38,35,352,355,356,352,353,355,357],"poster_id":[108,108,350,350,350,351,351,351,356]}');
 
 	addBox(351, "Text Content");
 	addBox(351, "Text Content 2");
@@ -311,7 +321,7 @@
 	$lasest_author_id = getLastInsertID();
 	connectAuthorToPoster($lasest_author_id, 351);
 	$check_a_t_p = getterQuery2("SELECT * FROM author_to_poster");
-	test_equal("add author to poster", json_encode($check_a_t_p, true), '{"id":[16,18,370,371,372,376,377,378,379,380],"author_id":[38,35,352,355,356,352,353,355,357,358],"poster_id":[108,108,350,350,350,351,351,351,355,351]}');
+	test_equal("add author to poster", json_encode($check_a_t_p, true), '{"id":[16,18,370,371,372,376,377,378,379,380],"author_id":[38,35,352,355,356,352,353,355,357,358],"poster_id":[108,108,350,350,350,351,351,351,356,351]}');
 
 	test_equal("title getter", getTitle(108), 'test1');
 	test_equal("title setter A", setTitle(108, 'ABC'), "successfully updated");
@@ -353,10 +363,10 @@
 	// test_equal("overwrite boxes empty-removal", implode(",", getBoxes(3)), '');
 
 	test_equal("get visibility options", implode(",", getVisibilityOptions()), 'public,private');
-	test_equal("get poster visibility", getVisibility(355), 2);
+	test_equal("get poster visibility", getVisibility(356), 2);
 
 	test_equal("get poster visibility", getVisibility(351), 1);
-	test_equal("set visibility mode", setViewMode(19, 2, 2), 'successfully updated');
+	test_equal("set visibility mode", setViewMode2(351, 2), 'successfully updated');
 	test_equal("get poster visibility", getVisibility(351), 2);
 
 	//update last edit date
@@ -684,7 +694,7 @@
 		FROM poster, view_modes, user
 		WHERE poster.fk_view_mode = view_modes.ID AND poster.user_id = user.user_id"
 	) . $san["sql"];
-	test_equal("filter integrationstest - all", implode(",", getterQuery2($sql, ...$san["var"])["id"]), "108,112,132,350,351,353,354,355");
+	test_equal("filter integrationstest - all", implode(",", getterQuery2($sql, ...$san["var"])["id"]), "108,112,132,350,351,353,354,356");
 
 	login("Admin", "PwScaDS-2025");
 	$result = json_decode(fetch_projects_all(85, $json), true);
@@ -702,7 +712,11 @@
 	// from account_management.php
 	// TODO: test getGlobalIDAuthor
 
-	// TODO: test rename_poster
+	// rename_poster
+	test_equal("rename poster - no user", rename_poster2("abc", 356, null), "No or invalid session");
+	test_equal("rename poster check previous", getterQuery2("SELECT title FROM poster WHERE title='First Project'")["title"][0], "First Project");
+	rename_poster2("Second Project", 356, 19);
+	test_equal("rename poster ", getterQuery2("SELECT title FROM poster WHERE poster_id=356")["title"][0], "Second Project");
 
 	// TODO: test rename_author
 
@@ -722,7 +736,6 @@
 	//	- check if session cookie is expired
 	//	- check if session in db is expired
 
-	// TODO: at setVisibility, setViewMode, setViewMode2 check if date gets really changed
 
 
 	/*
