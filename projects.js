@@ -131,14 +131,14 @@ function updateVisibility(id, value) {
     });
 }
 
-function rename_author(_this, param) {
+function rename_author(_this, id) {
     $.ajax({
         type: "POST",
         url: "account_management.php",
         data: {
             action: "rename-author",
             name: _this.value,
-            id: Number(param[1])
+            id: id
         },
         success: function (response) {
             console.log(response);
@@ -149,14 +149,15 @@ function rename_author(_this, param) {
     });
 }
 
-function rename_poster(_this, param) {
+function rename_poster(_this, id, is_global) {
     $.ajax({
         type: "POST",
         url: "account_management.php",
         data: {
             action: "rename_poster",
             name: _this.value,
-            id: Number(param[1])
+            id: id,
+            is_global: is_global
         },
         success: function (response) {
             console.log(response);
@@ -194,16 +195,22 @@ function create_and_append_image_container(td) {
 }
 
 async function change_action() {
+    const is_global = $(this).closest("tr")[0].hasAttribute("pk_id");
     var param = parse_id_name(this);
+    var id = Number(param[1]);
+
     // console.log(this.value, ...param);
 
     if (param[0] == 'author-list') {
-        rename_author(this, param);
+        rename_author(this, id);
     }
-    if (param[0] == 'table-container') {
-        // console.log("poster rename");
 
-        rename_poster(this, param);
+    if (is_global) {
+        id = $(this).closest("tr")[0].getAttribute("pk_id");
+    }
+
+    if (param[0] == 'table-container') {
+        rename_poster(this, id, is_global);
     }
     load_project_page_data();
 }
@@ -447,7 +454,7 @@ function loadTable(response) {
         };
         // console.log(data);
 
-        createTableFromJSON("table-container", pk_ids, data, [0], editColumn, deleteColumn);
+        createTableFromJSON("table-container", pk_ids, data, pk_ids ? [1] : [0], editColumn, deleteColumn);
     }
 }
 
@@ -836,6 +843,7 @@ async function createFilter() {
 async function load_project_page_data() {
 
     if (await isAdmin()) {
+        $("#filter").empty();
         createFilter();
 
         // fetch_projects_filtered(JSON.stringify(filter));

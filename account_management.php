@@ -502,6 +502,18 @@
             return "No or invalid session";
         }
     }
+    // TODO: needs testing
+    function rename_poster2($name, $poster_id, $user_id) {
+        if ($user_id != null) {
+
+            return editQuery(
+                "UPDATE poster SET title=? WHERE poster_id=?",
+                "si", $name, $poster_id
+            );
+        }else{
+            return "No or invalid session";
+        }
+    }
 
     function getGlobalIDAuthor($local_id, $user_id) {
         if ($user_id != null) {
@@ -824,10 +836,16 @@
         if ($_POST['action'] == 'rename_poster') {
 
             $name = isset($_POST['name']) ? $_POST['name'] : '';
-            $id = isset($_POST['id']) ? $_POST['id'] : 0;
+            $id = isset($_POST['id']) ? $_POST['id'] : '';
+            $is_global = isset($_POST['is_global']) ? $_POST['is_global'] : '';
+
             $user_id = getValidUserFromSession();
 
-            echo rename_poster($name, $id, $user_id);
+            if ($is_global === "true") {
+                echo rename_poster2($name, $id, $user_id);
+            }else{
+                echo rename_poster($name, $id, $user_id);
+            }
         }
 
         if ($_POST['action'] == 'logout') {
