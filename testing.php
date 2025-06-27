@@ -335,7 +335,6 @@
 	deleteBox(2, 3);
 	test_equal("delete box", implode(",", getBoxes(3)), '');
 
-	// TODO:   rename_author
 
 	removeAuthor(4, 351);
 	test_equal("remove author", implode(",", getAuthors(351)["name"]), 'ChatGPT,Alice Johnson,Lina Chen');
@@ -482,11 +481,24 @@
 	overwriteBoxes(351, array("CTest1", "CTest2",  "CTest3", "CTest4", "CTest5"));
 	test_equal("overwrite Boxes - greater", implode(",", getterQuery2("SELECT content FROM box WHERE poster_id = 351")["content"]), "CTest1,CTest2,CTest3,CTest4,CTest5");
 
-	// TODO: test addImage
+	// addImage
+	$img_data = [
+		"name" => "test-img",
+		"type" => "test",
+		"size" => 0,
+		"last_modified" => 1,
+		"webkit_relative_path" => "./",
+		"data" => "abc"
+	];
+	addImage($img_data, 112);
+	test_equal("upload image", getterQuery2("SELECT image_id, file_name, last_edit_date, type, size, fk_poster FROM image")["image_id"][0], 221);
+	addImage($img_data, 112);
+	test_equal("upload image duplicates in same poster", getterQuery2("SELECT COUNT(image_id) AS count FROM image")["count"][0], 1);
+	// print_r(getterQuery2("SELECT image_id, file_name, last_edit_date, type, size, SUBSTR(data, 1, 30) fk_poster FROM image"));
 
-	// TODO: test getImage
-
-	// TODO: test getFullImage
+	// getFullImage
+	test_equal("get image", getFullImage("abc", 112), '{"file_name":[],"type":[],"size":[],"last_modified":[],"data":[]}');
+	test_equal("get image", getFullImage("test-img", 112), '{"file_name":["test-img"],"type":["test"],"size":[0],"last_modified":[1],"data":["abc"]}');
 
 	// setVisibility
 	test_equal("set visibilty", getterQuery2("SELECT fk_view_mode FROM poster WHERE poster_id = 351")["fk_view_mode"][0], 2);
@@ -734,7 +746,11 @@
 	rename_author("test123", 18, 85);
 	test_equal("rename author", getterQuery2("SELECT name FROM author WHERE id=35")["name"][0], "test123");
 
-	// TODO: test rename_image
+	// rename_image
+	test_equal("rename image no user", rename_image("abc", 221, 0), "No or invalid session");
+	test_equal("rename image pre-check", implode(",", getterQuery2("SELECT file_name FROM image")["file_name"]), "test-img");
+	rename_image("abc", 221, 85);
+	test_equal("rename image pre-check", implode(",", getterQuery2("SELECT file_name FROM image")["file_name"]), "abc");
 
 	// delete_author
 	test_equal("delete author - preview", implode(",", json_decode(fetch_authors_all(85, ""), true)["id"]), "16,18,370,371,372,379,387,388,389");
@@ -765,9 +781,11 @@
 	// 	"38,348,349,351,353,354,356,357,358,359,360,361,362,363,364,365,366,367"
 	// );
 
-	// TODO: test delete_image
-
-	// TODO: test getGlobalIDImage
+	// delete_image
+	test_equal("delete image does not exist", delete_image(1, 84), "successfully deleted");
+	test_equal("delete image pre-check", implode(",", getterQuery2("SELECT image_id FROM image")["image_id"]), "221");
+	delete_image(221, 84);
+	test_equal("delete image", implode(",", getterQuery2("SELECT image_id FROM image")["image_id"]), "");
 
 	// TODO: test fetch_images
 

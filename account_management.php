@@ -527,26 +527,6 @@
         }
     }
 
-    function getGlobalIDImage($local_id, $user_id) {
-        if ($user_id != null) {
-
-            return getterQuery2(
-                "SELECT image_id
-                FROM (
-                    SELECT ROW_NUMBER() OVER (ORDER BY image_id) AS local_id, image_id
-                    FROM image
-                    INNER JOIN poster ON fk_poster=poster_id
-                    WHERE user_id=?
-                ) AS ranked_images
-                WHERE local_id=?",
-                $user_id, $local_id
-            )["image_id"][0];
-
-        }else{
-            return "No or invalid session";
-        }
-    }
-
     function rename_author($name, $id, $user_id) {
 
         if ($user_id != null) {
@@ -606,14 +586,13 @@
         }
     }
 
-    function rename_image($name, $local_id, $user_id) {
+    function rename_image($name, $id, $user_id) {
         if ($user_id != null) {
 
-            $id = getGlobalIDImage($local_id, $user_id);
             if (is_numeric($id) && $id > 0) {
                 $res = editQuery(
                     "UPDATE image SET file_name=? WHERE image_id=?",
-                    $name, $id
+                    "si", $name, $id
                 );
 
                 return $res;
@@ -625,11 +604,9 @@
         }
     }
 
-    function delete_image($local_id, $user_id) {
+    function delete_image($id, $user_id) {
 
         if ($user_id != null) {
-
-            $id = getGlobalIDImage($local_id, $user_id);
             if (is_numeric($id) && $id > 0) {
                 return deleteQuery(
                     "DELETE FROM image WHERE image_id=?",

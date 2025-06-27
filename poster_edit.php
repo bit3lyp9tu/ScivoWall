@@ -115,12 +115,12 @@
             // deleteBox(1, $poster_id);
         }
     }
-    function getImage($image_id) {
-        return json_encode(getterQuery2(
-            "SELECT data FROM image WHERE image_id=?",
-            $image_id
-        ), true)["data"][0];
-    }
+    // function getImage($image_id) {
+    //     return json_encode(getterQuery2(
+    //         "SELECT data FROM image WHERE image_id=?",
+    //         $image_id
+    //     ), true)["data"][0];
+    // }
     function getFullImage($name, $poster_id) {
         return json_encode(getterQuery2(
             "SELECT file_name, type, size, last_modified, data FROM image WHERE fk_poster=? AND file_name=? LIMIT 1",

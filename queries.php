@@ -218,6 +218,7 @@
 
     // TODO:   	using from_unixtime(last_edit_date) AS 'last edit' as selector throws errors
 	// - 		using * and JOIN throws errors
+	// -		SUBSTR(data, 1, 30) in select returns errors
     function getterQuery2($sql, ...$param) {
 	    $out = array();
 
