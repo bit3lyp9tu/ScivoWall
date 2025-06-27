@@ -450,7 +450,7 @@
                 $sanitized = sanitize_filter($filtered);
 
                 $sql =  (
-                    "SELECT user.name AS user, poster.title, author.name AS author
+                    "SELECT author_to_poster.id AS id, user.name AS user, poster.title, author.name AS author
                     FROM author
                     INNER JOIN author_to_poster ON author.id=author_to_poster.author_id
                     INNER JOIN poster ON author_to_poster.poster_id=poster.poster_id
@@ -476,7 +476,7 @@
         if ($user_id) {
 
             return json_encode(getterQuery2(
-                "SELECT author.name AS name, poster.title AS title
+                "SELECT author_to_poster.id AS id, author.name AS name, poster.title AS title
                 FROM author
                 INNER JOIN author_to_poster ON author.id=author_to_poster.author_id
                 INNER JOIN poster ON author_to_poster.poster_id=poster.poster_id
@@ -527,26 +527,6 @@
         }
     }
 
-    function getGlobalIDAuthor($local_id, $user_id) {
-        if ($user_id != null) {
-
-            return getterQuery2(
-                "SELECT author_id
-                FROM (
-                    SELECT ROW_NUMBER() OVER (ORDER BY author_to_poster.id) AS local_id, author_to_poster.author_id
-                    FROM author_to_poster
-                    INNER JOIN poster ON author_to_poster.poster_id=poster.poster_id
-                    WHERE user_id=?
-                ) AS ranked_authors
-                WHERE local_id=?",
-                $user_id, $local_id
-            )["author_id"][0];
-
-        }else{
-            return "No or invalid session";
-        }
-    }
-
     function getGlobalIDImage($local_id, $user_id) {
         if ($user_id != null) {
 
@@ -567,15 +547,18 @@
         }
     }
 
-    function rename_author($name, $local_id, $user_id) {
+    function rename_author($name, $id, $user_id) {
 
         if ($user_id != null) {
 
-            $id = getGlobalIDAuthor($local_id, $user_id);
             if (is_numeric($id) && $id > 0) {
 
                 return editQuery(
-                    "UPDATE author SET name=? WHERE id=?",
+                    "UPDATE author
+                    INNER JOIN author_to_poster
+                    ON author.id=author_to_poster.author_id
+                    SET name=?
+                    WHERE author_to_poster.id=?",
                     "si", $name, $id
                 );
 
@@ -587,21 +570,31 @@
         }
     }
 
-    function delete_author($local_id, $user_id) {
+    function delete_author($id, $user_id) {
 
         if ($user_id != null) {
-
-            $id = getGlobalIDAuthor($local_id, $user_id);
             if (is_numeric($id) && $id > 0) {
-                $res = deleteQuery(
-                    "DELETE FROM author WHERE id=?",
-                    "i", $id
-                );
+
+                $author_id = null;
+                if (getterQuery2("SELECT COUNT(author_id) AS count FROM author_to_poster WHERE id=?", $id)["count"][0] === 1) {
+                    $author_id = getterQuery2("SELECT author_id FROM author_to_poster WHERE id=?", $id)["author_id"][0];
+                }
 
                 $res2 = deleteQuery(
-                    "DELETE FROM author_to_poster WHERE author_id=?",
+                    "DELETE FROM author_to_poster WHERE id=?",
                     "i", $id
                 );
+
+                // TODO: delete author if no longer in author_to_poster
+                // print_r($author_id . " " . $id . "\n");
+                // if ($author_id) {
+                //     $res = deleteQuery(
+                //         "DELETE FROM author WHERE id=?",
+                //         "i", $author_id
+                //     );
+                // }else{
+                // }
+                $res = "";
 
                 return $res . " " . $res2;
 
@@ -728,33 +721,37 @@
             echo fetch_projects_all($user_id, $filter);
         }
 
+        if ($_POST['action'] == 'fetch_filtered_authors') {
+
+            $filter = isset($_POST['filter']) ? $_POST['filter'] : '';
+            $user_id = getValidUserFromSession();
+
+            echo fetch_authors_all($user_id, $filter);
+        }
+
         if ($_POST['action'] == 'fetch_authors') {
 
             $filter = isset($_POST['filter']) ? $_POST['filter'] : '';
             $user_id = getValidUserFromSession();
 
-            if (isAdmin()) {
-                echo fetch_authors_all($user_id, $filter);
-            }else{
-                echo fetch_authors($user_id);
-            }
+            echo fetch_authors($user_id);
         }
 
         if ($_POST['action'] == 'rename-author') {
 
             $name = isset($_POST['name']) ? $_POST['name'] : '';
-            $local_id = isset($_POST['id']) ? $_POST['id'] : 0;
+            $id = isset($_POST['id']) ? $_POST['id'] : 0;
             $user_id = getValidUserFromSession();
 
-            echo rename_author($name, $local_id, $user_id);
+            echo rename_author($name, $id, $user_id);
         }
 
         if ($_POST['action'] == 'delete-author') {
 
-            $local_id = isset($_POST['id']) ? $_POST['id'] : 0;
+            $id = isset($_POST['id']) ? $_POST['id'] : 0;
             $user_id = getValidUserFromSession();
 
-            echo delete_author($local_id, $user_id);
+            echo delete_author($id, $user_id);
         }
 
         if ($_POST['action'] == 'fetch_images') {

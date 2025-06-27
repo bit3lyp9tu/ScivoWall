@@ -63,17 +63,23 @@ function deleteRow(id, filter) {
     });
 }
 
-function delete_author(local_id) {
+function delete_author(id) {
     $.ajax({
         type: "POST",
         url: "account_management.php",
         data: {
             action: "delete-author",
-            id: Number(local_id)
+            id: Number(id)
         },
-        success: function (response) {
+        success: async function (response) {
             console.log(response);
-            fetch_authors_list();
+            if (await isAdmin()) {
+                // fetch_authors_filtered();
+                console.log(response);
+
+            } else {
+                fetch_authors_list();
+            }
         },
         error: function (err) {
             console.error(err);
@@ -199,16 +205,27 @@ async function change_action() {
     var param = parse_id_name(this);
     var id = Number(param[1]);
 
-    // console.log(this.value, ...param);
-
-    if (param[0] == 'author-list') {
-        rename_author(this, id);
-    }
 
     if (is_global) {
         id = $(this).closest("tr")[0].getAttribute("pk_id");
+        if (await isAdmin()) {
+            var filter_elements = getFilterElements();
+        }
     }
-
+    if (param[0] == 'author-list') {
+        rename_author(this, id);
+        if (is_global && await isAdmin()) {
+            await fetch_authors_filtered(
+                filter_to_json(
+                    filter_elements["user"],
+                    filter_elements["poster"],
+                    filter_elements["view_mode"],
+                    filter_elements["last_edit"],
+                    filter_elements["visibility"]
+                )
+            );
+        }
+    }
     if (param[0] == 'table-container') {
         rename_poster(this, id);
     }
@@ -525,7 +542,7 @@ async function fetch_all_projects() {
             if (response != "No or invalid session") {
                 if (response != "No results found") {
                     loadTable(response);
-                    console.log(JSON.parse(response));
+                    // console.log(JSON.parse(response));
 
                     toastr["success"]("Loading Projects");
                 } else {
@@ -583,6 +600,86 @@ async function fetch_projects_filtered(filter) {
     });
 }
 
+function remove_local_data(local_id, data) {
+    Object.keys(data).forEach(key => {
+        data[key].splice(local_id, 1);
+    });
+}
+
+async function fetch_authors_filtered(filter) {
+    document.getElementById("author-list").replaceChildren();
+
+    $.ajax({
+        type: "POST",
+        url: "account_management.php",
+        data: {
+            action: 'fetch_filtered_authors',
+            filter: filter
+        },
+        success: function (response) {
+            // console.log(JSON.parse(response));
+
+            if (response != "No or invalid session") {
+                if (response != "No results found") {
+                    var data = isJSON(response) ? JSON.parse(response) : response;
+                    var pk_ids = null;
+
+                    if (Object.keys(data).includes("id")) {
+                        pk_ids = data["id"];
+                        delete data["id"];
+                    }
+
+                    function deleteColumn(index) {
+                        const td = document.createElement("td");
+                        const btn = document.createElement('input');
+                        btn.type = "button";
+                        btn.className = "btn";
+                        btn.value = "Delete";
+                        btn.onclick = async function () {
+
+                            if (pk_ids) {
+                                var id = $(this).closest("tr")[0].getAttribute("pk_id");
+
+                                var filter = "";
+
+                                if (await isAdmin()) {
+                                    var filter_elements = getFilterElements();
+
+                                    filter = (filter_to_json(
+                                        filter_elements["user"],
+                                        filter_elements["poster"],
+                                        filter_elements["view_mode"],
+                                        filter_elements["last_edit"],
+                                        filter_elements["visibility"]
+                                    ));
+                                }
+                                delete_author(id);
+                                $("#author-list").empty();
+
+                                const local_id = parse_id_name(this);
+                                remove_local_data(local_id, data);
+                                pk_ids.splice(local_id, 1);
+                                // console.log(data);
+
+                                createTableFromJSON("author-list", pk_ids, data, [2], deleteColumn);
+                            } else {
+                                console.error("no pk_ids");
+                            }
+                        }
+                        td.appendChild(btn);
+                        return td;
+                    };
+
+                    createTableFromJSON("author-list", pk_ids, data, [2], deleteColumn);
+                }
+            }
+        },
+        error: function (err) {
+            console.error(err);
+        }
+    });
+}
+
 async function fetch_authors_list() {
     document.getElementById("author-list").replaceChildren();
 
@@ -597,6 +694,13 @@ async function fetch_authors_list() {
 
             if (response != "No or invalid session") {
                 if (response != "No results found") {
+                    var data = isJSON(response) ? JSON.parse(response) : response;
+                    var pk_ids = null;
+
+                    if (Object.keys(data).includes("id")) {
+                        pk_ids = data["id"];
+                        delete data["id"];
+                    }
 
                     function deleteColumn(index) {
                         const td = document.createElement("td");
@@ -605,17 +709,26 @@ async function fetch_authors_list() {
                         btn.className = "btn";
                         btn.value = "Delete";
                         btn.onclick = function () {
-                            var param = parse_id_name(this);
 
-                            // console.log(param[0], param[1], this.value);
+                            if (pk_ids) {
+                                var id = $(this).closest("tr")[0].getAttribute("pk_id");
 
-                            deleteItem(...param);
+                                delete_author(id);
+                                $("#author-list").empty();
+
+                                const local_id = parse_id_name(this);
+                                remove_local_data(local_id, data);
+                                pk_ids.splice(local_id, 1);
+
+                                createTableFromJSON("author-list", pk_ids, data, [2], deleteColumn);
+                            } else {
+                                console.error("no pk_ids");
+                            }
                         }
                         td.appendChild(btn);
                         return td;
                     };
-
-                    createTableFromJSON("author-list", null, JSON.parse(response), [0], deleteColumn);
+                    createTableFromJSON("author-list", pk_ids, data, [0], deleteColumn);
                 }
             }
         },
@@ -833,15 +946,15 @@ async function createFilter() {
                 filter_elements["visibility"]
             )
         );
-        // await fetch_authors_filtered(
-        //     filter_to_json(
-        //         filter_elements["user"],
-        //         filter_elements["poster"],
-        //         filter_elements["view_mode"],
-        //         filter_elements["last_edit"],
-        //         filter_elements["visibility"]
-        //     )
-        // );
+        await fetch_authors_filtered(
+            filter_to_json(
+                filter_elements["user"],
+                filter_elements["poster"],
+                filter_elements["view_mode"],
+                filter_elements["last_edit"],
+                filter_elements["visibility"]
+            )
+        );
     }
     containerD.appendChild(submit);
     filter.appendChild(containerD);
@@ -857,9 +970,9 @@ async function load_project_page_data() {
     } else {
         // TODO: [BUG] occasionally projects are loaded in wrong order (wrong title/link)
         fetch_all_projects();
+        fetch_authors_list();
     }
 
-    fetch_authors_list();
     fetch_images();
 }
 

@@ -704,7 +704,7 @@
 	test_equal(
 		"author filter - integration - single",
 		fetch_authors_all(85, $json),
-		'{"user":["max5","max5","max5"],"poster.title":["The Future of Urban Farming","The Future of Urban Farming","The Future of Urban Farming"],"author":["user1C","user2C","user3C"]}'
+		'{"id":[387,388,389],"user":["max5","max5","max5"],"poster.title":["The Future of Urban Farming","The Future of Urban Farming","The Future of Urban Farming"],"author":["user1C","user2C","user3C"]}'
 	);
 
 
@@ -722,19 +722,48 @@
 
 
 	// from account_management.php
-	// TODO: test getGlobalIDAuthor
-
 	// rename_poster
 	test_equal("rename poster - no user", rename_poster2("abc", 356, null), "No or invalid session");
 	test_equal("rename poster check previous", getterQuery2("SELECT title FROM poster WHERE title='First Project'")["title"][0], "First Project");
 	rename_poster2("Second Project", 356, 19);
 	test_equal("rename poster ", getterQuery2("SELECT title FROM poster WHERE poster_id=356")["title"][0], "Second Project");
 
-	// TODO: test rename_author
+	// rename_author
+	test_equal("rename author invalid id", rename_author("abc", 0, 85), "No or invalid id:0");
+	test_equal("rename author check previous", getterQuery2("SELECT name FROM author WHERE id=35")["name"][0], "Author5");
+	rename_author("test123", 18, 85);
+	test_equal("rename author", getterQuery2("SELECT name FROM author WHERE id=35")["name"][0], "test123");
 
 	// TODO: test rename_image
 
-	// TODO: test delete_author
+	// delete_author
+	test_equal("delete author - preview", implode(",", json_decode(fetch_authors_all(85, ""), true)["id"]), "16,18,370,371,372,379,387,388,389");
+	delete_author(370, 85);
+	test_equal("delete author", implode(",", json_decode(fetch_authors_all(85, ""), true)["id"]), "16,18,371,372,379,387,388,389");
+	// delete_author(18, 85);
+	// test_equal(
+	// 	"delete author - removed unconnected author element",
+	// 	implode(",", getterQuery2(
+	// 		"SELECT * FROM author"
+	// 	)["id"]),
+	// 	"38,348,349,351,353,354,355,356,357,358,359,360,361,362,363,364,365,366,367"
+	// );
+	// delete_author(371, 85);
+	// test_equal(
+	// 	"delete author - removed unconnected author element - not delete",
+	// 	implode(",", getterQuery2(
+	// 		"SELECT id FROM author"
+	// 	)["id"]),
+	// 	"38,348,349,351,353,354,355,356,357,358,359,360,361,362,363,364,365,366,367"
+	// );
+	// delete_author(378, 85);
+	// test_equal(
+	// 	"delete author - removed unconnected author element - not delete",
+	// 	implode(",", getterQuery2(
+	// 		"SELECT id FROM author"
+	// 	)["id"]),
+	// 	"38,348,349,351,353,354,356,357,358,359,360,361,362,363,364,365,366,367"
+	// );
 
 	// TODO: test delete_image
 
