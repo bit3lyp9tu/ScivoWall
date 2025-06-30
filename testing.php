@@ -493,7 +493,7 @@
 	addImage($img_data, 112);
 	test_equal("upload image", getterQuery2("SELECT image_id, file_name, last_edit_date, type, size, fk_poster FROM image")["image_id"][0], 221);
 	addImage($img_data, 112);
-	test_equal("upload image duplicates in same poster", getterQuery2("SELECT COUNT(image_id) AS count FROM image")["count"][0], 1);
+	test_equal("upload image duplicates in same poster", getterQuery2("SELECT COUNT(image_id) AS count FROM image")["count"][0], 4);
 	// print_r(getterQuery2("SELECT image_id, file_name, last_edit_date, type, size, SUBSTR(data, 1, 30) fk_poster FROM image"));
 
 	// getFullImage
@@ -748,9 +748,9 @@
 
 	// rename_image
 	test_equal("rename image no user", rename_image("abc", 221, 0), "No or invalid session");
-	test_equal("rename image pre-check", implode(",", getterQuery2("SELECT file_name FROM image")["file_name"]), "test-img");
-	rename_image("abc", 221, 85);
-	test_equal("rename image pre-check", implode(",", getterQuery2("SELECT file_name FROM image")["file_name"]), "abc");
+	test_equal("rename image pre-check", implode(",", getterQuery2("SELECT file_name FROM image")["file_name"]), "tudlogo.png,scadslogo.png,leipzig.png,test-img");
+	rename_image("abc", 224, 85);
+	test_equal("rename image pre-check", implode(",", getterQuery2("SELECT file_name FROM image")["file_name"]), "tudlogo.png,scadslogo.png,leipzig.png,abc");
 
 	// delete_author
 	test_equal("delete author - preview", implode(",", json_decode(fetch_authors_all(85, ""), true)["id"]), "16,18,370,371,372,379,387,388,389");
@@ -783,9 +783,9 @@
 
 	// delete_image
 	test_equal("delete image does not exist", delete_image(1, 84), "successfully deleted");
-	test_equal("delete image pre-check", implode(",", getterQuery2("SELECT image_id FROM image")["image_id"]), "221");
-	delete_image(221, 84);
-	test_equal("delete image", implode(",", getterQuery2("SELECT image_id FROM image")["image_id"]), "");
+	test_equal("delete image pre-check", implode(",", getterQuery2("SELECT image_id FROM image")["image_id"]), "224,221,222,223");
+	delete_image(224, 84);
+	test_equal("delete image", implode(",", getterQuery2("SELECT image_id FROM image")["image_id"]), "221,222,223");
 
 	// TODO: test fetch_images
 
