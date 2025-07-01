@@ -729,12 +729,12 @@
 
 
 	login("Admin", "PwScaDS-2025");
-	$result = json_decode(fetch_projects_all($json), true);
+	$result = json_decode(fetch_projects_all(85, $json), true);
 	test_equal("fetch filtered projects - name", $result["user.name"][0], 'max5');
 	test_equal("fetch filtered projects - title", $result["title"][0], 'The Future of Urban Farming');
-	test_equal("fetch filtered projects all", implode(",", json_decode(fetch_projects_all(""), true)["id"]), '108,112,132,350,351,353,354,356');
+	test_equal("fetch filtered projects all", implode(",", json_decode(fetch_projects_all(85, ""), true)["id"]), '108,112,132,350,351,353,354,356');
 
-	test_equal("fetch filtered projects non filter mode", implode(",", json_decode(fetch_projects_all($non_filter_mode), true)["id"]), '350,351');
+	test_equal("fetch filtered projects non filter mode", implode(",", json_decode(fetch_projects_all(85, $non_filter_mode), true)["id"]), '350,351');
 
 	test_equal(
 		"filter interface content",
