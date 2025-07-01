@@ -618,6 +618,8 @@
 		}', true
 	)), " name IN ('max5','Admin') ");
 
+	$non_filter_mode = '{"attributes": {"user.name": {"list": ["max5"]}}}';
+
 	$json = '{
 		"attributes": {
 			"user.name": {
@@ -665,6 +667,8 @@
 		filter_projects($json),
 		" AND  user.name IN ('max5') AND poster.title IN ('The Future of Urban Farming') AND visible IN (1) AND view_modes.name IN ('private','public') "
 	);
+	test_equal("filter projects single A", filter_projects($non_filter_mode), " AND  user.name IN ('max5') ");
+	test_equal("filter projects single B", filter_projects('{"attributes": {"user.name": {"list": ["bug"]}}}'), " AND  user.name IN ('bug') ");
 
 	$sanitized = sanitize_filter(" AND  user.name IN ('max5') AND poster.title IN ('The Future of Urban Farming') AND last_edit_date >= 1.5 AND last_edit_date <= 5 AND view_modes.name IN ('private','public') ");
 	test_equal(
@@ -707,24 +711,30 @@
 	) . $san["sql"];
 	test_equal("filter integrationstest - all", implode(",", getterQuery2($sql, ...$san["var"])["id"]), "108,112,132,350,351,353,354,356");
 
+	// user to filter
+	test_equal("user to filter - unknown user", user_to_filter(1), "");
+	test_equal("user to filter", user_to_filter(19), '{"attributes": {"user.name": {"list": ["max5"]}}}');
+
 	// author filter
 	test_equal(
 		"author filter - integration - all",
-		implode(",", json_decode(fetch_authors_all(85, $data), true)["author"]),
+		implode(",", json_decode(fetch_authors_all($data), true)["author"]),
 		"Author8,Author5,ChatGPT,Lina Chen,Marcus Lee,Anne Beispielfrau,user1C,user2C,user3C"
 	);
 	test_equal(
 		"author filter - integration - single",
-		fetch_authors_all(85, $json),
+		fetch_authors_all($json),
 		'{"id":[387,388,389],"user":["max5","max5","max5"],"poster.title":["The Future of Urban Farming","The Future of Urban Farming","The Future of Urban Farming"],"author":["user1C","user2C","user3C"]}'
 	);
 
 
 	login("Admin", "PwScaDS-2025");
-	$result = json_decode(fetch_projects_all(85, $json), true);
+	$result = json_decode(fetch_projects_all($json), true);
 	test_equal("fetch filtered projects - name", $result["user.name"][0], 'max5');
 	test_equal("fetch filtered projects - title", $result["title"][0], 'The Future of Urban Farming');
-	test_equal("fetch filtered projects not admin", fetch_projects_all(86, $json), 'Not Admin');
+	test_equal("fetch filtered projects all", implode(",", json_decode(fetch_projects_all(""), true)["id"]), '108,112,132,350,351,353,354,356');
+
+	test_equal("fetch filtered projects non filter mode", implode(",", json_decode(fetch_projects_all($non_filter_mode), true)["id"]), '350,351');
 
 	test_equal(
 		"filter interface content",
@@ -753,9 +763,9 @@
 	test_equal("rename image pre-check", implode(",", getterQuery2("SELECT file_name FROM image")["file_name"]), "tudlogo.png,scadslogo.png,leipzig.png,abc");
 
 	// delete_author
-	test_equal("delete author - preview", implode(",", json_decode(fetch_authors_all(85, ""), true)["id"]), "16,18,370,371,372,379,387,388,389");
+	test_equal("delete author - preview", implode(",", json_decode(fetch_authors_all(""), true)["id"]), "16,18,370,371,372,379,387,388,389");
 	delete_author(370, 85);
-	test_equal("delete author", implode(",", json_decode(fetch_authors_all(85, ""), true)["id"]), "16,18,371,372,379,387,388,389");
+	test_equal("delete author", implode(",", json_decode(fetch_authors_all(""), true)["id"]), "16,18,371,372,379,387,388,389");
 	// delete_author(18, 85);
 	// test_equal(
 	// 	"delete author - removed unconnected author element",
@@ -787,7 +797,17 @@
 	delete_image(224, 84);
 	test_equal("delete image", implode(",", getterQuery2("SELECT image_id FROM image")["image_id"]), "221,222,223");
 
-	// TODO: test fetch_images
+	// fetch_images_all
+	test_equal("fetch img all", implode(",", json_decode(fetch_images_all($data), true)["id"]), '221,222,223');
+	$data = json_decode($data, true);
+	$data["title"] = array("The Future of Urban Farming");
+	test_equal("fetch img single target", implode(",", json_decode(fetch_images_all(json_encode($data)), true)["id"]), '221,222,223');
+	test_equal("fetch img return empty 1", fetch_images_all('{"attributes": {"user.name": {"list": ["bug"]}}}'), '{"id":[],"image_data":[],"name":[],"last_edit":[],"title":[]}');
+	test_equal(
+		"fetch img return empty 2",
+		fetch_images_all('{"attributes":{"user.name":{"min":"","max":"","list":["bug"]},"poster.title":{"min":"","max":"","list":[]},"last_edit_date":{"min":"","max":"","list":[]},"visible":{"min":"","max":"","list":[]},"view_modes.name":{"min":"","max":"","list":[]}}}'),
+		'{"id":[],"image_data":[],"name":[],"last_edit":[],"title":[]}'
+	);
 
 	// TODO: test fetch_img_data
 

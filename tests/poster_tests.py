@@ -181,6 +181,7 @@ class PythonOrgSearch(unittest.TestCase):
             By.CSS_SELECTOR, "#table-container>table>tr#table-container--nr-3"
         )
         time.sleep(self.wait_time)
+        print(poster_list_element.text)
         self.assertTrue(
             poster_list_element.text
             in [

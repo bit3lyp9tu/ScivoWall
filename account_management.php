@@ -217,7 +217,7 @@
         // }
         // return " " . $attribute . " IN (" . implode(', ', $field) . ") ";
 
-        if (sizeof($rules["attributes"][$attribute]["list"]) > 0) {
+        if (isset($rules["attributes"][$attribute]["list"]) && sizeof($rules["attributes"][$attribute]["list"]) > 0) {
 
             $list = array();
             for ($i=0; $i < sizeof($rules["attributes"][$attribute]["list"]); $i++) {
@@ -236,7 +236,7 @@
     }
 
     function solve_min($attribute, $rules) {
-        if ($rules["attributes"][$attribute]["min"] !== "") {
+        if (isset($rules["attributes"][$attribute]["min"]) && $rules["attributes"][$attribute]["min"] !== "") {
             return " " . $attribute . " >= " . $rules["attributes"][$attribute]["min"] . " ";
         }else{
             return "";
@@ -244,7 +244,7 @@
     }
 
     function solve_max($attribute, $rules) {
-        if ($rules["attributes"][$attribute]["max"] !== "") {
+        if (isset($rules["attributes"][$attribute]["max"]) && $rules["attributes"][$attribute]["max"] !== "") {
             return " " . $attribute . " <= " . $rules["attributes"][$attribute]["max"] . " ";
         }else{
             return "";
@@ -287,6 +287,8 @@
         }
     }
 
+    // TODO:    table names can only consist of /[a-zA-Z][\.a-zA-Z0-9_]*/
+    //  -       escape if character ';' is used
     function sanitize_filter($sql) {
         $result = array();
 
@@ -339,27 +341,27 @@
         return $result;
     }
 
-    function fetch_projects_all($user_id, $rules) {
-        if ($user_id != null) {
-            if (isAdmin($user_id)) {
+    function user_to_filter($user_id) {
+        $user_name = getterQuery2("SELECT name FROM user WHERE user_id=?", $user_id)["name"];
 
-                $filtered = filter_projects($rules);
-                $sanitized = sanitize_filter($filtered);
-
-                $sql =  (
-                    "SELECT poster_id AS id, user.name, title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode
-                    FROM poster, view_modes, user
-                    WHERE poster.fk_view_mode = view_modes.ID AND poster.user_id = user.user_id"
-                ) . $sanitized["sql"];
-
-                return json_encode(getterQuery2($sql, ...$sanitized["var"]), true);
-
-            } else {
-                return "Not Admin";
-            }
-        } else {
-            return "No or invalid session";
+        if (sizeof($user_name) == 0) {
+            return "";
         }
+        return '{"attributes": {"user.name": {"list": ["' . $user_name[0] . '"]}}}';
+    }
+
+    function fetch_projects_all($filter) {
+
+        $filtered = filter_projects($filter);
+        $sanitized = sanitize_filter($filtered);
+
+        $sql =  (
+            "SELECT poster_id AS id, user.name, title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode
+            FROM poster, view_modes, user
+            WHERE poster.fk_view_mode = view_modes.ID AND poster.user_id = user.user_id"
+        ) . $sanitized["sql"];
+
+        return json_encode(getterQuery2($sql, ...$sanitized["var"]), true);
     }
 
     function getFilterSelectables($user_id) {
@@ -412,19 +414,22 @@
         }
     }
 
-    function fetch_images($user_id) {
-        if ($user_id) {
-            return json_encode(getterQuery2(
-                "SELECT 0 AS image_data, image.file_name AS name, from_unixtime(image.last_edit_date) AS last_edit, poster.title AS title
-                FROM image
-                INNER JOIN poster ON image.fk_poster=poster.poster_id
-                WHERE poster.user_id=?",
-                $user_id
-            ), true);
+    function fetch_images_all($filter) {
 
-        }else{
-            return "No or invalid session";
+        $filtered = filter_projects($filter);
+        $sanitized = sanitize_filter($filtered);
+
+        $sql = "SELECT image_id AS id, 0 AS image_data, image.file_name AS name, from_unixtime(image.last_edit_date) AS last_edit, poster.title AS title
+            FROM image
+            INNER JOIN poster ON image.fk_poster=poster.poster_id
+            INNER JOIN user ON poster.user_id=user.user_id
+            INNER JOIN view_modes ON poster.fk_view_mode=view_modes.ID";
+
+        if (sizeof($sanitized["var"]) > 0) {
+            $sql .= " WHERE " . substr($sanitized["sql"], 4, -1);
         }
+
+        return json_encode(getterQuery2($sql, ...$sanitized["var"]), true);
     }
 
     function fetch_img_data($user_id) {
@@ -442,51 +447,25 @@
         }
     }
 
-    function fetch_authors_all($user_id, $rules) {
-        if ($user_id != null) {
-            if (isAdmin($user_id)) {
+    function fetch_authors_all($filter) {
 
-                $filtered = filter_projects($rules);
-                $sanitized = sanitize_filter($filtered);
+        $filtered = filter_projects($filter);
+        $sanitized = sanitize_filter($filtered);
 
-                $sql =  (
-                    "SELECT author_to_poster.id AS id, user.name AS user, poster.title, author.name AS author
-                    FROM author
-                    INNER JOIN author_to_poster ON author.id=author_to_poster.author_id
-                    INNER JOIN poster ON author_to_poster.poster_id=poster.poster_id
-                    INNER JOIN user ON poster.user_id=user.user_id
-                    INNER JOIN view_modes ON poster.fk_view_mode=view_modes.ID"
-                );
+        $sql =  (
+            "SELECT author_to_poster.id AS id, user.name AS user, poster.title, author.name AS author
+            FROM author
+            INNER JOIN author_to_poster ON author.id=author_to_poster.author_id
+            INNER JOIN poster ON author_to_poster.poster_id=poster.poster_id
+            INNER JOIN user ON poster.user_id=user.user_id
+            INNER JOIN view_modes ON poster.fk_view_mode=view_modes.ID"
+        );
 
-                if (sizeof($sanitized["var"]) > 0) {
-                    $sql .= " WHERE " . substr($sanitized["sql"], 4, -1);
-                }
-
-                return json_encode(getterQuery2($sql, ...$sanitized["var"]), true);
-
-            } else {
-                return "Not Admin";
-            }
-        } else {
-            return "No or invalid session";
+        if (sizeof($sanitized["var"]) > 0) {
+            $sql .= " WHERE " . substr($sanitized["sql"], 4, -1);
         }
-    }
 
-    function fetch_authors($user_id) {
-        if ($user_id) {
-
-            return json_encode(getterQuery2(
-                "SELECT author_to_poster.id AS id, author.name AS name, poster.title AS title
-                FROM author
-                INNER JOIN author_to_poster ON author.id=author_to_poster.author_id
-                INNER JOIN poster ON author_to_poster.poster_id=poster.poster_id
-                WHERE poster.user_id=?",
-                $user_id
-            ), true);
-
-        }else{
-            return "No or invalid session";
-        }
+        return json_encode(getterQuery2($sql, ...$sanitized["var"]), true);
     }
 
     function create_project($name, $user_id) {
@@ -646,7 +625,7 @@
         $attribute = array(
             "poster" => "last_edit_date",
             "user" => "last_login_date",
-            "image" => "upload_date"
+            "image" => "last_edit_date"
         );
         $query = "UPDATE " . $table . " SET " . $table . "." . $attribute[$table] . "=UNIX_TIMESTAMP() WHERE " . $table . "." . $table . "_id=?";
 
@@ -678,12 +657,6 @@
             echo login($name, $pw);
         }
 
-        if ($_POST['action'] == 'fetch_all_projects') {
-
-            $user_id = getValidUserFromSession();
-            echo fetch_projects($user_id, false);
-        }
-
         if ($_POST['action'] == 'selectable_filters') {
 
             $user_id = getValidUserFromSession();
@@ -695,7 +668,15 @@
             $filter = isset($_POST['filter']) ? $_POST['filter'] : '';
             $user_id = getValidUserFromSession();
 
-            echo fetch_projects_all($user_id, $filter);
+            if ($user_id != null) {
+                if (!isAdmin($user_id)) {
+                    $filter = user_to_filter($user_id);
+                }
+
+                echo fetch_projects_all($filter);
+            } else {
+                return "No or invalid session";
+            }
         }
 
         if ($_POST['action'] == 'fetch_filtered_authors') {
@@ -703,15 +684,31 @@
             $filter = isset($_POST['filter']) ? $_POST['filter'] : '';
             $user_id = getValidUserFromSession();
 
-            echo fetch_authors_all($user_id, $filter);
+            if ($user_id != null) {
+                if (!isAdmin($user_id)) {
+                    $filter = user_to_filter($user_id);
+                }
+
+                echo fetch_authors_all($filter);
+            } else {
+                return "No or invalid session";
+            }
         }
 
-        if ($_POST['action'] == 'fetch_authors') {
+        if ($_POST['action'] == 'fetch_filtered_images') {
 
             $filter = isset($_POST['filter']) ? $_POST['filter'] : '';
             $user_id = getValidUserFromSession();
 
-            echo fetch_authors($user_id);
+            if ($user_id != null) {
+                if (!isAdmin($user_id)) {
+                    $filter = user_to_filter($user_id);
+                }
+
+                echo fetch_images_all($filter);
+            } else {
+                return "No or invalid session";
+            }
         }
 
         if ($_POST['action'] == 'rename-author') {
@@ -723,6 +720,16 @@
             echo rename_author($name, $id, $user_id);
         }
 
+        if ($_POST['action'] == 'rename-image') {
+
+            $name = isset($_POST['name']) ? $_POST['name'] : '';
+            $id = isset($_POST['id']) ? $_POST['id'] : 0;
+            $user_id = getValidUserFromSession();
+
+            updateEditDate2("image", $id);
+            echo rename_image($name, $id, $user_id);
+        }
+
         if ($_POST['action'] == 'delete-author') {
 
             $id = isset($_POST['id']) ? $_POST['id'] : 0;
@@ -731,18 +738,12 @@
             echo delete_author($id, $user_id);
         }
 
-        if ($_POST['action'] == 'fetch_images') {
-
-            $user_id = getValidUserFromSession();
-            echo fetch_images($user_id);
-        }
-
         if ($_POST['action'] == 'delete-image') {
 
-            $local_id = isset($_POST['id']) ? $_POST['id'] : 0;
+            $id = isset($_POST['id']) ? $_POST['id'] : 0;
             $user_id = getValidUserFromSession();
 
-            echo delete_image($local_id, $user_id);
+            echo delete_image($id, $user_id);
         }
 
         if ($_POST['action'] == 'fetch_img_data') {
@@ -753,31 +754,9 @@
 
         if ($_POST['action'] == 'delete_project') {
             $id = isset($_POST['id']) ? $_POST['id'] : '';
-            $filter = isset($_POST['filter']) ? $_POST['filter'] : '';
-
             $user_id = getValidUserFromSession();
-            if ($user_id != null) {
 
-                if (isAdmin($user_id) && $filter !== "") {
-
-                    $result = delete_project_advanced($id);
-                    if ($result == "successfully deleted") {
-                        echo fetch_projects_all($user_id, $filter);
-                    }else{
-                        echo "[ERROR] " . $result;
-                    }
-
-                }else{
-                    $result = delete_project_simple($id, $user_id);
-                    if ($result == "successfully deleted") {
-                        echo fetch_projects($user_id, false);
-                    }else{
-                        echo "[ERROR] " . $result;
-                    }
-                }
-            }else{
-                echo "No or invalid session";
-            }
+            echo delete_project_advanced($id);
         }
 
         if ($_POST['action'] == 'create_project') {

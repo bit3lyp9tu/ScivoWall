@@ -407,7 +407,8 @@
         if (isAdmin($user_id) === true) {
             return true;
         }
-        if (getterQuery2("SELECT user_id FROM poster WHERE poster_id = ?", $poster_id)["user_id"][0] == $user_id) {
+
+        if (getterQuery2("SELECT user_id FROM poster WHERE poster_id = ?", $poster_id)["user_id"][0] === $user_id) {
             return true;
         }
 

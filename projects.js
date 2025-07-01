@@ -20,7 +20,7 @@ function createProject() {
             if (response == "ERROR" || response == "No or invalid session") {
                 toastr["warning"]("Not logged in");
             } else {
-                loadTable(response);
+                load_project_page_data();
                 toastr["success"]("New Project created");
             }
         },
@@ -30,32 +30,17 @@ function createProject() {
     });
 }
 
-function error_if_not_number(name, data) {
-    if (typeof (data) != "number") {
-        console.error(`deleteRow: ${name} is not a number: ${data}`);
-    }
-}
-
 //TODO:   reloaded data after delete should include last edit time
-function deleteRow(id, filter) {
-    error_if_not_number("id", id)
-
+function delete_project(id) {
     $.ajax({
         type: "POST",
         url: "account_management.php",
         data: {
             action: 'delete_project',
             id: Number(id),
-            filter: filter
         },
         success: function (response) {
-            loadTable(response);
-
-            if (response != "No results found") {
-                toastr["success"]("No Projects available");
-            } else {
-                toastr["success"]("Project deleted");
-            }
+            console.log(response);
         },
         error: function () {
             toastr["error"]("An error occurred");
@@ -73,13 +58,6 @@ function delete_author(id) {
         },
         success: async function (response) {
             console.log(response);
-            if (await isAdmin()) {
-                // fetch_authors_filtered();
-                console.log(response);
-
-            } else {
-                fetch_authors_list();
-            }
         },
         error: function (err) {
             console.error(err);
@@ -87,17 +65,16 @@ function delete_author(id) {
     });
 }
 
-function delete_image(local_id) {
+function delete_image(id) {
     $.ajax({
         type: "POST",
         url: "account_management.php",
         data: {
             action: "delete-image",
-            id: Number(local_id)
+            id: Number(id)
         },
         success: function (response) {
             console.log(response);
-            fetch_images();
         },
         error: function (err) {
             console.error(err);
@@ -142,6 +119,24 @@ function rename_author(_this, id) {
         url: "account_management.php",
         data: {
             action: "rename-author",
+            name: _this.value,
+            id: id
+        },
+        success: function (response) {
+            console.log(response);
+        },
+        error: function (err) {
+            console.error(err);
+        }
+    });
+}
+
+function rename_image(_this, id) {
+    $.ajax({
+        type: "POST",
+        url: "account_management.php",
+        data: {
+            action: "rename-image",
             name: _this.value,
             id: id
         },
@@ -228,6 +223,20 @@ async function change_action() {
     }
     if (param[0] == 'table-container') {
         rename_poster(this, id);
+    }
+    if (param[0] == 'image-list') {
+        rename_image(this, id);
+        if (is_global && await isAdmin()) {
+            await fetch_images_filtered(
+                filter_to_json(
+                    filter_elements["user"],
+                    filter_elements["poster"],
+                    filter_elements["view_mode"],
+                    filter_elements["last_edit"],
+                    filter_elements["visibility"]
+                )
+            );
+        }
     }
     load_project_page_data();
 }
@@ -347,19 +356,23 @@ async function createTableFromJSON(id, pk_ids, data, editable_columns, ...additi
 
     table.appendChild(headerRow);
 
-    for (let i = 0; i < data[headers[0]].length; i++) {
-        const row = document.createElement("tr");
-        row.id = id + "--nr-" + (i + 1);
+    if (data !== "") {
+        for (let i = 0; i < data[headers[0]].length; i++) {
+            const row = document.createElement("tr");
+            row.id = id + "--nr-" + (i + 1);
 
-        if (pk_ids && pk_ids.length == data[headers[0]].length) {
-            row.setAttribute("pk_id", pk_ids[i]);
+            if (pk_ids && pk_ids.length == data[headers[0]].length) {
+                row.setAttribute("pk_id", pk_ids[i]);
+            } else {
+                console.error("no pk_id", pk_ids, data);
+            }
+
+            await make_headers_editable(editable_columns, headers, data, i, row);
+
+            append_additional_columns(additional_columns, i, row);
+
+            table.appendChild(row);
         }
-
-        await make_headers_editable(editable_columns, headers, data, i, row);
-
-        append_additional_columns(additional_columns, i, row);
-
-        table.appendChild(row);
     }
 
     document.getElementById(id).appendChild(table);
@@ -399,74 +412,6 @@ async function isAdmin() {
     } catch (err) {
         console.error(`Error while checking isAdmin: ${err}`);
         return false;
-    }
-}
-
-async function loadTable(response) {
-    $('#table-container').empty();
-
-    if (response == "No results found") {
-        // $('#table-container').html(response);
-        toastr["warning"]("No results found");  //TODO:   bug? execute msg twice?
-
-    } else {
-        var data = isJSON(response) ? JSON.parse(response) : response;
-        var pk_ids = null;
-
-        if (Object.keys(data).includes("id")) {
-            pk_ids = data["id"];
-            delete data["id"];
-        }
-
-        const editColumn = (index) => {
-            const td = document.createElement("td");
-
-            const elem = document.createElement("INPUT");
-            elem.type = "button";
-            elem.value = "Edit";
-            elem.onclick = async function () {
-                var local_id = get_found_id(this);
-                const poster_id = pk_ids ? $(this).closest("tr")[0].getAttribute("pk_id") : await edit_translation(local_id);
-                window.location.href = "poster.php?id=" + poster_id + "&mode=private";
-            }
-            td.appendChild(elem);
-
-            return td;
-        };
-        const deleteColumn = (index) => {
-            const td = document.createElement("td");
-            const btn = document.createElement('input');
-            btn.type = "button";
-            btn.className = "btn";
-            btn.value = "Delete";
-            btn.onclick = async function () {
-                if (pk_ids) {
-                    var id = $(this).closest("tr")[0].getAttribute("pk_id");
-
-                    var filter = "";
-
-                    if (await isAdmin()) {
-                        var filter_elements = getFilterElements();
-
-                        filter = (filter_to_json(
-                            filter_elements["user"],
-                            filter_elements["poster"],
-                            filter_elements["view_mode"],
-                            filter_elements["last_edit"],
-                            filter_elements["visibility"]
-                        ));
-                    }
-                    deleteRow(Number(id), filter);
-                } else {
-                    console.error("no pk_ids");
-                }
-            }
-            td.appendChild(btn);
-            return td;
-        };
-        // console.log(data);
-
-        createTableFromJSON("table-container", pk_ids, data, await isAdmin() ? [1] : [0], editColumn, deleteColumn);
     }
 }
 
@@ -531,33 +476,6 @@ function isJSON(data) {
     return true;
 }
 
-async function fetch_all_projects() {
-    $.ajax({
-        type: "POST",
-        url: "account_management.php",
-        data: {
-            action: 'fetch_all_projects'
-        },
-        success: function (response) {
-            if (response != "No or invalid session") {
-                if (response != "No results found") {
-                    loadTable(response);
-                    // console.log(JSON.parse(response));
-
-                    toastr["success"]("Loading Projects");
-                } else {
-                    toastr["warning"]("No results found");
-                }
-            } else {
-                toastr["warning"]("Not logged in");
-            }
-        },
-        error: function () {
-            toastr["error"]("An error occurred");
-        }
-    });
-}
-
 async function get_selectable_filters() {
     try {
         const response = await $.ajax({
@@ -574,7 +492,19 @@ async function get_selectable_filters() {
     }
 }
 
+function process_data(response) {
+    var data = isJSON(response) ? JSON.parse(response) : response;
+
+    if (data === "") {
+        console.error("no data received, not logged in?");
+    }
+
+    return data;
+}
+
 async function fetch_projects_filtered(filter) {
+    document.getElementById("table-container").replaceChildren();
+
     $.ajax({
         type: "POST",
         url: "account_management.php",
@@ -585,8 +515,60 @@ async function fetch_projects_filtered(filter) {
         success: function (response) {
             if (response != "No or invalid session") {
                 if (response != "No results found") {
-                    loadTable(response);
-                    toastr["success"]("Loading Projects");
+                    // loadTable(response);
+                    // toastr["success"]("Loading Projects");
+
+                    var data = process_data(response);
+                    var pk_ids = null;
+
+                    if (Object.keys(data).includes("id")) {
+                        pk_ids = data["id"];
+                        delete data["id"];
+                    }
+
+                    function deleteColumn(index) {
+                        const td = document.createElement("td");
+                        const btn = document.createElement('input');
+                        btn.type = "button";
+                        btn.className = "btn";
+                        btn.value = "Delete";
+                        btn.onclick = async function () {
+
+                            if (pk_ids) {
+                                var id = $(this).closest("tr")[0].getAttribute("pk_id");
+
+                                var filter = "";
+
+                                if (await isAdmin()) {
+                                    var filter_elements = getFilterElements();
+
+                                    filter = (filter_to_json(
+                                        filter_elements["user"],
+                                        filter_elements["poster"],
+                                        filter_elements["view_mode"],
+                                        filter_elements["last_edit"],
+                                        filter_elements["visibility"]
+                                    ));
+                                }
+                                console.log("poster_id", id);
+                                delete_project(id);
+                                $("#table-container").empty();
+
+                                const local_id = parse_id_name(this);
+                                remove_local_data(local_id, data);
+                                pk_ids.splice(local_id, 1);
+
+                                createTableFromJSON("table-container", pk_ids, data, [1], deleteColumn);
+                            } else {
+                                console.error("no pk_ids");
+                            }
+                        }
+                        td.appendChild(btn);
+                        return td;
+                    };
+
+                    createTableFromJSON("table-container", pk_ids, data, [1], deleteColumn);
+
                 } else {
                     toastr["warning"]("No results found");
                 }
@@ -621,7 +603,7 @@ async function fetch_authors_filtered(filter) {
 
             if (response != "No or invalid session") {
                 if (response != "No results found") {
-                    var data = isJSON(response) ? JSON.parse(response) : response;
+                    var data = process_data(response);
                     var pk_ids = null;
 
                     if (Object.keys(data).includes("id")) {
@@ -680,21 +662,22 @@ async function fetch_authors_filtered(filter) {
     });
 }
 
-async function fetch_authors_list() {
-    document.getElementById("author-list").replaceChildren();
+async function fetch_images_filtered(filter) {
+    document.getElementById("image-list").replaceChildren();
 
     $.ajax({
         type: "POST",
         url: "account_management.php",
         data: {
-            action: "fetch_authors",
+            action: 'fetch_filtered_images',
+            filter: filter
         },
         success: function (response) {
             // console.log(JSON.parse(response));
 
             if (response != "No or invalid session") {
                 if (response != "No results found") {
-                    var data = isJSON(response) ? JSON.parse(response) : response;
+                    var data = process_data(response);
                     var pk_ids = null;
 
                     if (Object.keys(data).includes("id")) {
@@ -708,19 +691,32 @@ async function fetch_authors_list() {
                         btn.type = "button";
                         btn.className = "btn";
                         btn.value = "Delete";
-                        btn.onclick = function () {
+                        btn.onclick = async function () {
 
                             if (pk_ids) {
                                 var id = $(this).closest("tr")[0].getAttribute("pk_id");
 
-                                delete_author(id);
-                                $("#author-list").empty();
+                                var filter = "";
+
+                                if (await isAdmin()) {
+                                    var filter_elements = getFilterElements();
+
+                                    filter = (filter_to_json(
+                                        filter_elements["user"],
+                                        filter_elements["poster"],
+                                        filter_elements["view_mode"],
+                                        filter_elements["last_edit"],
+                                        filter_elements["visibility"]
+                                    ));
+                                }
+                                delete_image(id);
+                                $("#image-list").empty();
 
                                 const local_id = parse_id_name(this);
                                 remove_local_data(local_id, data);
                                 pk_ids.splice(local_id, 1);
 
-                                createTableFromJSON("author-list", pk_ids, data, [2], deleteColumn);
+                                createTableFromJSON("image-list", pk_ids, data, [1], deleteColumn);
                             } else {
                                 console.error("no pk_ids");
                             }
@@ -728,53 +724,8 @@ async function fetch_authors_list() {
                         td.appendChild(btn);
                         return td;
                     };
-                    createTableFromJSON("author-list", pk_ids, data, [0], deleteColumn);
-                }
-            }
-        },
-        error: function (err) {
-            console.error(err);
-        }
-    });
-}
 
-async function fetch_images() {
-    document.getElementById("image-list").replaceChildren();
-
-    $.ajax({
-        type: "POST",
-        url: "account_management.php",
-        data: {
-            action: "fetch_images",
-        },
-        success: function (response) {
-
-            if (response != "No or invalid session") {
-                // console.log(JSON.parse(response));
-
-                if (response != "No results found") {
-
-                    const deleteColumn = (index) => {
-                        const td = document.createElement("td");
-                        const btn = document.createElement('input');
-                        btn.type = "button";
-                        btn.className = "btn";
-                        btn.value = "Delete";
-                        btn.onclick = function () {
-                            // TODO:   error if poster was preiously deleted
-                            // deleteRow(this.closest('tr').id.split("--nr-")[1]);
-                            var parsed_id_name = parse_id_name(this);
-
-                            // console.log(parsed_id_name);
-
-                            deleteItem(parsed_id_name);
-                        }
-                        td.appendChild(btn);
-                        return td;
-                    };
-                    createTableFromJSON("image-list", null, JSON.parse(response), [1], deleteColumn);
-
-                    loadImgsInTable("image-list");
+                    createTableFromJSON("image-list", pk_ids, data, [1], deleteColumn);
                 }
             }
         },
@@ -955,6 +906,15 @@ async function createFilter() {
                 filter_elements["visibility"]
             )
         );
+        await fetch_images_filtered(
+            filter_to_json(
+                filter_elements["user"],
+                filter_elements["poster"],
+                filter_elements["view_mode"],
+                filter_elements["last_edit"],
+                filter_elements["visibility"]
+            )
+        );
     }
     containerD.appendChild(submit);
     filter.appendChild(containerD);
@@ -966,14 +926,12 @@ async function load_project_page_data() {
         $("#filter").empty();
         createFilter();
 
-        // fetch_projects_filtered(JSON.stringify(filter));
     } else {
         // TODO: [BUG] occasionally projects are loaded in wrong order (wrong title/link)
-        fetch_all_projects();
-        fetch_authors_list();
+        fetch_projects_filtered("");
+        fetch_authors_filtered("");
+        fetch_images_filtered("");
     }
-
-    fetch_images();
 }
 
 async function loadImgsInTable(id) {
