@@ -718,14 +718,16 @@
 	// author filter
 	test_equal(
 		"author filter - integration - all",
-		implode(",", json_decode(fetch_authors_all($data), true)["author"]),
+		implode(",", json_decode(fetch_authors_all(85, $data), true)["author"]),
 		"Author8,Author5,ChatGPT,Lina Chen,Marcus Lee,Anne Beispielfrau,user1C,user2C,user3C"
 	);
 	test_equal(
 		"author filter - integration - single",
-		fetch_authors_all($json),
+		fetch_authors_all(85, $json),
 		'{"id":[387,388,389],"user":["max5","max5","max5"],"poster.title":["The Future of Urban Farming","The Future of Urban Farming","The Future of Urban Farming"],"author":["user1C","user2C","user3C"]}'
 	);
+	test_equal("author filter column-names as admin",  implode(",", array_keys(json_decode(fetch_authors_all(85, $non_filter_mode), true))), 'id,user,poster.title,author');
+	test_equal("author filter column-names as not admin",  implode(",", array_keys(json_decode(fetch_authors_all(19, $non_filter_mode), true))), 'id,poster.title,author');
 
 
 	login("Admin", "PwScaDS-2025");
@@ -765,9 +767,9 @@
 	test_equal("rename image pre-check", implode(",", getterQuery2("SELECT file_name FROM image")["file_name"]), "tudlogo.png,scadslogo.png,leipzig.png,abc");
 
 	// delete_author
-	test_equal("delete author - preview", implode(",", json_decode(fetch_authors_all(""), true)["id"]), "16,18,370,371,372,379,387,388,389");
+	test_equal("delete author - preview", implode(",", json_decode(fetch_authors_all(85, ""), true)["id"]), "16,18,370,371,372,379,387,388,389");
 	delete_author(370, 85);
-	test_equal("delete author", implode(",", json_decode(fetch_authors_all(""), true)["id"]), "16,18,371,372,379,387,388,389");
+	test_equal("delete author", implode(",", json_decode(fetch_authors_all(85, ""), true)["id"]), "16,18,371,372,379,387,388,389");
 	// delete_author(18, 85);
 	// test_equal(
 	// 	"delete author - removed unconnected author element",

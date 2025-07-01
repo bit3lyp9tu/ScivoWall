@@ -309,7 +309,7 @@ class PythonOrgSearch(unittest.TestCase):
         # check access poster
         driver.find_element(
             By.CSS_SELECTOR,
-            "#table-container>table>tr#table-container--nr-3>td:nth-last-child(1)>td>input",
+            "#table-container>table>tr#table-container--nr-3>td:nth-last-child(2)>td>input",
         ).click()
         time.sleep(self.wait_time)
         self.assertEqual(
@@ -326,14 +326,14 @@ class PythonOrgSearch(unittest.TestCase):
         # check author list correctly loaded
         author_list_element = driver.find_element(
             By.CSS_SELECTOR,
-            "#author-list>table>tr#author-list--nr-9>td:first-child>input",
+            "#author-list>table>tr#author-list--nr-9>td:nth-child(2)>input",
         )
         time.sleep(self.wait_time)
         self.assertEqual("Lina Chen", author_list_element.get_attribute("value"))
 
         author_list_element2 = driver.find_element(
             By.CSS_SELECTOR,
-            "#author-list>table>tr#author-list--nr-9>td:nth-child(2)",
+            "#author-list>table>tr#author-list--nr-9>td:nth-child(1)",
         )
         time.sleep(self.wait_time)
         self.assertEqual("The Future of Urban Farming", author_list_element2.text)
@@ -341,7 +341,7 @@ class PythonOrgSearch(unittest.TestCase):
         # check edit author name
         author_list_element3 = driver.find_element(
             By.CSS_SELECTOR,
-            "#author-list>table>tr#author-list--nr-9>td:first-child>input",
+            "#author-list>table>tr#author-list--nr-9>td:nth-child(2)>input",
         )
         time.sleep(self.wait_time)
         author_list_element3.click()
@@ -353,12 +353,12 @@ class PythonOrgSearch(unittest.TestCase):
 
         driver.find_element(
             By.CSS_SELECTOR,
-            "#author-list>table>tr#author-list--nr-1>td:first-child>input",
+            "#author-list>table>tr#author-list--nr-1>td:nth-child(2)>input",
         ).click()
         time.sleep(self.wait_time)
         author_list_element4 = driver.find_element(
             By.CSS_SELECTOR,
-            "#author-list>table>tr#author-list--nr-9>td:first-child>input",
+            "#author-list>table>tr#author-list--nr-9>td:nth-child(2)>input",
         )
         self.assertTrue(
             author_list_element4.get_attribute("value")
@@ -374,13 +374,38 @@ class PythonOrgSearch(unittest.TestCase):
         time.sleep(self.wait_time)
         author_list_element5 = driver.find_element(
             By.CSS_SELECTOR,
-            "#author-list>table>tr:nth-child(6)>td:first-child>input",
+            "#author-list>table>tr:nth-child(6)>td:nth-child(2)>input",
         )
         self.assertIsNot("Alice johnson", author_list_element5.get_attribute("value"))
 
-        # TODO: check image list
-        #   + rename
-        #   + delete
+        # check image rename
+        img_element = driver.find_element(
+            By.CSS_SELECTOR,
+            "#image-list>table>tr:nth-child(3)>td:nth-child(2)>input",
+        )
+        img_element.click()
+        img_element.send_keys("-test")
+        self.assertEqual(
+            "scadslogo.png-test",
+            driver.find_element(
+                By.CSS_SELECTOR,
+                "#image-list>table>tr:nth-child(3)>td:nth-child(2)>input",
+            ).get_attribute("value"),
+        )
+
+        # check image delete
+        img_element2 = driver.find_element(
+            By.CSS_SELECTOR,
+            "#image-list>table>tr:nth-child(3)>td:nth-child(5)>td>input",
+        )
+        img_element2.click()
+        imgs = [
+            i.get_attribute("value")
+            for i in driver.find_elements(
+                By.CSS_SELECTOR, "#image-list>table>*>td:nth-child(2)>input"
+            )
+        ]
+        self.assertListEqual(imgs, ["tudlogo.png", "leipzig.png"])
         pass
 
     def date_compair_day(self, date1, date2):

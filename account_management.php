@@ -451,7 +451,7 @@
         }
     }
 
-    function fetch_authors_all($filter) {
+    function fetch_authors_all($user_id, $filter) {
 
         $filtered = filter_projects($filter);
         $sanitized = sanitize_filter($filtered);
@@ -467,6 +467,10 @@
 
         if (sizeof($sanitized["var"]) > 0) {
             $sql .= " WHERE " . substr($sanitized["sql"], 4, -1);
+        }
+
+        if (!isAdmin($user_id)) {
+            $sql = str_replace("user.name AS user, ","",$sql);
         }
 
         return json_encode(getterQuery2($sql, ...$sanitized["var"]), true);
@@ -693,7 +697,7 @@
                     $filter = user_to_filter($user_id);
                 }
 
-                echo fetch_authors_all($filter);
+                echo fetch_authors_all($user_id, $filter);
             } else {
                 return "No or invalid session";
             }

@@ -523,7 +523,6 @@ async function fetch_projects_filtered(filter) {
         success: async function (response) {
             if (response != "No or invalid session") {
                 if (response != "No results found") {
-                    // loadTable(response);
                     // toastr["success"]("Loading Projects");
 
                     var data = process_data(response);
@@ -535,6 +534,21 @@ async function fetch_projects_filtered(filter) {
                         pk_ids = data["id"];
                         delete data["id"];
                     }
+
+                    const editColumn = (index) => {
+                        const td = document.createElement("td");
+
+                        const elem = document.createElement("INPUT");
+                        elem.type = "button";
+                        elem.value = "Edit";
+                        elem.onclick = async function () {
+                            const poster_id = this.closest("tr").getAttribute("pk_id");
+                            window.location.href = "poster.php?id=" + poster_id + "&mode=private";
+                        }
+                        td.appendChild(elem);
+
+                        return td;
+                    };
 
                     function deleteColumn(index) {
                         const td = document.createElement("td");
@@ -568,7 +582,7 @@ async function fetch_projects_filtered(filter) {
                                 remove_local_data(local_id, data);
                                 pk_ids.splice(local_id, 1);
 
-                                createTableFromJSON("table-container", pk_ids, data, textfield_indexes, deleteColumn);
+                                createTableFromJSON("table-container", pk_ids, data, textfield_indexes, editColumn, deleteColumn);
                             } else {
                                 console.error("no pk_ids");
                             }
@@ -577,7 +591,7 @@ async function fetch_projects_filtered(filter) {
                         return td;
                     };
 
-                    createTableFromJSON("table-container", pk_ids, data, textfield_indexes, deleteColumn);
+                    createTableFromJSON("table-container", pk_ids, data, textfield_indexes, editColumn, deleteColumn);
 
                 } else {
                     toastr["warning"]("No results found");
@@ -608,13 +622,15 @@ async function fetch_authors_filtered(filter) {
             action: 'fetch_filtered_authors',
             filter: filter
         },
-        success: function (response) {
+        success: async function (response) {
             // console.log(JSON.parse(response));
 
             if (response != "No or invalid session") {
                 if (response != "No results found") {
                     var data = process_data(response);
                     var pk_ids = null;
+
+                    var textfield_indexes = await isAdmin() ? [2] : [1];
 
                     if (Object.keys(data).includes("id")) {
                         pk_ids = data["id"];
@@ -653,7 +669,7 @@ async function fetch_authors_filtered(filter) {
                                 pk_ids.splice(local_id, 1);
                                 // console.log(data);
 
-                                createTableFromJSON("author-list", pk_ids, data, [2], deleteColumn);
+                                createTableFromJSON("author-list", pk_ids, data, textfield_indexes, deleteColumn);
                             } else {
                                 console.error("no pk_ids");
                             }
@@ -662,7 +678,7 @@ async function fetch_authors_filtered(filter) {
                         return td;
                     };
 
-                    createTableFromJSON("author-list", pk_ids, data, [2], deleteColumn);
+                    createTableFromJSON("author-list", pk_ids, data, textfield_indexes, deleteColumn);
                 }
             }
         },
