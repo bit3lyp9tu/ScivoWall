@@ -502,6 +502,14 @@ function process_data(response) {
     return data;
 }
 
+function getIndex(element) {
+    const row = element.closest("tr");
+    const table = row.closest("table");
+    const index = Array.from(table.rows).indexOf(row);
+
+    return index - 1;
+}
+
 async function fetch_projects_filtered(filter) {
     document.getElementById("table-container").replaceChildren();
 
@@ -554,7 +562,7 @@ async function fetch_projects_filtered(filter) {
                                 delete_project(id);
                                 $("#table-container").empty();
 
-                                const local_id = parse_id_name(this);
+                                const local_id = getIndex(this);
                                 remove_local_data(local_id, data);
                                 pk_ids.splice(local_id, 1);
 
@@ -638,7 +646,7 @@ async function fetch_authors_filtered(filter) {
                                 delete_author(id);
                                 $("#author-list").empty();
 
-                                const local_id = parse_id_name(this);
+                                const local_id = getIndex(this);
                                 remove_local_data(local_id, data);
                                 pk_ids.splice(local_id, 1);
                                 // console.log(data);
@@ -712,7 +720,7 @@ async function fetch_images_filtered(filter) {
                                 delete_image(id);
                                 $("#image-list").empty();
 
-                                const local_id = parse_id_name(this);
+                                const local_id = getIndex(this);
                                 remove_local_data(local_id, data);
                                 pk_ids.splice(local_id, 1);
 
