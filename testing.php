@@ -733,8 +733,10 @@
 	test_equal("fetch filtered projects - name", $result["user.name"][0], 'max5');
 	test_equal("fetch filtered projects - title", $result["title"][0], 'The Future of Urban Farming');
 	test_equal("fetch filtered projects all", implode(",", json_decode(fetch_projects_all(85, ""), true)["id"]), '108,112,132,350,351,353,354,356');
-
 	test_equal("fetch filtered projects non filter mode", implode(",", json_decode(fetch_projects_all(85, $non_filter_mode), true)["id"]), '350,351');
+	test_equal("fetch filtered projects column-names as admin", implode(",", array_keys(json_decode(fetch_projects_all(85, $non_filter_mode), true))), 'id,user.name,title,last_edit,visible,view_mode');
+	test_equal("fetch filtered projects column-names as not admin", implode(",", array_keys(json_decode(fetch_projects_all(19, $non_filter_mode), true))), 'id,title,last_edit,visible,view_mode');
+
 
 	test_equal(
 		"filter interface content",

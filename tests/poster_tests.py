@@ -181,7 +181,6 @@ class PythonOrgSearch(unittest.TestCase):
             By.CSS_SELECTOR, "#table-container>table>tr#table-container--nr-3"
         )
         time.sleep(self.wait_time)
-        print(poster_list_element.text)
         self.assertTrue(
             poster_list_element.text
             in [
@@ -310,7 +309,7 @@ class PythonOrgSearch(unittest.TestCase):
         # check access poster
         driver.find_element(
             By.CSS_SELECTOR,
-            "#table-container>table>tr#table-container--nr-3>td:nth-last-child(2)>td>input",
+            "#table-container>table>tr#table-container--nr-3>td:nth-last-child(1)>td>input",
         ).click()
         time.sleep(self.wait_time)
         self.assertEqual(

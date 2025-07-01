@@ -520,7 +520,7 @@ async function fetch_projects_filtered(filter) {
             action: 'fetch_filtered_projects',
             filter: filter
         },
-        success: function (response) {
+        success: async function (response) {
             if (response != "No or invalid session") {
                 if (response != "No results found") {
                     // loadTable(response);
@@ -528,6 +528,8 @@ async function fetch_projects_filtered(filter) {
 
                     var data = process_data(response);
                     var pk_ids = null;
+
+                    var textfield_indexes = await isAdmin() ? [1] : [0];
 
                     if (Object.keys(data).includes("id")) {
                         pk_ids = data["id"];
@@ -566,7 +568,7 @@ async function fetch_projects_filtered(filter) {
                                 remove_local_data(local_id, data);
                                 pk_ids.splice(local_id, 1);
 
-                                createTableFromJSON("table-container", pk_ids, data, [1], deleteColumn);
+                                createTableFromJSON("table-container", pk_ids, data, textfield_indexes, deleteColumn);
                             } else {
                                 console.error("no pk_ids");
                             }
@@ -575,7 +577,7 @@ async function fetch_projects_filtered(filter) {
                         return td;
                     };
 
-                    createTableFromJSON("table-container", pk_ids, data, [1], deleteColumn);
+                    createTableFromJSON("table-container", pk_ids, data, textfield_indexes, deleteColumn);
 
                 } else {
                     toastr["warning"]("No results found");
