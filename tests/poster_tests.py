@@ -384,6 +384,8 @@ class PythonOrgSearch(unittest.TestCase):
             "#image-list>table>tr:nth-child(3)>td:nth-child(2)>input",
         )
         img_element.click()
+        for i in range(7):
+            img_element.send_keys(Keys.ARROW_RIGHT)
         img_element.send_keys("-test")
         self.assertEqual(
             "scadslogo.png-test",
