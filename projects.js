@@ -226,17 +226,6 @@ async function change_action() {
     }
     if (param[0] == 'image-list') {
         rename_image(this, id);
-        // if (is_global && await isAdmin()) {
-        //     await fetch_images_filtered(
-        //         filter_to_json(
-        //             filter_elements["user"],
-        //             filter_elements["poster"],
-        //             filter_elements["view_mode"],
-        //             filter_elements["last_edit"],
-        //             filter_elements["visibility"]
-        //         )
-        //     );
-        // }
     }
     load_project_page_data();
 }
@@ -812,6 +801,47 @@ function getFilterElements() {
     };
 }
 
+async function filter_submit() {
+    var filter_elements = getFilterElements();
+
+    await fetch_projects_filtered(
+        filter_to_json(
+            filter_elements["user"],
+            filter_elements["poster"],
+            filter_elements["view_mode"],
+            filter_elements["last_edit"],
+            filter_elements["visibility"]
+        )
+    );
+    await fetch_authors_filtered(
+        filter_to_json(
+            filter_elements["user"],
+            filter_elements["poster"],
+            filter_elements["view_mode"],
+            filter_elements["last_edit"],
+            filter_elements["visibility"]
+        )
+    );
+    await fetch_images_filtered(
+        filter_to_json(
+            filter_elements["user"],
+            filter_elements["poster"],
+            filter_elements["view_mode"],
+            filter_elements["last_edit"],
+            filter_elements["visibility"]
+        )
+    );
+    await loadImgsInTable(
+        filter_to_json(
+            filter_elements["user"],
+            filter_elements["poster"],
+            filter_elements["view_mode"],
+            filter_elements["last_edit"],
+            filter_elements["visibility"]
+        )
+    );
+}
+
 async function createFilter() {
     const filter = document.getElementById("filter");
 
@@ -884,45 +914,7 @@ async function createFilter() {
     submit.id = "submit-filter";
     submit.value = "Submit";
     submit.onclick = async function () {
-
-        var filter_elements = getFilterElements();
-
-        await fetch_projects_filtered(
-            filter_to_json(
-                filter_elements["user"],
-                filter_elements["poster"],
-                filter_elements["view_mode"],
-                filter_elements["last_edit"],
-                filter_elements["visibility"]
-            )
-        );
-        await fetch_authors_filtered(
-            filter_to_json(
-                filter_elements["user"],
-                filter_elements["poster"],
-                filter_elements["view_mode"],
-                filter_elements["last_edit"],
-                filter_elements["visibility"]
-            )
-        );
-        await fetch_images_filtered(
-            filter_to_json(
-                filter_elements["user"],
-                filter_elements["poster"],
-                filter_elements["view_mode"],
-                filter_elements["last_edit"],
-                filter_elements["visibility"]
-            )
-        );
-        await loadImgsInTable(
-            filter_to_json(
-                filter_elements["user"],
-                filter_elements["poster"],
-                filter_elements["view_mode"],
-                filter_elements["last_edit"],
-                filter_elements["visibility"]
-            )
-        );
+        await filter_submit();
     }
     containerD.appendChild(submit);
     filter.appendChild(containerD);
@@ -932,8 +924,8 @@ async function load_project_page_data() {
 
     if (await isAdmin()) {
         $("#filter").empty();
-        createFilter();
-
+        await createFilter();
+        await filter_submit();
     } else {
         // TODO: [BUG] occasionally projects are loaded in wrong order (wrong title/link)
         fetch_projects_filtered("");
