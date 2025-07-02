@@ -436,19 +436,22 @@
         return json_encode(getterQuery2($sql, ...$sanitized["var"]), true);
     }
 
-    function fetch_img_data($user_id) {
-        if ($user_id) {
-            return json_encode(getterQuery2(
-                "SELECT image.data AS image_data
-                FROM image
-                INNER JOIN poster ON image.fk_poster=poster.poster_id
-                WHERE poster.user_id=?",
-                $user_id
-            ), true);
+    function fetch_img_data($filter) {
 
-        }else{
-            return "No or invalid session";
+        $filtered = filter_projects($filter);
+        $sanitized = sanitize_filter($filtered);
+
+        $sql = "SELECT image_id AS id, image.data AS image_data
+            FROM image
+            INNER JOIN poster ON image.fk_poster=poster.poster_id
+            INNER JOIN user ON poster.user_id=user.user_id
+            INNER JOIN view_modes ON poster.fk_view_mode=view_modes.ID";
+
+        if (sizeof($sanitized["var"]) > 0) {
+            $sql .= " WHERE " . substr($sanitized["sql"], 4, -1);
         }
+
+        return json_encode(getterQuery2($sql, ...$sanitized["var"]), true);
     }
 
     function fetch_authors_all($user_id, $filter) {
@@ -683,7 +686,7 @@
 
                 echo fetch_projects_all($user_id, $filter);
             } else {
-                return "No or invalid session";
+                echo "No or invalid session";
             }
         }
 
@@ -699,7 +702,7 @@
 
                 echo fetch_authors_all($user_id, $filter);
             } else {
-                return "No or invalid session";
+                echo "No or invalid session";
             }
         }
 
@@ -715,7 +718,23 @@
 
                 echo fetch_images_all($filter);
             } else {
-                return "No or invalid session";
+                echo "No or invalid session";
+            }
+        }
+
+        if ($_POST['action'] == 'fetch_img_data') {
+
+            $filter = isset($_POST['filter']) ? $_POST['filter'] : '';
+            $user_id = getValidUserFromSession();
+
+            if ($user_id != null) {
+                if (!isAdmin($user_id)) {
+                    $filter = user_to_filter($user_id);
+                }
+
+                echo fetch_img_data($user_id);
+            } else {
+                echo "No or invalid session";
             }
         }
 
@@ -752,12 +771,6 @@
             $user_id = getValidUserFromSession();
 
             echo delete_image($id, $user_id);
-        }
-
-        if ($_POST['action'] == 'fetch_img_data') {
-
-            $user_id = getValidUserFromSession();
-            echo fetch_img_data($user_id);
         }
 
         if ($_POST['action'] == 'delete_project') {

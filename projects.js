@@ -226,17 +226,17 @@ async function change_action() {
     }
     if (param[0] == 'image-list') {
         rename_image(this, id);
-        if (is_global && await isAdmin()) {
-            await fetch_images_filtered(
-                filter_to_json(
-                    filter_elements["user"],
-                    filter_elements["poster"],
-                    filter_elements["view_mode"],
-                    filter_elements["last_edit"],
-                    filter_elements["visibility"]
-                )
-            );
-        }
+        // if (is_global && await isAdmin()) {
+        //     await fetch_images_filtered(
+        //         filter_to_json(
+        //             filter_elements["user"],
+        //             filter_elements["poster"],
+        //             filter_elements["view_mode"],
+        //             filter_elements["last_edit"],
+        //             filter_elements["visibility"]
+        //         )
+        //     );
+        // }
     }
     load_project_page_data();
 }
@@ -561,20 +561,6 @@ async function fetch_projects_filtered(filter) {
                             if (pk_ids) {
                                 var id = $(this).closest("tr")[0].getAttribute("pk_id");
 
-                                var filter = "";
-
-                                if (await isAdmin()) {
-                                    var filter_elements = getFilterElements();
-
-                                    filter = (filter_to_json(
-                                        filter_elements["user"],
-                                        filter_elements["poster"],
-                                        filter_elements["view_mode"],
-                                        filter_elements["last_edit"],
-                                        filter_elements["visibility"]
-                                    ));
-                                }
-                                console.log("poster_id", id);
                                 delete_project(id);
                                 $("#table-container").empty();
 
@@ -648,26 +634,12 @@ async function fetch_authors_filtered(filter) {
                             if (pk_ids) {
                                 var id = $(this).closest("tr")[0].getAttribute("pk_id");
 
-                                var filter = "";
-
-                                if (await isAdmin()) {
-                                    var filter_elements = getFilterElements();
-
-                                    filter = (filter_to_json(
-                                        filter_elements["user"],
-                                        filter_elements["poster"],
-                                        filter_elements["view_mode"],
-                                        filter_elements["last_edit"],
-                                        filter_elements["visibility"]
-                                    ));
-                                }
                                 delete_author(id);
                                 $("#author-list").empty();
 
                                 const local_id = getIndex(this);
                                 remove_local_data(local_id, data);
                                 pk_ids.splice(local_id, 1);
-                                // console.log(data);
 
                                 createTableFromJSON("author-list", pk_ids, data, textfield_indexes, deleteColumn);
                             } else {
@@ -743,6 +715,7 @@ async function fetch_images_filtered(filter) {
                                 pk_ids.splice(local_id, 1);
 
                                 createTableFromJSON("image-list", pk_ids, data, [1], deleteColumn);
+                                loadImgsInTable(filter);
                             } else {
                                 console.error("no pk_ids");
                             }
@@ -941,6 +914,15 @@ async function createFilter() {
                 filter_elements["visibility"]
             )
         );
+        await loadImgsInTable(
+            filter_to_json(
+                filter_elements["user"],
+                filter_elements["poster"],
+                filter_elements["view_mode"],
+                filter_elements["last_edit"],
+                filter_elements["visibility"]
+            )
+        );
     }
     containerD.appendChild(submit);
     filter.appendChild(containerD);
@@ -957,15 +939,17 @@ async function load_project_page_data() {
         fetch_projects_filtered("");
         fetch_authors_filtered("");
         fetch_images_filtered("");
+        loadImgsInTable("");
     }
 }
 
-async function loadImgsInTable(id) {
+async function loadImgsInTable(filter) {
     var json_string = await $.ajax({
         type: "POST",
         url: "account_management.php",
         data: {
-            action: 'fetch_img_data'
+            action: 'fetch_img_data',
+            filter: filter
         },
         success: function (response) {
             return response;
@@ -988,14 +972,7 @@ async function loadImgsInTable(id) {
         return null;
     }
 
-    const img_data = json_parsed["image_data"];
-
-    var elem = document.getElementById(id);
-
-    if (!elem) {
-        console.error(`loadImgsInTable: elem not found by id ${id}`)
-        return null;
-    }
+    var elem = document.getElementById("image-list");
 
     var elem_children = elem.children;
 
@@ -1012,14 +989,17 @@ async function loadImgsInTable(id) {
     }
 
     const table = first_child.children;
-    if (img_data.length == table.length - 1) {
+    if (json_parsed["image_data"].length == table.length - 1) {
         for (let i = 1; i < table.length; i++) {
-            const img = table[i].querySelector('img');
+            if (json_parsed["id"][i - 1] == table[i].getAttribute("pk_id")) {
 
-            img.classList.add("table-img");
-            img.src = img_data[i - 1];
-            // console.log(i, img_data[i - 1]);
+                const img = table[i].querySelector('img');
 
+                img.classList.add("table-img");
+                img.src = json_parsed["image_data"][i - 1];
+                // console.log(i, img_data[i - 1]);
+
+            }
         }
     } else {
         console.warn(`Rows and Images are unequal [${img_data.length}: ${(table.length - 1)}]`);
