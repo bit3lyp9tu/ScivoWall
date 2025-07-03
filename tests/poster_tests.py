@@ -670,7 +670,6 @@ class PythonOrgSearch(unittest.TestCase):
         pass
 
     def check_selected(self, driver, css_selector, default_selected, results):
-        results.insert(0, default_selected)
         time.sleep(self.wait_time)
         select_user = driver.find_element(
             By.CSS_SELECTOR,
@@ -851,6 +850,34 @@ class PythonOrgSearch(unittest.TestCase):
 
         driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
 
+        # check set view_mode
+        self.change_selector(
+            driver,
+            "#table-container>table>tr:nth-child(2)>td:nth-child(5)>select",
+            "public",
+            None,
+        )
+        # check if state stored after reload
+        time.sleep(self.wait_time)
+        driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
+        self.check_selected(
+            driver,
+            "div#table-container>table>tr:nth-child(2)>td:nth-child(5)>select",
+            "public",
+            ["public", "private"],
+        )
+        time.sleep(self.wait_time)
+        driver.get(f"http://{self.address}/scientific_poster_generator/index.php")
+        time.sleep(self.wait_time * 2 + 2)
+        self.assertEqual(
+            3,
+            len(
+                [i for i in driver.find_elements(By.CSS_SELECTOR, "div#posters>div>*")]
+            ),
+        )
+        time.sleep(self.wait_time)
+        driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
+
         time.sleep(self.wait_time)
         driver.find_element(By.CSS_SELECTOR, "input#submit-filter").click()
 
@@ -900,7 +927,7 @@ class PythonOrgSearch(unittest.TestCase):
             driver,
             "select#select_user",
             "-",
-            ["Admin", "Anne Beispielfrau", "bug", "Max Mustermann", "max5"],
+            ["-", "Admin", "Anne Beispielfrau", "bug", "Max Mustermann", "max5"],
         )
         # check select title
         self.check_selected(
@@ -908,6 +935,7 @@ class PythonOrgSearch(unittest.TestCase):
             "select#select_title",
             "-",
             [
+                "-",
                 "test1",
                 "test4",
                 "fxhfdf",
@@ -919,11 +947,11 @@ class PythonOrgSearch(unittest.TestCase):
         )
         # check select view_mode
         self.check_selected(
-            driver, "select#select_view_mode", "-", ["public", "private"]
+            driver, "select#select_view_mode", "-", ["-", "public", "private"]
         )
         # TODO: check select last_edit
         # check select visibility
-        self.check_selected(driver, "select#visibility", "-", ["0", "1"])
+        self.check_selected(driver, "select#visibility", "-", ["-", "0", "1"])
 
         # check filter results posters change selector
         self.change_selector(
