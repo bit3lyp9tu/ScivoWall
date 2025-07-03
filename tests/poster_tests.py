@@ -920,6 +920,12 @@ class PythonOrgSearch(unittest.TestCase):
             "div#image-list>table>*>td:nth-child(2)>input",
             ["tudlogo.png", "leipzig.png"],
         )
+        # check image data
+        time.sleep(self.wait_time)
+        for i in driver.find_elements(
+            By.CSS_SELECTOR, "div#image-list>table>*>td:nth-child(1)>div>img"
+        ):
+            self.assertTrue(i.get_attribute("src") != "0")
 
         # check right select options in filter
         # check select user
