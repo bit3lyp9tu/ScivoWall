@@ -54,8 +54,7 @@ class PythonOrgSearch(unittest.TestCase):
 
         self.user_page(driver)
         self.poster_page(driver, 3)
-        # TODO: update admin tests
-        # self.admin_user(driver, "")
+        self.admin_user(driver, "")
         self.index_page(driver)
 
         # self.logout(driver)
@@ -163,6 +162,7 @@ class PythonOrgSearch(unittest.TestCase):
         pass
 
     def register(self, driver, name, pw):
+        # TODO: check register user
         # check existing name
         # check invalid pw
         # check two diffent pw
@@ -658,8 +658,123 @@ class PythonOrgSearch(unittest.TestCase):
         )
         # TODO: check if other user cannot change
 
+    def check_filter(self, driver, css_selector, results):
+        time.sleep(self.wait_time)
+        self.assertListEqual(
+            results,
+            [
+                el.get_attribute("value")
+                for el in driver.find_elements(By.CSS_SELECTOR, css_selector)
+            ],
+        )
+        pass
+
+    def check_selected(self, driver, css_selector, default_selected, results):
+        results.insert(0, default_selected)
+        time.sleep(self.wait_time)
+        select_user = driver.find_element(
+            By.CSS_SELECTOR,
+            css_selector,
+        )
+        sel1 = Select(select_user)
+        time.sleep(self.wait_time)
+        self.assertListEqual(
+            results,
+            [i.text for i in sel1.options],
+        )
+        time.sleep(self.wait_time)
+        self.assertEqual(default_selected, sel1.all_selected_options[0].text)
+        pass
+
+    def change_selector(self, driver, css_selector, value, css_submit):
+        time.sleep(self.wait_time)
+        select_user = driver.find_element(
+            By.CSS_SELECTOR,
+            css_selector,
+        )
+        sel1 = Select(select_user)
+        time.sleep(self.wait_time)
+        sel1.select_by_visible_text(value)
+
+        if css_submit:
+            time.sleep(self.wait_time)
+            driver.find_element(By.CSS_SELECTOR, css_submit).click()
+        pass
+
+    def check_rename_row(self, driver, css_cell, value, css_names, list):
+        page = f"http://{self.address}/scientific_poster_generator/projects.php"
+        filter_config = [
+            ("select#select_user", "max5", "input#submit-filter"),
+            ("select#visibility", "1", "input#submit-filter"),
+        ]
+
+        time.sleep(self.wait_time)
+        img_last_edit = driver.find_element(
+            By.CSS_SELECTOR,
+            css_cell,
+        ).text
+        time.sleep(self.wait_time)
+        img_selector = driver.find_element(
+            By.CSS_SELECTOR,
+            css_cell + ">input",
+        )
+        img_selector.send_keys(value)
+        time.sleep(self.wait_time)
+        driver.find_element(
+            By.CSS_SELECTOR, "div#author-list>table>tr:nth-child(1)>th:nth-child(2)"
+        ).click()
+        time.sleep(self.wait_time)
+        driver.get(page)
+        for i in filter_config:
+            self.change_selector(driver, *i)
+        time.sleep(self.wait_time)
+        self.check_filter(
+            driver,
+            css_names,
+            list,
+        )
+        # check correct time change - image
+        time.sleep(self.wait_time)
+        self.assertEqual(
+            img_last_edit,
+            driver.find_element(
+                By.CSS_SELECTOR,
+                css_cell,
+            ).text,
+        )
+        pass
+
+    def check_delete_row(self, driver, css_selector, css_names, list):
+        page = f"http://{self.address}/scientific_poster_generator/projects.php"
+        filter_config = [
+            ("select#select_user", "max5", "input#submit-filter"),
+            ("select#visibility", "1", "input#submit-filter"),
+        ]
+
+        time.sleep(self.wait_time)
+        driver.find_element(
+            By.CSS_SELECTOR,
+            css_selector,
+        ).click()
+        time.sleep(self.wait_time)
+        self.check_filter(
+            driver,
+            css_names,
+            list,
+        )
+        driver.get(page)
+        for i in filter_config:
+            self.change_selector(driver, *i)
+
+        time.sleep(self.wait_time)
+        self.check_filter(
+            driver,
+            css_names,
+            list,
+        )
+        pass
+
     def admin_user(self, driver, pw):
-        # TODO:   ??? check posters set on public
 
         # go to projects page
         driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
@@ -680,11 +795,11 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check login successfully
         self.assertEqual(
-            6,
+            7,
             len(
                 driver.find_elements(
                     By.CSS_SELECTOR,
-                    "div#table-container>table>tr#table-container--nr-1>td",
+                    "div#table-container>table>tr:nth-child(2)>td",
                 )
             ),
         )
@@ -693,7 +808,7 @@ class PythonOrgSearch(unittest.TestCase):
             "on",
             driver.find_elements(
                 By.CSS_SELECTOR,
-                "div#table-container>table>tr#table-container--nr-1>td:nth-child(3)>input",
+                "div#table-container>table>tr#table-container--nr-1>td:nth-child(4)>input",
             )[0].get_attribute("value"),
         )
         driver.get(f"http://{self.address}/scientific_poster_generator/index.php")
@@ -709,7 +824,7 @@ class PythonOrgSearch(unittest.TestCase):
 
         visibility = driver.find_element(
             By.CSS_SELECTOR,
-            "div#table-container>table>tr#table-container--nr-1>td:nth-child(3)>input",
+            "div#table-container>table>tr#table-container--nr-1>td:nth-child(4)>input",
         )
 
         # print(visibility.is_selected())
@@ -725,15 +840,6 @@ class PythonOrgSearch(unittest.TestCase):
 
         time.sleep(self.wait_time)
 
-        # check if view mode disabeld
-        selector = driver.find_element(
-            By.CSS_SELECTOR,
-            "div#table-container>table>tr:nth-child(3)>td:nth-child(4)>select",
-        )
-        self.assertIsNotNone(selector.get_attribute("disabled"))
-
-        time.sleep(self.wait_time)
-
         driver.get(f"http://{self.address}/scientific_poster_generator/index.php")
 
         time.sleep(self.wait_time)
@@ -742,6 +848,247 @@ class PythonOrgSearch(unittest.TestCase):
             [], driver.find_elements(By.CSS_SELECTOR, "div#posters>div>iframe")
         )
         # TODO: check if admin can change other posters
+
+        driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
+
+        time.sleep(self.wait_time)
+        driver.find_element(By.CSS_SELECTOR, "input#submit-filter").click()
+
+        # check filter results posters - all
+        self.check_filter(
+            driver,
+            "div#table-container>table>*>td:nth-child(2)>input",
+            [
+                "test1",
+                "test4",
+                "fxhfdf",
+                "dxfgbfdffdbdfxbfbxbf",
+                "Climate Change Effects in the Arctic",
+                "AI in Modern Healthcare",
+                "The Future of Urban Farming",
+            ],
+        )
+
+        # check filter results authors - all
+        self.check_filter(
+            driver,
+            "div#author-list>table>*>td:nth-child(3)>input",
+            [
+                "Author8",
+                "Author5",
+                "ChatGPT",
+                "Alice Johnson",
+                "Dr. Rahul Mehta",
+                "ChatGPT",
+                "Lina Chen abc",
+                "ChatGPT",
+                "Alice Johnson",
+                "Lina Chen abc",
+            ],
+        )
+
+        # check filter results imgs - all
+        self.check_filter(
+            driver,
+            "div#image-list>table>*>td:nth-child(2)>input",
+            ["tudlogo.png", "leipzig.png"],
+        )
+
+        # check right select options in filter
+        # check select user
+        self.check_selected(
+            driver,
+            "select#select_user",
+            "-",
+            ["Admin", "Anne Beispielfrau", "bug", "Max Mustermann", "max5"],
+        )
+        # check select title
+        self.check_selected(
+            driver,
+            "select#select_title",
+            "-",
+            [
+                "test1",
+                "test4",
+                "fxhfdf",
+                "dxfgbfdffdbdfxbfbxbf",
+                "Climate Change Effects in the Arctic",
+                "AI in Modern Healthcare",
+                "The Future of Urban Farming",
+            ],
+        )
+        # check select view_mode
+        self.check_selected(
+            driver, "select#select_view_mode", "-", ["public", "private"]
+        )
+        # TODO: check select last_edit
+        # check select visibility
+        self.check_selected(driver, "select#visibility", "-", ["0", "1"])
+
+        # check filter results posters change selector
+        self.change_selector(
+            driver, "select#select_user", "max5", "input#submit-filter"
+        )
+        # check filter results posters - user
+        self.check_filter(
+            driver,
+            "div#table-container>table>*>td:nth-child(2)>input",
+            [
+                "Climate Change Effects in the Arctic",
+                "AI in Modern Healthcare",
+                "The Future of Urban Farming",
+            ],
+        )
+        # check filter results authors - user
+        self.check_filter(
+            driver,
+            "div#author-list>table>*>td:nth-child(3)>input",
+            [
+                "ChatGPT",
+                "Alice Johnson",
+                "Dr. Rahul Mehta",
+                "ChatGPT",
+                "Lina Chen abc",
+                "ChatGPT",
+                "Alice Johnson",
+                "Lina Chen abc",
+            ],
+        )
+        # check filter results imgs - user
+        self.check_filter(
+            driver,
+            "div#image-list>table>*>td:nth-child(2)>input",
+            ["tudlogo.png", "leipzig.png"],
+        )
+
+        # check with additional filter attribute - visibility
+        self.change_selector(driver, "select#visibility", "0", "input#submit-filter")
+
+        # check filter results posters - user, visibility
+        self.check_filter(
+            driver,
+            "div#table-container>table>*>td:nth-child(2)>input",
+            ["Climate Change Effects in the Arctic"],
+        )
+
+        # check filter results authors - user, visibility
+        self.check_filter(
+            driver,
+            "div#author-list>table>*>td:nth-child(3)>input",
+            ["ChatGPT", "Alice Johnson", "Dr. Rahul Mehta"],
+        )
+
+        # check filter results imgs - user, visibility
+        self.check_filter(
+            driver,
+            "div#image-list>table>*>td:nth-child(2)>input",
+            [],
+        )
+
+        # check with additional filter attribute - view_mode
+        self.change_selector(
+            driver, "select#select_view_mode", "public", "input#submit-filter"
+        )
+        # check filter results posters - user, visibility, view_mode
+        self.check_filter(
+            driver,
+            "div#table-container>table>*>td:nth-child(2)>input",
+            [],
+        )
+
+        # check filter results authors - user, visibility, view_mode
+        self.check_filter(
+            driver,
+            "div#author-list>table>*>td:nth-child(3)>input",
+            [],
+        )
+
+        # check filter results imgs - user, visibility, view_mode
+        self.check_filter(
+            driver,
+            "div#image-list>table>*>td:nth-child(2)>input",
+            [],
+        )
+
+        # reset filter attribute - view_mode
+        self.change_selector(
+            driver, "select#select_view_mode", "-", "input#submit-filter"
+        )
+        # change filter attribute - visibility
+        self.change_selector(driver, "select#visibility", "1", "input#submit-filter")
+
+        # check with additional filter attribute - poster
+        self.change_selector(
+            driver,
+            "select#select_title",
+            "The Future of Urban Farming",
+            "input#submit-filter",
+        )
+        # check filter results posters - user, visibility, poster
+        self.check_filter(
+            driver,
+            "div#table-container>table>*>td:nth-child(2)>input",
+            ["The Future of Urban Farming"],
+        )
+
+        # check filter results authors - user, visibility, poster
+        self.check_filter(
+            driver,
+            "div#author-list>table>*>td:nth-child(3)>input",
+            ["ChatGPT", "Alice Johnson", "Lina Chen abc"],
+        )
+
+        # check filter results imgs - user, visibility, poster
+        self.check_filter(
+            driver,
+            "div#image-list>table>*>td:nth-child(2)>input",
+            ["tudlogo.png", "leipzig.png"],
+        )
+
+        # check correct rename - author
+        self.check_rename_row(
+            driver,
+            "div#author-list>table>tr:nth-child(2)>td:nth-child(3)",
+            " abc",
+            "div#author-list>table>*>td:nth-child(3)>input",
+            [
+                "ChatGPT abc",
+                "Lina Chen abc",
+                "ChatGPT abc",
+                "Alice Johnson",
+                "Lina Chen abc",
+            ],
+        )
+        # check correct delete - author
+        time.sleep(self.wait_time)
+        self.check_delete_row(
+            driver,
+            "div#author-list>table>tr:nth-child(2)>td:nth-child(4)>td>input",
+            "div#author-list>table>*>td:nth-child(3)>input",
+            [
+                "Lina Chen abc",
+                "ChatGPT abc",
+                "Alice Johnson",
+                "Lina Chen abc",
+            ],
+        )
+
+        # check correct rename - image
+        self.check_rename_row(
+            driver,
+            "div#image-list>table>tr:nth-child(2)>td:nth-child(2)",
+            " abc",
+            "div#image-list>table>*>td:nth-child(2)>input",
+            ["tudlogo.png abc", "leipzig.png"],
+        )
+
+        # check correct delete - image
+        self.check_delete_row(
+            driver,
+            "div#image-list>table>tr:nth-child(2)>td:nth-child(5)>td>input",
+            "div#image-list>table>*>td:nth-child(2)>input",
+            ["leipzig.png"],
+        )
 
     # TODO: test index page
     def index_page(self, driver):
