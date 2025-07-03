@@ -377,6 +377,27 @@ div#toggle_register_box {
     border: unset !important;
 }
 
-.filter-container {}
+.filter-container {
+    /* border: 1; */
+}
 
-.filter-select {}
+.filter-select {
+    display: flex;
+    flex-direction: row;
+}
+
+#filter>table {
+    border-collapse: collapse;
+    border: 1px solid rgb(110, 110, 110);
+}
+
+th,
+td {
+    text-align: left;
+}
+
+th {
+    font-weight: bold;
+}
+
+.filter-container input[type='button'] {}

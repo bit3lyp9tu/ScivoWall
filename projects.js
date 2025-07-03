@@ -842,14 +842,35 @@ async function filter_submit() {
     );
 }
 
+function createTable(parent, data) {
+    const table = document.createElement("table");
+
+    for (let i = 0; i < Object.keys(data).length; i++) {
+        const key = Object.keys(data)[i];
+        const value = data[key];
+
+        const row = document.createElement("tr");
+        const name = document.createElement("th");
+        name.innerText = key;
+
+        row.appendChild(name);
+        row.appendChild(value);
+
+        table.appendChild(row);
+    }
+
+    parent.appendChild(table);
+}
+
 async function createFilter() {
     const filter = document.getElementById("filter");
 
     var selectables = JSON.parse(await get_selectable_filters());
-    // console.log(selectables);
 
     const json = ["user", "title", "view_mode"];
     const db = ["name", "title", "name"];
+
+    var l = [];
 
     for (let i = 0; i < json.length; i++) {
         const container = document.createElement("div");
@@ -869,7 +890,7 @@ async function createFilter() {
             select.appendChild(option);
         }
         container.appendChild(select);
-        filter.appendChild(container);
+        l.push(select);
     }
 
     const containerB = document.createElement("div");
@@ -880,7 +901,7 @@ async function createFilter() {
     last_edit.min = unixToDate(selectables["last_edit"]["min"]);
     last_edit.max = unixToDate(selectables["last_edit"]["max"]);
     containerB.appendChild(last_edit);
-    filter.appendChild(containerB);
+    l.push(containerB);
 
     // const visibility_btn = document.createElement("input");
     // visibility_btn.id = "visibility";
@@ -906,7 +927,16 @@ async function createFilter() {
     visibility_select.appendChild(mode_optionC);
     filter.appendChild(visibility_select);
     containerC.appendChild(visibility_select);
-    filter.appendChild(containerC);
+    l.push(containerC);
+
+    var table_data = {
+        "user": l[0],
+        "title": l[1],
+        "view_mode": l[2],
+        "last_edit_date": l[3],
+        "visibility": l[4]
+    };
+    createTable(filter, table_data);
 
     const containerD = document.createElement("div");
     const submit = document.createElement("input");
