@@ -11,4 +11,4 @@ tests/php_build_in_func
 tests/test_report.json
 tests/test_log
 
-./.env
+.env
