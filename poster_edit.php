@@ -341,7 +341,6 @@
         return $result;
     }
 
-    //TODO:   function to change last_edit_date
     function updateEditDate($table, $id) {
         $attribute = array(
             "poster" => "last_edit_date",

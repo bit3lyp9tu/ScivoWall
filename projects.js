@@ -30,7 +30,6 @@ function createProject() {
     });
 }
 
-//TODO:   reloaded data after delete should include last edit time
 function delete_project(id) {
     $.ajax({
         type: "POST",
@@ -179,7 +178,6 @@ async function insert_visibility_column(_this, data, td, header, i) {
             console.error("pk id not found");
         }
     }
-    // TODO: needs testing
     if (!await isAdmin()) {
         elem.toggleAttribute("disabled");
     }
@@ -945,6 +943,7 @@ async function createFilter() {
     last_edit.max = unixToDate(selectables["last_edit"]["max"]);
     containerB.appendChild(last_edit);
 
+    // TODO: finish last_edit category
     // const visibility_btn = document.createElement("input");
     // visibility_btn.id = "visibility";
     // visibility_btn.type = "checkbox";

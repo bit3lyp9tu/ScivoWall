@@ -51,9 +51,6 @@
 
 	// print_r("name: " . $GLOBALS['dbname'] . "\n");
 
-	//TODO:   add columns in user: last logged-in date/ date of registration
-	//TODO:   add columns in poster: date of creation/ last edit date/ last edited by user_id
-
 	$create_queries = [
 		"create database if not exists ".$GLOBALS["dbname"],
 		"use ".$GLOBALS["dbname"],

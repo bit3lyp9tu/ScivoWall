@@ -265,9 +265,6 @@
 
 	test_equal("fetch all projects", implode(",", json_decode(fetch_projects(19), true)["title"]), 'Climate Change Effects in the Arctic,AI in Modern Healthcare,The Future of Urban Farming');
 
-	// TODO:
-	// test_equal("fetch authors user is working with", implode(',', fetch_authors(1)["name"]), '');
-
 
 	$pre_delete = json_encode(getterQuery2("SELECT poster_id FROM poster"), true);
 	delete_project_simple(108, 19);

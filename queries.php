@@ -26,7 +26,7 @@
         )["LAST_INSERT_ID()"][0];
     }
 
-    function editQuery($sql, $types, ...$param) {   //TODO:   ??????????????????
+    function editQuery($sql, $types, ...$param) {
         $stmt = $GLOBALS["conn"]->prepare($sql);
         $stmt->bind_param($types, ...$param);
         $stmt->execute();
