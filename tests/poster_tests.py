@@ -881,6 +881,102 @@ class PythonOrgSearch(unittest.TestCase):
         time.sleep(self.wait_time)
         driver.find_element(By.CSS_SELECTOR, "input#submit-filter").click()
 
+        # check filter categories
+        # - check create filter category + reset selected
+        time.sleep(self.wait_time)
+        selecter = driver.find_element(
+            By.CSS_SELECTOR,
+            "select#select_view_mode",
+        )
+        sel1 = Select(selecter)
+        time.sleep(self.wait_time)
+        sel1.select_by_visible_text("public")
+        time.sleep(self.wait_time)
+        self.assertListEqual(
+            ["-1", "public"],
+            [
+                i.get_attribute("value")
+                for i in driver.find_elements(
+                    By.CSS_SELECTOR,
+                    "div#filter.filter-container>table>tr:nth-child(3)>div.filter-select>*",
+                )
+            ],
+        )
+        # - check delete category
+        time.sleep(self.wait_time)
+        driver.find_element(
+            By.CSS_SELECTOR,
+            "div#filter.filter-container>table>tr:nth-child(3)>div.filter-select>input",
+        ).click()
+        time.sleep(self.wait_time)
+        self.assertListEqual(
+            ["-1"],
+            [
+                i.get_attribute("value")
+                for i in driver.find_elements(
+                    By.CSS_SELECTOR,
+                    "div#filter.filter-container>table>tr:nth-child(3)>div.filter-select>*",
+                )
+            ],
+        )
+        # - check no category duplicates
+        time.sleep(self.wait_time)
+        selecter = driver.find_element(
+            By.CSS_SELECTOR,
+            "select#select_view_mode",
+        )
+        sel1 = Select(selecter)
+        time.sleep(self.wait_time)
+        sel1.select_by_visible_text("public")
+        time.sleep(self.wait_time)
+        sel1.select_by_visible_text("private")
+        time.sleep(self.wait_time)
+        self.assertListEqual(
+            ["-1", "public", "private"],
+            [
+                i.get_attribute("value")
+                for i in driver.find_elements(
+                    By.CSS_SELECTOR,
+                    "div#filter.filter-container>table>tr:nth-child(3)>div.filter-select>*",
+                )
+            ],
+        )
+        time.sleep(self.wait_time)
+        sel1.select_by_visible_text("private")
+        time.sleep(self.wait_time)
+        self.assertListEqual(
+            ["-1", "public", "private"],
+            [
+                i.get_attribute("value")
+                for i in driver.find_elements(
+                    By.CSS_SELECTOR,
+                    "div#filter.filter-container>table>tr:nth-child(3)>div.filter-select>*",
+                )
+            ],
+        )
+        # - clean up
+        time.sleep(self.wait_time)
+        driver.find_element(
+            By.CSS_SELECTOR,
+            "div#filter.filter-container>table>tr:nth-child(3)>div.filter-select>:nth-child(2)",
+        ).click()
+        time.sleep(self.wait_time)
+        driver.find_element(
+            By.CSS_SELECTOR,
+            "div#filter.filter-container>table>tr:nth-child(3)>div.filter-select>:nth-child(2)",
+        ).click()
+        time.sleep(self.wait_time)
+        self.assertListEqual(
+            ["-1"],
+            [
+                i.get_attribute("value")
+                for i in driver.find_elements(
+                    By.CSS_SELECTOR,
+                    "div#filter.filter-container>table>tr:nth-child(3)>div.filter-select>*",
+                )
+            ],
+        )
+
         # check filter results posters - all
         self.check_filter(
             driver,
