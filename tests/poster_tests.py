@@ -644,8 +644,6 @@ class PythonOrgSearch(unittest.TestCase):
             .all_selected_options[0]
             .text,
         )
-        driver.find_element(By.CSS_SELECTOR, "button#save-content").click()
-        time.sleep(self.wait_time)
 
         driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
         time.sleep(self.wait_time)

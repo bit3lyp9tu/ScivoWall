@@ -34,8 +34,6 @@
 
     <!-- <p id="tester" style="width:600px;height:250px;"></p> -->
 
-    <button id="img-load">Load Image</button>
-
     <div id="titles">
         <div>
             <div id="title">Title</div>   <!-- change ids -->

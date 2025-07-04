@@ -369,6 +369,8 @@ async function unedit_box() {
 
         // forget old selected
         selected_box = null;
+
+        await save_content();
     }
 
     initEditBoxes();
@@ -449,12 +451,14 @@ async function edit_box_event(event) {
         // Edit Boxes
         //edit_box(event.target)
     }
+
+    await save_content();
 }
 
 document.addEventListener("click", edit_box_event);
 
 //TODO:   check for invalid names during image upload
-function imgDragDrop() {
+async function imgDragDrop() {
     const url = url_to_json();
 
     // const dropZone = document.getElementById('drop-zone');
@@ -519,6 +523,8 @@ function imgDragDrop() {
             });
         }
     }
+
+    await save_content();
 }
 
 function insertImageMark(name, index) {
@@ -549,10 +555,6 @@ function createEditMenu() {
     add_btn.id = "add-box";
     add_btn.innerText = "Add Box";
 
-    const save_btn = document.createElement("button");
-    save_btn.id = "save-content";
-    save_btn.innerText = "Save";
-
     // TODO:   needs save?
     const select_view_mode = document.createElement("select");
     select_view_mode.id = "view-mode";
@@ -560,7 +562,6 @@ function createEditMenu() {
 
     parent.appendChild(link_container);
     parent.appendChild(add_btn);
-    parent.appendChild(save_btn);
     parent.appendChild(select_view_mode);
 }
 
@@ -695,7 +696,7 @@ document.addEventListener("focusin", function (event) {
     // });
 })
 
-document.addEventListener("focusout", function (event) {
+document.addEventListener("focusout", async function (event) {
     if (event.target.id == "typeahead") {
         if (event.target.value != "") {
             // convert target into item
@@ -711,6 +712,8 @@ document.addEventListener("focusout", function (event) {
 
             // const input = document.getElementsByClassName("typeahead-standalone")
             // input.after(new_elem);
+
+            await save_content();
         }
     }
 });
@@ -788,14 +791,6 @@ async function save_content() {
 
 function buttonEvents() {
 
-    if (!document.getElementById("save-content")) {
-        return;
-    }
-    document.getElementById("save-content").onclick = async function () {
-        console.log("save");
-
-        await save_content();
-    };
     if (!document.getElementById("add-box")) {
         return;
     }
@@ -812,12 +807,6 @@ function buttonEvents() {
 
         loadPlots();
     };
-    if (!document.getElementById("img-load")) {
-        return;
-    }
-    document.getElementById("img-load").onclick = async function () {
-        loadImages();
-    }
 }
 
 function match_placeholder_image(str) {
@@ -1041,7 +1030,7 @@ var dragged_text = "";
 var is_draging = false;
 var dragend_item = null;
 
-document.addEventListener("dragstart", function (event) {
+document.addEventListener("dragstart", async function (event) {
 
     console.log("drawstart event", event.target);
 
@@ -1053,6 +1042,8 @@ document.addEventListener("dragstart", function (event) {
         dragend_item = event.target;
     }
     is_draging = true;
+
+    await save_content();
 });
 
 document.addEventListener("dragover", function (event) {
@@ -1069,7 +1060,7 @@ document.addEventListener("dragover", function (event) {
 
 // });
 
-document.addEventListener("drop", function (event) {
+document.addEventListener("drop", async function (event) {
     event.preventDefault();
 
     if (document.getElementById("typeahead-container").contains(event.target)) {
@@ -1084,6 +1075,8 @@ document.addEventListener("drop", function (event) {
     dragend_item.style.borderWidth = "1px";
 
     is_draging = false;
+
+    await save_content();
 });
 
 document.addEventListener("mouseover", function (event) {
