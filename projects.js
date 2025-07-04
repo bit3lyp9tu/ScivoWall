@@ -728,7 +728,7 @@ function unixToDate(number) {
     return date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
 }
 
-function filter_to_json(user, poster, view_mode, last_edit, visiblitly) {
+function filter_to_json(users, posters, view_modes, last_edits, visiblitlies) {
     var json = JSON.parse(`{
 		"attributes": {
 			"user.name": {
@@ -764,40 +764,35 @@ function filter_to_json(user, poster, view_mode, last_edit, visiblitly) {
 		}
 	}`);
 
-    if (user !== "-") {
-        json["attributes"]["user.name"]["list"].push(user);
-    }
-    if (poster !== "-") {
-        json["attributes"]["poster.title"]["list"].push(poster);
-    }
-    // if (last_edit !== "-") {
-    //     json["attributes"]["last_edit_date"].push("{}");
-    // }
-    if (visiblitly !== "-") {
-        json["attributes"]["visible"]["list"].push(visiblitly);
-    }
-    if (view_mode !== "-") {
-        json["attributes"]["view_modes.name"]["list"].push(view_mode);
-    }
+    json["attributes"]["user.name"]["list"].push(...users);
+    json["attributes"]["poster.title"]["list"].push(...posters);
+    //  json["attributes"]["last_edit_date"].push("{}");
+    json["attributes"]["visible"]["list"].push(...visiblitlies);
+    json["attributes"]["view_modes.name"]["list"].push(...view_modes);
 
-    console.log("request: ", json);
+    // console.log("request: ", json);
 
     return JSON.stringify(json);
 }
 
 function getFilterElements() {
-    const user = document.getElementById("select_user");
-    const poster = document.getElementById("select_title");
-    const view_mode = document.getElementById("select_view_mode");
-    // const last_edit = document.getElementById("last_edit");
-    const visibility = document.getElementById("visibility");
+    const categories = document.querySelectorAll(".filter-category");
+    var map = {};
+
+    categories.forEach(i => {
+        if (map[i.getAttribute("key")]) {
+            map[i.getAttribute("key")].push(i.value);
+        } else {
+            map[i.getAttribute("key")] = [i.value];
+        }
+    });
 
     return {
-        "user": user.options[user.selectedIndex].text,
-        "poster": poster.options[poster.selectedIndex].text,
-        "view_mode": view_mode.options[view_mode.selectedIndex].text,
+        "user": map["user"] ? map["user"] : [],
+        "poster": map["title"] ? map["title"] : [],
+        "view_mode": map["view_mode"] ? map["view_mode"] : [],
         "last_edit": "",
-        "visibility": visibility.options[visibility.selectedIndex].text
+        "visibility": map["visibility"] ? map["visibility"] : []
     };
 }
 
@@ -862,6 +857,40 @@ function createTable(parent, data) {
     parent.appendChild(table);
 }
 
+function createFilterCategory(_this) {
+    const selected = _this.options[_this.selectedIndex];
+
+    const category = document.createElement("input");
+    category.type = "button";
+    category.classList.add("filter-category");
+    category.value = selected.text;
+    category.onclick = function () {
+        this.remove();
+    }
+    category.setAttribute("index", selected.value);
+
+    var key = _this.closest("select").id;
+    if (key.includes("_")) {
+        key = _this.closest("select").id.split("select_")[1];
+    }
+    category.setAttribute("key", key);
+    return category;
+}
+
+function hasFilterCategory(_this) {
+    const children = _this.closest("div").children;
+    const selected = _this.options[_this.selectedIndex];
+
+    for (var i = 0; i < children.length; i++) {
+        const element = children[i];
+
+        if (element.type == "button" && element.value == selected.text) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function createSelect(id, hasUndecided, list) {
     const select = document.createElement("select");
     select.id = id
@@ -878,6 +907,14 @@ function createSelect(id, hasUndecided, list) {
         option.value = j;
         option.text = list[j];
         select.appendChild(option);
+    }
+    select.onchange = function () {
+        // console.log(this);
+
+        if (!hasFilterCategory(this)) {
+            this.closest("div").appendChild(createFilterCategory(this));
+        }
+        this.closest("select").selectedIndex = 0;
     }
     return select;
 }
