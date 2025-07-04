@@ -890,7 +890,7 @@ async function createFilter() {
             select.appendChild(option);
         }
         container.appendChild(select);
-        l.push(select);
+        l.push(container);
     }
 
     const containerB = document.createElement("div");
@@ -911,6 +911,7 @@ async function createFilter() {
 
     const containerC = document.createElement("div");
     containerC.classList.add("filter-select");
+
     const visibility_select = document.createElement("select");
     visibility_select.id = "visibility";
     const mode_optionA = document.createElement("option");

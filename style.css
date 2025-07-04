@@ -391,6 +391,15 @@ div#toggle_register_box {
     border: 1px solid rgb(110, 110, 110);
 }
 
+tr>div>select,
+tr>div>input {
+    width: 100%;
+}
+
+td>select {
+    width: 100%;
+}
+
 th,
 td {
     text-align: left;
