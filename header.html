@@ -17,7 +17,7 @@
 
     <!-- <script src="mathjax_config.js"></script> -->
 
-    <script src="https://cdn.plot.ly/plotly-3.0.0.min.js" charset="utf-8"></script>
+    <!-- <script src="https://cdn.plot.ly/plotly-3.0.0.min.js" charset="utf-8"></script> -->
 
     <script src="https://cdn.jsdelivr.net/npm/typeahead-standalone"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeahead-standalone/dist/basic.css" />
@@ -42,6 +42,9 @@
 
         if (file_exists($script_path)) {
             print "<script src='$script_path' defer></script>";
+        }
+        if($script_path != "index.js") {
+            print "<script src='https://cdn.plot.ly/plotly-3.0.0.min.js' charset='utf-8'></script>";
         }
     ?>
 </head>
