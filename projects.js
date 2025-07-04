@@ -862,6 +862,26 @@ function createTable(parent, data) {
     parent.appendChild(table);
 }
 
+function createSelect(id, hasUndecided, list) {
+    const select = document.createElement("select");
+    select.id = id
+
+    if (hasUndecided) {
+        const option = document.createElement("option");
+        option.value = -1;
+        option.text = "-";
+        select.appendChild(option);
+    }
+
+    for (let j = 0; j < list.length; j++) {
+        const option = document.createElement("option");
+        option.value = j;
+        option.text = list[j];
+        select.appendChild(option);
+    }
+    return select;
+}
+
 async function createFilter() {
     const filter = document.getElementById("filter");
 
@@ -875,21 +895,7 @@ async function createFilter() {
     for (let i = 0; i < json.length; i++) {
         const container = document.createElement("div");
         container.classList.add("filter-select");
-        const select = document.createElement("select");
-        select.id = "select_" + json[i];
-
-        const option = document.createElement("option");
-        option.value = -1;
-        option.text = "-";
-        select.appendChild(option);
-
-        for (let j = 0; j < selectables[json[i]][db[i]].length; j++) {
-            const option = document.createElement("option");
-            option.value = j;
-            option.text = selectables[json[i]][db[i]][j];
-            select.appendChild(option);
-        }
-        container.appendChild(select);
+        container.appendChild(createSelect("select_" + json[i], true, selectables[json[i]][db[i]]));
         l.push(container);
     }
 
@@ -901,7 +907,6 @@ async function createFilter() {
     last_edit.min = unixToDate(selectables["last_edit"]["min"]);
     last_edit.max = unixToDate(selectables["last_edit"]["max"]);
     containerB.appendChild(last_edit);
-    l.push(containerB);
 
     // const visibility_btn = document.createElement("input");
     // visibility_btn.id = "visibility";
@@ -911,31 +916,14 @@ async function createFilter() {
 
     const containerC = document.createElement("div");
     containerC.classList.add("filter-select");
-
-    const visibility_select = document.createElement("select");
-    visibility_select.id = "visibility";
-    const mode_optionA = document.createElement("option");
-    mode_optionA.value = -1;
-    mode_optionA.text = "-";
-    visibility_select.appendChild(mode_optionA);
-    const mode_optionB = document.createElement("option");
-    mode_optionB.value = 0;
-    mode_optionB.text = "0";
-    visibility_select.appendChild(mode_optionB);
-    const mode_optionC = document.createElement("option");
-    mode_optionC.value = 1;
-    mode_optionC.text = "1";
-    visibility_select.appendChild(mode_optionC);
-    filter.appendChild(visibility_select);
-    containerC.appendChild(visibility_select);
-    l.push(containerC);
+    containerC.appendChild(createSelect("visibility", true, ["0", "1"]));
 
     var table_data = {
         "user": l[0],
         "title": l[1],
         "view_mode": l[2],
-        "last_edit_date": l[3],
-        "visibility": l[4]
+        "last_edit_date": containerB,
+        "visibility": containerC
     };
     createTable(filter, table_data);
 
