@@ -329,40 +329,49 @@ function append_additional_columns(additional_columns, i, row) {
 
 // TODO:   may need an overwork
 async function createTableFromJSON(id, pk_ids, data, editable_columns, ...additional_columns) {
-    const table = document.createElement("table");
-    table.setAttribute("border", "1");
 
-    const headerRow = document.createElement("tr");
-    const headers = Object.keys(data);
+    if (pk_ids.length > 0) {
+        const table = document.createElement("table");
+        table.setAttribute("border", "1");
 
-    headers.forEach(header => {
-        const th = document.createElement("th");
-        th.innerText = header;
-        headerRow.appendChild(th);
-    });
+        const headerRow = document.createElement("tr");
+        const headers = Object.keys(data);
 
-    table.appendChild(headerRow);
+        headers.forEach(header => {
+            const th = document.createElement("th");
+            th.innerText = header;
+            headerRow.appendChild(th);
+        });
 
-    if (data !== "") {
-        for (let i = 0; i < data[headers[0]].length; i++) {
-            const row = document.createElement("tr");
-            row.id = id + "--nr-" + (i + 1);
+        table.appendChild(headerRow);
 
-            if (pk_ids && pk_ids.length == data[headers[0]].length) {
-                row.setAttribute("pk_id", pk_ids[i]);
-            } else {
-                console.error("no pk_id", pk_ids, data);
+        if (data !== "") {
+            for (let i = 0; i < data[headers[0]].length; i++) {
+                const row = document.createElement("tr");
+                row.id = id + "--nr-" + (i + 1);
+
+                if (pk_ids && pk_ids.length == data[headers[0]].length) {
+                    row.setAttribute("pk_id", pk_ids[i]);
+                } else {
+                    console.error("no pk_id", pk_ids, data);
+                }
+
+                await make_headers_editable(editable_columns, headers, data, i, row);
+
+                append_additional_columns(additional_columns, i, row);
+
+                table.appendChild(row);
             }
-
-            await make_headers_editable(editable_columns, headers, data, i, row);
-
-            append_additional_columns(additional_columns, i, row);
-
-            table.appendChild(row);
         }
-    }
 
-    document.getElementById(id).appendChild(table);
+        document.getElementById(id).appendChild(table);
+
+    } else {
+        const no_data = document.createElement("p");
+        no_data.innerText = "No Data Available";
+
+        document.getElementById(id).appendChild(no_data);
+    }
 }
 
 async function edit_translation(local_id) {
