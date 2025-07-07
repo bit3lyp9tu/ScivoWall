@@ -11,7 +11,7 @@
 <body>
     <div id="logo_headline">
         <img class="nomargin" id='scadslogo' src="img/scadslogo.png" draggable="false"/>
-        <div style="float: right;">
+        <div class="header-video" style="float: right;">
             <!-- <img id='bgpattern' src="bgpattern.jpeg" /> -->
             <?php
                 // if(!get_get("disable_video")) {

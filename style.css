@@ -2,6 +2,11 @@
     margin: 20px;
 }
 
+#logo_headline>img,
+#logo_headline>div.header-video {
+    user-select: none;
+}
+
 .grid-container {
     padding-top: 10px;
     background-color: white;
@@ -12,6 +17,8 @@
 
     justify-content: end;
     align-items: stretch;
+
+    user-select: none;
 }
 
 .grid-container>.item {
@@ -67,6 +74,8 @@
 
 .bottom-div {
     grid-column: 1 / span 7;
+
+    user-select: none;
 }
 
 .small_logo {
