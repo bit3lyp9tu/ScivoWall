@@ -448,7 +448,7 @@
                     $visibility = $data["visibility"];
 
                     setTitle($poster_id, $title);
-                    updateEditDate("poster", $poster_id);
+                    updateEditDate2("poster", $poster_id);
                     // addAuthors($poster_id, $authors);
                     overwriteAuthors($poster_id, $authors);
                     overwriteBoxes($poster_id, $content);
@@ -503,7 +503,7 @@
             if ($user_id != null) {
 
                 if (hasPermissionToChange($user_id, $poster_id) === true) {
-                    updateEditDate("poster", $poster_id);
+                    updateEditDate2("poster", $poster_id);
                     echo setViewMode2($poster_id, $view_option);
                 }else{
                     echo "Insufficient permission";

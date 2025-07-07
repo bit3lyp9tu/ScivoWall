@@ -96,15 +96,6 @@
 
 	test_equal("isDocker()", gettype(isDocker()), "boolean");
 
-	/*
-	$new_id = insertQuery("insert ...");
-	test_not_equal("new id", $new_id, null);
-	if($new_id !== null) {
-		test_equal("zweite fkt die nur ausgeführt wird wenn erste geht", bla, blubb);
-		} else {
-			test_equal("diese fkt failt immer", 0, 1);
-	}
-	*/
 
 	// check query to attribute filter
 	test_equal("get column name A", implode(",", getColumnNames("SELECT id, name FROM author AS t;")), 'id,name');
@@ -177,10 +168,10 @@
 				getterQuery2("SELECT title, user_id FROM poster;", 1)["[ERROR]"],
 				"Found param-references '?' (0) in query does not match the amound of params (1) given.");
 
-	//TODO:
+	//TODO: prevent encoding to unicode ('<' to '\u003C')
 	// $result = json_encode(getterQuery2("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "Test-Name"), true);
 	// test_equal("select query get json result", $result,
-	// 	'{"user_id":[1],"name":["Test-Name"],"pass_sha":["0bf301312acc91474e96e1a07422a791"],"salt":["vAfcB\"$2NE[C}Rpw)9vhI\/-4YPS<}?@F"],"pepper":["a2d47c981889513c5e2ddbca71f414"],"access_level":[1]}'
+	// 	'{"user_id":[88],"name":["Test-Name"],"pass_sha":["0bf301312acc91474e96e1a07422a791"],"salt":["vAfcB\"$2NE[C}Rpw)9vhI\/-4YPS<}?@F"],"pepper":["a2d47c981889513c5e2ddbca71f414"],"access_level":[1]}'
 	// );
 	$result = json_encode(getterQuery2("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "---"), true);
 	test_equal("select query getter", $result, '{"user_id":[],"name":[],"pass_sha":[],"salt":[],"pepper":[],"access_level":[]}');
@@ -222,18 +213,14 @@
 
 	// TODO: need testing
 	// test_equal("test is table users empty", isEmpty(), 1);
-
 	test_equal("register new user", register("testing", "1A_aaaaaaaaaa"), "success");
 
 	test_equal("test is table users not empty", isEmpty(), 0);
-	// TODO: test fails (user_id does not exist)
-	// test_equal("test", isAdmin(1), true);
 
 	test_equal("register with same username twice", register("testing", "1A_aaaaaaaaaa"), "The user testing already exists.");
 	test_equal("register with number as username", register(123, "1A_aaaaaaaaaa"), "success");
 	test_equal("register bad password msg", register("testing2", "123"), "Password not complex enough");
-
-	//TODO:  	print_r(getterQuery2("SELECT LAST_INSERT_ID() AS id;"));
+	test_equal("check last insert id", getterQuery2("SELECT LAST_INSERT_ID() AS id;")["id"][0], 91);
 
 	test_equal("login unknown username", login("---", "---"), "Wrong Username or Password");
 	test_equal("login with wrong password", login("testing", "---"), "Wrong Username or Password");
@@ -256,7 +243,6 @@
 	editQuery("UPDATE poster SET visible=?", "i", 1);
 	test_equal("is public true", isPublic(350), 1);
 
-	// print_r(json_decode(create_project("new Project", 1), true)["title"]);
 	test_equal("create new project", implode(",", json_decode(create_project("new Project", 86), true)["title"]), 'TestingTitle,new Project');
 	test_equal("fetch all projects db check", json_encode(getterQuery2("SELECT poster_id, title, user_id, visible FROM poster"), true),
 	'{"poster_id":[108,112,132,349,350,351,353,354],' .
@@ -336,26 +322,6 @@
 	removeAuthor(4, 351);
 	test_equal("remove author", implode(",", getAuthors(351)["name"]), 'ChatGPT,Alice Johnson,Lina Chen');
 
-	// test_equal("add list of authors", addAuthors(349, ["author1", "auhtor2", "author3"]), '[success|success],[success|success],[success|success],');
-	// test_equal("added list of authors correctly", implode(",", getAuthors(349)["name"]), 'Test-Name');
-
-	// TODO:   fix return msg to: successfully deleted[success|success],[success|success],[success|success],
-	// test_equal("overwrite Authors", overwriteAuthors(351, ["author2", "author3", "author4"]), 'successfully deleted[success|success],|success],[success|success],');
-	// test_equal("overwrite Authors check content", implode(",", getAuthors(3)["name"]), 'Test-Name');
-
-	// overwriteBoxes(2, array("Content A"));
-	// test_equal("overwrite boxes equal size edit", implode(",", getBoxes(3)), 'Content A');
-
-	// overwriteBoxes(2, array("Content A", "Content B", "Content C", "Content D", "Content E", "Content F"));
-	// test_equal("overwrite boxes addition", implode(",", getBoxes(3)), 'Content A,Content B,Content C,Content D,Content E,Content F');
-
-	// print_r(getBoxes(3));
-
-	//TODO:   removal of Boxes
-	// overwriteBoxes(3, array("Content C"));
-	// test_equal("overwrite boxes removal", implode(",", getBoxes(3)), 'Content C');
-	// overwriteBoxes(3, array());
-	// test_equal("overwrite boxes empty-removal", implode(",", getBoxes(3)), '');
 
 	test_equal("get visibility options", implode(",", getVisibilityOptions()), 'public,private');
 	test_equal("get poster visibility", getVisibility(356), 2);
@@ -370,39 +336,30 @@
 	test_equal("update last edit date poster 1", updateEditDate("poster", 2), 'successfully updated');
 	$t1 = getterQuery2("SELECT last_edit_date FROM poster WHERE poster.poster_id=?", 350)["last_edit_date"][0];
 	sleep($sleep_time);
-	updateEditDate("poster", 350);
-	// $t2 = getterQuery2("SELECT last_edit_date FROM poster WHERE poster.poster_id=?", 350)["last_edit_date"][0];
-	// print_r($t1 + $sleep_time);
-	// test_equal("update last edit date poster 2", ($t1 + $sleep_time == $t2) ? 1 : 0, 1);
-	// print_r($t2);
-	// //user
-	// $user_id = 2;
-	// test_equal("update last edit date user 1", updateEditDate("user", $user_id), 'successfully updated');
+	updateEditDate2("poster", 350);
+	$t2 = getterQuery2("SELECT last_edit_date FROM poster WHERE poster.poster_id=?", 350)["last_edit_date"][0];
+	test_equal("update last edit date poster 2", ($t1 < $t2) ? 1 : 0, 1);
+	//user
+	$user_id = 19;
+	test_equal("update last edit date user 1", updateEditDate("user", $user_id), 'successfully updated');
+	$t1 = getterQuery2("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id)["last_login_date"][0];
+	sleep($sleep_time);
+	updateEditDate2("user", $user_id);
+	$t2 = getterQuery2("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id)["last_login_date"][0];
+	test_equal("update last edit date user 2", ($t1 < $t2) ? 1 : 0, 1);
+	//image
+	$image_id = 221;
+	test_equal("update last edit date image 1", updateEditDate("image", $image_id), 'successfully updated');
+	$t1 = getterQuery2("SELECT last_edit_date FROM image WHERE image.image_id=?", $image_id)["last_edit_date"][0];
+	sleep($sleep_time);
+	updateEditDate2("image", $image_id);
+	$t2 = getterQuery2("SELECT last_edit_date FROM image WHERE image.image_id=?", $image_id)["last_edit_date"][0];
+	test_equal("update last edit date image 2", ($t1 < $t2) ? 1 : 0, 1);
 
-	// print_r(getterQuery2("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id));
-
-	// $t1 = getterQuery2("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id)["last_login_date"][0];
-	// sleep($sleep_time);
-	// updateEditDate("user", $user_id);
-	// $t2 = getterQuery2("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id)["last_login_date"][0];
-	// test_equal("update last edit date user 2", ($t1 + $sleep_time == $t2) ? 1 : 0, 1);
-
-
-	//image //TODO:
-	// print_r(getDBHeader("image")["Field"]);
-	// $image_id = 1;
-	// test_equal("update last edit date image 1", updateEditDate("image", $image_id), 'successfully updated');
-	// $t1 = getterQuery2("SELECT last_edit_date FROM image WHERE image.image_id=?", $image_id)["last_edit_date"][0];
-	// print_r(getterQuery2("SELECT last_edit_date FROM image WHERE image.image_id=?", $image_id));
-	// sleep($sleep_time);
-	// updateEditDate("image", $image_id);
-	// $t2 = getterQuery2("SELECT last_edit_date FROM image WHERE image.image_id=?", $image_id)["last_edit_date"][0];
-	// test_equal("update last edit date image 2", ($t1 + $sleep_time == $t2) ? 1 : 0, 1);
 
 	// print_r(unpack('H*', 'AB101')[1]);
 	// print_r(str2bin('AB101'));
 
-	// print_r($DB_NAME);
 
 	// from poster_edit.php
 	// addAuthors
