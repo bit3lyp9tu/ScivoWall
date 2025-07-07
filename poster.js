@@ -261,7 +261,7 @@ var selected_title = null;
 function edit_box_if_no_other_was_selected(_target) {
     // change box to editable
     const element = createArea("textarea", _target.id, "", _target.getAttribute("data-content"));
-    element.rows = Math.round((_target.innerText.match(/(<br>|\n)/g) || []).length * 1.5) + 1;
+    element.rows = Math.round((_target.innerHTML.match(/(<br>|\n)/g) || []).length * 1.5) + 1;
     element.style.resize = "none"; //"vertical";
     element.value = _target.getAttribute("data-content");
 
