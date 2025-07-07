@@ -271,6 +271,9 @@ function edit_box_if_no_other_was_selected(_target) {
 
     _target.parentNode.replaceChild(element, _target);
 
+    element.focus();
+    element.setSelectionRange(element.value.length, element.value.length);
+
     //  remember box as previously selected
     selected_box = element;
 }
