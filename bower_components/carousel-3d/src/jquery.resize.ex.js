@@ -1,7 +1,6 @@
 (function () {
   "use strict";
   var originalResize = $.fn.resize;
-  //TODO IE call resize infinite. patch jquery.resize then replace
   $.fn.resize = function (callback) {
     var width = $(this).width();
     var height = $(this).height();

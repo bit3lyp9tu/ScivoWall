@@ -46,7 +46,7 @@ jQuery plugin library usage
   var myFunc = function() {
     /* do something */
   };
-  
+
   $('#resizeElement').resize(myFunc);
   $('#resizeElement').removeResize(myFunc);
 </script>
@@ -70,7 +70,6 @@ Doesn't work on:
 
 Please [let me know](https://github.com/sdecima/javascript-detect-element-resize/issues) if you test these libraries on any other browser, of if you run into issues with any of the above browsers.
 
-TODO
 ====
 
  - Fix detach/re-attach issue on IE 10 and below (IE 9 and below doesn't support CSS animations so we can use those as in the rest of the browsers).
@@ -146,7 +145,7 @@ Don't get me wrong, these are great libraries and work as advertised, it's just 
 
 External links
 --------------
-[Back Alley Coder: Cross-Browser, Event-based, Element Resize Detection][1]  
+[Back Alley Coder: Cross-Browser, Event-based, Element Resize Detection][1]
 [Back Alley Coder: Overflow and Underflow Events][2]
 
 [1]: http://www.backalleycoder.com/2013/03/18/cross-browser-event-based-element-resize-detection/
