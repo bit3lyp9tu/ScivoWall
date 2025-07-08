@@ -97,48 +97,6 @@
 	test_equal("isDocker()", gettype(isDocker()), "boolean");
 
 
-	// check query to attribute filter
-	// test_equal("get column name A", implode(",", getColumnNames("SELECT id, name FROM author AS t;")), 'id,name');
-	// test_equal("get column name B", implode(",", getColumnNames("SELECT id AS a, name FROM author;")), 'a,name');
-	// test_equal("get column name C", implode(",", getColumnNames(
-	// 	"SELECT e.name,
-	//        (SELECT MAX(salary)
-	// 	   FROM employees
-	// 	   WHERE department_id = e.department_id
-	// 	   ) AS highest_salary_in_dept
-	// 	FROM employees e;
-	// ")), 'e.name,highest_salary_in_dept');
-	// test_equal("get column name error", implode(",", getColumnNames("SELECT id AS")), '[ERROR]: SELECT id AS does not match');
-	// $sql2 = "SELECT id, name FROM author, (SELECT author_id FROM author_to_poster WHERE author_to_poster.poster_id=?) AS sub WHERE sub.author_id=author.id";
-	// test_equal("A", implode(",", getColumnNames($sql2)), "id,name,author_id");
-	// $str2 = "SELECT e.name, MAX(sa.lary) AS ttt
-	// 	FROM employees
-	// 	WHERE department_id = e.department_id
-	// 	) AS highest_salary_in_dept
-	// 	FROM employees e;";
-	// test_equal("B", implode(",", getColumnNames($str2)), 'e.name,ttt');
-	// $str3 = "SELECT title, from_unixtime(last_edit_date) AS last_edit, visible FROM poster WHERE fk_view_mode=?";
-	// test_equal("C", implode(",", getColumnNames($str3)), "title,last_edit,visible");
-	// test_equal("get difficult column", implode(",", getColumnNames("SELECT title, from_unixtime(last_edit_date) AS last_edit, visible FROM poster WHERE fk_view_mode=?", 1)), "title,last_edit,visible");
-
-
-	// test_equal("", implode(",", getColumnNames("SELECT * FROM author;")), 'id,name');
-
-
-	// check get tables of query
-	// test_equal("get table error", implode(",", getTableNames("SELECT * FR")), '[ERROR]: SELECT * FR does not match');
-	// test_equal("get simple table", implode(",", getTableNames("SELECT * FROM user WHERE id=1;")), 'user');
-	// test_equal("get two tables", implode(",", getTableNames("SELECT * FROM user, author WHERE id=1;")), 'user,author');
-	// test_equal("get with subtable", implode(",", getTableNames("SELECT * FROM user, (SELECT * FROM poster, session) AS abc WHERE id=1;")), 'user');
-	// test_equal("get tables with alias", implode(",", getTableNames("SELECT * FROM user AS a, session AS b, author;")), 'user,session,author');
-	//TODO:   test get complex table with linebreaks
-	// test_equal("get complex table with linebreaks",
-	// 			implode(",", getTableNames(
-	// 				"SELECT *
-	// 				FROM user
-	// 				AS a, session AS b, author;"
-	// 			)), 'user,session,author');
-
 	// check type converter
 	test_equal("type dedection int", getTypeStr(1), "i");
 	test_equal("type dedection str", getTypeStr("test"), "s");
@@ -146,12 +104,13 @@
 	test_equal("type dedection 4", getTypeStr("TestingTitle2"), "s");
 
 	// check get table description
-	// test_equal("get attributes of session table", implode(",", getDBHeader("session")["Field"]), 'id,user_id,sessionID,expiration_date');
+	$header = getDBHeader("session");
+	test_equal("get attributes of session table", implode(",", $header["Field"]), 'id,user_id,sessionID,expiration_date');
+	test_equal("get attributes of session table", implode(",", $header["Type"]), 'int(11),int(11),varchar(256),int(11)');
 
 
 	//SQL Queries
 	test_equal("select query no result", sizeof(runQuery("SELECT * FROM session")), 0);
-	// print_r(getterQuery2("SELECT id, user_id FROM session;"));
 
 	test_equal("query check show", json_encode(getterQuery2("SHOW TABLES"), true), '{"Tables_in_poster_generator":["author","author_to_poster","box","image","poster","ranked_posters","session","user","view_modes"]}');
 	test_equal("query check desc", json_encode(getterQuery2("DESC poster")["Field"], true), '["poster_id","title","user_id","creation_date","last_edit_date","fk_view_mode","visible"]');
@@ -172,38 +131,41 @@
 	$result = getterQuery2("SELECT * FROM poster INNER JOIN view_modes ON fk_view_mode=ID");
 	test_equal("query check using * and JOIN - keys", json_encode(array_keys($result), true), '["poster_id","title","user_id","creation_date","last_edit_date","fk_view_mode","visible","ID","name"]');
 	test_equal("query check using * and JOIN - ids", json_encode($result["poster_id"], true), '[108,112,129,132,349,350,351]');
+
 	test_equal("query check subqueries", json_encode(getterQuery2("SELECT * FROM poster WHERE poster_id=(SELECT 350)"), true), '{"poster_id":[350],"title":["AI in Modern Healthcare"],"user_id":[19],"creation_date":[1744803287],"last_edit_date":[1744803628],"fk_view_mode":[2],"visible":[1]}');
+	test_equal(
+		"query check subqueries 2",
+		json_encode(getterQuery2(
+			"SELECT id, name
+            FROM
+                author, (
+                    SELECT author_id
+                    FROM author_to_poster
+                    WHERE author_to_poster.poster_id=?
+                ) AS sub
+            WHERE sub.author_id=author.id",
+			351), true),
+		'{"id":[352,353,355],"name":["ChatGPT","Alice Johnson","Lina Chen"]}'
+	);
 
-	print_r("####################################");
+	// TODO: should two identical selectors be overritten?
+	// test_equal("query check two identical selectors", json_encode(getterQuery2("SELECT title, poster.poster_id, author_to_poster.poster_id FROM poster INNER JOIN author_to_poster ON poster.poster_id=author_to_poster.poster_id"), true), '');
 
-	// print_r(getterQuery2("SELECT id, user_id FROM session;"));
-	// test_equal("new getter query", implode(",",getterQuery2("SELECT id, user_id FROM session;")["id"]), '');
-
+	test_equal("new getter query", implode(",",getterQuery2("SELECT id, user_id FROM session")["id"]), '');
 	test_equal("insert query", insertQuery("INSERT INTO user (name, pass_sha, salt, pepper) VALUE (?, ?, ?, ?)", "ssss", 'Test-Name', '0bf301312acc91474e96e1a07422a791', 'vAfcB"$2NE[C}Rpw)9vhI/-4YPS<}?@F', 'a2d47c981889513c5e2ddbca71f414'), "success");
-	// test_equal("select query get single result", json_encode(runQuery("SELECT user_id FROM user"))[0][0], "1");
+	test_equal("select query get single result", json_encode(runQuery("SELECT user_id FROM user")[0][0], true), '"85"');
 
-	// test_equal("get inserted id", getLastInsertID(), 88);
+	test_equal("get inserted id", getLastInsertID(), 88);
 
-	// print_r(getterQuery2("SELECT name FROM user;"));
 	test_equal("test getter query kleene", implode(",", getterQuery2("SELECT * FROM user;")["name"]), 'max5,bug,Admin,Max Mustermann,Anne Beispielfrau,Test-Name');
-	// test_equal(
-	// 	"getter query unequal amount of references and given params",
-	// 	getterQuery2("SELECT title, user_id FROM poster WHERE poster.title=?", )["[ERROR]"],
-	// 	"Found param-references '?' (1) in query does not match the amound of params (0) given."
-	// );
-	// test_equal(
-	// 	"getter query unequal amount of references and given params2",
-	// 	getterQuery2("SELECT title, user_id FROM poster;", 1)["[ERROR]"],
-	// 	"Found param-references '?' (0) in query does not match the amound of params (1) given."
-	// );
 
-	//TODO: prevent encoding to unicode ('<' to '\u003C')
 	$result = json_encode(getterQuery2("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "Test-Name"), JSON_UNESCAPED_SLASHES);
 	test_equal("select query get json result", $result,
-		'{"user_id":[88],"name":["Test-Name"],"pass_sha":["0bf301312acc91474e96e1a07422a791"],"salt":["vAfcB\"$2NE[C}Rpw)9vhI\/-4YPS<}?@F"],"pepper":["a2d47c981889513c5e2ddbca71f414"],"access_level":[1]}'
+		'{"user_id":[88],"name":["Test-Name"],"pass_sha":["0bf301312acc91474e96e1a07422a791"],"salt":["vAfcB\"$2NE[C}Rpw)9vhI/-4YPS<}?@F"],"pepper":["a2d47c981889513c5e2ddbca71f414"],"access_level":[1]}'
 	);
 	$result = json_encode(getterQuery2("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "---"), true);
 	test_equal("select query getter", $result, '{"user_id":[],"name":[],"pass_sha":[],"salt":[],"pepper":[],"access_level":[]}');
+
 
 	// Empty Delete???
 	test_equal("delete query", deleteQuery("DELETE FROM poster WHERE poster.title = ?", "s", "Testing Title"), "successfully deleted");
@@ -214,25 +176,6 @@
 
 	test_equal("update query check status", json_encode(getterQuery2("SELECT title, user_id FROM poster WHERE poster.title=?", "fxhfdf"), true), '{"title":["fxhfdf"],"user_id":[82]}');
 	test_equal("update query cleanup", deleteQuery("DELETE FROM poster WHERE poster.title = ?", "s", "fxhfdf"), "successfully deleted");
-
-
-	$str = "(A1 (B1 (C1 (D1))) A2 ((C1) (C1) B1) (B1) A3)";
-	test_equal("", buildBrackets(resolveBrackets($str)), $str);
-
-	$str = "(grxhgrdxA1 (A1 iehroo))";
-	test_equal("", buildBrackets(resolveBrackets($str)), $str);
-
-	$str = "(A1)";
-	test_equal("", buildBrackets(resolveBrackets($str)), $str);
-
-	$str = "(A1 A1 A1 A1 A1 A1 A1A1)";
-	test_equal("", buildBrackets(resolveBrackets($str)), $str);
-
-	$str = "A1";
-	test_equal("", buildBrackets(resolveBrackets($str)), $str);
-
-	$str = "(A1 (B1))";
-	test_equal("", buildBrackets(resolveBrackets($str)), $str);
 
 
 	// Account Management
@@ -339,7 +282,7 @@
 	test_equal("title setter B", getTitle(108), "ABC");
 
 	test_equal("author getter", implode(",", getAuthors(350)["name"]), 'ChatGPT,Lina Chen,Marcus Lee');
-	test_equal("authors null",  json_encode(getAuthors(1), true), '{"id":[],"name":[],"author_id":[]}');
+	test_equal("authors null",  json_encode(getAuthors(1), true), '{"id":[],"name":[]}');
 
 	test_equal("boxes getter", implode(",", getBoxes(349)), '');
 	test_equal("boxes getter empty", sizeof(getBoxes(100)), 0);
@@ -707,19 +650,19 @@
 	test_equal(
 		"author filter - integration - single",
 		fetch_authors_all(85, $json),
-		'{"id":[387,388,389],"user":["max5","max5","max5"],"poster.title":["The Future of Urban Farming","The Future of Urban Farming","The Future of Urban Farming"],"author":["user1C","user2C","user3C"]}'
+		'{"id":[387,388,389],"user":["max5","max5","max5"],"title":["The Future of Urban Farming","The Future of Urban Farming","The Future of Urban Farming"],"author":["user1C","user2C","user3C"]}'
 	);
-	test_equal("author filter column-names as admin",  implode(",", array_keys(json_decode(fetch_authors_all(85, $non_filter_mode), true))), 'id,user,poster.title,author');
-	test_equal("author filter column-names as not admin",  implode(",", array_keys(json_decode(fetch_authors_all(19, $non_filter_mode), true))), 'id,poster.title,author');
+	test_equal("author filter column-names as admin",  implode(",", array_keys(json_decode(fetch_authors_all(85, $non_filter_mode), true))), 'id,user,title,author');
+	test_equal("author filter column-names as not admin",  implode(",", array_keys(json_decode(fetch_authors_all(19, $non_filter_mode), true))), 'id,title,author');
 
 
 	login("Admin", "PwScaDS-2025");
 	$result = json_decode(fetch_projects_all(85, $json), true);
-	test_equal("fetch filtered projects - name", $result["user.name"][0], 'max5');
+	test_equal("fetch filtered projects - name", $result["name"][0], 'max5');
 	test_equal("fetch filtered projects - title", $result["title"][0], 'The Future of Urban Farming');
 	test_equal("fetch filtered projects all", implode(",", json_decode(fetch_projects_all(85, ""), true)["id"]), '108,112,132,350,351,353,354,356');
 	test_equal("fetch filtered projects non filter mode", implode(",", json_decode(fetch_projects_all(85, $non_filter_mode), true)["id"]), '350,351');
-	test_equal("fetch filtered projects column-names as admin", implode(",", array_keys(json_decode(fetch_projects_all(85, $non_filter_mode), true))), 'id,user.name,title,last_edit,visible,view_mode');
+	test_equal("fetch filtered projects column-names as admin", implode(",", array_keys(json_decode(fetch_projects_all(85, $non_filter_mode), true))), 'id,name,title,last_edit,visible,view_mode');
 	test_equal("fetch filtered projects column-names as not admin", implode(",", array_keys(json_decode(fetch_projects_all(19, $non_filter_mode), true))), 'id,title,last_edit,visible,view_mode');
 
 
