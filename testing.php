@@ -148,7 +148,7 @@
 		'{"id":[352,353,355],"name":["ChatGPT","Alice Johnson","Lina Chen"]}'
 	);
 
-	// TODO: should two identical selectors be overritten?
+	// TODO: in query should two identical selectors be overritten?
 	// test_equal("query check two identical selectors", json_encode(getterQuery2("SELECT title, poster.poster_id, author_to_poster.poster_id FROM poster INNER JOIN author_to_poster ON poster.poster_id=author_to_poster.poster_id"), true), '');
 
 	test_equal("new getter query", implode(",",getterQuery2("SELECT id, user_id FROM session")["id"]), '');
