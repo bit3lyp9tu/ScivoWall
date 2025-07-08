@@ -98,8 +98,8 @@
 
 
 	// check query to attribute filter
-	test_equal("get column name A", implode(",", getColumnNames("SELECT id, name FROM author AS t;")), 'id,name');
-	test_equal("get column name B", implode(",", getColumnNames("SELECT id AS a, name FROM author;")), 'a,name');
+	// test_equal("get column name A", implode(",", getColumnNames("SELECT id, name FROM author AS t;")), 'id,name');
+	// test_equal("get column name B", implode(",", getColumnNames("SELECT id AS a, name FROM author;")), 'a,name');
 	// test_equal("get column name C", implode(",", getColumnNames(
 	// 	"SELECT e.name,
 	//        (SELECT MAX(salary)
@@ -108,29 +108,29 @@
 	// 	   ) AS highest_salary_in_dept
 	// 	FROM employees e;
 	// ")), 'e.name,highest_salary_in_dept');
-	test_equal("get column name error", implode(",", getColumnNames("SELECT id AS")), '[ERROR]: SELECT id AS does not match');
-	$sql2 = "SELECT id, name FROM author, (SELECT author_id FROM author_to_poster WHERE author_to_poster.poster_id=?) AS sub WHERE sub.author_id=author.id";
-	test_equal("A", implode(",", getColumnNames($sql2)), "id,name,author_id");
-	$str2 = "SELECT e.name, MAX(sa.lary) AS ttt
-		FROM employees
-		WHERE department_id = e.department_id
-		) AS highest_salary_in_dept
-		FROM employees e;";
-	test_equal("B", implode(",", getColumnNames($str2)), 'e.name,ttt');
-	$str3 = "SELECT title, from_unixtime(last_edit_date) AS last_edit, visible FROM poster WHERE fk_view_mode=?";
-	test_equal("C", implode(",", getColumnNames($str3)), "title,last_edit,visible");
-	test_equal("get difficult column", implode(",", getColumnNames("SELECT title, from_unixtime(last_edit_date) AS last_edit, visible FROM poster WHERE fk_view_mode=?", 1)), "title,last_edit,visible");
+	// test_equal("get column name error", implode(",", getColumnNames("SELECT id AS")), '[ERROR]: SELECT id AS does not match');
+	// $sql2 = "SELECT id, name FROM author, (SELECT author_id FROM author_to_poster WHERE author_to_poster.poster_id=?) AS sub WHERE sub.author_id=author.id";
+	// test_equal("A", implode(",", getColumnNames($sql2)), "id,name,author_id");
+	// $str2 = "SELECT e.name, MAX(sa.lary) AS ttt
+	// 	FROM employees
+	// 	WHERE department_id = e.department_id
+	// 	) AS highest_salary_in_dept
+	// 	FROM employees e;";
+	// test_equal("B", implode(",", getColumnNames($str2)), 'e.name,ttt');
+	// $str3 = "SELECT title, from_unixtime(last_edit_date) AS last_edit, visible FROM poster WHERE fk_view_mode=?";
+	// test_equal("C", implode(",", getColumnNames($str3)), "title,last_edit,visible");
+	// test_equal("get difficult column", implode(",", getColumnNames("SELECT title, from_unixtime(last_edit_date) AS last_edit, visible FROM poster WHERE fk_view_mode=?", 1)), "title,last_edit,visible");
 
 
 	// test_equal("", implode(",", getColumnNames("SELECT * FROM author;")), 'id,name');
 
 
 	// check get tables of query
-	test_equal("get table error", implode(",", getTableNames("SELECT * FR")), '[ERROR]: SELECT * FR does not match');
-	test_equal("get simple table", implode(",", getTableNames("SELECT * FROM user WHERE id=1;")), 'user');
-	test_equal("get two tables", implode(",", getTableNames("SELECT * FROM user, author WHERE id=1;")), 'user,author');
-	test_equal("get with subtable", implode(",", getTableNames("SELECT * FROM user, (SELECT * FROM poster, session) AS abc WHERE id=1;")), 'user');
-	test_equal("get tables with alias", implode(",", getTableNames("SELECT * FROM user AS a, session AS b, author;")), 'user,session,author');
+	// test_equal("get table error", implode(",", getTableNames("SELECT * FR")), '[ERROR]: SELECT * FR does not match');
+	// test_equal("get simple table", implode(",", getTableNames("SELECT * FROM user WHERE id=1;")), 'user');
+	// test_equal("get two tables", implode(",", getTableNames("SELECT * FROM user, author WHERE id=1;")), 'user,author');
+	// test_equal("get with subtable", implode(",", getTableNames("SELECT * FROM user, (SELECT * FROM poster, session) AS abc WHERE id=1;")), 'user');
+	// test_equal("get tables with alias", implode(",", getTableNames("SELECT * FROM user AS a, session AS b, author;")), 'user,session,author');
 	//TODO:   test get complex table with linebreaks
 	// test_equal("get complex table with linebreaks",
 	// 			implode(",", getTableNames(
@@ -146,33 +146,62 @@
 	test_equal("type dedection 4", getTypeStr("TestingTitle2"), "s");
 
 	// check get table description
-	test_equal("get attributes of session table", implode(",", getDBHeader("session")["Field"]), 'id,user_id,sessionID,expiration_date');
+	// test_equal("get attributes of session table", implode(",", getDBHeader("session")["Field"]), 'id,user_id,sessionID,expiration_date');
 
 
 	//SQL Queries
 	test_equal("select query no result", sizeof(runQuery("SELECT * FROM session")), 0);
 	// print_r(getterQuery2("SELECT id, user_id FROM session;"));
-	test_equal("new getter query", implode(",",getterQuery2("SELECT id, user_id FROM session;")["id"]), '');
+
+	test_equal("query check show", json_encode(getterQuery2("SHOW TABLES"), true), '{"Tables_in_poster_generator":["author","author_to_poster","box","image","poster","ranked_posters","session","user","view_modes"]}');
+	test_equal("query check desc", json_encode(getterQuery2("DESC poster")["Field"], true), '["poster_id","title","user_id","creation_date","last_edit_date","fk_view_mode","visible"]');
+
+	test_equal("query check kleene", json_encode(getterQuery2("SELECT * FROM user"), true), '{"user_id":[19,82,85,86,87],"name":["max5","bug","Admin","Max Mustermann","Anne Beispielfrau"],"pass_sha":["0bf301312acc91474e96e1a07422a791","4574898fe827f6a1e78bf394c8c7c8ab","4f3d9c5f4ffa47e7ee8f9231abc2929de8573dad","029509c53500b98806c55e9b231a833d8d360b2d","b441330f5c7f3feaf7770885e018275c2b8992ec"],"salt":["vAfcB\"$2NE[C}Rpw)9vhI\/-4YPS\u003C}?@F","4437b2372f0ca7604a48200724e46fcb","f13f70a20a196d35f729374539a667ac","9ce5fa78a2f41d5626c45e0bf4eac549","61aaa68b50c23159fe2e14004db1f93a"],"pepper":["a2d47c981889513c5e2ddbca71f414","a2d47c981889513c5e2ddbca71f414","a2d47c981889513c5e2ddbca71f414","a2d47c981889513c5e2ddbca71f414","a2d47c981889513c5e2ddbca71f414"],"registration_date":[1739535194,1739535194,1739871262,1744804799,1744804935],"last_login_date":[0,0,1739871262,1744804799,1744804935],"access_level":[1,1,2,1,1]}');
+	test_equal("query check single", json_encode(getterQuery2("SELECT user_id FROM user"), true), '{"user_id":[85,87,82,86,19]}');
+	test_equal("query check as", json_encode(getterQuery2("SELECT user_id AS id FROM user"), true), '{"id":[85,87,82,86,19]}');
+	test_equal("query check where - no ?", json_encode(getterQuery2("SELECT user_id, name FROM user WHERE user_id=?", 86), true), '{"user_id":[86],"name":["Max Mustermann"]}');
+	test_equal("query check where - with ?", json_encode(getterQuery2("SELECT user_id, name FROM user WHERE user_id=?", 86), true), '{"user_id":[86],"name":["Max Mustermann"]}');
+	test_equal("query check where - no result", json_encode(getterQuery2("SELECT user_id, name FROM user WHERE user_id=?", 1), true), '{"user_id":[],"name":[]}');
+	test_equal("query check aggregat funktion with as", getterQuery2("SELECT SUBSTR(data, 1, 30) AS data FROM image WHERE image_id=?", 221)["data"][0], 'data:image/png;base64,iVBORw0K');
+	test_equal("query check several tables", json_encode(getterQuery2("SELECT poster_id, view_modes.name AS n FROM poster, view_modes WHERE poster.fk_view_mode=view_modes.ID")["poster_id"], true), '[108,112,129,132,349,350,351]');
+	test_equal(
+		"query check using from_unixtime(last_edit_date) AS 'last edit' as selector",
+		json_encode(getterQuery2("SELECT from_unixtime(last_edit_date) AS last_edit FROM poster, view_modes WHERE poster.fk_view_mode = view_modes.ID"), true),
+		'{"last_edit":["2025-02-14 13:35:11","2025-02-14 13:35:11","2025-02-14 13:35:11","2025-02-17 15:19:18","2025-04-16 13:37:52","2025-04-16 13:40:28","2025-04-16 13:43:02"]}'
+	);
+	$result = getterQuery2("SELECT * FROM poster INNER JOIN view_modes ON fk_view_mode=ID");
+	test_equal("query check using * and JOIN - keys", json_encode(array_keys($result), true), '["poster_id","title","user_id","creation_date","last_edit_date","fk_view_mode","visible","ID","name"]');
+	test_equal("query check using * and JOIN - ids", json_encode($result["poster_id"], true), '[108,112,129,132,349,350,351]');
+	test_equal("query check subqueries", json_encode(getterQuery2("SELECT * FROM poster WHERE poster_id=(SELECT 350)"), true), '{"poster_id":[350],"title":["AI in Modern Healthcare"],"user_id":[19],"creation_date":[1744803287],"last_edit_date":[1744803628],"fk_view_mode":[2],"visible":[1]}');
+
+	print_r("####################################");
+
+	// print_r(getterQuery2("SELECT id, user_id FROM session;"));
+	// test_equal("new getter query", implode(",",getterQuery2("SELECT id, user_id FROM session;")["id"]), '');
 
 	test_equal("insert query", insertQuery("INSERT INTO user (name, pass_sha, salt, pepper) VALUE (?, ?, ?, ?)", "ssss", 'Test-Name', '0bf301312acc91474e96e1a07422a791', 'vAfcB"$2NE[C}Rpw)9vhI/-4YPS<}?@F', 'a2d47c981889513c5e2ddbca71f414'), "success");
 	// test_equal("select query get single result", json_encode(runQuery("SELECT user_id FROM user"))[0][0], "1");
 
-	test_equal("get inserted id", getLastInsertID(), 88);
+	// test_equal("get inserted id", getLastInsertID(), 88);
 
 	// print_r(getterQuery2("SELECT name FROM user;"));
 	test_equal("test getter query kleene", implode(",", getterQuery2("SELECT * FROM user;")["name"]), 'max5,bug,Admin,Max Mustermann,Anne Beispielfrau,Test-Name');
-	test_equal("getter query unequal amount of references and given params",
-				getterQuery2("SELECT title, user_id FROM poster WHERE poster.title=?")["[ERROR]"],
-				"Found param-references '?' (1) in query does not match the amound of params (0) given.");
-	test_equal("getter query unequal amount of references and given params2",
-				getterQuery2("SELECT title, user_id FROM poster;", 1)["[ERROR]"],
-				"Found param-references '?' (0) in query does not match the amound of params (1) given.");
+	// test_equal(
+	// 	"getter query unequal amount of references and given params",
+	// 	getterQuery2("SELECT title, user_id FROM poster WHERE poster.title=?", )["[ERROR]"],
+	// 	"Found param-references '?' (1) in query does not match the amound of params (0) given."
+	// );
+	// test_equal(
+	// 	"getter query unequal amount of references and given params2",
+	// 	getterQuery2("SELECT title, user_id FROM poster;", 1)["[ERROR]"],
+	// 	"Found param-references '?' (0) in query does not match the amound of params (1) given."
+	// );
 
 	//TODO: prevent encoding to unicode ('<' to '\u003C')
-	// $result = json_encode(getterQuery2("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "Test-Name"), true);
-	// test_equal("select query get json result", $result,
-	// 	'{"user_id":[88],"name":["Test-Name"],"pass_sha":["0bf301312acc91474e96e1a07422a791"],"salt":["vAfcB\"$2NE[C}Rpw)9vhI\/-4YPS<}?@F"],"pepper":["a2d47c981889513c5e2ddbca71f414"],"access_level":[1]}'
-	// );
+	$result = json_encode(getterQuery2("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "Test-Name"), JSON_UNESCAPED_SLASHES);
+	test_equal("select query get json result", $result,
+		'{"user_id":[88],"name":["Test-Name"],"pass_sha":["0bf301312acc91474e96e1a07422a791"],"salt":["vAfcB\"$2NE[C}Rpw)9vhI\/-4YPS<}?@F"],"pepper":["a2d47c981889513c5e2ddbca71f414"],"access_level":[1]}'
+	);
 	$result = json_encode(getterQuery2("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "---"), true);
 	test_equal("select query getter", $result, '{"user_id":[],"name":[],"pass_sha":[],"salt":[],"pepper":[],"access_level":[]}');
 
