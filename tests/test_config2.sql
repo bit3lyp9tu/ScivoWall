@@ -120,8 +120,8 @@ LOCK TABLES `box` WRITE;
 set autocommit=0;
 INSERT INTO `box` VALUES
 (29,108,'Text 1'),
-(30,108,'Other Text'),
-(31,108,'New Text'),
+(30,108,'# Other Text'),
+(31,108,'# New Text'),
 (234,349,'# Introduction\n\nAn overview of recent climate patterns.'),
 (235,349,'# Methodology\n\nSatellite imagery and temperature records.'),
 (236,349,'# Findings\n\nIce melting rates have doubled since 2000.'),

@@ -44,7 +44,7 @@ async function request(data) {
 
         $.ajax({
             type: "POST",
-            url: "poster_edit.php",
+            url: "post_traffic.php",
             data: {
                 action: "get-content",
                 key: key,
@@ -64,7 +64,7 @@ async function request(data) {
 async function hasValidUserSession() {
     return await $.ajax({
         type: "POST",
-        url: "account_management.php",
+        url: "post_traffic.php",
         data: {
             action: "has-valid-user-session"
         },
@@ -80,7 +80,7 @@ async function hasValidUserSession() {
 async function imageUpload(data, poster_id) {
     await $.ajax({
         type: "POST",
-        url: "poster_edit.php",
+        url: "post_traffic.php",
         data: {
             action: "image-upload",
             data: data,
@@ -124,7 +124,7 @@ function style_parser(element, style) {
 async function getLoadedImg(poster_id, img_name, style) {
     const resp = await $.ajax({
         type: "POST",
-        url: "poster_edit.php",
+        url: "post_traffic.php",
         data: {
             action: "get-image",
             //id: pk_id,
@@ -153,7 +153,7 @@ async function getLoadedImg(poster_id, img_name, style) {
 async function upload(id, data) {
     return await $.ajax({
         type: "POST",
-        url: "poster_edit.php",
+        url: "post_traffic.php",
         data: {
             action: "content-upload",
             id: id,
@@ -435,6 +435,9 @@ async function edit_box_event(event) {
             element.value = event.target.children[0].getAttribute("data-content");
             event.target.children[0].parentNode.replaceChild(element, event.target.children[0]);
             element.style['pointer-events'] = 'auto';
+
+            element.focus();
+            element.setSelectionRange(element.value.length, element.value.length);
 
             // remember box as previously selected
             selected_title = element;

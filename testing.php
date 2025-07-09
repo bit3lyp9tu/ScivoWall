@@ -262,11 +262,11 @@
 	addBox(351, "Text Content");
 	addBox(351, "Text Content 2");
 	$check_box = getterQuery2("SELECT * FROM box");
-	test_equal("add box fill content check", json_encode($check_box, true), '{"box_id":[29,30,31,237,238,239,240,241,242,243,244],"poster_id":[108,108,108,350,350,350,351,351,351,351,351],"content":["Text 1","Other Text","New Text","# Background\n\nHow AI is being used in diagnostics.","# Data\n\nPatient outcome statistics from 2015-2022.","# Conclusion\n\nAI improves diagnostic accuracy by 12%.","# Concept\n\nVertical farms and hydroponic systems.","# Case Studies\n\nTokyo and New York initiatives.","# Impact\n\nIncreased yields with 70% less water usage.","Text Content","Text Content 2"]}');
+	test_equal("add box fill content check", json_encode($check_box, true), '{"box_id":[29,30,31,237,238,239,240,241,242,243,244],"poster_id":[108,108,108,350,350,350,351,351,351,351,351],"content":["Text 1","# Other Text","# New Text","# Background\n\nHow AI is being used in diagnostics.","# Data\n\nPatient outcome statistics from 2015-2022.","# Conclusion\n\nAI improves diagnostic accuracy by 12%.","# Concept\n\nVertical farms and hydroponic systems.","# Case Studies\n\nTokyo and New York initiatives.","# Impact\n\nIncreased yields with 70% less water usage.","Text Content","Text Content 2"]}');
 
 	editBox(1, 351, "New Text");
 	$check_box = getterQuery2("SELECT * FROM box");
-	test_equal("edit box", json_encode($check_box, true), '{"box_id":[29,30,31,237,238,239,240,241,242,243,244],"poster_id":[108,108,108,350,350,350,351,351,351,351,351],"content":["Text 1","Other Text","New Text","# Background\n\nHow AI is being used in diagnostics.","# Data\n\nPatient outcome statistics from 2015-2022.","# Conclusion\n\nAI improves diagnostic accuracy by 12%.","New Text","# Case Studies\n\nTokyo and New York initiatives.","# Impact\n\nIncreased yields with 70% less water usage.","Text Content","Text Content 2"]}');
+	test_equal("edit box", json_encode($check_box, true), '{"box_id":[29,30,31,237,238,239,240,241,242,243,244],"poster_id":[108,108,108,350,350,350,351,351,351,351,351],"content":["Text 1","# Other Text","# New Text","# Background\n\nHow AI is being used in diagnostics.","# Data\n\nPatient outcome statistics from 2015-2022.","# Conclusion\n\nAI improves diagnostic accuracy by 12%.","New Text","# Case Studies\n\nTokyo and New York initiatives.","# Impact\n\nIncreased yields with 70% less water usage.","Text Content","Text Content 2"]}');
 
 	addAuthor("Other Author");
 	$check_author = getterQuery2("SELECT * FROM author");
@@ -305,7 +305,7 @@
 	//update last edit date
 	$sleep_time = 1;
 	//poster
-	test_equal("update last edit date poster 1", updateEditDate("poster", 2), 'successfully updated');
+	test_equal("update last edit date poster 1", updateEditDate2("poster", 2), 'successfully updated');
 	$t1 = getterQuery2("SELECT last_edit_date FROM poster WHERE poster.poster_id=?", 350)["last_edit_date"][0];
 	sleep($sleep_time);
 	updateEditDate2("poster", 350);
@@ -313,7 +313,7 @@
 	test_equal("update last edit date poster 2", ($t1 < $t2) ? 1 : 0, 1);
 	//user
 	$user_id = 19;
-	test_equal("update last edit date user 1", updateEditDate("user", $user_id), 'successfully updated');
+	test_equal("update last edit date user 1", updateEditDate2("user", $user_id), 'successfully updated');
 	$t1 = getterQuery2("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id)["last_login_date"][0];
 	sleep($sleep_time);
 	updateEditDate2("user", $user_id);
@@ -321,7 +321,7 @@
 	test_equal("update last edit date user 2", ($t1 < $t2) ? 1 : 0, 1);
 	//image
 	$image_id = 221;
-	test_equal("update last edit date image 1", updateEditDate("image", $image_id), 'successfully updated');
+	test_equal("update last edit date image 1", updateEditDate2("image", $image_id), 'successfully updated');
 	$t1 = getterQuery2("SELECT last_edit_date FROM image WHERE image.image_id=?", $image_id)["last_edit_date"][0];
 	sleep($sleep_time);
 	updateEditDate2("image", $image_id);

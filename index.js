@@ -2,7 +2,7 @@
 async function fetchAvailablePosters() {
     return await $.ajax({
         type: "POST",
-        url: "poster_edit.php",
+        url: "post_traffic.php",
         data: {
             action: "fetch-available-posters"
         },
@@ -108,7 +108,7 @@ document.getElementById("login-btn").addEventListener("click", function () {
     } else {
         $.ajax({
             type: "POST",
-            url: "account_management.php",
+            url: "post_traffic.php",
             data: {
                 action: 'login',
                 name: username.value,
@@ -154,7 +154,7 @@ document.getElementById("register-btn").addEventListener("click", function () {
     } else {
         $.ajax({
             type: "POST",
-            url: "account_management.php",
+            url: "post_traffic.php",
             data: {
                 action: 'register',
                 name: username.value,

@@ -271,15 +271,15 @@ class PythonOrgSearch(unittest.TestCase):
         # custom_poster.click()
         # custom_poster.send_keys(" abc")
 
-        # time.sleep(3)
+        # time.sleep(self.wait_time)
         # custom_poster.send_keys(Keys.TAB)
-        time.sleep(3)
+        time.sleep(self.wait_time)
 
         driver.find_element(
             By.CSS_SELECTOR,
             "#table-container>table>tr#table-container--nr-1>td:first-child>input",
         ).click()
-        time.sleep(3)
+        time.sleep(self.wait_time)
 
         # custom_poster2 = driver.find_element(
         #     By.CSS_SELECTOR,
@@ -417,40 +417,28 @@ class PythonOrgSearch(unittest.TestCase):
         return g1[0] == g2[0]
         # and g1[1].split(":")[0] == g2[1].split(":")[0]
 
-    def poster_page(self, driver, local_index):
-
-        driver.get(
-            f"http://{self.address}/scientific_poster_generator/projects.php",
-        )
-
-        time.sleep(3)
-
-        driver.find_element(
-            By.CSS_SELECTOR,
-            f"#table-container>table>tr#table-container--nr-{local_index}>td:nth-last-child(2)>td>input",
-        ).click()
+    def poster_tests(self, driver, css_selector, poster_id, data, isAdmin):
 
         # check right title
         title = driver.find_element(By.CSS_SELECTOR, "div#title")
         time.sleep(self.wait_time)
         # print(title.text)
-        self.assertEqual("The Future of Urban Farming", title.text)
+        self.assertEqual(data["title"], title.text)
 
         time.sleep(self.wait_time)
 
-        # TODO: check edit title
-        # driver.find_element(By.CSS_SELECTOR, "div#titles>div>div#title").click()
-        # WebDriverWait(driver, 5).until(
-        #     EC.element_to_be_clickable((By.CSS_SELECTOR, "div#titles>div>div#title"))
-        # ).click()
-        # title2 = driver.find_element(By.CSS_SELECTOR, "textearea#title").get_attribute(
-        #     "data-content"
-        # )
-        # title2.click()
-        # title2.send_keys(" abc")
-        # title2.send_keys(Keys.RETURN)
-        # title3 = driver.find_element(By.CSS_SELECTOR, "div#title>p")
-        # self.assertEqual("The Future of Urban Farming", title3.text)
+        # check edit title
+        title2 = driver.find_element(By.CSS_SELECTOR, "div#titles>div")
+        title2.click()
+        time.sleep(self.wait_time)
+
+        ActionChains(driver).send_keys(" abc").send_keys(Keys.RETURN).perform()
+
+        driver.find_element(By.CSS_SELECTOR, "img#scadslogo").click()
+        title3 = driver.find_element(By.CSS_SELECTOR, "div#titles>div>div#title>p")
+        self.assertEqual(data["title"] + " abc", title3.text)
+        self.assertEqual(data["title"] + " abc", title3.get_attribute("data-content"))
+
         # #   +globally
 
         time.sleep(self.wait_time)
@@ -463,13 +451,9 @@ class PythonOrgSearch(unittest.TestCase):
                 )
             ]
         )
-        self.assertTrue(
-            authors
-            in [
-                {"ChatGPT", "Alice Johnson", "Lina Chen abc"},
-                {"ChatGPT", "Alice Johnson", "Lina Chen"},
-            ]
-        )
+        author_list = [set(data["authors"]["pre"]), set(data["authors"]["edited"])]
+        # print(f"{authors} : {author_list}")
+        self.assertTrue(authors in author_list)
 
         # check empty authors
 
@@ -490,10 +474,7 @@ class PythonOrgSearch(unittest.TestCase):
         # print(changed_authors)
         self.assertTrue(
             changed_authors
-            in [
-                ["ChatGPT", "Alice Johnson", "Lina Chen abc", "Author"],
-                ["ChatGPT", "Alice Johnson", "Lina Chen", "Author"],
-            ],
+            in [data["authors"]["added"], data["authors"]["added-edited"]],
         )
 
         time.sleep(self.wait_time)
@@ -545,11 +526,7 @@ class PythonOrgSearch(unittest.TestCase):
             )
         ]
         self.assertTrue(
-            changed_authors2
-            in [
-                ["ChatGPT", "Alice Johnson", "Lina Chen abc"],
-                ["ChatGPT", "Alice Johnson", "Lina Chen"],
-            ],
+            changed_authors2 in [data["authors"]["pre"], data["authors"]["edited"]],
         )
 
         # check add box
@@ -572,17 +549,17 @@ class PythonOrgSearch(unittest.TestCase):
 
         changed_box = driver.find_element(By.CSS_SELECTOR, "div#boxes>div:nth-child(3)")
         self.assertEqual(
-            "# Impact\n\nIncreased yields with 70% less water usage. abc\n$$ x $$",
+            data["boxes"][0],
             changed_box.get_attribute("data-content"),
         )
 
         # check box markdown render
         self.assertEqual(
-            "Impact",
+            data["boxes"][1],
             driver.find_element(By.CSS_SELECTOR, "div#boxes>div:nth-child(3)>h1").text,
         )
         self.assertEqual(
-            "Increased yields with 70% less water usage. abc\nx",
+            data["boxes"][2],
             driver.find_element(By.CSS_SELECTOR, "div#boxes>div:nth-child(3)>p").text,
         )
 
@@ -647,13 +624,53 @@ class PythonOrgSearch(unittest.TestCase):
 
         driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
         time.sleep(self.wait_time)
+        column_nr = 3 if isAdmin else 2
+        row_nr = 2 if isAdmin else 4
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d")
+        # print(timestamp)
         self.assertEqual(
-            datetime.datetime.now().strftime("%Y-%m-%d"),
+            timestamp,
             driver.find_element(
                 By.CSS_SELECTOR,
-                "div#table-container>table>tr#table-container--nr-3",
-            ).text.split(" ")[0],
+                f"div#table-container>table>tr:nth-child({row_nr})>td:nth-child({column_nr})",
+            )
+            .get_attribute("innerText")
+            .split(" ")[0],
         )
+        pass
+
+    def poster_page(self, driver, local_index):
+
+        driver.get(
+            f"http://{self.address}/scientific_poster_generator/projects.php",
+        )
+
+        time.sleep(3)
+
+        poster_row = driver.find_element(
+            By.CSS_SELECTOR,
+            f"#table-container>table>tr#table-container--nr-{local_index}>td:nth-last-child(2)>td>input",
+        )
+        poster_id = poster_row.get_attribute("pk_id")
+        poster_row.click()
+
+        data = {
+            "title": "The Future of Urban Farming",
+            "authors": {
+                "pre": ["ChatGPT", "Alice Johnson", "Lina Chen"],
+                "edited": ["ChatGPT", "Alice Johnson", "Lina Chen abc"],
+                "added": ["ChatGPT", "Alice Johnson", "Lina Chen", "Author"],
+                "added-edited": ["ChatGPT", "Alice Johnson", "Lina Chen abc", "Author"],
+            },
+            "boxes": [
+                "# Impact\n\nIncreased yields with 70% less water usage. abc\n$$ x $$",
+                "Impact",
+                "Increased yields with 70% less water usage. abc\nx",
+            ],
+        }
+
+        self.poster_tests(driver, "", poster_id, data, False)
+
         # TODO: check if other user cannot change
 
     def check_filter(self, driver, css_selector, results):
@@ -844,8 +861,40 @@ class PythonOrgSearch(unittest.TestCase):
         self.assertEqual(
             [], driver.find_elements(By.CSS_SELECTOR, "div#posters>div>iframe")
         )
-        # TODO: check if admin can change other posters
 
+        driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
+
+        # check if admin can change other posters
+        time.sleep(self.wait_time)
+        poster_id = 108
+        driver.find_element(
+            By.CSS_SELECTOR,
+            "div#table-container>table>tr:nth-child(2)>td:nth-child(6)>td>input",
+        ).click()
+        time.sleep(self.wait_time)
+        self.assertEqual(
+            f"http://{self.address}/scientific_poster_generator/poster.php?id={poster_id}&mode=private",
+            driver.current_url,
+        )
+        time.sleep(self.wait_time)
+
+        data = {
+            "title": "test1",
+            "authors": {
+                "pre": ["Author8", "Author5"],
+                "edited": ["Author8", "Author5 abc"],
+                "added": ["Author8", "Author5", "Author"],
+                "added-edited": ["Author8", "Author5 abc", "Author"],
+            },
+            "boxes": [
+                "# New Text abc\n$$ x $$",
+                "New Text abc",
+                "x",
+            ],
+        }
+        self.poster_tests(driver, "", poster_id, data, True)
+
+        time.sleep(self.wait_time)
         driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
 
         # check set view_mode
@@ -980,7 +1029,7 @@ class PythonOrgSearch(unittest.TestCase):
             driver,
             "div#table-container>table>*>td:nth-child(2)>input",
             [
-                "test1",
+                "test1 abc",
                 "test4",
                 "fxhfdf",
                 "dxfgbfdffdbdfxbfbxbf",
@@ -995,8 +1044,6 @@ class PythonOrgSearch(unittest.TestCase):
             driver,
             "div#author-list>table>*>td:nth-child(3)>input",
             [
-                "Author8",
-                "Author5",
                 "ChatGPT",
                 "Alice Johnson",
                 "Dr. Rahul Mehta",
@@ -1005,6 +1052,8 @@ class PythonOrgSearch(unittest.TestCase):
                 "ChatGPT",
                 "Alice Johnson",
                 "Lina Chen abc",
+                "Author8",
+                "Author5",
             ],
         )
 
@@ -1049,7 +1098,23 @@ class PythonOrgSearch(unittest.TestCase):
         self.check_selected(
             driver, "select#select_view_mode", "-", ["-", "public", "private"]
         )
-        # TODO: check select last_edit
+
+        # check select last_edit
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d")
+        self.assertEqual(
+            len(
+                [
+                    i.get_attribute("innerText").split(" ")[0]
+                    for i in driver.find_elements(
+                        By.CSS_SELECTOR,
+                        "div#table-container>table>*>td:nth-child(3)",
+                    )
+                    if i.get_attribute("innerText").split(" ")[0] == timestamp
+                ]
+            ),
+            3,
+        )
+
         # check select visibility
         self.check_selected(driver, "select#visibility", "-", ["-", "0", "1"])
 

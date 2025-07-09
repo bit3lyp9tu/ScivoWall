@@ -13,7 +13,7 @@ $(document).ready(function () {
         } else {
             $.ajax({
                 type: "POST",
-                url: "account_management.php",
+                url: "post_traffic.php",
                 data: {
                     action: 'register',
                     name: username.value,
