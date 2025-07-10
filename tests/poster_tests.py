@@ -428,20 +428,31 @@ class PythonOrgSearch(unittest.TestCase):
         time.sleep(self.wait_time)
 
         # check edit title
-        title2 = driver.find_element(By.CSS_SELECTOR, "div#titles>div")
-        title2.click()
-        time.sleep(self.wait_time)
-        textarea = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "div#titles>div>textarea"))
-        )
-        WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "div#titles>div>textarea"))
-        )
-        textarea.send_keys(" abc")
+        title = driver.find_element(By.CSS_SELECTOR, "div#titles>div")
+        ActionChains(driver).move_to_element(title).click(title).perform()
         time.sleep(self.wait_time)
 
-        driver.find_element(By.CSS_SELECTOR, "img#scadslogo").click()
+        ActionChains(driver).click(
+            driver.find_element(By.CSS_SELECTOR, "div#titles>div>textarea")
+        ).send_keys(Keys.DOWN).send_keys(" abc").click(
+            driver.find_element(By.CSS_SELECTOR, "img#scadslogo")
+        ).perform()
         time.sleep(self.wait_time)
+
+        # title2 = driver.find_element(By.CSS_SELECTOR, "div#titles>div")
+        # title2.click()
+        # time.sleep(self.wait_time)
+        # textarea = WebDriverWait(driver, 10).until(
+        #     EC.presence_of_element_located((By.CSS_SELECTOR, "div#titles>div>textarea"))
+        # )
+        # WebDriverWait(driver, 10).until(
+        #     EC.element_to_be_clickable((By.CSS_SELECTOR, "div#titles>div>textarea"))
+        # )
+        # textarea.send_keys(" abc")
+        # time.sleep(self.wait_time)
+
+        # driver.find_element(By.CSS_SELECTOR, "img#scadslogo").click()
+        # time.sleep(self.wait_time)
 
         title3 = driver.find_element(By.CSS_SELECTOR, "div#titles>div>div#title>p")
         self.assertEqual(data["title"] + " abc", title3.text)
