@@ -123,7 +123,7 @@
         <?php
             // if(!get_get("disable_video")) {
         ?>
-            <video id="bottom_video" autoplay="true" loop="true" muted="muted" [muted]="'muted'" class="bottompattern" src="img/footer.mp4" draggable="false"></video>
+            <video id="bottom_video" autoplay="true" loop="true" muted="muted" [muted]="'muted'" class="bottompattern" src="img/footer.mp4" draggable="false" disablePictureInPicture></video>
         <?php
             // }
         ?>
