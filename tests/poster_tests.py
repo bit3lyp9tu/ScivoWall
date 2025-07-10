@@ -433,10 +433,15 @@ class PythonOrgSearch(unittest.TestCase):
         time.sleep(self.wait_time)
 
         ActionChains(driver).send_keys(" abc").perform()
+        time.sleep(self.wait_time)
 
         driver.find_element(By.CSS_SELECTOR, "img#scadslogo").click()
+        time.sleep(self.wait_time)
+
         title3 = driver.find_element(By.CSS_SELECTOR, "div#titles>div>div#title>p")
         self.assertEqual(data["title"] + " abc", title3.text)
+        time.sleep(self.wait_time)
+
         self.assertEqual(
             data["title"] + " abc",
             driver.find_element(
