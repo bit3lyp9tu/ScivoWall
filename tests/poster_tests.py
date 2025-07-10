@@ -432,10 +432,10 @@ class PythonOrgSearch(unittest.TestCase):
         title2.click()
         time.sleep(self.wait_time)
         textarea = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "div#titles textarea"))
+            EC.presence_of_element_located((By.CSS_SELECTOR, "div#titles>div>textarea"))
         )
         WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "div#titles textarea"))
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "div#titles>div>textarea"))
         )
         textarea.send_keys(" abc")
         time.sleep(self.wait_time)
@@ -446,7 +446,6 @@ class PythonOrgSearch(unittest.TestCase):
         title3 = driver.find_element(By.CSS_SELECTOR, "div#titles>div>div#title>p")
         self.assertEqual(data["title"] + " abc", title3.text)
         time.sleep(self.wait_time)
-
         self.assertEqual(
             data["title"] + " abc",
             driver.find_element(
