@@ -475,7 +475,7 @@ async function imgDragDrop() {
         return;
     }
     if (boxes.children.length == 0) {
-        console.error("boxes has no children"); // TODO:   throws when boxes empty
+        console.error("boxes has no children");
         return;
     }
 
@@ -561,7 +561,6 @@ function createEditMenu() {
     add_btn.id = "add-box";
     add_btn.innerText = "Add Box";
 
-    // TODO:   needs save?
     const select_view_mode = document.createElement("select");
     select_view_mode.id = "view-mode";
     select_view_mode.name = "";
@@ -826,7 +825,6 @@ async function loadImages() {
     const boxes = document.getElementById("boxes");
 
     for (let i = 0; i < boxes.children.length; i++) {
-        //TODO:   check for invalid names during image upload
 
         const word = match_placeholder_image(boxes.children[i].innerHTML);
         if (word) {
@@ -885,8 +883,6 @@ async function loadPlots() {
                 if (placeholder_list[j].getAttribute("placeholder") == "plotly") {
 
                     var content = {};
-
-                    // TODO: load valid chart-types dynamically
                     if (placeholder_list[j].hasAttribute("chart") && placeholder_list[j].getAttribute("chart") !== "" && ["scatter", "line", "bar", "pie"].includes(placeholder_list[j].getAttribute("chart"))) {
                         chart_path = "./plotly/" + placeholder_list[j].getAttribute("chart") + ".json";
 

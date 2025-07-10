@@ -103,7 +103,6 @@ function updateVisibility(id, value) {
             value: value
         },
         success: function (response) {
-            // TODO: returns ERROR msgs if non-admin tries to toggle
             console.log(response);
         },
         error: function (err) {

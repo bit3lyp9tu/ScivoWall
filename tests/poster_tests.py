@@ -434,7 +434,9 @@ class PythonOrgSearch(unittest.TestCase):
 
         ActionChains(driver).click(
             driver.find_element(By.CSS_SELECTOR, "div#titles>div>textarea")
-        ).send_keys(Keys.DOWN).send_keys(" abc").click(
+        ).send_keys(Keys.DOWN).send_keys(" abc").send_keys(Keys.ENTER).send_keys(
+            Keys.BACKSPACE
+        ).click(
             driver.find_element(By.CSS_SELECTOR, "img#scadslogo")
         ).perform()
         time.sleep(self.wait_time)
