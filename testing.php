@@ -665,13 +665,15 @@
 	test_equal("fetch filtered projects column-names as admin", implode(",", array_keys(json_decode(fetch_projects_all(85, $non_filter_mode), true))), 'id,name,title,last_edit,visible,view_mode');
 	test_equal("fetch filtered projects column-names as not admin", implode(",", array_keys(json_decode(fetch_projects_all(19, $non_filter_mode), true))), 'id,title,last_edit,visible,view_mode');
 
-
 	test_equal(
 		"filter interface content",
 		getFilterSelectables(85),
 		'{"user":{"name":["123","Admin","Anne Beispielfrau","bug","Max Mustermann","max5","Test-Name","testing"]},"title":{"title":["ABC","test4","dxfgbfdffdbdfxbfbxbf","AI in Modern Healthcare","The Future of Urban Farming","TestingTitle","new Project","First Project"]},"last_edit":{"min":0,"max":2147483647},"visible":{"min":0,"max":1},"view_mode":{"name":["public","private"]}}'
 	);
 
+	create_project("whitespacetest ", 86);
+	$json = '{"attributes":{"user.name":{"list":[]},"poster.title":{"list":["whitespacetest "]},"last_edit_date":{"min":"","max":"","list":[]},"visible":{"list":[]},"view_modes.name":{"list":[]}}}';
+	test_equal("fetch filtered projects title with whitespace", implode(",", json_decode(fetch_projects_all(86, $json), true)["title"]), 'whitespacetest ');
 
 	// from account_management.php
 	// rename_poster

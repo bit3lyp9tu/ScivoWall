@@ -432,12 +432,17 @@ class PythonOrgSearch(unittest.TestCase):
         title2.click()
         time.sleep(self.wait_time)
 
-        ActionChains(driver).send_keys(" abc").send_keys(Keys.RETURN).perform()
+        ActionChains(driver).send_keys(" abc").perform()
 
         driver.find_element(By.CSS_SELECTOR, "img#scadslogo").click()
         title3 = driver.find_element(By.CSS_SELECTOR, "div#titles>div>div#title>p")
         self.assertEqual(data["title"] + " abc", title3.text)
-        self.assertEqual(data["title"] + " abc", title3.get_attribute("data-content"))
+        self.assertEqual(
+            data["title"] + " abc",
+            driver.find_element(
+                By.CSS_SELECTOR, "div#titles>div>div#title"
+            ).get_attribute("data-content"),
+        )
 
         # #   +globally
 
@@ -670,8 +675,14 @@ class PythonOrgSearch(unittest.TestCase):
         }
 
         self.poster_tests(driver, "", poster_id, data, False)
+        time.sleep(self.wait_time)
 
         # TODO: check if other user cannot change
+        # poster_id = 108
+        # driver.get(
+        #     f"http://{self.address}/scientific_poster_generator/poster.php?id={poster_id}&mode=private"
+        # )
+        # self.assertTrue(False)
 
     def check_filter(self, driver, css_selector, results):
         time.sleep(self.wait_time)
@@ -1035,7 +1046,7 @@ class PythonOrgSearch(unittest.TestCase):
                 "dxfgbfdffdbdfxbfbxbf",
                 "Climate Change Effects in the Arctic",
                 "AI in Modern Healthcare",
-                "The Future of Urban Farming",
+                "The Future of Urban Farming abc",
             ],
         )
 
@@ -1085,13 +1096,13 @@ class PythonOrgSearch(unittest.TestCase):
             "-",
             [
                 "-",
-                "test1",
+                "test1 abc",
                 "test4",
                 "fxhfdf",
                 "dxfgbfdffdbdfxbfbxbf",
                 "Climate Change Effects in the Arctic",
                 "AI in Modern Healthcare",
-                "The Future of Urban Farming",
+                "The Future of Urban Farming abc",
             ],
         )
         # check select view_mode
@@ -1129,7 +1140,7 @@ class PythonOrgSearch(unittest.TestCase):
             [
                 "Climate Change Effects in the Arctic",
                 "AI in Modern Healthcare",
-                "The Future of Urban Farming",
+                "The Future of Urban Farming abc",
             ],
         )
         # check filter results authors - user
@@ -1207,6 +1218,7 @@ class PythonOrgSearch(unittest.TestCase):
         self.change_selector(
             driver, "select#select_view_mode", "-", "input#submit-filter"
         )
+
         # change filter attribute - visibility
         self.change_selector(driver, "select#visibility", "1", "input#submit-filter")
 
@@ -1214,23 +1226,22 @@ class PythonOrgSearch(unittest.TestCase):
         self.change_selector(
             driver,
             "select#select_title",
-            "The Future of Urban Farming",
+            "The Future of Urban Farming abc",
             "input#submit-filter",
         )
+
         # check filter results posters - user, visibility, poster
         self.check_filter(
             driver,
             "div#table-container>table>*>td:nth-child(2)>input",
-            ["The Future of Urban Farming"],
+            ["The Future of Urban Farming abc"],
         )
-
         # check filter results authors - user, visibility, poster
         self.check_filter(
             driver,
             "div#author-list>table>*>td:nth-child(3)>input",
             ["ChatGPT", "Alice Johnson", "Lina Chen abc"],
         )
-
         # check filter results imgs - user, visibility, poster
         self.check_filter(
             driver,

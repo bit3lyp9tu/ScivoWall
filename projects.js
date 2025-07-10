@@ -739,14 +739,10 @@ function filter_to_json(users, posters, view_modes, last_edits, visiblitlies) {
     var json = JSON.parse(`{
 		"attributes": {
 			"user.name": {
-				"min": "",
-				"max": "",
 				"list": [
 				]
 			},
 			"poster.title": {
-				"min": "",
-				"max": "",
 				"list": [
 				]
 			},
@@ -757,14 +753,10 @@ function filter_to_json(users, posters, view_modes, last_edits, visiblitlies) {
 				]
 			},
 			"visible": {
-				"min": "",
-				"max": "",
 				"list": [
 				]
 			},
 			"view_modes.name": {
-				"min": "",
-				"max": "",
 				"list": [
 				]
 			}
@@ -777,7 +769,7 @@ function filter_to_json(users, posters, view_modes, last_edits, visiblitlies) {
     json["attributes"]["visible"]["list"].push(...visiblitlies);
     json["attributes"]["view_modes.name"]["list"].push(...view_modes);
 
-    // console.log("request: ", json);
+    console.log("request: ", json);
 
     return JSON.stringify(json);
 }
@@ -786,6 +778,8 @@ function getFilterElements() {
     const categories = document.querySelectorAll(".filter-category");
     var map = {};
 
+    console.log(categories);
+
     categories.forEach(i => {
         if (map[i.getAttribute("key")]) {
             map[i.getAttribute("key")].push(i.value);
@@ -793,6 +787,8 @@ function getFilterElements() {
             map[i.getAttribute("key")] = [i.value];
         }
     });
+
+    console.log(map);
 
     return {
         "user": map["user"] ? map["user"] : [],
