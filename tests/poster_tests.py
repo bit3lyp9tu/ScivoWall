@@ -431,8 +431,13 @@ class PythonOrgSearch(unittest.TestCase):
         title2 = driver.find_element(By.CSS_SELECTOR, "div#titles>div")
         title2.click()
         time.sleep(self.wait_time)
-
-        ActionChains(driver).send_keys(" abc").perform()
+        textarea = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "div#titles textarea"))
+        )
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "div#titles textarea"))
+        )
+        textarea.send_keys(" abc")
         time.sleep(self.wait_time)
 
         driver.find_element(By.CSS_SELECTOR, "img#scadslogo").click()
@@ -448,8 +453,6 @@ class PythonOrgSearch(unittest.TestCase):
                 By.CSS_SELECTOR, "div#titles>div>div#title"
             ).get_attribute("data-content"),
         )
-
-        # #   +globally
 
         time.sleep(self.wait_time)
         # check authors
