@@ -661,3 +661,21 @@ input[type="checkbox"]:checked {}
     left: 0px;
     top: 10%
 }
+
+@media (max-width: 1800px) {
+    .tables {
+        position: absolute;
+        top: 300px;
+        /* flex-direction: row; */
+        justify-content: left;
+    }
+
+    .menu {
+        top: 0;
+        left: 50%;
+    }
+
+    .filter-select {
+        /* flex-direction: column; */
+    }
+}

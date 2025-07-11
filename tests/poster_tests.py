@@ -477,7 +477,7 @@ class PythonOrgSearch(unittest.TestCase):
             ]
         )
         author_list = [set(data["authors"]["pre"]), set(data["authors"]["edited"])]
-        # print(f"{authors} : {author_list}")
+        print(f"{authors} : {author_list}")
         self.assertTrue(authors in author_list)
 
         # check empty authors
