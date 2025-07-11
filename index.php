@@ -73,6 +73,7 @@
         ></iframe> -->
     </div>
 
+    <span id="spinner" class="loader"></span>
 
 </body>
 <footer>

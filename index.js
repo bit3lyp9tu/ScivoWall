@@ -58,6 +58,8 @@ window.onload = async function () {
 
     await loadStyle("./bower_components/carousel-3d/dist/styles/jquery.carousel-3d.default.css");
     await loadStyle('./style_index.css');
+
+    document.getElementById("spinner").style.display = "none";
 }
 
 function loadScript(src) {
