@@ -11,50 +11,15 @@
 <body>
     <div id="logo_headline">
         <img class="nomargin" id='scadslogo' src="img/scadslogo.png" draggable="false"/>
-        <div class="header-video" style="float: right;">
-            <!-- <img id='bgpattern' src="bgpattern.jpeg" /> -->
-            <?php
-                // if(!get_get("disable_video")) {
-            ?>
-                <!-- <video autoplay="true" loop="true" muted="muted" [muted]="'muted'" id="bgpattern" src="img/scads-graphic_edited.mov" draggable="false"></video> -->
-            <?php
-                // }
-            ?>
-        </div>
+        <div class="header-video" style="float: right;"></div>
     </div>
-
-<!--
-    <div id="drop-zone" style="width: 300px; height: 300px; border: 2px dashed #ccc; text-align: center; line-height: 300px;">
-        Drop your image here
-    </div>
-    <div id="preview">
-        <img id="preview-img" src="" alt="Preview" style="max-width: 100%; max-height: 100%; display: none;">
-    </div>-->
-    <!-- <div id="img"></div> -->
-
-    <!-- <p id="tester" style="width:600px;height:250px;"></p> -->
-
     <div id="titles">
         <div>
-            <div id="title">Title</div>   <!-- change ids -->
-            <br>
-            <!-- <h2 id="authors">Heading 2</h2> -->
-            <div id="typeahead-container" style="display: flex;">
-                <!-- <div style="display: flex;">
-                    <input type="search" id="typeahead" autocomplete="on" placeholder="...">
-                    <button id="remove-element">X</button>
-                </div> -->
+            <div id="title">Title</div>
                 <input type="text" id="typeahead" values=""></input>
             </div>
         </div>
-        <div id="edit-options">
-            <!-- <a href="login.php">Login</a> -->
-            <!-- <button id="add-box">Add Box</button> -->
-            <!-- <button id="save-content">Save</button> -->
-            <!-- <select name="" id="view-mode"> -->
-                <!-- <option value="2">---/option> -->
-            <!-- </select> -->
-        </div>
+        <div id="edit-options"></div>
     </div>
 
     <div class="container" id="boxes"></div>
@@ -104,13 +69,7 @@
     </div>
 
     <div class="bottom-div">
-        <?php
-            // if(!get_get("disable_video")) {
-        ?>
-            <video id="bottom_video" autoplay="true" loop="true" muted="muted" [muted]="'muted'" class="bottompattern" src="img/footer.mp4" draggable="false" disablePictureInPicture></video>
-        <?php
-            // }
-        ?>
+        <video id="bottom_video" autoplay="true" loop="true" muted="muted" [muted]="'muted'" class="bottompattern" src="img/footer.mp4" draggable="false" disablePictureInPicture></video>
     </div>
 </footer>
 </html>

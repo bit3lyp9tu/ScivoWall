@@ -1,3 +1,10 @@
+:root {
+    --scads-green: #56af31;
+    --light-green: #8ecc73;
+
+    --scads-blue: #1275ab;
+}
+
 #titles {
     margin: 20px;
 }
@@ -100,7 +107,7 @@
     justify-content: center;
     align-items: center;
     overflow-wrap: anywhere;
-    border-bottom: 1px solid #83d252;
+    border-bottom: 1px solid var(--scads-green);
     margin: 0px;
 }
 
@@ -144,13 +151,13 @@ div#boxes>div {
 h1 {
     font-family: "Barlow", sans-serif;
     margin: 0;
-    color: #0e496a;
+    color: var(--scads-blue);
 }
 
 h2 {
     font-family: "Barlow", sans-serif;
     margin: 0;
-    color: #83d252;
+    color: var(--scads-green);
     font-weight: lighter;
 }
 
@@ -207,13 +214,13 @@ body {
 h3 {
     font-family: "Barlow", sans-serif;
     margin: 0;
-    color: #0e496a;
+    color: var(--scads-blue);
 }
 
 h4 {
     font-family: "Barlow", sans-serif;
     margin: 0;
-    color: #0e496a;
+    color: var(--scads-blue);
     font-weight: lighter;
 }
 
@@ -291,7 +298,7 @@ input#typeahead.tt-input {
     align-items: center;
     border: solid;
     border-width: 1px;
-    border-color: #83d252;
+    border-color: var(--scads-green);
     border-radius: 7px;
     background-color: white;
 
@@ -345,6 +352,8 @@ img.table-img {
 }
 
 img.table-img:hover {
+    /* position: absolute; */
+
     height: 50%;
     width: 50%;
 
@@ -353,7 +362,7 @@ img.table-img:hover {
 
 div[data-content]:hover:not([in-iframe]) {
     border: solid;
-    border-color: #83d252;
+    border-color: var(--scads-green);
     border-width: 1px;
 }
 
@@ -372,7 +381,7 @@ div#toggle_register_box {
 
     display: none;
 
-    border-bottom: 2px solid #83d252;
+    border-bottom: 2px solid var(--scads-green);
 
     padding-right: 5px;
 }
@@ -409,9 +418,13 @@ td>select {
     width: 100%;
 }
 
-th,
+/* th,
 td {
     text-align: left;
+} */
+
+table>tr:first-child {
+    text-align: center;
 }
 
 th {
@@ -442,7 +455,7 @@ th {
     position: absolute;
     inset: 0px;
     border-radius: 50%;
-    border: 5px solid #83d252;
+    border: 5px solid var(--scads-green);
     animation: prixClipFix 2s linear infinite;
 
     display: block;
@@ -474,4 +487,177 @@ th {
     100% {
         clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 0)
     }
+}
+
+.menu {
+    position: fixed;
+    left: 10px;
+    top: 15%;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: white;
+
+    /* overscroll-behavior: ; */
+}
+
+.table {
+    display: flex;
+    justify-content: center;
+    /* width: 40%; */
+    /* padding-top: 30px; */
+    /* width: 70%; */
+    box-shadow: 5px 5px 50px 1px rgba(0, 128, 0, 0.1);
+}
+
+.table>table {
+    width: 100%;
+    /* padding: 5px; */
+    border-radius: 10px;
+    background-color: white;
+    /* border-collapse: collapse; */
+}
+
+.table>p {
+    background-color: var(--scads-blue);
+    color: white;
+    height: 50px;
+    width: 300px;
+    padding: 10px;
+    box-shadow: 0px 0px 0px 0px gba(0, 0, 0, 0);
+    border: 5px;
+    text-align: center;
+}
+
+.tables {
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+    /* margin-bottom: 250px; */
+}
+
+.tables>div {
+
+    display: flex;
+    flex-direction: column;
+    /* align-items: stretch; */
+    justify-content: center;
+
+    padding: 20px;
+
+    opacity: 0.93;
+}
+
+.tables>div>div {
+    width: 80%%;
+
+    padding-bottom: 30px;
+}
+
+table>tr>td {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.table tr:not(tr:first-child):hover {
+    background-color: var(--light-green);
+}
+
+.table tr:nth-child(2n) {
+    background-color: #ececec;
+}
+
+table th,
+table td {
+    padding: 0.25rem 0.25rem 0.25rem 0.25rem;
+    border: 0px solid white;
+    text-align: center;
+}
+
+.table>table>tr:first-child {
+    background-color: var(--light-green);
+}
+
+td>td {
+    display: flex;
+    justify-content: center;
+}
+
+td>input {
+    width: 96%;
+}
+
+.bgimg {
+    background-image: url("img/bgpattern.jpeg");
+    background-color: white;
+    height: 100%;
+    width: 100%;
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: auto;
+    position: absolute;
+    top: 0;
+    right: 0;
+    opacity: 1;
+
+    /* background: #ffffff url("img/bgpattern.jpeg") no-repeat right top;
+    height: 25%;
+    width: 25%;
+    position: absolute; */
+    /* margin-right: -200px; */
+}
+
+html {
+    overflow: hidden;
+}
+
+footer {
+    margin-top: 200px;
+    /* position: absolute;
+    bottom: 0; */
+}
+
+button,
+input[type="button"] {
+    background-color: var(--scads-green);
+
+    color: white;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    opacity: 0.94;
+}
+
+button,
+input[type="button"]:hover {
+    background-color: var(--scads-blue);
+    transform: translateY(-2px);
+}
+
+button,
+input[type="button"]:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+input[type="text"]:focus {
+    border-color: var(--scads-green);
+    transition: 0.5s;
+    outline: none;
+}
+
+input[type="checkbox"]:checked {}
+
+.account-menu {
+    position: fixed;
+    left: 0px;
+    top: 10%
 }

@@ -22,16 +22,7 @@
 <body>
     <div id="logo_headline">
         <img class="nomargin" id='scadslogo' src="img/scadslogo.png" draggable="false"/>
-        <div class="header-video" style="float: right;">
-            <!-- <img id='bgpattern' src="bgpattern.jpeg" /> -->
-            <?php
-                // if(!get_get("disable_video")) {
-            ?>
-                <!-- <video autoplay="true" loop="true" muted="muted" [muted]="'muted'" id="bgpattern" src="img/scads-graphic_edited.mov" draggable="false"></video> -->
-            <?php
-                // }
-            ?>
-        </div>
+        <div class="header-video" style="float: right;"></div>
         <div>
             <input id="toggle_login_box" class="toggle-btn" type="button" value="Login" />
             <div id="login-box" class="account-box" style="display: none;">
@@ -55,29 +46,15 @@
 
                 <p id="register-response"></p>
             </div>
-
-            <!-- <input type="button" onclick="location.href='./login.php';" value="Login" />
-            <input type="button" onclick="location.href='./register.php';" value="Register" /> -->
         </div>
     </div>
 
-    <div id="posters" class="poster-slide">
-        <!-- <iframe
-            src="poster.php?mode=public"
-            name="targetframe"
-            allowTransparency="true"
-            scrolling="yes"
-
-            width=300
-            height=600
-        ></iframe> -->
-    </div>
+    <div id="posters" class="poster-slide"></div>
 
     <span id="spinner" class="loader"></span>
 
 </body>
 <footer>
-    <!-- <div id="resize_me_according_to_bottom_table"></div> -->
     <div class="grid-container">
         <div class="large-div">
             <img src="img/qrcode.png" class="large_logo" alt="logo" draggable="false">
@@ -121,13 +98,7 @@
     </div>
 
     <div class="bottom-div">
-        <?php
-            // if(!get_get("disable_video")) {
-        ?>
-            <video id="bottom_video" autoplay="true" loop="true" muted="muted" [muted]="'muted'" class="bottompattern" src="img/footer.mp4" draggable="false" disablePictureInPicture></video>
-        <?php
-            // }
-        ?>
+        <video id="bottom_video" autoplay="true" loop="true" muted="muted" [muted]="'muted'" class="bottompattern" src="img/footer.mp4" draggable="false" disablePictureInPicture></video>
     </div>
 </footer>
 </html>
