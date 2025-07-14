@@ -963,7 +963,6 @@ class PythonOrgSearch(unittest.TestCase):
         time.sleep(self.wait_time)
         driver.get(f"http://{address}/scientific_poster_generator/projects.php")
         self.check_selected(
-            driver,
             "div#table-container>table>tr:nth-child(2)>td:nth-child(5)>select",
             "public",
             ["public", "private"],
@@ -1126,14 +1125,12 @@ class PythonOrgSearch(unittest.TestCase):
         # check right select options in filter
         # check select user
         self.check_selected(
-            driver,
             "select#select_user",
             "-",
             ["-", "Admin", "Anne Beispielfrau", "bug", "Max Mustermann", "max5"],
         )
         # check select title
         self.check_selected(
-            driver,
             "select#select_title",
             "-",
             [
@@ -1149,7 +1146,7 @@ class PythonOrgSearch(unittest.TestCase):
         )
         # check select view_mode
         self.check_selected(
-            driver, "select#select_view_mode", "-", ["-", "public", "private"]
+            "select#select_view_mode", "-", ["-", "public", "private"]
         )
 
         # check select last_edit
@@ -1280,7 +1277,6 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check correct rename - author
         self.check_rename_row(
-            driver,
             "div#author-list>table>tr:nth-child(2)>td:nth-child(3)",
             " abc",
             "div#author-list>table>*>td:nth-child(3)>input",
@@ -1295,7 +1291,6 @@ class PythonOrgSearch(unittest.TestCase):
         # check correct delete - author
         time.sleep(self.wait_time)
         self.check_delete_row(
-            driver,
             "div#author-list>table>tr:nth-child(2)>td:nth-child(4)>td>input",
             "div#author-list>table>*>td:nth-child(3)>input",
             [
@@ -1308,7 +1303,6 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check correct rename - image
         self.check_rename_row(
-            driver,
             "div#image-list>table>tr:nth-child(2)>td:nth-child(2)",
             " abc",
             "div#image-list>table>*>td:nth-child(2)>input",
@@ -1317,7 +1311,6 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check correct delete - image
         self.check_delete_row(
-            driver,
             "div#image-list>table>tr:nth-child(2)>td:nth-child(5)>td>input",
             "div#image-list>table>*>td:nth-child(2)>input",
             ["leipzig.png"],
