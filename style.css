@@ -332,7 +332,7 @@ input#typeahead.tt-input {
 }
 
 .remove-element::before {
-	content: "X";
+    content: "X";
 }
 
 p[placeholder="plotly"] {
@@ -598,13 +598,19 @@ td>input {
     background-color: white;
     height: 100%;
     width: 100%;
-    background-position: left;
-    background-repeat: no-repeat;
-    background-size: auto;
+    //background-position: left;
+    //background-repeat: no-repeat;
+    //background-size: auto;
     position: absolute;
     top: 0;
     right: 0;
     opacity: 1;
+
+
+    background-size: 572px;
+    background-repeat: no-repeat;
+    background-position-x: 115%;
+    background-position-y: -208px;
 
     /* background: #ffffff url("img/bgpattern.jpeg") no-repeat right top;
     height: 25%;
