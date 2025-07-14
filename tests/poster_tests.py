@@ -466,6 +466,7 @@ class PythonOrgSearch(unittest.TestCase):
             ).get_attribute("data-content"),
         )
 
+        print(driver.current_url)
         time.sleep(self.wait_time)
         # check authors
         authors = set(

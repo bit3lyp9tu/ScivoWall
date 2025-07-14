@@ -648,11 +648,11 @@ input[type="button"]:active {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
-input[type="text"]:focus {
+/* input[type="text"]:focus {
     border-color: var(--scads-green);
     transition: 0.5s;
     outline: none;
-}
+} */
 
 input[type="checkbox"]:checked {}
 

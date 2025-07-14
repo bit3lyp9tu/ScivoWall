@@ -216,7 +216,7 @@ async function show(response) {
     document.getElementById("title").setAttribute("data-content", response.title);
 
     // document.getElementById("authors").value = response.authors != null ? response.authors.toString(", ") : "";
-    filloutAuthors(response.authors);
+    // filloutAuthors(response.authors);
 
     const boxes = document.getElementById("boxes");
 
@@ -557,9 +557,10 @@ function createEditMenu() {
     link.href = "login.php";
     link_container.appendChild(link);
 
-    const add_btn = document.createElement("button");
+    const add_btn = document.createElement("input");
+    add_btn.type = "button";
     add_btn.id = "add-box";
-    add_btn.innerText = "Add Box";
+    add_btn.value = "Add Box";
 
     const select_view_mode = document.createElement("select");
     select_view_mode.id = "view-mode";
