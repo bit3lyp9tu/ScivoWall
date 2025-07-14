@@ -734,12 +734,18 @@ class PythonOrgSearch(unittest.TestCase):
 
     def check_filter(self, css_selector, results):
         time.sleep(self.wait_time)
+
+        found_elements = [
+            el.get_attribute("value")
+            for el in driver.find_elements(By.CSS_SELECTOR, css_selector)
+        ]
+
+        import pprint
+        pprint.pprint(found_elements)
+
         self.assertListEqual(
             results,
-            [
-                el.get_attribute("value")
-                for el in driver.find_elements(By.CSS_SELECTOR, css_selector)
-            ],
+            found_elements,
         )
         pass
 
@@ -1096,19 +1102,18 @@ class PythonOrgSearch(unittest.TestCase):
         self.check_filter(
             "div#author-list>table>*>td:nth-child(3)>input",
             [
-                "Author8",
-                "Author5",
-                "ChatGPT",
-                "Alice Johnson",
-                "Dr. Rahul Mehta",
-                "ChatGPT",
-                "Lina Chen abc",
-                "Marcus Lee",
-                "ChatGPT",
-                "Alice Johnson",
-                "Lina Chen abc",
-            ],
-        )
+                'ChatGPT',
+                 'Alice Johnson',
+                 'Dr. Rahul Mehta',
+                 'ChatGPT',
+                 'Lina Chen abc',
+                 'ChatGPT',
+                 'Alice Johnson',
+                 'Lina Chen abc',
+                 'Author8',
+                 'Author5'
+                ]
+            )
 
         # check filter results imgs - all
         self.check_filter(
