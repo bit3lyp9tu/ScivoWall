@@ -12,3 +12,4 @@ tests/test_report.json
 tests/test_log
 
 .env
+test.sh
