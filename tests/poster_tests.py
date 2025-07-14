@@ -1,3 +1,4 @@
+import argparse
 import os
 import sys
 import datetime
@@ -22,94 +23,97 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.firefox.service import Service as FirefoxService
 
+driver = None
+address = None
+
+def create_driver ():
+    global driver, address
+
+    options = Options()
+
+    if os.environ.get("GITHUB_ACTIONS"):
+        options.add_argument("--headless")
+
+        options.binary_location = "/usr/bin/firefox"
+        service = FirefoxService(
+            executable_path="/home/runner/cache/.driver/geckodriver"
+        )
+        driver = webdriver.Firefox(service=service, options=options)
+        address = "127.0.0.1:8080"
+    else:
+        driver = webdriver.Firefox(options=options)
+        address = "localhost"
 
 class PythonOrgSearch(unittest.TestCase):
 
     wait_time = 1
     address = ""
 
-    def setUp(self):
-        options = Options()
-
-        if os.environ.get("GITHUB_ACTIONS"):
-            options.add_argument("--headless")
-
-            options.binary_location = "/usr/bin/firefox"
-            service = FirefoxService(
-                executable_path="/home/runner/cache/.driver/geckodriver"
-            )
-            self.driver = webdriver.Firefox(service=service, options=options)
-            self.address = "127.0.0.1:8080"
-        else:
-            self.driver = webdriver.Firefox(options=options)
-            self.address = "localhost"
-
     def test_search_in_python_org(self):
-        driver = self.driver
-        driver.get(f"http://{self.address}/scientific_poster_generator/login.php")
+        driver.get(f"http://{address}/scientific_poster_generator/login.php")
         self.assertIn("Poster Generator", driver.title)
         print("Testing Page: " + driver.title)
 
-        self.login_page(driver)
+        self.login_page()
 
-        self.user_page(driver)
-        self.poster_page(driver, 3)
-        self.admin_user(driver, "")
-        self.index_page(driver)
+        self.user_page()
+        self.poster_page(3)
+        self.admin_user()
+        self.index_page()
 
-        # self.logout(driver)
+        # self.logout()
 
     def tearDown(self):
         if os.environ.get("GITHUB_ACTIONS"):
-            self.driver.close()
+            driver.close()
 
-    def login_page(self, driver):
+    def login_page(self):
 
         # check both empty
-        self.login_fill_form(driver, "", "")
+        self.login_fill_form("", "")
         time.sleep(self.wait_time)
         driver.find_element(By.ID, "login").click()
         self.assertEqual(
-            f"http://{self.address}/scientific_poster_generator/login.php",
+            f"http://{address}/scientific_poster_generator/login.php",
             driver.current_url,
         )
         time.sleep(self.wait_time)
-        self.login_clear_form(self.driver)
+        self.login_clear_form()
 
         time.sleep(self.wait_time)
         # check wrong name
-        self.login_fill_form(driver, "Max Mustermann" + "123", "AbC123-98xy")
+        self.login_fill_form("Max Mustermann" + "123", "AbC123-98xy")
         time.sleep(self.wait_time)
         driver.find_element(By.ID, "login").click()
         time.sleep(self.wait_time)
         self.assertEqual(
-            f"http://{self.address}/scientific_poster_generator/login.php",
+            f"http://{address}/scientific_poster_generator/login.php",
             driver.current_url,
         )
         time.sleep(self.wait_time)
-        self.login_clear_form(self.driver)
+        self.login_clear_form()
 
         time.sleep(self.wait_time)
         # check wrong pw
-        self.login_fill_form(driver, "Max Mustermann", "AbC123-98xy" + "abc")
+        self.login_fill_form("Max Mustermann", "AbC123-98xy" + "abc")
         time.sleep(self.wait_time)
         driver.find_element(By.ID, "login").click()
         time.sleep(self.wait_time)
         self.assertEqual(
-            f"http://{self.address}/scientific_poster_generator/login.php",
+            f"http://{address}/scientific_poster_generator/login.php",
             driver.current_url,
         )
         time.sleep(self.wait_time)
-        self.login_clear_form(self.driver)
+        self.login_clear_form()
 
         time.sleep(self.wait_time)
         # check right name+pw
-        self.login_fill_form(driver, "max5", "abc")
+        self.login_fill_form("max5", "abc")
         # time.sleep(self.wait_time)
         driver.find_element(By.ID, "login").click()
         time.sleep(self.wait_time)
         self.assertEqual(
-            f"http://{self.address}/scientific_poster_generator/projects.php",
+            f"http://{address}/scientific_poster_generator/projects.php",
             driver.current_url,
         )
 
@@ -121,9 +125,9 @@ class PythonOrgSearch(unittest.TestCase):
 
         pass
 
-    def login_fill_form(self, driver, name, pw):
+    def login_fill_form(self, name, pw):
         self.assertEqual(
-            f"http://{self.address}/scientific_poster_generator/login.php",
+            f"http://{address}/scientific_poster_generator/login.php",
             driver.current_url,
         )
         time.sleep(self.wait_time)
@@ -139,13 +143,13 @@ class PythonOrgSearch(unittest.TestCase):
         filed_pw.send_keys(pw)
         filed_pw.send_keys(Keys.RETURN)
 
-    def login_clear_form(self, driver):
+    def login_clear_form(self):
         driver.find_element(By.ID, "name").clear()
         time.sleep(self.wait_time)
         driver.find_element(By.ID, "pw").clear()
 
-    def logout(self, driver):
-        driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
+    def logout(self):
+        driver.get(f"http://{address}/scientific_poster_generator/projects.php")
         time.sleep(self.wait_time)
         # check if page contains logout
         logout = driver.find_element(By.ID, "logout")
@@ -154,14 +158,14 @@ class PythonOrgSearch(unittest.TestCase):
         time.sleep(self.wait_time)
         logout.click()
         self.assertEqual(
-            f"http://{self.address}/scientific_poster_generator/login.php",
+            f"http://{address}/scientific_poster_generator/login.php",
             driver.current_url,
         )
 
         # check if correct logout   ???
         pass
 
-    def register(self, driver, name, pw):
+    def register(self, name, pw):
         # TODO: check register user
         # check existing name
         # check invalid pw
@@ -169,9 +173,9 @@ class PythonOrgSearch(unittest.TestCase):
         # check correct action + now at login page
         pass
 
-    def user_page(self, driver):
+    def user_page(self):
         self.assertEqual(
-            f"http://{self.address}/scientific_poster_generator/projects.php",
+            f"http://{address}/scientific_poster_generator/projects.php",
             driver.current_url,
         )
         time.sleep(self.wait_time)
@@ -313,12 +317,12 @@ class PythonOrgSearch(unittest.TestCase):
         ).click()
         time.sleep(self.wait_time)
         self.assertEqual(
-            f"http://{self.address}/scientific_poster_generator/poster.php",
+            f"http://{address}/scientific_poster_generator/poster.php",
             driver.current_url.split("?")[0],
         )
 
         driver.get(
-            f"http://{self.address}/scientific_poster_generator/projects.php",
+            f"http://{address}/scientific_poster_generator/projects.php",
         )
 
         time.sleep(self.wait_time)
@@ -439,7 +443,7 @@ class PythonOrgSearch(unittest.TestCase):
         return g1[0] == g2[0]
         # and g1[1].split(":")[0] == g2[1].split(":")[0]
 
-    def poster_tests(self, driver, css_selector, poster_id, data, isAdmin):
+    def poster_tests(self, css_selector, poster_id, data, isAdmin):
 
         # check right title
         title = driver.find_element(By.CSS_SELECTOR, "div#title")
@@ -671,7 +675,7 @@ class PythonOrgSearch(unittest.TestCase):
             .text,
         )
 
-        driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
+        driver.get(f"http://{address}/scientific_poster_generator/projects.php")
         time.sleep(self.wait_time)
         column_nr = 3 if isAdmin else 2
         row_nr = 2 if isAdmin else 4
@@ -688,10 +692,10 @@ class PythonOrgSearch(unittest.TestCase):
         )
         pass
 
-    def poster_page(self, driver, local_index):
+    def poster_page(self, local_index):
 
         driver.get(
-            f"http://{self.address}/scientific_poster_generator/projects.php",
+            f"http://{address}/scientific_poster_generator/projects.php",
         )
 
         time.sleep(3)
@@ -718,17 +722,17 @@ class PythonOrgSearch(unittest.TestCase):
             ],
         }
 
-        self.poster_tests(driver, "", poster_id, data, False)
+        self.poster_tests("", poster_id, data, False)
         time.sleep(self.wait_time)
 
         # TODO: check if other user cannot change
         # poster_id = 108
         # driver.get(
-        #     f"http://{self.address}/scientific_poster_generator/poster.php?id={poster_id}&mode=private"
+        #     f"http://{address}/scientific_poster_generator/poster.php?id={poster_id}&mode=private"
         # )
         # self.assertTrue(False)
 
-    def check_filter(self, driver, css_selector, results):
+    def check_filter(self, css_selector, results):
         time.sleep(self.wait_time)
         self.assertListEqual(
             results,
@@ -739,7 +743,7 @@ class PythonOrgSearch(unittest.TestCase):
         )
         pass
 
-    def check_selected(self, driver, css_selector, default_selected, results):
+    def check_selected(self, css_selector, default_selected, results):
         time.sleep(self.wait_time)
         select_user = driver.find_element(
             By.CSS_SELECTOR,
@@ -755,7 +759,7 @@ class PythonOrgSearch(unittest.TestCase):
         self.assertEqual(default_selected, sel1.all_selected_options[0].text)
         pass
 
-    def change_selector(self, driver, css_selector, value, css_submit):
+    def change_selector(self, css_selector, value, css_submit):
         time.sleep(self.wait_time)
         select_user = driver.find_element(
             By.CSS_SELECTOR,
@@ -770,8 +774,8 @@ class PythonOrgSearch(unittest.TestCase):
             driver.find_element(By.CSS_SELECTOR, css_submit).click()
         pass
 
-    def check_rename_row(self, driver, css_cell, value, css_names, list):
-        page = f"http://{self.address}/scientific_poster_generator/projects.php"
+    def check_rename_row(self, css_cell, value, css_names, list):
+        page = f"http://{address}/scientific_poster_generator/projects.php"
         filter_config = [
             ("select#select_user", "max5", "input#submit-filter"),
             ("select#visibility", "1", "input#submit-filter"),
@@ -795,7 +799,7 @@ class PythonOrgSearch(unittest.TestCase):
         time.sleep(self.wait_time)
         driver.get(page)
         for i in filter_config:
-            self.change_selector(driver, *i)
+            self.change_selector(*i)
         time.sleep(self.wait_time)
         self.check_filter(
             driver,
@@ -813,8 +817,8 @@ class PythonOrgSearch(unittest.TestCase):
         )
         pass
 
-    def check_delete_row(self, driver, css_selector, css_names, list):
-        page = f"http://{self.address}/scientific_poster_generator/projects.php"
+    def check_delete_row(self, css_selector, css_names, list):
+        page = f"http://{address}/scientific_poster_generator/projects.php"
         filter_config = [
             ("select#select_user", "max5", "input#submit-filter"),
             ("select#visibility", "1", "input#submit-filter"),
@@ -833,7 +837,7 @@ class PythonOrgSearch(unittest.TestCase):
         )
         driver.get(page)
         for i in filter_config:
-            self.change_selector(driver, *i)
+            self.change_selector(*i)
 
         time.sleep(self.wait_time)
         self.check_filter(
@@ -843,10 +847,10 @@ class PythonOrgSearch(unittest.TestCase):
         )
         pass
 
-    def admin_user(self, driver, pw):
+    def admin_user(self):
 
         # go to projects page
-        driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
+        driver.get(f"http://{address}/scientific_poster_generator/projects.php")
         time.sleep(self.wait_time)
 
         # logout
@@ -854,10 +858,10 @@ class PythonOrgSearch(unittest.TestCase):
         time.sleep(self.wait_time)
 
         # login as admin
-        self.login_fill_form(driver, "Admin", "PwScaDS-2025")
+        self.login_fill_form("Admin", "PwScaDS-2025")
         driver.find_element(By.ID, "login").click()
         self.assertEqual(
-            f"http://{self.address}/scientific_poster_generator/projects.php",
+            f"http://{address}/scientific_poster_generator/projects.php",
             driver.current_url,
         )
         time.sleep(self.wait_time)
@@ -880,14 +884,14 @@ class PythonOrgSearch(unittest.TestCase):
                 "div#table-container>table>tr#table-container--nr-1>td:nth-child(4)>input",
             )[0].get_attribute("value"),
         )
-        driver.get(f"http://{self.address}/scientific_poster_generator/index.php")
+        driver.get(f"http://{address}/scientific_poster_generator/index.php")
         self.assertIsNotNone(
             driver.find_elements(By.CSS_SELECTOR, "div#posters>div>iframe")
         )
 
         time.sleep(self.wait_time)
 
-        driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
+        driver.get(f"http://{address}/scientific_poster_generator/projects.php")
 
         time.sleep(self.wait_time)
 
@@ -909,7 +913,7 @@ class PythonOrgSearch(unittest.TestCase):
 
         time.sleep(self.wait_time)
 
-        driver.get(f"http://{self.address}/scientific_poster_generator/index.php")
+        driver.get(f"http://{address}/scientific_poster_generator/index.php")
 
         time.sleep(self.wait_time)
 
@@ -917,7 +921,7 @@ class PythonOrgSearch(unittest.TestCase):
             [], driver.find_elements(By.CSS_SELECTOR, "div#posters>div>iframe")
         )
 
-        driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
+        driver.get(f"http://{address}/scientific_poster_generator/projects.php")
 
         # check if admin can change other posters
         time.sleep(self.wait_time)
@@ -928,7 +932,7 @@ class PythonOrgSearch(unittest.TestCase):
         ).click()
         time.sleep(self.wait_time)
         self.assertEqual(
-            f"http://{self.address}/scientific_poster_generator/poster.php?id={poster_id}&mode=private",
+            f"http://{address}/scientific_poster_generator/poster.php?id={poster_id}&mode=private",
             driver.current_url,
         )
         time.sleep(self.wait_time)
@@ -947,10 +951,10 @@ class PythonOrgSearch(unittest.TestCase):
                 "x",
             ],
         }
-        self.poster_tests(driver, "", poster_id, data, True)
+        self.poster_tests("", poster_id, data, True)
 
         time.sleep(self.wait_time)
-        driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
+        driver.get(f"http://{address}/scientific_poster_generator/projects.php")
 
         # check set view_mode
         self.change_selector(
@@ -961,7 +965,7 @@ class PythonOrgSearch(unittest.TestCase):
         )
         # check if state stored after reload
         time.sleep(self.wait_time)
-        driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
+        driver.get(f"http://{address}/scientific_poster_generator/projects.php")
         self.check_selected(
             driver,
             "div#table-container>table>tr:nth-child(2)>td:nth-child(5)>select",
@@ -969,7 +973,7 @@ class PythonOrgSearch(unittest.TestCase):
             ["public", "private"],
         )
         time.sleep(self.wait_time)
-        driver.get(f"http://{self.address}/scientific_poster_generator/index.php")
+        driver.get(f"http://{address}/scientific_poster_generator/index.php")
         time.sleep(self.wait_time * 2 + 2)
         self.assertEqual(
             3,
@@ -978,7 +982,7 @@ class PythonOrgSearch(unittest.TestCase):
             ),
         )
         time.sleep(self.wait_time)
-        driver.get(f"http://{self.address}/scientific_poster_generator/projects.php")
+        driver.get(f"http://{address}/scientific_poster_generator/projects.php")
 
         time.sleep(self.wait_time)
         driver.find_element(By.CSS_SELECTOR, "input#submit-filter").click()
@@ -1099,16 +1103,17 @@ class PythonOrgSearch(unittest.TestCase):
             driver,
             "div#author-list>table>*>td:nth-child(3)>input",
             [
+                "Author8",
+                "Author5",
                 "ChatGPT",
                 "Alice Johnson",
                 "Dr. Rahul Mehta",
                 "ChatGPT",
                 "Lina Chen abc",
+                "Marcus Lee",
                 "ChatGPT",
                 "Alice Johnson",
                 "Lina Chen abc",
-                "Author8",
-                "Author5",
             ],
         )
 
@@ -1171,7 +1176,7 @@ class PythonOrgSearch(unittest.TestCase):
         )
 
         # check select visibility
-        self.check_selected(driver, "select#visibility", "-", ["-", "0", "1"])
+        self.check_selected("select#visibility", "-", ["-", "0", "1"])
 
         # check filter results posters change selector
         self.change_selector(
@@ -1210,7 +1215,7 @@ class PythonOrgSearch(unittest.TestCase):
         )
 
         # check with additional filter attribute - visibility
-        self.change_selector(driver, "select#visibility", "0", "input#submit-filter")
+        self.change_selector("select#visibility", "0", "input#submit-filter")
 
         # check filter results posters - user, visibility
         self.check_filter(
@@ -1264,7 +1269,7 @@ class PythonOrgSearch(unittest.TestCase):
         )
 
         # change filter attribute - visibility
-        self.change_selector(driver, "select#visibility", "1", "input#submit-filter")
+        self.change_selector("select#visibility", "1", "input#submit-filter")
 
         # check with additional filter attribute - poster
         self.change_selector(
@@ -1339,7 +1344,7 @@ class PythonOrgSearch(unittest.TestCase):
         )
 
     # TODO: test index page
-    def index_page(self, driver):
+    def index_page(self):
         # check spinner
         # check register
         # check login
@@ -1357,4 +1362,25 @@ class PythonOrgSearch(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--test",
+        "-t",
+        nargs="*",
+        help="Liste von Testmethoden, die ausgeführt werden sollen. Wenn nichts angegeben, laufen alle Tests.",
+    )
+    args = parser.parse_args()
+
+    create_driver()
+
+    if args.test:
+        # Wenn Testnamen angegeben sind, bauen wir die Test-Suite nur mit diesen Tests
+        suite = unittest.TestSuite()
+        loader = unittest.TestLoader()
+        for test_name in args.test:
+            suite.addTest(PythonOrgSearch(test_name))
+        runner = unittest.TextTestRunner()
+        runner.run(suite)
+    else:
+        # Ohne Parameter alle Tests ausführen
+        unittest.main()

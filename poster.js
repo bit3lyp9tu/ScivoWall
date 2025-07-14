@@ -753,10 +753,22 @@ function insertElementAtIndex(container, newElement, index) {
 }
 
 function filloutAuthors(list) {
-    for (let i = 0; i < list.length; i++) {
-        author_names.push(list[i]);
-        insertElementAtIndex(document.getElementById("authors"), author_item(list[i]), i);
-    }
+	for (let i = 0; i < list.length; i++) {
+		author_names.push(list[i]);
+		insertElementAtIndex(document.getElementById("authors"), author_item(list[i]), i);
+	}
+
+	$('.author-item').on('mouseenter', function() {
+		$(this).find('.author-item-btn').show();
+	});
+
+	$('.author-item').on('mouseleave', function() {
+		$(this).find('.author-item-btn').hide();
+	});
+
+	// Optional: Button zu Beginn ausblenden
+	$('.author-item-btn').hide();
+
 }
 
 function getAuthorItems() {

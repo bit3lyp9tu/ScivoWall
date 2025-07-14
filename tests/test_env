@@ -76,7 +76,11 @@ done
 #     python3 ./tests/coverage.py $i ./testing.php | sed 's/^/- /'
 # done
 
-cd tests; ./run_tests $DB_NAME; CODE=$?; cd ..
+cd tests
+export DB_NAME
+./run_tests $*
+CODE=$?
+cd ..
 
 echo --- Backend Coverage ---
 python3 ./tests/coverage.py ./testing.php 2 0 0

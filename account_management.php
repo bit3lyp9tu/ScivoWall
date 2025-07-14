@@ -465,12 +465,14 @@
             INNER JOIN author_to_poster ON author.id=author_to_poster.author_id
             INNER JOIN poster ON author_to_poster.poster_id=poster.poster_id
             INNER JOIN user ON poster.user_id=user.user_id
-            INNER JOIN view_modes ON poster.fk_view_mode=view_modes.ID"
+	    INNER JOIN view_modes ON poster.fk_view_mode=view_modes.ID"
         );
 
         if (sizeof($sanitized["var"]) > 0) {
             $sql .= " WHERE " . substr($sanitized["sql"], 4, -1);
         }
+
+	$sql .= " ORDER BY author_to_poster.id ASC";
 
         if (!isAdmin($user_id)) {
             $sql = str_replace("user.name AS user, ","",$sql);

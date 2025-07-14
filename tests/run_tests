@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-if [ "$#" -eq 1 ]; then
-	DB_NAME="$1"
+if [[ -n $DB_NAME ]]; then
+	DB_NAME="$DB_NAME"
 else
 	DB_NAME="db"
 fi
@@ -76,7 +76,7 @@ else
 	mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword $DB_NAME < ./test_img.sql
 fi
 
-python3 poster_tests.py
+python3 poster_tests.py $*
 #  $*
 CODE=$?
 
