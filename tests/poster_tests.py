@@ -802,7 +802,6 @@ class PythonOrgSearch(unittest.TestCase):
             self.change_selector(*i)
         time.sleep(self.wait_time)
         self.check_filter(
-            driver,
             css_names,
             list,
         )
@@ -831,7 +830,6 @@ class PythonOrgSearch(unittest.TestCase):
         ).click()
         time.sleep(self.wait_time)
         self.check_filter(
-            driver,
             css_names,
             list,
         )
@@ -841,7 +839,6 @@ class PythonOrgSearch(unittest.TestCase):
 
         time.sleep(self.wait_time)
         self.check_filter(
-            driver,
             css_names,
             list,
         )
@@ -958,7 +955,6 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check set view_mode
         self.change_selector(
-            driver,
             "#table-container>table>tr:nth-child(2)>td:nth-child(5)>select",
             "public",
             None,
@@ -1085,7 +1081,6 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check filter results posters - all
         self.check_filter(
-            driver,
             "div#table-container>table>*>td:nth-child(2)>input",
             [
                 "test1 abc",
@@ -1100,7 +1095,6 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check filter results authors - all
         self.check_filter(
-            driver,
             "div#author-list>table>*>td:nth-child(3)>input",
             [
                 "Author8",
@@ -1119,7 +1113,6 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check filter results imgs - all
         self.check_filter(
-            driver,
             "div#image-list>table>*>td:nth-child(2)>input",
             ["tudlogo.png", "leipzig.png"],
         )
@@ -1180,11 +1173,10 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check filter results posters change selector
         self.change_selector(
-            driver, "select#select_user", "max5", "input#submit-filter"
+            "select#select_user", "max5", "input#submit-filter"
         )
         # check filter results posters - user
         self.check_filter(
-            driver,
             "div#table-container>table>*>td:nth-child(2)>input",
             [
                 "Climate Change Effects in the Arctic",
@@ -1194,7 +1186,6 @@ class PythonOrgSearch(unittest.TestCase):
         )
         # check filter results authors - user
         self.check_filter(
-            driver,
             "div#author-list>table>*>td:nth-child(3)>input",
             [
                 "ChatGPT",
@@ -1209,7 +1200,6 @@ class PythonOrgSearch(unittest.TestCase):
         )
         # check filter results imgs - user
         self.check_filter(
-            driver,
             "div#image-list>table>*>td:nth-child(2)>input",
             ["tudlogo.png", "leipzig.png"],
         )
@@ -1219,53 +1209,47 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check filter results posters - user, visibility
         self.check_filter(
-            driver,
             "div#table-container>table>*>td:nth-child(2)>input",
             ["Climate Change Effects in the Arctic"],
         )
 
         # check filter results authors - user, visibility
         self.check_filter(
-            driver,
             "div#author-list>table>*>td:nth-child(3)>input",
             ["ChatGPT", "Alice Johnson", "Dr. Rahul Mehta"],
         )
 
         # check filter results imgs - user, visibility
         self.check_filter(
-            driver,
             "div#image-list>table>*>td:nth-child(2)>input",
             [],
         )
 
         # check with additional filter attribute - view_mode
         self.change_selector(
-            driver, "select#select_view_mode", "public", "input#submit-filter"
+            "select#select_view_mode", "public", "input#submit-filter"
         )
         # check filter results posters - user, visibility, view_mode
         self.check_filter(
-            driver,
             "div#table-container>table>*>td:nth-child(2)>input",
             [],
         )
 
         # check filter results authors - user, visibility, view_mode
         self.check_filter(
-            driver,
             "div#author-list>table>*>td:nth-child(3)>input",
             [],
         )
 
         # check filter results imgs - user, visibility, view_mode
         self.check_filter(
-            driver,
             "div#image-list>table>*>td:nth-child(2)>input",
             [],
         )
 
         # reset filter attribute - view_mode
         self.change_selector(
-            driver, "select#select_view_mode", "-", "input#submit-filter"
+            "select#select_view_mode", "-", "input#submit-filter"
         )
 
         # change filter attribute - visibility
@@ -1273,7 +1257,6 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check with additional filter attribute - poster
         self.change_selector(
-            driver,
             "select#select_title",
             "The Future of Urban Farming abc",
             "input#submit-filter",
@@ -1281,19 +1264,16 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check filter results posters - user, visibility, poster
         self.check_filter(
-            driver,
             "div#table-container>table>*>td:nth-child(2)>input",
             ["The Future of Urban Farming abc"],
         )
         # check filter results authors - user, visibility, poster
         self.check_filter(
-            driver,
             "div#author-list>table>*>td:nth-child(3)>input",
             ["ChatGPT", "Alice Johnson", "Lina Chen abc"],
         )
         # check filter results imgs - user, visibility, poster
         self.check_filter(
-            driver,
             "div#image-list>table>*>td:nth-child(2)>input",
             ["tudlogo.png", "leipzig.png"],
         )
