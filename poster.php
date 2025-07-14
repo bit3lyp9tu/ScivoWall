@@ -16,6 +16,8 @@
     <div id="titles">
         <div>
             <div id="title">Title</div>
+            </div>
+            <div id="authors">
                 <input type="text" id="typeahead" values=""></input>
             </div>
         </div>

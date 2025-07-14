@@ -328,7 +328,11 @@ input#typeahead.tt-input {
     width: 1.2rem;
     border-radius: 1.2rem;
 
-    display: none;
+    //display: none;
+}
+
+.remove-element::before {
+	content: "X";
 }
 
 p[placeholder="plotly"] {
@@ -619,7 +623,6 @@ footer {
     bottom: 0; */
 }
 
-button,
 input[type="button"] {
     background-color: var(--scads-green);
 
@@ -636,13 +639,11 @@ input[type="button"] {
     opacity: 0.94;
 }
 
-button,
 input[type="button"]:hover {
     background-color: var(--scads-blue);
     transform: translateY(-2px);
 }
 
-button,
 input[type="button"]:active {
     transform: translateY(0);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
@@ -678,4 +679,9 @@ input[type="checkbox"]:checked {}
     .filter-select {
         /* flex-direction: column; */
     }
+}
+
+div#authors {
+    display: flex;
+    flex-direction: row;
 }

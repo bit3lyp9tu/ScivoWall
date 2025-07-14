@@ -323,6 +323,28 @@ class PythonOrgSearch(unittest.TestCase):
 
         time.sleep(self.wait_time)
 
+        self.assertListEqual(
+            [
+                "ChatGPT",
+                "Alice Johnson",
+                "Dr. Rahul Mehta",
+                "ChatGPT",
+                "Lina Chen",
+                "Marcus Lee",
+                "ChatGPT",
+                "Alice Johnson",
+                "Lina Chen",
+            ],
+            [
+                i.get_attribute("value")
+                for i in driver.find_elements(
+                    By.CSS_SELECTOR, "#author-list>table>*>td:nth-child(2)>input"
+                )
+            ],
+        )
+
+        time.sleep(self.wait_time)
+
         # check author list correctly loaded
         author_list_element = driver.find_element(
             By.CSS_SELECTOR,
@@ -471,9 +493,9 @@ class PythonOrgSearch(unittest.TestCase):
         # check authors
         authors = set(
             [
-                i.text
+                i.text.split("\n")[0]
                 for i in driver.find_elements(
-                    By.CSS_SELECTOR, "div#typeahead-container>div.author-item"
+                    By.CSS_SELECTOR, "div#authors>div.author-item"
                 )
             ]
         )
@@ -486,7 +508,7 @@ class PythonOrgSearch(unittest.TestCase):
         # check add author
         WebDriverWait(driver, 20).until(
             EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, "div#typeahead-container>div:last-child")
+                (By.CSS_SELECTOR, "div#authors>input:last-child")
             )
         ).click()
         ActionChains(driver).send_keys("Author").perform()
@@ -494,10 +516,10 @@ class PythonOrgSearch(unittest.TestCase):
         changed_authors = [
             i.text
             for i in driver.find_elements(
-                By.CSS_SELECTOR, "div#typeahead-container>div.author-item"
+                By.CSS_SELECTOR, "div#authors>div.author-item"
             )
         ]
-        # print(changed_authors)
+        print(f"check add author: {changed_authors}")
         self.assertTrue(
             changed_authors
             in [data["authors"]["added"], data["authors"]["added-edited"]],
@@ -509,7 +531,7 @@ class PythonOrgSearch(unittest.TestCase):
             EC.element_to_be_clickable(
                 (
                     By.CSS_SELECTOR,
-                    "div#typeahead-container>div:nth-child(1)",
+                    "div#authors>div:nth-child(1)",
                 )
             )
         )
@@ -519,7 +541,7 @@ class PythonOrgSearch(unittest.TestCase):
             EC.element_to_be_clickable(
                 (
                     By.CSS_SELECTOR,
-                    "div#typeahead-container>div:nth-child(3)",
+                    "div#authors>div:nth-child(3)",
                 )
             )
         )
@@ -528,7 +550,7 @@ class PythonOrgSearch(unittest.TestCase):
         author_order = [
             i.text
             for i in driver.find_elements(
-                By.CSS_SELECTOR, "div#typeahead-container>div.author-item"
+                By.CSS_SELECTOR, "div#authors>div.author-item"
             )
         ]
         # print(author_order)
@@ -538,17 +560,18 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check author delete
         last_author = driver.find_element(
-            By.CSS_SELECTOR, "div#typeahead-container>div:nth-last-child(2)"
+            By.CSS_SELECTOR, "div#authors>div:nth-last-child(2)"
         )
         ActionChains(driver).move_to_element(last_author).perform()
         driver.find_element(
             By.CSS_SELECTOR,
-            "div#typeahead-container>div:nth-last-child(2)>button#remove-element",
+            "div#authors>div:nth-last-child(2)>button.remove-element",
         ).click()
+        # driver.execute_script("document.")
         changed_authors2 = [
             i.text
             for i in driver.find_elements(
-                By.CSS_SELECTOR, "div#typeahead-container>div.author-item"
+                By.CSS_SELECTOR, "div#authors>div.author-item"
             )
         ]
         self.assertTrue(
@@ -557,7 +580,7 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check add box
         boxes = [i for i in driver.find_elements(By.CSS_SELECTOR, "div#boxes>div")]
-        driver.find_element(By.CSS_SELECTOR, "button#add-box").click()
+        driver.find_element(By.CSS_SELECTOR, "input#add-box").click()
         boxes2 = [i for i in driver.find_elements(By.CSS_SELECTOR, "div#boxes>div")]
         self.assertEqual(len(boxes) + 1, len(boxes2))
 

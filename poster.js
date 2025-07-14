@@ -216,7 +216,7 @@ async function show(response) {
     document.getElementById("title").setAttribute("data-content", response.title);
 
     // document.getElementById("authors").value = response.authors != null ? response.authors.toString(", ") : "";
-    // filloutAuthors(response.authors);
+    filloutAuthors(response.authors);
 
     const boxes = document.getElementById("boxes");
 
@@ -651,12 +651,12 @@ window.onload = async function () {
     if (!isInIframe()) {
         const inputElement = document.getElementById("typeahead");
 
-        const instance = typeahead({
-            input: inputElement,
-            source: {
-                local: author_names,
-            }
-        });
+        // const instance = typeahead({
+        //     input: inputElement,
+        //     source: {
+        //         local: author_names,
+        //     }
+        // });
     }
 
     initEditBoxes();
@@ -675,9 +675,10 @@ function author_item(value) {
     if (!isInIframe()) {
 
         const btn = document.createElement("button");
-        btn.id = "remove-element";
+        //btn.id = "remove-element";
         btn.classList.add("author-item-btn");
-        btn.innerText = "X";
+	btn.classList.add("remove-element");
+        btn.innerText = "";
         btn.onclick = function () {
             this.closest("div").remove();
         };
@@ -704,6 +705,7 @@ document.addEventListener("focusin", function (event) {
 
 document.addEventListener("focusout", async function (event) {
     if (event.target.id == "typeahead") {
+        console.log(event.target);
         if (event.target.value != "") {
             // convert target into item
 
@@ -713,7 +715,7 @@ document.addEventListener("focusout", async function (event) {
 
             const new_elem = author_item(event.target.value)
 
-            insertElementAtIndex(document.getElementById("typeahead-container"), new_elem, -1);
+            insertElementAtIndex(document.getElementById("authors"), new_elem, -1);
             event.target.value = "";
 
             // const input = document.getElementsByClassName("typeahead-standalone")
@@ -753,16 +755,16 @@ function insertElementAtIndex(container, newElement, index) {
 function filloutAuthors(list) {
     for (let i = 0; i < list.length; i++) {
         author_names.push(list[i]);
-        insertElementAtIndex(document.getElementById("typeahead-container"), author_item(list[i]), i);
+        insertElementAtIndex(document.getElementById("authors"), author_item(list[i]), i);
     }
 }
 
 function getAuthorItems() {
     var list = [];
-    const parent = document.getElementById("typeahead-container");
+    const parent = document.getElementById("authors");
 
     for (let i = 0; i < parent.children.length; i++) {
-        if (!parent.children[i].classList.contains("typeahead-standalone")) {
+        if (parent.children[i].tagName != "input" && parent.children[i].type != "text") {
             list.push(parent.children[i].querySelector('p').innerText);
         }
     }
@@ -1037,7 +1039,7 @@ document.addEventListener("dragstart", async function (event) {
 
     console.log("drawstart event", event.target);
 
-    if (document.getElementById("typeahead-container").contains(event.target)) {
+    if (document.getElementById("typeahead").contains(event.target)) {
         event.target.style.border = "dashed";
         event.target.style.borderColor = "#83d252";
         event.target.style.border.width = "thin";
@@ -1066,7 +1068,7 @@ document.addEventListener("dragover", function (event) {
 document.addEventListener("drop", async function (event) {
     event.preventDefault();
 
-    if (document.getElementById("typeahead-container").contains(event.target)) {
+    if (document.getElementById("typeahead").contains(event.target)) {
         if (event.target.tagName == "P") {
             event.target.parentElement.after(dragend_item);
         } else {
