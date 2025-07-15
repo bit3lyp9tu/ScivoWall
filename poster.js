@@ -254,7 +254,7 @@ async function show(response) {
     document.getElementById("title").setAttribute("data-content", response.title);
 
     // document.getElementById("authors").value = response.authors != null ? response.authors.toString(", ") : "";
-    filloutAuthors(response.authors);
+    await filloutAuthors(response.authors);
 
     const data = await getAuthorCollection();
     setAuthorSuggestions("#add_author", data);
@@ -381,63 +381,63 @@ async function importFile(output, file) {
 }
 
 async function unedit_box() {
-    //console.log("TESTETSTSTTSTTS", selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``));
-    // selected_box = selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``);
-    // if (element.querySelector("p[placeholder='plotly']")) {
-    // }
+	//console.log("TESTETSTSTTSTTS", selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``));
+	// selected_box = selected_box.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``);
+	// if (element.querySelector("p[placeholder='plotly']")) {
+	// }
 
-    // change old back to non-editable and save old edits
-    if (selected_box) {
-        const element = createArea("div", selected_box.id, "box", selected_box.value);
+	// change old back to non-editable and save old edits
+	if (selected_box) {
+		const element = createArea("div", selected_box.id, "box", selected_box.value);
 
-        await typeset(element, () => marked.marked(selected_box.value));
-        if (selected_box && selected_box.parentNode) {
-            selected_box.parentNode.replaceChild(element, selected_box);
-        }
+		await typeset(element, () => marked.marked(selected_box.value));
+		if (selected_box && selected_box.parentNode) {
+			selected_box.parentNode.replaceChild(element, selected_box);
+		}
 
-        element.appendChild(createMenu());
+		element.appendChild(createMenu());
 
-        var inbtn = document.querySelector('#' + selected_box.id + '>input[type="file"]');
-        // console.log(inbtn);
+		var inbtn = document.querySelector('#' + selected_box.id + '>input[type="file"]');
+		// console.log(inbtn);
 
-        // TODO: [BUG] editBox needs to be selected previously at least once for the change event to be detected
-        inbtn.addEventListener('change', function (event) {
+		// TODO: [BUG] editBox needs to be selected previously at least once for the change event to be detected
+		inbtn.addEventListener('change', function (event) {
 
-            const file = event.target.files[0];
-            importFile(selected_box, file);
-        });
+			const file = event.target.files[0];
+			importFile(selected_box, file);
+		});
 
-        loadImages();
+		await loadImages();
 
-        loadPlots();
+		await loadPlots();
 
-        // forget old selected
-        selected_box = null;
+		// forget old selected
+		selected_box = null;
 
-        await save_content();
-    }
+		await save_content();
+	}
 
-    initEditBoxes();
+	await initEditBoxes();
 }
 
 async function edit_box(_target) {
-    if (_target.tagName === "DIV" && _target.id.startsWith("editBox") && selected_box === null) { // if new editBox gets selected
-        edit_box_if_no_other_was_selected(_target)
-    } else if (selected_box && _target !== selected_box) {// if there was something once selected and if the new selected is different from the old
-        unedit_box();
-    }
+	if (_target.tagName === "DIV" && _target.id.startsWith("editBox") && selected_box === null) { // if new editBox gets selected
+		edit_box_if_no_other_was_selected(_target)
+	} else if (selected_box && _target !== selected_box) {// if there was something once selected and if the new selected is different from the old
+		await unedit_box();
+	}
 }
 
 function initUneditHandler() {
-    document.addEventListener('click', function (event) {
-        // Prüfe, ob der Klick *innerhalb* einer editBox war
-        const isInsideEditBox = event.target.closest('[id^="editBox-"]');
+	document.addEventListener('click', async function (event) {
+		// Prüfe, ob der Klick *innerhalb* einer editBox war
+		const isInsideEditBox = event.target.closest('[id^="editBox-"]');
 
-        // Wenn NICHT innerhalb einer editBox → unedit_box() aufrufen
-        if (!isInsideEditBox) {
-            unedit_box();
-        }
-    });
+		// Wenn NICHT innerhalb einer editBox → unedit_box() aufrufen
+		if (!isInsideEditBox) {
+			await unedit_box();
+		}
+	});
 }
 
 async function initEditBoxes() {
@@ -447,13 +447,13 @@ async function initEditBoxes() {
         editBoxes.forEach(box => {
             // Prüfen, ob der Listener bereits gesetzt wurde
             if (!box._hasEditBoxClickListener) {
-                box.addEventListener('click', function (event) {
+                box.addEventListener('click', async function (event) {
                     // Abbrechen, wenn das geklickte Element Teil der Plotly-UI ist
                     if (event.target.closest('.modebar-container, .plotly, .zoomlayer')) {
                         return; // Ignoriere Plotly-interne Klicks
                     }
 
-                    edit_box(this);
+                    await edit_box(this);
                 });
 
                 box._hasEditBoxClickListener = true;
@@ -502,7 +502,6 @@ async function edit_box_event(event) {
 		}
 
 		// Edit Boxes
-		//edit_box(event.target)
 	}
 
 	//await save_content();
@@ -565,7 +564,7 @@ async function imgDragDrop() {
 
                         await imageUpload(data, url["id"]);
 
-                        loadImages();
+                        await loadImages();
                     };
 
                     reader.readAsDataURL(file); // Read the file as base64
@@ -651,19 +650,18 @@ window.onload = async function () {
 	if (response.status != 'error') {
 		//TODO:   iterate single functions over a shared loop
 		await show(response);
-		loadImages();
+		await loadImages();
 
-		loadPlots();
+		await loadPlots();
 
-		//imgDragDrop();
 		buttonEvents();
 
 	} else {
 		toastr["warning"]("Not Logged in");
 	}
 
-	initEditBoxes();
-	initUneditHandler();
+	await initEditBoxes();
+	await initUneditHandler();
 };
 
 async function author_item(value) {
@@ -715,7 +713,7 @@ document.addEventListener("focusout", async function (event) {
 
 			const author_element = document.getElementById("authors");
 
-			insertElementAtIndex(author_element, new_elem, author_element.children.length - 1);
+			await insertElementAtIndex(author_element, new_elem, author_element.children.length - 1);
 			event.target.value = "";
 			await save_content();
 		}
@@ -770,10 +768,10 @@ async function insertElementAtIndex(container, newElement, index) {
     container.insertBefore(await newElement, container.children[index]);
 }
 
-function filloutAuthors(list) {
+async function filloutAuthors(list) {
     for (let i = 0; i < list.length; i++) {
         author_names.push(list[i]);
-        insertElementAtIndex(document.getElementById("authors"), author_item(list[i]), i);
+        await insertElementAtIndex(document.getElementById("authors"), author_item(list[i]), i);
     }
 
     $('.author-item').on('mouseenter', function () {
@@ -833,23 +831,23 @@ async function save_content() {
 }
 
 function buttonEvents() {
+	if (!document.getElementById("add-box")) {
+		return;
+	}
 
-    if (!document.getElementById("add-box")) {
-        return;
-    }
-    document.getElementById("add-box").onclick = function () {
+	document.getElementById("add-box").onclick = async function () {
 
-        const container = document.getElementById("boxes");
+		const container = document.getElementById("boxes");
 
-        const content = "Content";
+		const content = "Content";
 
-        const box = createArea("div", "editBox-" + (container.children.length), "box", content);
-        box.innerHTML = content;
+		const box = createArea("div", "editBox-" + (container.children.length), "box", content);
+		box.innerHTML = content;
 
-        container.appendChild(box);
+		container.appendChild(box);
 
-        loadPlots();
-    };
+		await loadPlots();
+	};
 }
 
 function match_placeholder_image(str) {
