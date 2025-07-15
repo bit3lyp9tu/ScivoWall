@@ -32,7 +32,7 @@
 		$stmt->execute();
 		$stmt->close();
 
-		return "successfully updated";
+		return true;
 	}
 
 	# TODO:   true/false zurückgeben
