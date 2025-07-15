@@ -280,10 +280,12 @@
 			exit(1);
 		    }
 
-                    overwriteBoxes($poster_id, $content);
-                    setVisibility($poster_id, $visibility);
-
-                    echo "success?";
+		    if(!overwriteBoxes($poster_id, $content)) {
+			echo "overwriteBoxes failed";
+		    }
+		    if(!setVisibility($poster_id, $visibility)) {
+			echo "setVisibility failed";
+		    }
                 } else {
                     echo "Insufficient permission";
                 }

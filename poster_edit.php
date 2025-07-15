@@ -78,6 +78,7 @@
         );
         return $result;
     }
+
     function overwriteBoxes($poster_id, $new_content) {
 	    runQuery("START TRANSACTION");
 	    $boxes = getBoxes($poster_id);
@@ -312,7 +313,6 @@
         return $result["fk_view_mode"][0];
     }
     function setVisibility($poster_id, $value) {
-
         $result = editQuery(
             "UPDATE poster SET poster.fk_view_mode = ?
             WHERE poster.poster_id = ?", "ii", $value+1, $poster_id
