@@ -8,13 +8,6 @@
 
 	// error_log("functions.php");
 
-	function get_get($name, $default=null) {
-		if(isset($_GET[$name])) {
-			return $_GET[$name];
-		}
-		return $default;
-	}
-
 	function isDocker() {
 		return is_file("/.dockerenv");
 	}

@@ -125,47 +125,6 @@
 		return $out;
 	}
 
-	function simpleQuery($sql) {
-		// $stmt = $GLOBALS["conn"]->prepare($sql);
-		// $stmt->execute();
-		// $stmt->close();
-
-		return "";
-	}
-
-	// Old
-	function runSingleQuery ($sql, $allows_num_rows=true) {
-		$result = $GLOBALS["conn"]->query($sql);
-		$substr = explode(" ",$sql);
-
-		if (!$result) {
-			return "ERROR";
-		}
-
-		if($allows_num_rows) {
-			if ($result->num_rows > 0) {
-				// Initialize an empty string to store the result
-				$output = "";
-
-				// Fetch all rows and generate HTML output
-				while ($row = $result->fetch_assoc()) {
-					$key = $substr[1];
-					if (!isset($row[$key])) {
-						$errmsg = "ERROR: ".json_encode($row)." -> $key is not set. Query: ".json_encode($sql)."\n";
-						throw new Exception($errmsg);
-					}
-					$result_to_be_printed = $row[$key];
-					$output .= "<div>" . htmlspecialchars($result_to_be_printed) . "</div>";
-				}
-
-				$output .= "";
-				return $output;
-			} else {
-				return "No results found";
-			}
-		}
-	}
-
 	function runQuery($sql) {
 		try {
 			$result = $GLOBALS["conn"]->query($sql);
