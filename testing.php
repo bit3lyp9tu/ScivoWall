@@ -248,7 +248,7 @@
 
 
 	$new_proj = addProject(87, "First Project");
-	test_equal("new project creation success", $new_proj, "success success success");
+	test_equal("new project creation success", $new_proj, "1 1 1");
 
 	$check_poster = getterQuery("SELECT poster_id, title FROM poster");
 	test_equal("new project check poster", json_encode($check_poster, true), '{"poster_id":[108,112,132,350,351,353,354,356],"title":["test1","test4","dxfgbfdffdbdfxbfbxbf","AI in Modern Healthcare","The Future of Urban Farming","TestingTitle","new Project","First Project"]}');
@@ -299,13 +299,13 @@
 	test_equal("get poster visibility", getVisibility(356), 2);
 
 	test_equal("get poster visibility", getVisibility(351), 1);
-	test_equal("set visibility mode", setViewMode2(351, 2), 'successfully updated');
+	test_equal("set visibility mode", setViewMode2(351, 2), true);
 	test_equal("get poster visibility", getVisibility(351), 2);
 
 	//update last edit date
 	$sleep_time = 1;
 	//poster
-	test_equal("update last edit date poster 1", update_time("poster", 2), 'successfully updated');
+	test_equal("update last edit date poster 1", update_time("poster", 2), true);
 	$t1 = getterQuery("SELECT last_edit_date FROM poster WHERE poster.poster_id=?", 350)["last_edit_date"][0];
 	sleep($sleep_time);
 	update_time("poster", 350);
@@ -313,7 +313,7 @@
 	test_equal("update last edit date poster 2", ($t1 < $t2) ? 1 : 0, 1);
 	//user
 	$user_id = 19;
-	test_equal("update last edit date user 1", update_time("user", $user_id), 'successfully updated');
+	test_equal("update last edit date user 1", update_time("user", $user_id), true);
 	$t1 = getterQuery("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id)["last_login_date"][0];
 	sleep($sleep_time);
 	update_time("user", $user_id);
@@ -321,7 +321,7 @@
 	test_equal("update last edit date user 2", ($t1 < $t2) ? 1 : 0, 1);
 	//image
 	$image_id = 221;
-	test_equal("update last edit date image 1", update_time("image", $image_id), 'successfully updated');
+	test_equal("update last edit date image 1", update_time("image", $image_id), true);
 	$t1 = getterQuery("SELECT last_edit_date FROM image WHERE image.image_id=?", $image_id)["last_edit_date"][0];
 	sleep($sleep_time);
 	update_time("image", $image_id);
