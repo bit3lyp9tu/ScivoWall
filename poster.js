@@ -619,51 +619,51 @@ function createEditMenu() {
 }
 
 window.onload = async function () {
-    const data = url_to_json();
-    let response = {};
+	const data = url_to_json();
+	let response = {};
 
-    if (isInIframe()) {
-        console.log("in IFrame");
+	if (isInIframe()) {
+		console.log("in IFrame");
 
-        document.getElementById("add_author").style.display = "none";
+		document.getElementById("add_author").style.display = "none";
 
-        document.getElementById("img-load").style.display = "none";
+		document.getElementById("img-load").style.display = "none";
 
-        document.getElementsByTagName("footer")[0].style.display = "none";
-    }
+		document.getElementsByTagName("footer")[0].style.display = "none";
+	}
 
-    const state = await isEditView();
-    if (state) {
-        console.log("logged in");
-        createEditMenu();
-    } else {
-        console.log("logged out");
-    }
+	const state = await isEditView();
+	if (state) {
+		console.log("logged in");
+		createEditMenu();
+	} else {
+		console.log("logged out");
+	}
 
-    try {
-        response = await request(data);
-        console.log("load content", response);
+	try {
+		response = await request(data);
+		console.log("load content", response);
 
-    } catch (error) {
-        console.error("content head request failed " + error);
-    }
+	} catch (error) {
+		console.error("content head request failed " + error);
+	}
 
-    if (response.status != 'error') {
-        //TODO:   iterate single functions over a shared loop
-        await show(response);
-        loadImages();
+	if (response.status != 'error') {
+		//TODO:   iterate single functions over a shared loop
+		await show(response);
+		loadImages();
 
-        loadPlots();
+		loadPlots();
 
-        imgDragDrop();
-        buttonEvents();
+		//imgDragDrop();
+		buttonEvents();
 
-    } else {
-        toastr["warning"]("Not Logged in");
-    }
+	} else {
+		toastr["warning"]("Not Logged in");
+	}
 
-    initEditBoxes();
-    initUneditHandler();
+	initEditBoxes();
+	initUneditHandler();
 };
 
 async function author_item(value) {
@@ -704,7 +704,6 @@ async function author_item(value) {
 
 document.addEventListener("focusout", async function (event) {
     if (event.target.id == "add_author") {
-        console.log(event.target);
         if (event.target.value != "") {
             // convert target into item
 
