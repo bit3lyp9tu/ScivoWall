@@ -129,22 +129,18 @@
 		try {
 			$result = $GLOBALS["conn"]->query($sql);
 		} catch (Throwable $th) {
-
 			return array();
 		}
 
 
 		if ($result === True) {
 			return $result;
-		}else{
+		} else {
 			try {
 				return $result->fetch_all();
 			} catch (Throwable $th) {
 				return array();
 			}
 		}
-
-		// $obj = mysqli_fetch_object($result);
-		// print_r($obj);
 	}
 ?>
