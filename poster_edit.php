@@ -51,17 +51,11 @@
             WHERE box.poster_id=?",
             $poster_id
         )["content"];
-        // if ($content != "No results found") {
 
-        //     return json_decode($content, true)["content"];
-        // }else{
-        //     return [];
-        // }
         return $content;
     }
 
     function addBox($poster_id, $content="") {
-
         $result = insertQuery(
             "INSERT INTO box (poster_id, content) VALUE (?, ?)",
             "is", $poster_id, $content
@@ -69,7 +63,6 @@
         return $result;
     }
     function editBox($local_id, $poster_id, $content="") {
-
         $result = editQuery(
             "UPDATE box SET box.content=?
             WHERE box.box_id=(
@@ -86,41 +79,50 @@
         return $result;
     }
     function overwriteBoxes($poster_id, $new_content) {
+	    runQuery("START TRANSACTION");
+	    $boxes = getBoxes($poster_id);
 
-        $old_size = sizeof(getBoxes($poster_id));
-        $new_size = sizeof($new_content);
+	    $old_size = count($boxes);
+	    $new_size = count($new_content);
 
-        if ($new_size != 0) {
+	    if ($new_size != 0) {
+		    for ($i = 0; $i < $new_size; $i++) {
+			    if(!editBox($i + 1, $poster_id, $new_content[$i])) {
+				    runQuery("ROLLBACK");
+				    return false;
+			    }
+		    }
 
-            for ($i=0; $i < $new_size; $i++) {
-                editBox($i+1, $poster_id, $new_content[$i]);
-            }
+		    if ($old_size < $new_size) {
+			    for ($i = $old_size; $i < $new_size; $i++) {
+				    if(!addBox($poster_id, $new_content[$i])) {
+					    runQuery("ROLLBACK");
+					    return false;
+				    }
+			    }
+		    } else if ($old_size > $new_size) {
 
-            if($old_size < $new_size) {
+			    for ($i = $old_size - 1; $i > $new_size - 1; $i--) {
+				    if(!deleteBox($i+1, $poster_id)) {
+					    runQuery("ROLLBACK");
+					    return false;
+				    }
+			    }
+		    }
+	    } else {
+		    for ($i = $old_size; $i > 0; $i--) {
+			    if(!deleteBox($i, $poster_id)) {
+				    runQuery("ROLLBACK");
+				    return false;
+			    }
+		    }
+	    }
 
-                for ($i = $old_size; $i < $new_size; $i++) {
-                    addBox($poster_id, $new_content[$i]);
-                }
-            }else if ($old_size > $new_size) {
+	    runQuery("COMMIT");
 
-                for ($i = $old_size - 1; $i > $new_size - 1; $i--) {
-                    deleteBox($i+1, $poster_id);
-                }
-            }
-        }else{
-            for ($i=$old_size; $i > 0; $i--) {
-                // print_r($i . "\n");
-                deleteBox($i, $poster_id);
-            }
-            // deleteBox(1, $poster_id);
-        }
+	    return true;
     }
-    // function getImage($image_id) {
-    //     return json_encode(getterQuery(
-    //         "SELECT data FROM image WHERE image_id=?",
-    //         $image_id
-    //     ), true)["data"][0];
-    // }
+
     function getFullImage($name, $poster_id) {
         return json_encode(getterQuery(
             "SELECT file_name, type, size, last_modified, data FROM image WHERE fk_poster=? AND file_name=? LIMIT 1",
@@ -212,14 +214,14 @@
     function addAuthors($poster_id, $authors) {
 	    $results = "";
 
-	    for ($i = 0; $i < sizeof($authors); $i++) {
+	    for ($i = 0; $i < count($authors); $i++) {
 		    $id = null;
 
 		    $res = getterQuery(
 			    "SELECT id FROM author WHERE name=?", $authors[$i]
 		    )["id"];
 
-		    if (sizeof($res) == 0) {
+		    if (count($res) == 0) {
 			    $results .= "[" . addAuthor($authors[$i]);
 			    $id = getLastInsertID();
 		    } else {
@@ -243,13 +245,15 @@
 	    )) {
 		    runQuery("ROLLBACK");
 
-		    return;
+		    return false;
 	    }
 
 	    if(addAuthors($poster_id, $authors)) {
 		    runQuery("COMMIT");
 	    } else {
 		    runQuery("ROLLBACK");
+
+		    return false;
 	    }
 
 	    return true;
@@ -339,7 +343,7 @@
             "SELECT 1 AS is_public FROM poster WHERE poster_id=? AND fk_view_mode=? AND visible=?",
             $poster_id, 1, 1
         );
-        return sizeof($result["is_public"]) != 0 ? 1 : 0;
+        return count($result["is_public"]) != 0 ? 1 : 0;
     }
 
     function load_content($poster_id) {

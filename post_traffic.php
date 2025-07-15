@@ -120,7 +120,7 @@
             $id = isset($_POST['id']) ? $_POST['id'] : 0;
             $user_id = getValidUserFromSession();
 
-            updateEditDate("image", $id);
+            update_time("image", $id);
             echo rename_image($name, $id, $user_id);
         }
 
@@ -160,7 +160,7 @@
             $id = isset($_POST['id']) ? $_POST['id'] : '';
 
             $user_id = getValidUserFromSession();
-            updateEditDate("poster", $id);
+            update_time("poster", $id);
             echo rename_poster2($name, $id, $user_id);
         }
 
@@ -219,7 +219,7 @@
             // echo "test";//$local_id . " " . $value . " " . $user_id;
 
             if ($user_id != null && isAdmin($user_id)) {
-                updateEditDate("poster", $id);
+                update_time("poster", $id);
                 echo $value . " " . updateVisibility2($id, $value);
             }else{
                 echo "User not an Admin";
@@ -270,9 +270,16 @@
 			exit(1);
 		    }
 
-                    updateEditDate("poster", $poster_id);
-                    // addAuthors($poster_id, $authors);
-                    overwriteAuthors($poster_id, $authors);
+		    if(!update_time("poster", $poster_id)) {
+			echo "Date could not be updated";
+			exit(1);
+		    }
+
+		    if(!overwriteAuthors($poster_id, $authors)) {
+			echo "overwriting authors failed";
+			exit(1);
+		    }
+
                     overwriteBoxes($poster_id, $content);
                     setVisibility($poster_id, $visibility);
 
@@ -325,7 +332,7 @@
             if ($user_id != null) {
 
                 if (hasPermissionToChange($user_id, $poster_id) === true) {
-                    updateEditDate("poster", $poster_id);
+                    update_time("poster", $poster_id);
                     echo setViewMode2($poster_id, $view_option);
                 }else{
                     echo "Insufficient permission";

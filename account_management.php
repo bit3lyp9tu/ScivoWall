@@ -633,7 +633,7 @@
         return $result;
     }
 
-    function updateEditDate($table, $id) {
+    function update_time($table, $id) {
 	    $attribute = array(
 		    "poster" => "last_edit_date",
 		    "user" => "last_login_date",
