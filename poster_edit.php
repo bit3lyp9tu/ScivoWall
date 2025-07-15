@@ -11,7 +11,7 @@
     function getTitle($poster_id) {
         //TODO:   add test if id doesnt exists
 
-        $title = getterQuery2(
+        $title = getterQuery(
             "SELECT title
             FROM poster
             WHERE poster.poster_id=?",
@@ -30,7 +30,7 @@
     }
 
     function getAuthors($poster_id) {
-        $author_names = getterQuery2(
+        $author_names = getterQuery(
             "SELECT id, name
             FROM
                 author, (
@@ -45,7 +45,7 @@
     }
 
     function getBoxes($poster_id) {
-        $content = getterQuery2(
+        $content = getterQuery(
             "SELECT content
             FROM box
             WHERE box.poster_id=?",
@@ -116,13 +116,13 @@
         }
     }
     // function getImage($image_id) {
-    //     return json_encode(getterQuery2(
+    //     return json_encode(getterQuery(
     //         "SELECT data FROM image WHERE image_id=?",
     //         $image_id
     //     ), true)["data"][0];
     // }
     function getFullImage($name, $poster_id) {
-        return json_encode(getterQuery2(
+        return json_encode(getterQuery(
             "SELECT file_name, type, size, last_modified, data FROM image WHERE fk_poster=? AND file_name=? LIMIT 1",
             $poster_id, $name
         ), true);
@@ -138,7 +138,7 @@
 
     function addImage($json_data, $poster_id) {
 
-        $count = getterQuery2("SELECT COUNT(image_id) as cnt_image_id FROM image WHERE file_name=? AND fk_poster=?", $json_data["name"], $poster_id);
+        $count = getterQuery("SELECT COUNT(image_id) as cnt_image_id FROM image WHERE file_name=? AND fk_poster=?", $json_data["name"], $poster_id);
         #dier($count["cnt_image_id"][0]);
 
         #error_log(print_r(array($count), true));
@@ -215,7 +215,7 @@
 	    for ($i = 0; $i < sizeof($authors); $i++) {
 		    $id = null;
 
-		    $res = getterQuery2(
+		    $res = getterQuery(
 			    "SELECT id FROM author WHERE name=?", $authors[$i]
 		    )["id"];
 
@@ -293,14 +293,14 @@
     }
 
     function getVisibilityOptions() {
-        $result = getterQuery2(
+        $result = getterQuery(
             "SELECT name FROM view_modes"
         );
         return $result["name"];
     }
     function getVisibility($poster_id) {
 
-        $result = getterQuery2(
+        $result = getterQuery(
             "SELECT fk_view_mode
             FROM poster
             WHERE poster_id=?", $poster_id
@@ -326,7 +326,7 @@
     }
 
     function fetchPublicPosters() {
-        $result = getterQuery2(
+        $result = getterQuery(
             "SELECT poster_id, title
             FROM poster
             WHERE fk_view_mode=? AND visible=?", 1, 1
@@ -335,7 +335,7 @@
     }
 
     function isPublic($poster_id) {
-        $result = getterQuery2(
+        $result = getterQuery(
             "SELECT 1 AS is_public FROM poster WHERE poster_id=? AND fk_view_mode=? AND visible=?",
             $poster_id, 1, 1
         );
@@ -351,7 +351,7 @@
         $content->visibility = null;
         $content->vis_options = getVisibilityOptions();
 
-        $count = getterQuery2("SELECT COUNT(poster_id) as cnt_poster_id FROM poster WHERE poster_id = ?", $poster_id);
+        $count = getterQuery("SELECT COUNT(poster_id) as cnt_poster_id FROM poster WHERE poster_id = ?", $poster_id);
         if($count["cnt_poster_id"][0] > 0) {
             $content->title = getTitle($poster_id);
             $content->authors = getAuthors($poster_id)["name"]; //direct from project
@@ -371,7 +371,7 @@
             return true;
         }
 
-        if (getterQuery2("SELECT user_id FROM poster WHERE poster_id = ?", $poster_id)["user_id"][0] === $user_id) {
+        if (getterQuery("SELECT user_id FROM poster WHERE poster_id = ?", $poster_id)["user_id"][0] === $user_id) {
             return true;
         }
 

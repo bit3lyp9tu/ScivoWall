@@ -21,7 +21,7 @@
 	}
 
     function getLastInsertID() {
-        return getterQuery2(
+        return getterQuery(
             "SELECT LAST_INSERT_ID()"
         )["LAST_INSERT_ID()"][0];
     }
@@ -64,7 +64,7 @@
     }
 
     function getDBHeader($table) {
-	    return getterQuery2("DESC " . $table);
+	    return getterQuery("DESC " . $table);
     }
 
 	function assert_utf8_or_die($value) {
@@ -85,7 +85,7 @@
 		}
 	}
 
-    function getterQuery2($sql, ...$param) {
+    function getterQuery($sql, ...$param) {
 	    $out = array();
 	    $attributes = array();
 

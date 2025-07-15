@@ -112,30 +112,30 @@
 	//SQL Queries
 	test_equal("select query no result", sizeof(runQuery("SELECT * FROM session")), 0);
 
-	test_equal("query check show", json_encode(getterQuery2("SHOW TABLES"), true), '{"Tables_in_poster_generator":["author","author_to_poster","box","image","poster","ranked_posters","session","user","view_modes"]}');
-	test_equal("query check desc", json_encode(getterQuery2("DESC poster")["Field"], true), '["poster_id","title","user_id","creation_date","last_edit_date","fk_view_mode","visible"]');
+	test_equal("query check show", json_encode(getterQuery("SHOW TABLES"), true), '{"Tables_in_poster_generator":["author","author_to_poster","box","image","poster","ranked_posters","session","user","view_modes"]}');
+	test_equal("query check desc", json_encode(getterQuery("DESC poster")["Field"], true), '["poster_id","title","user_id","creation_date","last_edit_date","fk_view_mode","visible"]');
 
-	test_equal("query check kleene", json_encode(getterQuery2("SELECT * FROM user"), true), '{"user_id":[19,82,85,86,87],"name":["max5","bug","Admin","Max Mustermann","Anne Beispielfrau"],"pass_sha":["0bf301312acc91474e96e1a07422a791","4574898fe827f6a1e78bf394c8c7c8ab","4f3d9c5f4ffa47e7ee8f9231abc2929de8573dad","029509c53500b98806c55e9b231a833d8d360b2d","b441330f5c7f3feaf7770885e018275c2b8992ec"],"salt":["vAfcB\"$2NE[C}Rpw)9vhI\/-4YPS\u003C}?@F","4437b2372f0ca7604a48200724e46fcb","f13f70a20a196d35f729374539a667ac","9ce5fa78a2f41d5626c45e0bf4eac549","61aaa68b50c23159fe2e14004db1f93a"],"pepper":["a2d47c981889513c5e2ddbca71f414","a2d47c981889513c5e2ddbca71f414","a2d47c981889513c5e2ddbca71f414","a2d47c981889513c5e2ddbca71f414","a2d47c981889513c5e2ddbca71f414"],"registration_date":[1739535194,1739535194,1739871262,1744804799,1744804935],"last_login_date":[0,0,1739871262,1744804799,1744804935],"access_level":[1,1,2,1,1]}');
-	test_equal("query check single", json_encode(getterQuery2("SELECT user_id FROM user"), true), '{"user_id":[85,87,82,86,19]}');
-	test_equal("query check as", json_encode(getterQuery2("SELECT user_id AS id FROM user"), true), '{"id":[85,87,82,86,19]}');
-	test_equal("query check where - no ?", json_encode(getterQuery2("SELECT user_id, name FROM user WHERE user_id=?", 86), true), '{"user_id":[86],"name":["Max Mustermann"]}');
-	test_equal("query check where - with ?", json_encode(getterQuery2("SELECT user_id, name FROM user WHERE user_id=?", 86), true), '{"user_id":[86],"name":["Max Mustermann"]}');
-	test_equal("query check where - no result", json_encode(getterQuery2("SELECT user_id, name FROM user WHERE user_id=?", 1), true), '{"user_id":[],"name":[]}');
-	test_equal("query check aggregat funktion with as", getterQuery2("SELECT SUBSTR(data, 1, 30) AS data FROM image WHERE image_id=?", 221)["data"][0], 'data:image/png;base64,iVBORw0K');
-	test_equal("query check several tables", json_encode(getterQuery2("SELECT poster_id, view_modes.name AS n FROM poster, view_modes WHERE poster.fk_view_mode=view_modes.ID")["poster_id"], true), '[108,112,129,132,349,350,351]');
+	test_equal("query check kleene", json_encode(getterQuery("SELECT * FROM user"), true), '{"user_id":[19,82,85,86,87],"name":["max5","bug","Admin","Max Mustermann","Anne Beispielfrau"],"pass_sha":["0bf301312acc91474e96e1a07422a791","4574898fe827f6a1e78bf394c8c7c8ab","4f3d9c5f4ffa47e7ee8f9231abc2929de8573dad","029509c53500b98806c55e9b231a833d8d360b2d","b441330f5c7f3feaf7770885e018275c2b8992ec"],"salt":["vAfcB\"$2NE[C}Rpw)9vhI\/-4YPS\u003C}?@F","4437b2372f0ca7604a48200724e46fcb","f13f70a20a196d35f729374539a667ac","9ce5fa78a2f41d5626c45e0bf4eac549","61aaa68b50c23159fe2e14004db1f93a"],"pepper":["a2d47c981889513c5e2ddbca71f414","a2d47c981889513c5e2ddbca71f414","a2d47c981889513c5e2ddbca71f414","a2d47c981889513c5e2ddbca71f414","a2d47c981889513c5e2ddbca71f414"],"registration_date":[1739535194,1739535194,1739871262,1744804799,1744804935],"last_login_date":[0,0,1739871262,1744804799,1744804935],"access_level":[1,1,2,1,1]}');
+	test_equal("query check single", json_encode(getterQuery("SELECT user_id FROM user"), true), '{"user_id":[85,87,82,86,19]}');
+	test_equal("query check as", json_encode(getterQuery("SELECT user_id AS id FROM user"), true), '{"id":[85,87,82,86,19]}');
+	test_equal("query check where - no ?", json_encode(getterQuery("SELECT user_id, name FROM user WHERE user_id=?", 86), true), '{"user_id":[86],"name":["Max Mustermann"]}');
+	test_equal("query check where - with ?", json_encode(getterQuery("SELECT user_id, name FROM user WHERE user_id=?", 86), true), '{"user_id":[86],"name":["Max Mustermann"]}');
+	test_equal("query check where - no result", json_encode(getterQuery("SELECT user_id, name FROM user WHERE user_id=?", 1), true), '{"user_id":[],"name":[]}');
+	test_equal("query check aggregat funktion with as", getterQuery("SELECT SUBSTR(data, 1, 30) AS data FROM image WHERE image_id=?", 221)["data"][0], 'data:image/png;base64,iVBORw0K');
+	test_equal("query check several tables", json_encode(getterQuery("SELECT poster_id, view_modes.name AS n FROM poster, view_modes WHERE poster.fk_view_mode=view_modes.ID")["poster_id"], true), '[108,112,129,132,349,350,351]');
 	test_equal(
 		"query check using from_unixtime(last_edit_date) AS 'last edit' as selector",
-		sizeof(getterQuery2("SELECT from_unixtime(last_edit_date) AS last_edit FROM poster, view_modes WHERE poster.fk_view_mode = view_modes.ID")["last_edit"]),
+		sizeof(getterQuery("SELECT from_unixtime(last_edit_date) AS last_edit FROM poster, view_modes WHERE poster.fk_view_mode = view_modes.ID")["last_edit"]),
 		7
 	);
-	$result = getterQuery2("SELECT * FROM poster INNER JOIN view_modes ON fk_view_mode=ID");
+	$result = getterQuery("SELECT * FROM poster INNER JOIN view_modes ON fk_view_mode=ID");
 	test_equal("query check using * and JOIN - keys", json_encode(array_keys($result), true), '["poster_id","title","user_id","creation_date","last_edit_date","fk_view_mode","visible","ID","name"]');
 	test_equal("query check using * and JOIN - ids", json_encode($result["poster_id"], true), '[108,112,129,132,349,350,351]');
 
-	test_equal("query check subqueries", json_encode(getterQuery2("SELECT * FROM poster WHERE poster_id=(SELECT 350)"), true), '{"poster_id":[350],"title":["AI in Modern Healthcare"],"user_id":[19],"creation_date":[1744803287],"last_edit_date":[1744803628],"fk_view_mode":[2],"visible":[1]}');
+	test_equal("query check subqueries", json_encode(getterQuery("SELECT * FROM poster WHERE poster_id=(SELECT 350)"), true), '{"poster_id":[350],"title":["AI in Modern Healthcare"],"user_id":[19],"creation_date":[1744803287],"last_edit_date":[1744803628],"fk_view_mode":[2],"visible":[1]}');
 	test_equal(
 		"query check subqueries 2",
-		json_encode(getterQuery2(
+		json_encode(getterQuery(
 			"SELECT id, name
             FROM
                 author, (
@@ -149,21 +149,21 @@
 	);
 
 	// TODO: in query should two identical selectors be overritten?
-	// test_equal("query check two identical selectors", json_encode(getterQuery2("SELECT title, poster.poster_id, author_to_poster.poster_id FROM poster INNER JOIN author_to_poster ON poster.poster_id=author_to_poster.poster_id"), true), '');
+	// test_equal("query check two identical selectors", json_encode(getterQuery("SELECT title, poster.poster_id, author_to_poster.poster_id FROM poster INNER JOIN author_to_poster ON poster.poster_id=author_to_poster.poster_id"), true), '');
 
-	test_equal("new getter query", implode(",",getterQuery2("SELECT id, user_id FROM session")["id"]), '');
+	test_equal("new getter query", implode(",",getterQuery("SELECT id, user_id FROM session")["id"]), '');
 	test_equal("insert query", insertQuery("INSERT INTO user (name, pass_sha, salt, pepper) VALUE (?, ?, ?, ?)", "ssss", 'Test-Name', '0bf301312acc91474e96e1a07422a791', 'vAfcB"$2NE[C}Rpw)9vhI/-4YPS<}?@F', 'a2d47c981889513c5e2ddbca71f414'), true);
 	test_equal("select query get single result", json_encode(runQuery("SELECT user_id FROM user")[0][0], true), '"85"');
 
 	test_equal("get inserted id", getLastInsertID(), 88);
 
-	test_equal("test getter query kleene", implode(",", getterQuery2("SELECT * FROM user;")["name"]), 'max5,bug,Admin,Max Mustermann,Anne Beispielfrau,Test-Name');
+	test_equal("test getter query kleene", implode(",", getterQuery("SELECT * FROM user;")["name"]), 'max5,bug,Admin,Max Mustermann,Anne Beispielfrau,Test-Name');
 
-	$result = json_encode(getterQuery2("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "Test-Name"), JSON_UNESCAPED_SLASHES);
+	$result = json_encode(getterQuery("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "Test-Name"), JSON_UNESCAPED_SLASHES);
 	test_equal("select query get json result", $result,
 		'{"user_id":[88],"name":["Test-Name"],"pass_sha":["0bf301312acc91474e96e1a07422a791"],"salt":["vAfcB\"$2NE[C}Rpw)9vhI/-4YPS<}?@F"],"pepper":["a2d47c981889513c5e2ddbca71f414"],"access_level":[1]}'
 	);
-	$result = json_encode(getterQuery2("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "---"), true);
+	$result = json_encode(getterQuery("SELECT user_id, name, pass_sha, salt, pepper, access_level FROM user WHERE user.name = ?", "---"), true);
 	test_equal("select query getter", $result, '{"user_id":[],"name":[],"pass_sha":[],"salt":[],"pepper":[],"access_level":[]}');
 
 
@@ -174,13 +174,13 @@
 	test_equal("update query new entry", insertQuery("INSERT INTO poster (title, user_id) VALUE (?, ?)", "si", 'TestingTitle', 86), true);
 	test_equal("update query edit", editQuery("UPDATE poster SET \n poster.title=? \n WHERE poster.title=? \n AND poster.user_id=?", "sss", 'TestingTitle2', 'TestingTitle', 1), "successfully updated");
 
-	test_equal("update query check status", json_encode(getterQuery2("SELECT title, user_id FROM poster WHERE poster.title=?", "fxhfdf"), true), '{"title":["fxhfdf"],"user_id":[82]}');
+	test_equal("update query check status", json_encode(getterQuery("SELECT title, user_id FROM poster WHERE poster.title=?", "fxhfdf"), true), '{"title":["fxhfdf"],"user_id":[82]}');
 	test_equal("update query cleanup", deleteQuery("DELETE FROM poster WHERE poster.title = ?", "s", "fxhfdf"), true);
 
 
 	// Account Management
 	test_equal("delete user", deleteQuery("DELETE FROM user WHERE user.name = ?", "s", "testing"), true);
-	$result = json_encode(getterQuery2("SELECT user_id, name FROM user WHERE user.User_id > ?", 0), true);
+	$result = json_encode(getterQuery("SELECT user_id, name FROM user WHERE user.User_id > ?", 0), true);
 	test_equal("delete user", $result, '{"user_id":[19,82,85,86,87,88],"name":["max5","bug","Admin","Max Mustermann","Anne Beispielfrau","Test-Name"]}');
 
 	// TODO: need testing
@@ -192,7 +192,7 @@
 	test_equal("register with same username twice", register("testing", "1A_aaaaaaaaaa"), "The user testing already exists.");
 	test_equal("register with number as username", register(123, "1A_aaaaaaaaaa"), true);
 	test_equal("register bad password msg", register("testing2", "123"), "Password not complex enough");
-	test_equal("check last insert id", getterQuery2("SELECT LAST_INSERT_ID() AS id;")["id"][0], 91);
+	test_equal("check last insert id", getterQuery("SELECT LAST_INSERT_ID() AS id;")["id"][0], 91);
 
 	test_equal("login unknown username", login("---", "---"), "Wrong Username or Password");
 	test_equal("login with wrong password", login("testing", "---"), "Wrong Username or Password");
@@ -206,9 +206,9 @@
 
 	editQuery("UPDATE poster SET fk_view_mode=?", "i", 1);
 	updateVisibility2(108, true);
-	test_equal("update visibility", json_encode(getterQuery2("SELECT visible FROM poster"), true), '{"visible":[1,0,0,0,1,1,0]}');
+	test_equal("update visibility", json_encode(getterQuery("SELECT visible FROM poster"), true), '{"visible":[1,0,0,0,1,1,0]}');
 	updateVisibility2(108, false);
-	test_equal("update visibility", json_encode(getterQuery2("SELECT visible FROM poster"), true), '{"visible":[0,0,0,0,1,1,0]}');
+	test_equal("update visibility", json_encode(getterQuery("SELECT visible FROM poster"), true), '{"visible":[0,0,0,0,1,1,0]}');
 
 	test_equal("poster does not exist", isPublic(1), 0);
 	test_equal("is public false", isPublic(349), 0);
@@ -216,7 +216,7 @@
 	test_equal("is public true", isPublic(350), 1);
 
 	test_equal("create new project", implode(",", json_decode(create_project("new Project", 86), true)["title"]), 'TestingTitle,new Project');
-	test_equal("fetch all projects db check", json_encode(getterQuery2("SELECT poster_id, title, user_id, visible FROM poster"), true),
+	test_equal("fetch all projects db check", json_encode(getterQuery("SELECT poster_id, title, user_id, visible FROM poster"), true),
 	'{"poster_id":[108,112,132,349,350,351,353,354],' .
 		'"title":["test1","test4","dxfgbfdffdbdfxbfbxbf","Climate Change Effects in the Arctic","AI in Modern Healthcare","The Future of Urban Farming","TestingTitle","new Project"],' .
 		'"user_id":[82,82,82,19,19,19,86,86],"visible":[1,1,1,1,1,1,1,0]}');
@@ -224,17 +224,17 @@
 	test_equal("fetch all projects", implode(",", json_decode(fetch_projects(19), true)["title"]), 'Climate Change Effects in the Arctic,AI in Modern Healthcare,The Future of Urban Farming');
 
 
-	$pre_delete = json_encode(getterQuery2("SELECT poster_id FROM poster"), true);
+	$pre_delete = json_encode(getterQuery("SELECT poster_id FROM poster"), true);
 	delete_project_simple(108, 19);
-	test_equal("delete project simple - no change", json_encode(getterQuery2("SELECT poster_id FROM poster"), true), $pre_delete);
+	test_equal("delete project simple - no change", json_encode(getterQuery("SELECT poster_id FROM poster"), true), $pre_delete);
 	delete_project_simple(349, 19);
-	test_equal("delete project simple", json_encode(getterQuery2("SELECT poster_id FROM poster"), true), '{"poster_id":[108,112,132,350,351,353,354]}');
+	test_equal("delete project simple", json_encode(getterQuery("SELECT poster_id FROM poster"), true), '{"poster_id":[108,112,132,350,351,353,354]}');
 
-	test_equal("delete project advanced", json_encode(getterQuery2("SELECT poster_id FROM poster"), true), '{"poster_id":[108,112,132,350,351,353,354]}');
+	test_equal("delete project advanced", json_encode(getterQuery("SELECT poster_id FROM poster"), true), '{"poster_id":[108,112,132,350,351,353,354]}');
 	create_project("del after cre", 87);
-	test_equal("delete project advanced", json_encode(getterQuery2("SELECT poster_id FROM poster"), true), '{"poster_id":[108,112,132,350,351,353,354,355]}');
+	test_equal("delete project advanced", json_encode(getterQuery("SELECT poster_id FROM poster"), true), '{"poster_id":[108,112,132,350,351,353,354,355]}');
 	delete_project_advanced(355);
-	test_equal("delete project advanced", json_encode(getterQuery2("SELECT poster_id FROM poster"), true), '{"poster_id":[108,112,132,350,351,353,354]}');
+	test_equal("delete project advanced", json_encode(getterQuery("SELECT poster_id FROM poster"), true), '{"poster_id":[108,112,132,350,351,353,354]}');
 
 
 	test_equal("Password complexity empty", getPwComplexityLevel(""), 0);
@@ -244,37 +244,37 @@
 	test_equal("Password complexity contains special char", getPwComplexityLevel("1A_aaaaaaaaaa"), 4);
 
 
-	test_equal("check View Modes", json_encode(getterQuery2("SELECT name FROM view_modes"), true), '{"name":["public","private"]}');
+	test_equal("check View Modes", json_encode(getterQuery("SELECT name FROM view_modes"), true), '{"name":["public","private"]}');
 
 
 	$new_proj = addProject(87, "First Project");
 	test_equal("new project creation success", $new_proj, "success success success");
 
-	$check_poster = getterQuery2("SELECT poster_id, title FROM poster");
+	$check_poster = getterQuery("SELECT poster_id, title FROM poster");
 	test_equal("new project check poster", json_encode($check_poster, true), '{"poster_id":[108,112,132,350,351,353,354,356],"title":["test1","test4","dxfgbfdffdbdfxbfbxbf","AI in Modern Healthcare","The Future of Urban Farming","TestingTitle","new Project","First Project"]}');
 
-	$check_author = getterQuery2("SELECT id, name FROM author");
+	$check_author = getterQuery("SELECT id, name FROM author");
 	test_equal("new project heck author", json_encode($check_author, true), '{"id":[35,38,348,349,351,352,353,354,355,356,357],"name":["Author5","Author8","Du","Max","BlaBla","ChatGPT","Alice Johnson","Dr. Rahul Mehta","Lina Chen","Marcus Lee","Anne Beispielfrau"]}');
 
-	$check_a_to_p = getterQuery2("SELECT id, author_id, poster_id FROM author_to_poster");
+	$check_a_to_p = getterQuery("SELECT id, author_id, poster_id FROM author_to_poster");
 	test_equal("new project heck author_to_poster", json_encode($check_a_to_p, true), '{"id":[16,18,370,371,372,376,377,378,379],"author_id":[38,35,352,355,356,352,353,355,357],"poster_id":[108,108,350,350,350,351,351,351,356]}');
 
 	addBox(351, "Text Content");
 	addBox(351, "Text Content 2");
-	$check_box = getterQuery2("SELECT * FROM box");
+	$check_box = getterQuery("SELECT * FROM box");
 	test_equal("add box fill content check", json_encode($check_box, true), '{"box_id":[29,30,31,237,238,239,240,241,242,243,244],"poster_id":[108,108,108,350,350,350,351,351,351,351,351],"content":["Text 1","# Other Text","# New Text","# Background\n\nHow AI is being used in diagnostics.","# Data\n\nPatient outcome statistics from 2015-2022.","# Conclusion\n\nAI improves diagnostic accuracy by 12%.","# Concept\n\nVertical farms and hydroponic systems.","# Case Studies\n\nTokyo and New York initiatives.","# Impact\n\nIncreased yields with 70% less water usage.","Text Content","Text Content 2"]}');
 
 	editBox(1, 351, "New Text");
-	$check_box = getterQuery2("SELECT * FROM box");
+	$check_box = getterQuery("SELECT * FROM box");
 	test_equal("edit box", json_encode($check_box, true), '{"box_id":[29,30,31,237,238,239,240,241,242,243,244],"poster_id":[108,108,108,350,350,350,351,351,351,351,351],"content":["Text 1","# Other Text","# New Text","# Background\n\nHow AI is being used in diagnostics.","# Data\n\nPatient outcome statistics from 2015-2022.","# Conclusion\n\nAI improves diagnostic accuracy by 12%.","New Text","# Case Studies\n\nTokyo and New York initiatives.","# Impact\n\nIncreased yields with 70% less water usage.","Text Content","Text Content 2"]}');
 
 	addAuthor("Other Author");
-	$check_author = getterQuery2("SELECT * FROM author");
+	$check_author = getterQuery("SELECT * FROM author");
 	test_equal("add author", json_encode($check_author, true), '{"id":[35,38,348,349,351,352,353,354,355,356,357,358],"name":["Author5","Author8","Du","Max","BlaBla","ChatGPT","Alice Johnson","Dr. Rahul Mehta","Lina Chen","Marcus Lee","Anne Beispielfrau","Other Author"]}');
 
 	$lasest_author_id = getLastInsertID();
 	connectAuthorToPoster($lasest_author_id, 351);
-	$check_a_t_p = getterQuery2("SELECT * FROM author_to_poster");
+	$check_a_t_p = getterQuery("SELECT * FROM author_to_poster");
 	test_equal("add author to poster", json_encode($check_a_t_p, true), '{"id":[16,18,370,371,372,376,377,378,379,380],"author_id":[38,35,352,355,356,352,353,355,357,358],"poster_id":[108,108,350,350,350,351,351,351,356,351]}');
 
 	test_equal("title getter", getTitle(108), 'test1');
@@ -306,26 +306,26 @@
 	$sleep_time = 1;
 	//poster
 	test_equal("update last edit date poster 1", updateEditDate2("poster", 2), 'successfully updated');
-	$t1 = getterQuery2("SELECT last_edit_date FROM poster WHERE poster.poster_id=?", 350)["last_edit_date"][0];
+	$t1 = getterQuery("SELECT last_edit_date FROM poster WHERE poster.poster_id=?", 350)["last_edit_date"][0];
 	sleep($sleep_time);
 	updateEditDate2("poster", 350);
-	$t2 = getterQuery2("SELECT last_edit_date FROM poster WHERE poster.poster_id=?", 350)["last_edit_date"][0];
+	$t2 = getterQuery("SELECT last_edit_date FROM poster WHERE poster.poster_id=?", 350)["last_edit_date"][0];
 	test_equal("update last edit date poster 2", ($t1 < $t2) ? 1 : 0, 1);
 	//user
 	$user_id = 19;
 	test_equal("update last edit date user 1", updateEditDate2("user", $user_id), 'successfully updated');
-	$t1 = getterQuery2("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id)["last_login_date"][0];
+	$t1 = getterQuery("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id)["last_login_date"][0];
 	sleep($sleep_time);
 	updateEditDate2("user", $user_id);
-	$t2 = getterQuery2("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id)["last_login_date"][0];
+	$t2 = getterQuery("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id)["last_login_date"][0];
 	test_equal("update last edit date user 2", ($t1 < $t2) ? 1 : 0, 1);
 	//image
 	$image_id = 221;
 	test_equal("update last edit date image 1", updateEditDate2("image", $image_id), 'successfully updated');
-	$t1 = getterQuery2("SELECT last_edit_date FROM image WHERE image.image_id=?", $image_id)["last_edit_date"][0];
+	$t1 = getterQuery("SELECT last_edit_date FROM image WHERE image.image_id=?", $image_id)["last_edit_date"][0];
 	sleep($sleep_time);
 	updateEditDate2("image", $image_id);
-	$t2 = getterQuery2("SELECT last_edit_date FROM image WHERE image.image_id=?", $image_id)["last_edit_date"][0];
+	$t2 = getterQuery("SELECT last_edit_date FROM image WHERE image.image_id=?", $image_id)["last_edit_date"][0];
 	test_equal("update last edit date image 2", ($t1 < $t2) ? 1 : 0, 1);
 
 
@@ -339,7 +339,7 @@
 		"add authors - get init - state",
 		implode(
 			",",
-			getterQuery2("SELECT author_id, name, poster_id FROM author_to_poster, author WHERE author_to_poster.poster_id = 351 AND author.id = author_to_poster.author_id")["name"]
+			getterQuery("SELECT author_id, name, poster_id FROM author_to_poster, author WHERE author_to_poster.poster_id = 351 AND author.id = author_to_poster.author_id")["name"]
 		),
 		"ChatGPT,Alice Johnson,Lina Chen"
 	);
@@ -348,7 +348,7 @@
 		"add authors - empty",
 		implode(
 			",",
-			getterQuery2("SELECT author_id, name, poster_id FROM author_to_poster, author WHERE author_to_poster.poster_id = 351 AND author.id = author_to_poster.author_id")["name"]
+			getterQuery("SELECT author_id, name, poster_id FROM author_to_poster, author WHERE author_to_poster.poster_id = 351 AND author.id = author_to_poster.author_id")["name"]
 		),
 		"ChatGPT,Alice Johnson,Lina Chen"
 	);
@@ -357,7 +357,7 @@
 		"add authors",
 		implode(
 			",",
-			getterQuery2("SELECT author_id, name, poster_id FROM author_to_poster, author WHERE author_to_poster.poster_id = 351 AND author.id = author_to_poster.author_id")["name"]
+			getterQuery("SELECT author_id, name, poster_id FROM author_to_poster, author WHERE author_to_poster.poster_id = 351 AND author.id = author_to_poster.author_id")["name"]
 		),
 		"ChatGPT,Alice Johnson,Lina Chen,author1,author2"
 	);
@@ -369,7 +369,7 @@
 		"overwrite authors - less",
 		implode(
 			",",
-			getterQuery2("SELECT author_id, name, poster_id FROM author_to_poster, author WHERE author_to_poster.poster_id = 351 AND author.id = author_to_poster.author_id")["name"]
+			getterQuery("SELECT author_id, name, poster_id FROM author_to_poster, author WHERE author_to_poster.poster_id = 351 AND author.id = author_to_poster.author_id")["name"]
 		),
 		"user1,user2"
 	);
@@ -378,7 +378,7 @@
 		"overwrite authors - equal",
 		implode(
 			",",
-			getterQuery2("SELECT author_id, name, poster_id FROM author_to_poster, author WHERE author_to_poster.poster_id = 351 AND author.id = author_to_poster.author_id")["name"]
+			getterQuery("SELECT author_id, name, poster_id FROM author_to_poster, author WHERE author_to_poster.poster_id = 351 AND author.id = author_to_poster.author_id")["name"]
 		),
 		"user1B,user2B"
 	);
@@ -387,25 +387,25 @@
 		"overwrite authors - greater",
 		implode(
 			",",
-			getterQuery2("SELECT author_id, name, poster_id FROM author_to_poster, author WHERE author_to_poster.poster_id = 351 AND author.id = author_to_poster.author_id")["name"]
+			getterQuery("SELECT author_id, name, poster_id FROM author_to_poster, author WHERE author_to_poster.poster_id = 351 AND author.id = author_to_poster.author_id")["name"]
 		),
 		"user1C,user2C,user3C"
 	);
 
 	// overwriteBoxes
 	overwriteBoxes(351, array());
-	test_equal("overwrite Boxes - all", implode(",", getterQuery2("SELECT content FROM box WHERE poster_id = 351")["content"]), "");
+	test_equal("overwrite Boxes - all", implode(",", getterQuery("SELECT content FROM box WHERE poster_id = 351")["content"]), "");
 	overwriteBoxes(351, array("A", "B", "C", "D", "E", "F"));
-	test_equal("overwrite Boxes - less", implode(",", getterQuery2("SELECT content FROM box WHERE poster_id = 351")["content"]), "A,B,C,D,E,F");
+	test_equal("overwrite Boxes - less", implode(",", getterQuery("SELECT content FROM box WHERE poster_id = 351")["content"]), "A,B,C,D,E,F");
 	//	- test with <4
 	overwriteBoxes(351, array("ATest1", "ATest2"));
-	test_equal("overwrite Boxes - less", implode(",", getterQuery2("SELECT content FROM box WHERE poster_id = 351")["content"]), "ATest1,ATest2");
+	test_equal("overwrite Boxes - less", implode(",", getterQuery("SELECT content FROM box WHERE poster_id = 351")["content"]), "ATest1,ATest2");
 	//	- test with ==4
 	overwriteBoxes(351, array("Test1", "Test2"));
-	test_equal("overwrite Boxes - equal", implode(",", getterQuery2("SELECT content FROM box WHERE poster_id = 351")["content"]), "Test1,Test2");
+	test_equal("overwrite Boxes - equal", implode(",", getterQuery("SELECT content FROM box WHERE poster_id = 351")["content"]), "Test1,Test2");
 	// 	- test with >4
 	overwriteBoxes(351, array("CTest1", "CTest2",  "CTest3", "CTest4", "CTest5"));
-	test_equal("overwrite Boxes - greater", implode(",", getterQuery2("SELECT content FROM box WHERE poster_id = 351")["content"]), "CTest1,CTest2,CTest3,CTest4,CTest5");
+	test_equal("overwrite Boxes - greater", implode(",", getterQuery("SELECT content FROM box WHERE poster_id = 351")["content"]), "CTest1,CTest2,CTest3,CTest4,CTest5");
 
 	// addImage
 	$img_data = [
@@ -417,21 +417,21 @@
 		"data" => "abc"
 	];
 	addImage($img_data, 112);
-	test_equal("upload image", getterQuery2("SELECT image_id, file_name, last_edit_date, type, size, fk_poster FROM image")["image_id"][0], 221);
+	test_equal("upload image", getterQuery("SELECT image_id, file_name, last_edit_date, type, size, fk_poster FROM image")["image_id"][0], 221);
 	addImage($img_data, 112);
-	test_equal("upload image duplicates in same poster", getterQuery2("SELECT COUNT(image_id) AS count FROM image")["count"][0], 4);
-	// print_r(getterQuery2("SELECT image_id, file_name, last_edit_date, type, size, SUBSTR(data, 1, 30) fk_poster FROM image"));
+	test_equal("upload image duplicates in same poster", getterQuery("SELECT COUNT(image_id) AS count FROM image")["count"][0], 4);
+	// print_r(getterQuery("SELECT image_id, file_name, last_edit_date, type, size, SUBSTR(data, 1, 30) fk_poster FROM image"));
 
 	// getFullImage
 	test_equal("get image", getFullImage("abc", 112), '{"file_name":[],"type":[],"size":[],"last_modified":[],"data":[]}');
 	test_equal("get image", getFullImage("test-img", 112), '{"file_name":["test-img"],"type":["test"],"size":[0],"last_modified":[1],"data":["abc"]}');
 
 	// setVisibility
-	test_equal("set visibilty", getterQuery2("SELECT fk_view_mode FROM poster WHERE poster_id = 351")["fk_view_mode"][0], 2);
+	test_equal("set visibilty", getterQuery("SELECT fk_view_mode FROM poster WHERE poster_id = 351")["fk_view_mode"][0], 2);
 	setVisibility(351, 0);
-	test_equal("set visibilty", getterQuery2("SELECT fk_view_mode FROM poster WHERE poster_id = 351")["fk_view_mode"][0], 1);
+	test_equal("set visibilty", getterQuery("SELECT fk_view_mode FROM poster WHERE poster_id = 351")["fk_view_mode"][0], 1);
 	setVisibility(351, 1);
-	test_equal("set visibilty", getterQuery2("SELECT fk_view_mode FROM poster WHERE poster_id = 351")["fk_view_mode"][0], 2);
+	test_equal("set visibilty", getterQuery("SELECT fk_view_mode FROM poster WHERE poster_id = 351")["fk_view_mode"][0], 2);
 
 	// fetchPublicPosters
 	test_equal(
@@ -635,7 +635,7 @@
 		FROM poster, view_modes, user
 		WHERE poster.fk_view_mode = view_modes.ID AND poster.user_id = user.user_id"
 	) . $san["sql"];
-	test_equal("filter integrationstest - all", implode(",", getterQuery2($sql, ...$san["var"])["id"]), "108,112,132,350,351,353,354,356");
+	test_equal("filter integrationstest - all", implode(",", getterQuery($sql, ...$san["var"])["id"]), "108,112,132,350,351,353,354,356");
 
 	// user to filter
 	test_equal("user to filter - unknown user", user_to_filter(1), "");
@@ -678,21 +678,21 @@
 	// from account_management.php
 	// rename_poster
 	test_equal("rename poster - no user", rename_poster2("abc", 356, null), "No or invalid session");
-	test_equal("rename poster check previous", getterQuery2("SELECT title FROM poster WHERE title='First Project'")["title"][0], "First Project");
+	test_equal("rename poster check previous", getterQuery("SELECT title FROM poster WHERE title='First Project'")["title"][0], "First Project");
 	rename_poster2("Second Project", 356, 19);
-	test_equal("rename poster ", getterQuery2("SELECT title FROM poster WHERE poster_id=356")["title"][0], "Second Project");
+	test_equal("rename poster ", getterQuery("SELECT title FROM poster WHERE poster_id=356")["title"][0], "Second Project");
 
 	// rename_author
 	test_equal("rename author invalid id", rename_author("abc", 0, 85), "No or invalid id:0");
-	test_equal("rename author check previous", getterQuery2("SELECT name FROM author WHERE id=35")["name"][0], "Author5");
+	test_equal("rename author check previous", getterQuery("SELECT name FROM author WHERE id=35")["name"][0], "Author5");
 	rename_author("test123", 18, 85);
-	test_equal("rename author", getterQuery2("SELECT name FROM author WHERE id=35")["name"][0], "test123");
+	test_equal("rename author", getterQuery("SELECT name FROM author WHERE id=35")["name"][0], "test123");
 
 	// rename_image
 	test_equal("rename image no user", rename_image("abc", 221, 0), "No or invalid session");
-	test_equal("rename image pre-check", implode(",", getterQuery2("SELECT file_name FROM image")["file_name"]), "tudlogo.png,scadslogo.png,leipzig.png,test-img");
+	test_equal("rename image pre-check", implode(",", getterQuery("SELECT file_name FROM image")["file_name"]), "tudlogo.png,scadslogo.png,leipzig.png,test-img");
 	rename_image("abc", 224, 85);
-	test_equal("rename image pre-check", implode(",", getterQuery2("SELECT file_name FROM image")["file_name"]), "tudlogo.png,scadslogo.png,leipzig.png,abc");
+	test_equal("rename image pre-check", implode(",", getterQuery("SELECT file_name FROM image")["file_name"]), "tudlogo.png,scadslogo.png,leipzig.png,abc");
 
 	// delete_author
 	test_equal("delete author - preview", implode(",", json_decode(fetch_authors_all(85, ""), true)["id"]), "16,18,370,371,372,379,387,388,389");
@@ -701,7 +701,7 @@
 	// delete_author(18, 85);
 	// test_equal(
 	// 	"delete author - removed unconnected author element",
-	// 	implode(",", getterQuery2(
+	// 	implode(",", getterQuery(
 	// 		"SELECT * FROM author"
 	// 	)["id"]),
 	// 	"38,348,349,351,353,354,355,356,357,358,359,360,361,362,363,364,365,366,367"
@@ -709,7 +709,7 @@
 	// delete_author(371, 85);
 	// test_equal(
 	// 	"delete author - removed unconnected author element - not delete",
-	// 	implode(",", getterQuery2(
+	// 	implode(",", getterQuery(
 	// 		"SELECT id FROM author"
 	// 	)["id"]),
 	// 	"38,348,349,351,353,354,355,356,357,358,359,360,361,362,363,364,365,366,367"
@@ -717,7 +717,7 @@
 	// delete_author(378, 85);
 	// test_equal(
 	// 	"delete author - removed unconnected author element - not delete",
-	// 	implode(",", getterQuery2(
+	// 	implode(",", getterQuery(
 	// 		"SELECT id FROM author"
 	// 	)["id"]),
 	// 	"38,348,349,351,353,354,356,357,358,359,360,361,362,363,364,365,366,367"
@@ -725,9 +725,9 @@
 
 	// delete_image
 	test_equal("delete image does not exist", delete_image(1, 84), true);
-	test_equal("delete image pre-check", implode(",", getterQuery2("SELECT image_id FROM image")["image_id"]), "224,221,222,223");
+	test_equal("delete image pre-check", implode(",", getterQuery("SELECT image_id FROM image")["image_id"]), "224,221,222,223");
 	delete_image(224, 84);
-	test_equal("delete image", implode(",", getterQuery2("SELECT image_id FROM image")["image_id"]), "221,222,223");
+	test_equal("delete image", implode(",", getterQuery("SELECT image_id FROM image")["image_id"]), "221,222,223");
 
 	// fetch_images_all
 	test_equal("fetch img all", implode(",", json_decode(fetch_images_all($data), true)["id"]), '221,222,223');

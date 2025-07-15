@@ -54,7 +54,7 @@
             return null;
         }
 
-        $ret = getterQuery2(
+        $ret = getterQuery(
             "SELECT user_id
             FROM session
             WHERE session.sessionID = ?",
@@ -76,7 +76,7 @@
         // if ($user_id == null) {
         //     $user_id = getValidUserFromSession();
         // }
-        $result = getterQuery2(
+        $result = getterQuery(
             "SELECT access_level FROM user WHERE user_id=?", $user_id
         )["access_level"];
 
@@ -123,7 +123,7 @@
     }
 
     function isEmpty() {
-        if(getterQuery2("SELECT COUNT(name) AS n FROM user")["n"][0] === 0) {
+        if(getterQuery("SELECT COUNT(name) AS n FROM user")["n"][0] === 0) {
             return 1;
         }else{
             return 0;
@@ -134,7 +134,7 @@
 
         # TODO:   select user_id from user where username = ? and passwort = sha(?);
 
-        $result = getterQuery2(
+        $result = getterQuery(
             "SELECT user_id, pass_sha, salt, pepper FROM user WHERE user.name=?",
             $name
         );
@@ -187,7 +187,7 @@
     //TODO:   editing after logout bug
     function logout($user_id) {
 
-        $sid = getterQuery2(
+        $sid = getterQuery(
             "SELECT sessionID FROM session WHERE session.user_id=?",
             $user_id
         )["sessionID"][0];
@@ -342,7 +342,7 @@
     }
 
     function user_to_filter($user_id) {
-        $user_name = getterQuery2("SELECT name FROM user WHERE user_id=?", $user_id)["name"];
+        $user_name = getterQuery("SELECT name FROM user WHERE user_id=?", $user_id)["name"];
 
         if (sizeof($user_name) == 0) {
             return "";
@@ -365,7 +365,7 @@
             $sql = str_replace("user.name, ","",$sql);
         }
 
-        return json_encode(getterQuery2($sql, ...$sanitized["var"]), true);
+        return json_encode(getterQuery($sql, ...$sanitized["var"]), true);
     }
 
     function getFilterSelectables($user_id) {
@@ -374,13 +374,13 @@
 
                 $result = array();
 
-                $result["user"] = getterQuery2("SELECT name FROM user");
-                $result["title"] = getterQuery2("SELECT title FROM poster");
+                $result["user"] = getterQuery("SELECT name FROM user");
+                $result["title"] = getterQuery("SELECT title FROM poster");
                 $result["last_edit"]["min"] = 0;
                 $result["last_edit"]["max"] = 2147483647;
                 $result["visible"]["min"] = 0;
                 $result["visible"]["max"] = 1;
-                $result["view_mode"] = getterQuery2("SELECT name FROM view_modes");
+                $result["view_mode"] = getterQuery("SELECT name FROM view_modes");
 
                 return json_encode($result, true);
 
@@ -400,12 +400,12 @@
                 return "No results found";
             }else{
                 if (!$priv_acc && isAdmin($user_id)) {
-                    return json_encode(getterQuery2(
+                    return json_encode(getterQuery(
                         "SELECT title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode FROM poster, view_modes WHERE fk_view_mode=? AND poster.fk_view_mode = view_modes.ID",
                         1
                     ), true);
                 }else{
-                    return json_encode(getterQuery2(
+                    return json_encode(getterQuery(
                         // TODO: feature needs js support as well
                         "SELECT poster_id AS id, title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode FROM poster, view_modes WHERE poster.user_id=? AND poster.fk_view_mode = view_modes.ID",
                         $user_id
@@ -433,7 +433,7 @@
             $sql .= " WHERE " . substr($sanitized["sql"], 4, -1);
         }
 
-        return json_encode(getterQuery2($sql, ...$sanitized["var"]), true);
+        return json_encode(getterQuery($sql, ...$sanitized["var"]), true);
     }
 
     function fetch_img_data($filter) {
@@ -451,7 +451,7 @@
             $sql .= " WHERE " . substr($sanitized["sql"], 4, -1);
         }
 
-        return json_encode(getterQuery2($sql, ...$sanitized["var"]), true);
+        return json_encode(getterQuery($sql, ...$sanitized["var"]), true);
     }
 
     function fetch_authors_all($user_id, $filter) {
@@ -478,7 +478,7 @@
             $sql = str_replace("user.name AS user, ","",$sql);
         }
 
-        return json_encode(getterQuery2($sql, ...$sanitized["var"]), true);
+        return json_encode(getterQuery($sql, ...$sanitized["var"]), true);
     }
 
     function create_project($name, $user_id) {
@@ -492,7 +492,7 @@
                 );
 
                 //refresh list
-                $data = getterQuery2(
+                $data = getterQuery(
                     "SELECT poster_id as id, title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode FROM poster, view_modes WHERE poster.user_id=? AND fk_view_mode=view_modes.ID;",
                     $user_id
                 );
@@ -548,8 +548,8 @@
             if (is_numeric($id) && $id > 0) {
 
                 $author_id = null;
-                if (getterQuery2("SELECT COUNT(author_id) AS count FROM author_to_poster WHERE id=?", $id)["count"][0] === 1) {
-                    $author_id = getterQuery2("SELECT author_id FROM author_to_poster WHERE id=?", $id)["author_id"][0];
+                if (getterQuery("SELECT COUNT(author_id) AS count FROM author_to_poster WHERE id=?", $id)["count"][0] === 1) {
+                    $author_id = getterQuery("SELECT author_id FROM author_to_poster WHERE id=?", $id)["author_id"][0];
                 }
 
                 $res2 = deleteQuery(

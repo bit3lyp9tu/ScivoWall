@@ -181,7 +181,7 @@
             $user_id = getValidUserFromSession();
 
             if ($user_id != null) {
-                $poster_id = getterQuery2(
+                $poster_id = getterQuery(
                         "SELECT poster_id
                     FROM (
                         SELECT ROW_NUMBER() OVER (ORDER BY poster_id) AS local_id, poster_id
