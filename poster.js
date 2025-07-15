@@ -468,12 +468,9 @@ async function edit_box_event(event) {
 	//TODO:   check if session-id valid
 	if (url["mode"] != null && url["mode"] == 'private') {
 
-		console.log("event.target", event.target);
-
 		// Edit Title
 
 		if (typeof event !== 'undefined' && event.target) {
-			console.log(event.target);
 			if (event.target.tagName === "DIV" && !event.target.id.startsWith("editBox") && event.target.id.startsWith("title") && selected_title === null) { // if new editBox gets selected
 
 				// change box to editable
@@ -508,7 +505,7 @@ async function edit_box_event(event) {
 		//edit_box(event.target)
 	}
 
-	await save_content();
+	//await save_content();
 }
 
 document.addEventListener("click", edit_box_event);
@@ -693,7 +690,7 @@ async function author_item(value) {
 
         const data = await getAuthorCollection();
         data.push({ "label": value, "category": title });
-        console.log("item", data);
+        //console.log("item", data);
         setAuthorSuggestions("#add_author", data);
 
         item.appendChild(btn);
@@ -754,7 +751,7 @@ function getAuthorCollection() {
 
                         data.push({ "label": authors[i], "category": posters[i] });
                     }
-                    console.log(data);
+                    //console.log(data);
 
                     resolve(data);
                 } else {
@@ -771,7 +768,7 @@ function getAuthorCollection() {
 
 async function insertElementAtIndex(container, newElement, index) {
     // const children = document.querySelectorAll(".author-item");
-    console.log("author children", container.children, index);
+    //console.log("author children", container.children, index);
 
     container.insertBefore(await newElement, container.children[index]);
 }
@@ -812,6 +809,10 @@ async function save_content() {
 	const content = [];
 	const title = document.getElementById("title").getAttribute("data-content");//innerText;
 	const authors = getAuthorItems();
+	log("================================");
+	log(authors);
+	console.trace();
+	log("================================");
 
 	const container = document.getElementById("boxes");
 	for (let i = 0; i < container.children.length; i++) {
