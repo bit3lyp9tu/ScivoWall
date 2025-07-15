@@ -319,30 +319,40 @@ async function make_headers_editable(editable_columns, headers, data, i, row) {
 }
 
 function append_additional_columns(additional_columns, i, row) {
-    additional_columns.forEach((column, index) => {
-        const td = document.createElement("td");
+	additional_columns.forEach((column, index) => {
+		const td = document.createElement("td");
 
-        try {
-            const result = column(i);
-            console.debug(`[DEBUG] column[${index}] returned:`, result);
+		try {
+			const result = column(i);
+			console.debug(`[DEBUG] column[${index}] returned:`, result);
 
-            if (result instanceof Node) {
-                td.appendChild(result);
-            } else if (typeof result === "string" || typeof result === "number") {
-                td.textContent = result;
-            } else if (result !== null && result !== undefined) {
-                td.textContent = JSON.stringify(result);
-            } else {
-                console.warn(`[WARN] column[${index}] returned null/undefined`);
-                td.textContent = ""; // Optional: placeholder text like "N/A"
-            }
-        } catch (error) {
-            console.error(`[ERROR] Failed to append column[${index}]:`, error);
-            td.textContent = "Error"; // Show something visible in the table
-        }
+			if (result instanceof Node) {
+				log("A")
+				td.appendChild(result);
+			} else if (typeof result === "string" || typeof result === "number") {
+				log("B");
+				td.textContent = result;
+			} else if (typeof column === "function" && column.constructor.name === "AsyncFunction" && column.name === "deleteColumn") {
+				// TODO: Make the delete work again
+				const button = document.createElement("button");
+				button.textContent = "DELETE";
+				button.onclick = () => deleteColumn(i); // ruft deleteColumn mit dem aktuellen i auf
+				td.appendChild(button);
 
-        row.appendChild(td);
-    });
+			} else if (result !== null && result !== undefined) {
+				td.textContent = JSON.stringify(result);
+			} else {
+				log("D");
+				console.warn(`[WARN] column[${index}] returned null/undefined`);
+				td.textContent = "";
+			}
+		} catch (error) {
+			console.error(`[ERROR] Failed to append column[${index}]:`, error);
+			td.textContent = "Error"; // Show something visible in the table
+		}
+
+		row.appendChild(td);
+	});
 }
 
 // TODO:   may need an overwork
