@@ -634,23 +634,24 @@
     }
 
     function updateEditDate($table, $id) {
-        $attribute = array(
-            "poster" => "last_edit_date",
-            "user" => "last_login_date",
-            "image" => "last_edit_date"
-        );
-        $query = "UPDATE " . $table . " SET " . $table . "." . $attribute[$table] . "=UNIX_TIMESTAMP() WHERE " . $table . "." . $table . "_id=?";
+	    $attribute = array(
+		    "poster" => "last_edit_date",
+		    "user" => "last_login_date",
+		    "image" => "last_edit_date"
+	    );
 
-        if ($table="user" || $table="poster" || $table="image") {
+	    $query = "UPDATE " . $table . " SET " . $table . "." . $attribute[$table] . "=UNIX_TIMESTAMP() WHERE " . $table . "." . $table . "_id=?";
 
-            $result = editQuery(
-                $query,
-                "i", $id
-            );
-            return $result;
-        }else{
-            return null;
-        }
+	    if ($table == "user" || $table == "poster" || $table == "image") {
+		    $result = editQuery(
+			    $query,
+			    "i", $id
+		    );
+
+		    return $result;
+	    } else {
+		    return false;
+	    }
     }
 
 ?>
