@@ -826,7 +826,9 @@ async function save_content() {
 	if (response == -1) {
 
 	} else if (response != "ERROR") {
-		console.log(response);
+		if(response != "") {
+			console.log(response);
+		}
 	} else {
 		console.error(response);
 		toastr["error"]("An error occurred");
