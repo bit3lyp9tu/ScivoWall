@@ -795,41 +795,41 @@ function filloutAuthors(list) {
 }
 
 function getAuthorItems() {
-    var list = [];
-    const parent = document.getElementById("authors");
+	var list = [];
+	const parent = document.getElementById("authors");
 
-    for (let i = 0; i < parent.children.length; i++) {
-        if (parent.children[i].tagName != "input" && parent.children[i].type != "text") {
-            list.push(parent.children[i].querySelector('p').innerText);
-        }
-    }
-    return list;
+	for (let i = 0; i < parent.children.length; i++) {
+		if (parent.children[i].tagName != "input" && parent.children[i].type != "text") {
+			list.push(parent.children[i].querySelector('p').innerText);
+		}
+	}
+	return list;
 }
 
 async function save_content() {
-    const header = url_to_json();
+	const header = url_to_json();
 
-    const content = [];
-    const title = document.getElementById("title").getAttribute("data-content");//innerText;
-    const authors = getAuthorItems();
+	const content = [];
+	const title = document.getElementById("title").getAttribute("data-content");//innerText;
+	const authors = getAuthorItems();
 
-    const container = document.getElementById("boxes");
-    for (let i = 0; i < container.children.length; i++) {
-        const element = container.children[i];
+	const container = document.getElementById("boxes");
+	for (let i = 0; i < container.children.length; i++) {
+		const element = container.children[i];
 
-        content[i] = element.getAttribute("data-content");
-    }
-    const visibility = document.getElementById("view-mode").value;
-    const response = await upload(header.id, JSON.stringify(prepareJSON(title, authors, content, visibility)));
+		content[i] = element.getAttribute("data-content");
+	}
+	const visibility = document.getElementById("view-mode").value;
+	const response = await upload(header.id, JSON.stringify(prepareJSON(title, authors, content, visibility)));
 
-    if (response == -1) {
+	if (response == -1) {
 
-    } else if (response != "ERROR") {
-        console.log(response);
-    } else {
-        console.error(response);
-        toastr["error"]("An error occurred");
-    }
+	} else if (response != "ERROR") {
+		console.log(response);
+	} else {
+		console.error(response);
+		toastr["error"]("An error occurred");
+	}
 }
 
 function buttonEvents() {
