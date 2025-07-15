@@ -305,26 +305,26 @@
 	//update last edit date
 	$sleep_time = 1;
 	//poster
-	test_equal("update last edit date poster 1", updateEditDate2("poster", 2), 'successfully updated');
+	test_equal("update last edit date poster 1", updateEditDate("poster", 2), 'successfully updated');
 	$t1 = getterQuery("SELECT last_edit_date FROM poster WHERE poster.poster_id=?", 350)["last_edit_date"][0];
 	sleep($sleep_time);
-	updateEditDate2("poster", 350);
+	updateEditDate("poster", 350);
 	$t2 = getterQuery("SELECT last_edit_date FROM poster WHERE poster.poster_id=?", 350)["last_edit_date"][0];
 	test_equal("update last edit date poster 2", ($t1 < $t2) ? 1 : 0, 1);
 	//user
 	$user_id = 19;
-	test_equal("update last edit date user 1", updateEditDate2("user", $user_id), 'successfully updated');
+	test_equal("update last edit date user 1", updateEditDate("user", $user_id), 'successfully updated');
 	$t1 = getterQuery("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id)["last_login_date"][0];
 	sleep($sleep_time);
-	updateEditDate2("user", $user_id);
+	updateEditDate("user", $user_id);
 	$t2 = getterQuery("SELECT last_login_date FROM user WHERE user.user_id=?", $user_id)["last_login_date"][0];
 	test_equal("update last edit date user 2", ($t1 < $t2) ? 1 : 0, 1);
 	//image
 	$image_id = 221;
-	test_equal("update last edit date image 1", updateEditDate2("image", $image_id), 'successfully updated');
+	test_equal("update last edit date image 1", updateEditDate("image", $image_id), 'successfully updated');
 	$t1 = getterQuery("SELECT last_edit_date FROM image WHERE image.image_id=?", $image_id)["last_edit_date"][0];
 	sleep($sleep_time);
-	updateEditDate2("image", $image_id);
+	updateEditDate("image", $image_id);
 	$t2 = getterQuery("SELECT last_edit_date FROM image WHERE image.image_id=?", $image_id)["last_edit_date"][0];
 	test_equal("update last edit date image 2", ($t1 < $t2) ? 1 : 0, 1);
 
