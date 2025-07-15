@@ -804,10 +804,6 @@ async function save_content() {
 	const content = [];
 	const title = document.getElementById("title").getAttribute("data-content");//innerText;
 	const authors = getAuthorItems();
-	log("================================");
-	log(authors);
-	console.trace();
-	log("================================");
 
 	const container = document.getElementById("boxes");
 	for (let i = 0; i < container.children.length; i++) {
