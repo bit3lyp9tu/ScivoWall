@@ -564,7 +564,7 @@ async function fetch_projects_filtered(filter) {
                         return td;
                     };
 
-                    function deleteColumn(index) {
+                    async function deleteColumn(index) {
                         const td = document.createElement("td");
                         const btn = document.createElement('input');
                         btn.type = "button";
@@ -637,7 +637,7 @@ async function fetch_authors_filtered(filter) {
                         delete data["id"];
                     }
 
-                    function deleteColumn(index) {
+                    async function deleteColumn(index) {
                         const td = document.createElement("td");
                         const btn = document.createElement('input');
                         btn.type = "button";
