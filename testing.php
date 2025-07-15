@@ -152,7 +152,7 @@
 	// test_equal("query check two identical selectors", json_encode(getterQuery2("SELECT title, poster.poster_id, author_to_poster.poster_id FROM poster INNER JOIN author_to_poster ON poster.poster_id=author_to_poster.poster_id"), true), '');
 
 	test_equal("new getter query", implode(",",getterQuery2("SELECT id, user_id FROM session")["id"]), '');
-	test_equal("insert query", insertQuery("INSERT INTO user (name, pass_sha, salt, pepper) VALUE (?, ?, ?, ?)", "ssss", 'Test-Name', '0bf301312acc91474e96e1a07422a791', 'vAfcB"$2NE[C}Rpw)9vhI/-4YPS<}?@F', 'a2d47c981889513c5e2ddbca71f414'), "success");
+	test_equal("insert query", insertQuery("INSERT INTO user (name, pass_sha, salt, pepper) VALUE (?, ?, ?, ?)", "ssss", 'Test-Name', '0bf301312acc91474e96e1a07422a791', 'vAfcB"$2NE[C}Rpw)9vhI/-4YPS<}?@F', 'a2d47c981889513c5e2ddbca71f414'), true);
 	test_equal("select query get single result", json_encode(runQuery("SELECT user_id FROM user")[0][0], true), '"85"');
 
 	test_equal("get inserted id", getLastInsertID(), 88);
@@ -168,29 +168,29 @@
 
 
 	// Empty Delete???
-	test_equal("delete query", deleteQuery("DELETE FROM poster WHERE poster.title = ?", "s", "Testing Title"), "successfully deleted");
+	test_equal("delete query", deleteQuery("DELETE FROM poster WHERE poster.title = ?", "s", "Testing Title"), true);
 	test_equal("delete query check if removed", json_encode(runQuery("SELECT title FROM poster")), '[["test1"],["test4"],["fxhfdf"],["dxfgbfdffdbdfxbfbxbf"],["Climate Change Effects in the Arctic"],["AI in Modern Healthcare"],["The Future of Urban Farming"]]');
 
-	test_equal("update query new entry", insertQuery("INSERT INTO poster (title, user_id) VALUE (?, ?)", "si", 'TestingTitle', 86), "success");
+	test_equal("update query new entry", insertQuery("INSERT INTO poster (title, user_id) VALUE (?, ?)", "si", 'TestingTitle', 86), true);
 	test_equal("update query edit", editQuery("UPDATE poster SET \n poster.title=? \n WHERE poster.title=? \n AND poster.user_id=?", "sss", 'TestingTitle2', 'TestingTitle', 1), "successfully updated");
 
 	test_equal("update query check status", json_encode(getterQuery2("SELECT title, user_id FROM poster WHERE poster.title=?", "fxhfdf"), true), '{"title":["fxhfdf"],"user_id":[82]}');
-	test_equal("update query cleanup", deleteQuery("DELETE FROM poster WHERE poster.title = ?", "s", "fxhfdf"), "successfully deleted");
+	test_equal("update query cleanup", deleteQuery("DELETE FROM poster WHERE poster.title = ?", "s", "fxhfdf"), true);
 
 
 	// Account Management
-	test_equal("delete user", deleteQuery("DELETE FROM user WHERE user.name = ?", "s", "testing"), "successfully deleted");
+	test_equal("delete user", deleteQuery("DELETE FROM user WHERE user.name = ?", "s", "testing"), true);
 	$result = json_encode(getterQuery2("SELECT user_id, name FROM user WHERE user.User_id > ?", 0), true);
 	test_equal("delete user", $result, '{"user_id":[19,82,85,86,87,88],"name":["max5","bug","Admin","Max Mustermann","Anne Beispielfrau","Test-Name"]}');
 
 	// TODO: need testing
 	// test_equal("test is table users empty", isEmpty(), 1);
-	test_equal("register new user", register("testing", "1A_aaaaaaaaaa"), "success");
+	test_equal("register new user", register("testing", "1A_aaaaaaaaaa"), true);
 
 	test_equal("test is table users not empty", isEmpty(), 0);
 
 	test_equal("register with same username twice", register("testing", "1A_aaaaaaaaaa"), "The user testing already exists.");
-	test_equal("register with number as username", register(123, "1A_aaaaaaaaaa"), "success");
+	test_equal("register with number as username", register(123, "1A_aaaaaaaaaa"), true);
 	test_equal("register bad password msg", register("testing2", "123"), "Password not complex enough");
 	test_equal("check last insert id", getterQuery2("SELECT LAST_INSERT_ID() AS id;")["id"][0], 91);
 
@@ -724,7 +724,7 @@
 	// );
 
 	// delete_image
-	test_equal("delete image does not exist", delete_image(1, 84), "successfully deleted");
+	test_equal("delete image does not exist", delete_image(1, 84), true);
 	test_equal("delete image pre-check", implode(",", getterQuery2("SELECT image_id FROM image")["image_id"]), "224,221,222,223");
 	delete_image(224, 84);
 	test_equal("delete image", implode(",", getterQuery2("SELECT image_id FROM image")["image_id"]), "221,222,223");

@@ -165,7 +165,7 @@
 
                 // TODO:   is expiration_date for sql and cookie async??? Bug?
 
-                if ($insertion == "success") {
+                if ($insertion) {
 			$isCLI = (php_sapi_name() == 'cli');
 			if(!$isCLI) {
 				setcookie("sessionID", $sid, time() + $session_time_h * 60 * 60, "/", "", false, true);   //TODO:   placing additional time in variable

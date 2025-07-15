@@ -210,65 +210,49 @@
         return $result;
     }
     function addAuthors($poster_id, $authors) {
-        $results = "";
+	    $results = "";
 
-        for ($i=0; $i < sizeof($authors); $i++) {
-            $id = 0;
+	    for ($i = 0; $i < sizeof($authors); $i++) {
+		    $id = null;
 
-            $res = getterQuery2(
-                "SELECT id FROM author WHERE name=?", $authors[$i]
-            )["id"];
+		    $res = getterQuery2(
+			    "SELECT id FROM author WHERE name=?", $authors[$i]
+		    )["id"];
 
-            if (sizeof($res) == 0) {
-                $results .= "[" . addAuthor($authors[$i]);
-                $id = getLastInsertID();
-            }else{
+		    if (sizeof($res) == 0) {
+			    $results .= "[" . addAuthor($authors[$i]);
+			    $id = getLastInsertID();
+		    } else {
+			    $id = $res[0];
+		    }
 
-                $id = $res[0];
-            }
+		    if(!connectAuthorToPoster($id, $poster_id)) {
+			    return false;
+		    }
+	    }
 
-            $results .= "|" . connectAuthorToPoster($id, $poster_id) . "],";
-        }
-        return $results;
+	    return true;
     }
-    // function searchAuthor($name, $poster_id) {
-    //     $result = getterQuery2(
-    //         "SELECT a.id AS author_id, a.name AS name, b.id AS id, b.poster_id AS poster_id
-    //         FROM author AS a, author_to_poster AS b
-    //         WHERE a.id=b.author_id AND a.name=? AND b.poster_id=?",
-    //         $name, $poster_id
-    //     );
-    //     return $result;
-    // }
-    //  changes only author_to_poster, but not author
+
     function overwriteAuthors($poster_id, $authors) {
-        $results = "";
+	    runQuery("START TRANSACTION");
 
-        $results .= deleteQuery(
-            "DELETE FROM author_to_poster
-            WHERE poster_id=?", "i", $poster_id
-        );
+	    if(!deleteQuery(
+		    "DELETE FROM author_to_poster WHERE poster_id=?",
+		    "i", $poster_id
+	    )) {
+		    runQuery("ROLLBACK");
 
-        $results .= addAuthors($poster_id, $authors);
+		    return;
+	    }
 
-        // $existing_authors = getAuthors($poster_id);
-        // for ($i=0; $i < sizeof($authors); $i++) {
-        //     // check if $authors[$i] already exits
-        //     //      $existing_authors = searchAuthor($authors[$i], $poster_id);
-        //     // $res = array_search($authors[$i], $existing_authors["name"]);
-        //     if (in_array($authors[$i], $existing_authors["name"])) {
-        //         //  -true:     check if local poster_id is equal to $poster_id
-        //         //          -true:      none
-        //         //          -false:     add new author connection($id, $poster_id)
-        //         // $results .= "[-|" . connectAuthorToPoster($existing_authors["id"][$res], $poster_id) . "],";
-        //     }else{
-        //         //  -false:    add $authors[$i]; add author connection($id, $poster_id)
-        //         $results .= "[" . addAuthor($authors[$i]);
-        //         $id = getLastInsertID();
-        //         $results .= "|" . connectAuthorToPoster($id, $poster_id) . "],";
-        //     }
-        // }
-        return $results;
+	    if(addAuthors($poster_id, $authors)) {
+		    runQuery("COMMIT");
+	    } else {
+		    runQuery("ROLLBACK");
+	    }
+
+	    return true;
     }
 
     function addProject($user_id, $title) {

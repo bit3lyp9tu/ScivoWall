@@ -10,15 +10,15 @@
 
     include_once(__DIR__ . "/" . "mysql.php");
 
-    function insertQuery($sql, $types, ...$param) {
-        $stmt = $GLOBALS["conn"]->prepare($sql);
-        // $stmt->set_charset('utf8mb4');
-        $stmt->bind_param($types, ...$param);
-        $stmt->execute();
-        $stmt->close();
+	function insertQuery($sql, $types, ...$param) {
+		$stmt = $GLOBALS["conn"]->prepare($sql);
+		// $stmt->set_charset('utf8mb4');
+		$stmt->bind_param($types, ...$param);
+		$stmt->execute();
+		$stmt->close();
 
-		return "success";
-    }
+		return true;
+	}
 
     function getLastInsertID() {
         return getterQuery2(
@@ -37,12 +37,12 @@
 
     # TODO:   true/false zurückgeben
     function deleteQuery($sql, $types, ...$param) {
-        $stmt = $GLOBALS["conn"]->prepare($sql);
-        $stmt->bind_param($types, ...$param);
-        $stmt->execute();
-        $stmt->close();
+	    $stmt = $GLOBALS["conn"]->prepare($sql);
+	    $stmt->bind_param($types, ...$param);
+	    $stmt->execute();
+	    $stmt->close();
 
-		return "successfully deleted";
+	    return true;
     }
 
     function getTypeStr(...$params) {
@@ -85,45 +85,45 @@
 		}
 	}
 
-	function getterQuery2($sql, ...$param) {
-		$out = array();
+    function getterQuery2($sql, ...$param) {
+	    $out = array();
 	    $attributes = array();
 
-        $types = "";
-        try {
-            if (count($param) >= 1) {
-                $types = getTypeStr(...$param);
-            }
-        } catch (Exception $e) {
-            $out["[ERROR]"] = $e->getMessage() . " at " . $e->getLine();
-            return $out;
-        }
+	    $types = "";
+	    try {
+		    if (count($param) >= 1) {
+			    $types = getTypeStr(...$param);
+		    }
+	    } catch (Exception $e) {
+		    $out["[ERROR]"] = $e->getMessage() . " at " . $e->getLine();
+		    return $out;
+	    }
 
-        $stmt = $GLOBALS["conn"]->prepare($sql);
-        if ($types != "") {
-            $stmt->bind_param($types, ...$param);
-        }
-        $stmt->execute();
+	    $stmt = $GLOBALS["conn"]->prepare($sql);
+	    if ($types != "") {
+		    $stmt->bind_param($types, ...$param);
+	    }
+	    $stmt->execute();
 
-        $result = $stmt->get_result();
+	    $result = $stmt->get_result();
 
-		$meta = $result->fetch_fields();
-		foreach ($meta as $col) {
-			$out[$col->name] = [];
-		}
+	    $meta = $result->fetch_fields();
+	    foreach ($meta as $col) {
+		    $out[$col->name] = [];
+	    }
 
-		while ($row = $result->fetch_assoc()) {
-			foreach ($row as $key => $value) {
-				if (is_string($value)) {
-					assert_utf8_or_die($value);
-					//$value = mb_convert_encoding($value, 'UTF-8');
-				}
-				$out[$key][] = $value;
-			}
-		}
-        $stmt->close();
-        return $out;
-	}
+	    while ($row = $result->fetch_assoc()) {
+		    foreach ($row as $key => $value) {
+			    if (is_string($value)) {
+				    assert_utf8_or_die($value);
+				    //$value = mb_convert_encoding($value, 'UTF-8');
+			    }
+			    $out[$key][] = $value;
+		    }
+	    }
+	    $stmt->close();
+	    return $out;
+    }
 
     function simpleQuery($sql) {
         // $stmt = $GLOBALS["conn"]->prepare($sql);
