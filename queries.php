@@ -126,15 +126,16 @@
 	}
 
 	function runQuery($sql) {
-		try {
-			$result = $GLOBALS["conn"]->query($sql);
-		} catch (Throwable $th) {
-			return array();
+		if(!$GLOBALS["conn"]) {
+			die("Database could not be initialized");
 		}
 
+		$result = $GLOBALS["conn"]->query($sql);
 
-		if ($result === True) {
-			return $result;
+		if ($result === true) {
+			return true;
+		} else if ($result === false) {
+			return false;
 		} else {
 			try {
 				return $result->fetch_all();
