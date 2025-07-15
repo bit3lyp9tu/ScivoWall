@@ -319,40 +319,32 @@ async function make_headers_editable(editable_columns, headers, data, i, row) {
 }
 
 function append_additional_columns(additional_columns, i, row) {
-	additional_columns.forEach((column, index) => {
-		const td = document.createElement("td");
+    additional_columns.forEach((column, index) => {
+        const td = document.createElement("td");
 
-		try {
-			const result = column(i);
-			console.debug(`[DEBUG] column[${index}] returned:`, result);
+        try {
+            const result = column(i);
+            console.debug(`[DEBUG] column[${index}] returned:`, result);
 
-			if (result instanceof Node) {
-				log("A")
-				td.appendChild(result);
-			} else if (typeof result === "string" || typeof result === "number") {
-				log("B");
-				td.textContent = result;
-			} else if (typeof column === "function" && column.constructor.name === "AsyncFunction" && column.name === "deleteColumn") {
-				// TODO: Make the delete work again
-				const button = document.createElement("button");
-				button.textContent = "DELETE";
-				button.onclick = () => deleteColumn(i); // ruft deleteColumn mit dem aktuellen i auf
-				td.appendChild(button);
+            if (result instanceof Node) {
+                td.appendChild(result);
+            } else if (typeof result === "string" || typeof result === "number") {
+                td.textContent = result;
+            } else if (typeof column === "function" && column.constructor.name === "AsyncFunction" && column.name === "deleteColumn") {
+                td.textContent = "DELETE";
+            } else if (result !== null && result !== undefined) {
+                td.textContent = JSON.stringify(result);
+            } else {
+                console.warn(`[WARN] column[${index}] returned null/undefined`);
+                td.textContent = "";
+            }
+        } catch (error) {
+            console.error(`[ERROR] Failed to append column[${index}]:`, error);
+            td.textContent = "Error"; // Show something visible in the table
+        }
 
-			} else if (result !== null && result !== undefined) {
-				td.textContent = JSON.stringify(result);
-			} else {
-				log("D");
-				console.warn(`[WARN] column[${index}] returned null/undefined`);
-				td.textContent = "";
-			}
-		} catch (error) {
-			console.error(`[ERROR] Failed to append column[${index}]:`, error);
-			td.textContent = "Error"; // Show something visible in the table
-		}
-
-		row.appendChild(td);
-	});
+        row.appendChild(td);
+    });
 }
 
 // TODO:   may need an overwork
@@ -574,7 +566,7 @@ async function fetch_projects_filtered(filter) {
                         return td;
                     };
 
-                    async function deleteColumn(index) {
+                    function deleteColumn(index) {
                         const td = document.createElement("td");
                         const btn = document.createElement('input');
                         btn.type = "button";
@@ -647,7 +639,7 @@ async function fetch_authors_filtered(filter) {
                         delete data["id"];
                     }
 
-                    async function deleteColumn(index) {
+                    function deleteColumn(index) {
                         const td = document.createElement("td");
                         const btn = document.createElement('input');
                         btn.type = "button";
@@ -707,7 +699,7 @@ async function fetch_images_filtered(filter) {
                         delete data["id"];
                     }
 
-                    async function deleteColumn(index) {
+                    function deleteColumn(index) {
                         const td = document.createElement("td");
                         const btn = document.createElement('input');
                         btn.type = "button";
