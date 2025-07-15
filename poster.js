@@ -703,25 +703,23 @@ async function author_item(value) {
 }
 
 document.addEventListener("focusout", async function (event) {
-    if (event.target.id == "add_author") {
-        if (event.target.value != "") {
-            // convert target into item
+	if (event.target.id == "add_author") {
+		if (event.target.value != "") {
+			// convert target into item
 
-            const field = event.target;
+			const field = event.target;
 
-            author_names.push(event.target.value);
+			author_names.push(event.target.value);
 
-            const new_elem = await author_item(event.target.value);
+			const new_elem = await author_item(event.target.value);
 
-            const author_element = document.getElementById("authors");
-            console.log(author_element);
+			const author_element = document.getElementById("authors");
 
-            insertElementAtIndex(author_element, new_elem, author_element.children.length - 1);
-            event.target.value = "";
-
-            await save_content();
-        }
-    }
+			insertElementAtIndex(author_element, new_elem, author_element.children.length - 1);
+			event.target.value = "";
+			await save_content();
+		}
+	}
 });
 
 function addElementBeforeLast(parent_id, newElement, suffix) {
