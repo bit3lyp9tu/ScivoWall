@@ -19,71 +19,30 @@
         <script src="./bower_components/modernizr/modernizr.js"></script>
         <script src="./bower_components/carousel-3d/dist/jquery.carousel-3d.js" ></script>
 
-    </head>
-    <body>
-        <!-- <div id="wrapper">
-            <div id="myCarousel" data-carousel-3d="">
-                <img src="./img/scadslogo.png" selected=""/>
-                <iframe src="https://wikiroulette.co/" width="500" height="500"></iframe>
-                <iframe src="https://wikiroulette.co/" width="500" height="500"></iframe>
-                <iframe src="https://wikiroulette.co/" width="500" height="500"></iframe>
-                <iframe src="https://wikiroulette.co/" width="500" height="500"></iframe>
-                <iframe src="https://wikiroulette.co/" width="500" height="500"></iframe>
-            </div>
-        </div> -->
-
-        <input id="import" type="file" accept="image/png, image/jpeg, image/gif, .csv, text/csv, application/json, .json" />
-
-        <div id="body"></div>
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+        <!-- <link rel="stylesheet" href="/resources/demos/style.css"> -->
+        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
 
         <script>
-            document.getElementById('import').addEventListener('change', function(event) {
-                const file = event.target.files[0];
-                if (!file) return;
-
-                const output = document.getElementById('body');
-
-                if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const text = `<p placeholder="plotly" chart="points">\n` + e.target.result + `</p>`;
-
-                        console.log(text);
-                        output.innerHTML = text;
-                    };
-                    reader.readAsText(file);
-                } else if (file.type.startsWith('image/')) {
-
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.style.maxWidth = '300px';
-                        output.appendChild(img);
-                    };
-                    reader.readAsDataURL(file);
-
-                } else if (file.type === 'application/json' || file.name.endsWith('.json')) {
-
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        try {
-                            const json = JSON.parse(e.target.result);
-                            output.innerHTML = `<p placeholder="plotly">\n` + JSON.stringify(json, null, 2) + `</p>`;
-                            console.log(json);
-
-                        } catch (error) {
-                            output.innerHTML = "Error parsing JSON: " + error.message;
-                        }
-                    };
-                    reader.readAsText(file);
-
-                } else {
-                    output.textContent = 'Unsupported file type.';
-                }
-
-                console.log(file.name);
-            });
+            $( function() {
+                var availableTags = [
+                    "A", "AA", "AB", "ABB"
+                ];
+                $( "#testest" ).autocomplete({
+                    source: [
+                        "A", "AA", "AB", "ABB"
+                    ]
+                });
+            } );
         </script>
+
+    </head>
+
+    <body>
+        <div class="ui-widget">
+            <!-- <label for="tags">Tags: </label> -->
+            <input id="testest" type="text">
+        </div>
     </body>
 </html>

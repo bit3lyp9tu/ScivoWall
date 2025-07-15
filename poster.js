@@ -207,6 +207,44 @@ function createMenu() {
     return menu;
 }
 
+function setAuthorSuggestions(selector, data) {
+    // https://jqueryui.com/autocomplete/#categories
+
+    if (data.length > 0 && typeof (data[0]) != "number") {
+        if (!$.customCatcompleteDefined) {
+            $.widget("custom.catcomplete", $.ui.autocomplete, {
+                _create: function () {
+                    this._super();
+                    this.widget().menu("option", "items", "> :not(.ui-autocomplete-category)");
+                },
+                _renderMenu: function (ul, items) {
+                    var that = this,
+                        currentCategory = "";
+                    $.each(items, function (index, item) {
+                        var li;
+                        if (item.category !== currentCategory) {
+                            ul.append("<li class='ui-autocomplete-category'>" + item.category + "</li>");
+                            currentCategory = item.category;
+                        }
+                        li = that._renderItemData(ul, item);
+                        if (item.category) {
+                            li.attr("aria-label", item.category + " : " + item.label);
+                        }
+                    });
+                }
+            });
+            $.customCatcompleteDefined = false;
+        }
+    } else {
+        console.error("no or unusual author suggestions");
+    }
+
+    $(selector).catcomplete({
+        delay: 0,
+        source: data
+    });
+}
+
 async function show(response) {
 
     //TODO:   load interactive elements only if mode=private + session-id valid
@@ -217,6 +255,9 @@ async function show(response) {
 
     // document.getElementById("authors").value = response.authors != null ? response.authors.toString(", ") : "";
     filloutAuthors(response.authors);
+
+    const data = await getAuthorCollection();
+    setAuthorSuggestions("#add_author", data);
 
     const boxes = document.getElementById("boxes");
 
@@ -422,43 +463,52 @@ async function initEditBoxes() {
 }
 
 async function edit_box_event(event) {
-    const url = url_to_json();
+	const url = url_to_json();
 
-    //TODO:   check if session-id valid
-    if (url["mode"] != null && url["mode"] == 'private') {
-        // Edit Title
-        if (event.target.tagName === "DIV" && !event.target.id.startsWith("editBox") && event.target.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
+	//TODO:   check if session-id valid
+	if (url["mode"] != null && url["mode"] == 'private') {
 
-            // change box to editable
-            const element = createArea("textarea", event.target.children[0].id, "", event.target.children[0].getAttribute("data-content"));
-            element.style.resize = "none"; //"vertical";
-            element.value = event.target.children[0].getAttribute("data-content");
-            event.target.children[0].parentNode.replaceChild(element, event.target.children[0]);
-            element.style['pointer-events'] = 'auto';
+		console.log("event.target", event.target);
 
-            element.focus();
-            element.setSelectionRange(element.value.length, element.value.length);
+		// Edit Title
 
-            // remember box as previously selected
-            selected_title = element;
+		if (typeof event !== 'undefined' && event.target) {
+			console.log(event.target);
+			if (event.target.tagName === "DIV" && !event.target.id.startsWith("editBox") && event.target.id.startsWith("title") && selected_title === null) { // if new editBox gets selected
 
-        } else if (selected_title && event.target !== selected_title) {// if there was something once selected and if the new selected is different from the old
+				// change box to editable
+				const element = createArea("textarea", event.target.id, "", event.target.getAttribute("data-content"));
+				element.style.resize = "none"; //"vertical";
+				element.value = event.target.getAttribute("data-content");
+				event.target.parentNode.replaceChild(element, event.target);
+				element.style['pointer-events'] = 'auto';
 
-            // change old back to non-editable and save old edits
-            const element = createArea("div", selected_title.id, "", selected_title.value);
-            await typeset(element, () => marked.marked(selected_title.value));
-            selected_title.parentNode.replaceChild(element, selected_title);
-            element.style['pointer-events'] = 'none';
+				element.focus();
+				element.setSelectionRange(element.value.length, element.value.length);
 
-            // forget old selected
-            selected_title = null;
-        }
+				// remember box as previously selected
+				selected_title = element;
 
-        // Edit Boxes
-        //edit_box(event.target)
-    }
+			} else if (selected_title && event.target !== selected_title) {// if there was something once selected and if the new selected is different from the old
 
-    await save_content();
+				// change old back to non-editable and save old edits
+				const element = createArea("div", selected_title.id, "", selected_title.value);
+				await typeset(element, () => marked.marked(selected_title.value));
+				selected_title.parentNode.replaceChild(element, selected_title);
+				element.style['pointer-events'] = 'none';
+
+				// forget old selected
+				selected_title = null;
+			}
+		} else {
+			console.error("event.target is empty. event:", event);
+		}
+
+		// Edit Boxes
+		//edit_box(event.target)
+	}
+
+	await save_content();
 }
 
 document.addEventListener("click", edit_box_event);
@@ -578,7 +628,7 @@ window.onload = async function () {
     if (isInIframe()) {
         console.log("in IFrame");
 
-        document.getElementById("typeahead").style.display = "none";
+        document.getElementById("add_author").style.display = "none";
 
         document.getElementById("img-load").style.display = "none";
 
@@ -595,8 +645,8 @@ window.onload = async function () {
 
     try {
         response = await request(data);
+        console.log("load content", response);
 
-        console.log(response);
     } catch (error) {
         console.error("content head request failed " + error);
     }
@@ -615,55 +665,13 @@ window.onload = async function () {
         toastr["warning"]("Not Logged in");
     }
 
-    // start with single textfield
-    // once filed with content,
-    //      insert new button field
-    //      should button pressed - field gets removed
-
-    // if (document.getElementById("typeahead").value) {
-    //     console.log("content");
-
-    //     const input = document.createElement("input");
-    //     input.type = "search";
-    //     input.id = "typeahead";
-    //     // input.class = "tt-input";
-    //     input.autocomplete = "on";
-    //     input.placeholder = "...";
-
-    //     const btn = document.createElement("button");
-    //     btn.id = "remove-element";
-    //     // btn.onclick = remove();
-    //     btn.innerText = "X";
-
-    //     const container = document.createElement("div");
-    //     container.style.display = "flex";
-    //     container.appendChild(input);
-    //     container.appendChild(btn);
-
-    //     document.getElementById("typeahead-container").appendChild(container);
-    // }
-
-    // function remove() {
-    //     console.log("remove item", this.closest("div"));
-    //     this.closest("div").remove();
-    // }
-
-    if (!isInIframe()) {
-        const inputElement = document.getElementById("typeahead");
-
-        // const instance = typeahead({
-        //     input: inputElement,
-        //     source: {
-        //         local: author_names,
-        //     }
-        // });
-    }
-
     initEditBoxes();
     initUneditHandler();
 };
 
-function author_item(value) {
+async function author_item(value) {
+    const title = document.getElementById("title").innerText;
+
     const p = document.createElement("p");
     p.innerText = value
 
@@ -677,11 +685,16 @@ function author_item(value) {
         const btn = document.createElement("button");
         //btn.id = "remove-element";
         btn.classList.add("author-item-btn");
-	btn.classList.add("remove-element");
+        btn.classList.add("remove-element");
         btn.innerText = "";
         btn.onclick = function () {
             this.closest("div").remove();
         };
+
+        const data = await getAuthorCollection();
+        data.push({ "label": value, "category": title });
+        console.log("item", data);
+        setAuthorSuggestions("#add_author", data);
 
         item.appendChild(btn);
     } else {
@@ -692,19 +705,8 @@ function author_item(value) {
     return item;
 }
 
-document.addEventListener("focusin", function (event) {
-    // const inputElement = document.getElementById("typeahead");
-
-    // const instance = typeahead({
-    //     input: inputElement,
-    //     source: {
-    //         local: author_names,
-    //     }
-    // });
-})
-
 document.addEventListener("focusout", async function (event) {
-    if (event.target.id == "typeahead") {
+    if (event.target.id == "add_author") {
         console.log(event.target);
         if (event.target.value != "") {
             // convert target into item
@@ -713,13 +715,13 @@ document.addEventListener("focusout", async function (event) {
 
             author_names.push(event.target.value);
 
-            const new_elem = author_item(event.target.value)
+            const new_elem = await author_item(event.target.value);
 
-            insertElementAtIndex(document.getElementById("authors"), new_elem, -1);
+            const author_element = document.getElementById("authors");
+            console.log(author_element);
+
+            insertElementAtIndex(author_element, new_elem, author_element.children.length - 1);
             event.target.value = "";
-
-            // const input = document.getElementsByClassName("typeahead-standalone")
-            // input.after(new_elem);
 
             await save_content();
         }
@@ -733,41 +735,62 @@ function addElementBeforeLast(parent_id, newElement, suffix) {
     // container.appendChild(suffix);
 }
 
-function insertElementAtIndex(container, newElement, index) {
-    const children = Array.from(container.children);
+function getAuthorCollection() {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            type: "POST",
+            url: "post_traffic.php",
+            data: {
+                action: 'fetch_author_collection'
+            },
+            success: function (response) {
+                if (response !== "No or invalid session" && response !== "No results found") {
 
-    if (index <= children.length) {
+                    var data = [];
+                    var authors = JSON.parse(response).author;
+                    var posters = JSON.parse(response).title;
 
-        var i = 0;
+                    for (var i = 0; i < authors.length; i++) {
 
-        if (index < 0) {
-            i = children.length + index;
-        } else {
-            i = index;
-        }
-        const referenceNode = children[i] || null;
-        container.insertBefore(newElement, referenceNode);
-    } else {
-        console.error('Invalid index');
-    }
+                        data.push({ "label": authors[i], "category": posters[i] });
+                    }
+                    console.log(data);
+
+                    resolve(data);
+                } else {
+                    resolve({});
+                }
+            },
+            error: function (err) {
+                console.error(err);
+                reject(err);
+            }
+        });
+    });
+}
+
+async function insertElementAtIndex(container, newElement, index) {
+    // const children = document.querySelectorAll(".author-item");
+    console.log("author children", container.children, index);
+
+    container.insertBefore(await newElement, container.children[index]);
 }
 
 function filloutAuthors(list) {
-	for (let i = 0; i < list.length; i++) {
-		author_names.push(list[i]);
-		insertElementAtIndex(document.getElementById("authors"), author_item(list[i]), i);
-	}
+    for (let i = 0; i < list.length; i++) {
+        author_names.push(list[i]);
+        insertElementAtIndex(document.getElementById("authors"), author_item(list[i]), i);
+    }
 
-	$('.author-item').on('mouseenter', function() {
-		$(this).find('.author-item-btn').show();
-	});
+    $('.author-item').on('mouseenter', function () {
+        $(this).find('.author-item-btn').show();
+    });
 
-	$('.author-item').on('mouseleave', function() {
-		$(this).find('.author-item-btn').hide();
-	});
+    $('.author-item').on('mouseleave', function () {
+        $(this).find('.author-item-btn').hide();
+    });
 
-	// Optional: Button zu Beginn ausblenden
-	$('.author-item-btn').hide();
+    $('.author-item-btn').hide();
 
 }
 
@@ -1051,7 +1074,7 @@ document.addEventListener("dragstart", async function (event) {
 
     console.log("drawstart event", event.target);
 
-    if (document.getElementById("typeahead").contains(event.target)) {
+    if (document.getElementById("add_author").contains(event.target)) {
         event.target.style.border = "dashed";
         event.target.style.borderColor = "#83d252";
         event.target.style.border.width = "thin";
@@ -1065,11 +1088,6 @@ document.addEventListener("dragstart", async function (event) {
 
 document.addEventListener("dragover", function (event) {
     event.preventDefault();
-
-    // if (document.getElementById("typeahead-container").contains(event.target)) {
-    //     console.log(event.target);
-    // }
-
 });
 
 // document.addEventListener("dragend", function (event) {
@@ -1080,7 +1098,7 @@ document.addEventListener("dragover", function (event) {
 document.addEventListener("drop", async function (event) {
     event.preventDefault();
 
-    if (document.getElementById("typeahead").contains(event.target)) {
+    if (document.getElementById("add_author").contains(event.target)) {
         if (event.target.tagName == "P") {
             event.target.parentElement.after(dragend_item);
         } else {

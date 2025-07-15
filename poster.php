@@ -18,7 +18,7 @@
             <div id="title">Title</div>
             </div>
             <div id="authors">
-                <input type="text" id="typeahead" values=""></input>
+                <input type="text" id="add_author" values=""></input>
             </div>
         </div>
         <div id="edit-options"></div>

@@ -56,6 +56,23 @@
             }
         }
 
+        if ($_POST['action'] == 'fetch_author_collection') {
+
+            $user_id = getValidUserFromSession();
+
+            if ($user_id != null) {
+                if (isAdmin($user_id)) {
+                    $filter = '{"attributes":{"user.name":{"min":"","max":"","list":[]},"poster.title":{"min":"","max":"","list":[]},"last_edit_date":{"min":"","max":"","list":[]},"visible":{"min":"","max":"","list":[]},"view_modes.name":{"min":"","max":"","list":[]}}}';
+                } else {
+                    $filter = user_to_filter($user_id);
+                }
+
+                echo fetch_authors_all($user_id, $filter);
+            } else {
+                echo "No or invalid session";
+            }
+        }
+
         if ($_POST['action'] == 'fetch_filtered_images') {
 
             $filter = isset($_POST['filter']) ? $_POST['filter'] : '';
