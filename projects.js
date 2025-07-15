@@ -16,11 +16,11 @@ function createProject() {
             action: 'create_project',
             name: project_name.value
         },
-        success: function (response) {
+        success: async function (response) {
             if (response == "ERROR" || response == "No or invalid session") {
                 toastr["warning"]("Not logged in");
             } else {
-                load_project_page_data();
+                await load_project_page_data();
                 toastr["success"]("New Project created");
             }
         },
@@ -277,7 +277,7 @@ async function make_headers_editable(editable_columns, headers, data, i, row) {
         const td = document.createElement("td");
 
         if (header == "visible") {
-            insert_visibility_column(this, data, td, header, i);
+            await insert_visibility_column(this, data, td, header, i);
         } else if (header == "image_data") {
             create_and_append_image_container(td);
         } else if (header == "view_mode") {
@@ -582,7 +582,7 @@ async function fetch_projects_filtered(filter) {
                                 remove_local_data(local_id, data);
                                 pk_ids.splice(local_id, 1);
 
-                                createTableFromJSON("table-container", pk_ids, data, textfield_indexes, editColumn, deleteColumn);
+                                await createTableFromJSON("table-container", pk_ids, data, textfield_indexes, editColumn, deleteColumn);
                             } else {
                                 console.error("no pk_ids");
                             }
@@ -591,7 +591,7 @@ async function fetch_projects_filtered(filter) {
                         return td;
                     };
 
-                    createTableFromJSON("table-container", pk_ids, data, textfield_indexes, editColumn, deleteColumn);
+                    await createTableFromJSON("table-container", pk_ids, data, textfield_indexes, editColumn, deleteColumn);
 
                 } else {
                     toastr["warning"]("No results found");
@@ -655,7 +655,7 @@ async function fetch_authors_filtered(filter) {
                                 remove_local_data(local_id, data);
                                 pk_ids.splice(local_id, 1);
 
-                                createTableFromJSON("author-list", pk_ids, data, textfield_indexes, deleteColumn);
+                                await createTableFromJSON("author-list", pk_ids, data, textfield_indexes, deleteColumn);
                             } else {
                                 console.error("no pk_ids");
                             }
@@ -664,7 +664,7 @@ async function fetch_authors_filtered(filter) {
                         return td;
                     };
 
-                    createTableFromJSON("author-list", pk_ids, data, textfield_indexes, deleteColumn);
+                    await createTableFromJSON("author-list", pk_ids, data, textfield_indexes, deleteColumn);
                 }
             }
         },
@@ -684,7 +684,7 @@ async function fetch_images_filtered(filter) {
             action: 'fetch_filtered_images',
             filter: filter
         },
-        success: function (response) {
+        success: async function (response) {
             // console.log(JSON.parse(response));
 
             if (response != "No or invalid session") {
@@ -728,7 +728,7 @@ async function fetch_images_filtered(filter) {
                                 remove_local_data(local_id, data);
                                 pk_ids.splice(local_id, 1);
 
-                                createTableFromJSON("image-list", pk_ids, data, [1], deleteColumn);
+                                await createTableFromJSON("image-list", pk_ids, data, [1], deleteColumn);
                                 await loadImgsInTable(filter);
                             } else {
                                 console.error("no pk_ids");
@@ -738,7 +738,7 @@ async function fetch_images_filtered(filter) {
                         return td;
                     };
 
-                    createTableFromJSON("image-list", pk_ids, data, [1], deleteColumn);
+                    await createTableFromJSON("image-list", pk_ids, data, [1], deleteColumn);
                 }
             }
         },
@@ -787,7 +787,7 @@ function filter_to_json(users, posters, view_modes, last_edits, visiblitlies) {
     json["attributes"]["visible"]["list"].push(...visiblitlies);
     json["attributes"]["view_modes.name"]["list"].push(...view_modes);
 
-    console.log("request: ", json);
+    console.debug("request: ", json);
 
     return JSON.stringify(json);
 }
@@ -1006,10 +1006,10 @@ async function load_project_page_data() {
         await filter_submit();
     } else {
         // TODO: [BUG] occasionally projects are loaded in wrong order (wrong title/link)
-        fetch_projects_filtered("");
-        fetch_authors_filtered("");
-        fetch_images_filtered("");
-        loadImgsInTable("");
+        await fetch_projects_filtered("");
+        await fetch_authors_filtered("");
+        await fetch_images_filtered("");
+        await loadImgsInTable("");
     }
 }
 
