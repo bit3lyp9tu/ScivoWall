@@ -224,7 +224,7 @@ async function change_action() {
     if (param[0] == 'image-list') {
         rename_image(this, id);
     }
-    load_project_page_data();
+    await load_project_page_data();
 }
 
 function make_column_editable(data, header, i, td) {
@@ -319,9 +319,28 @@ async function make_headers_editable(editable_columns, headers, data, i, row) {
 }
 
 function append_additional_columns(additional_columns, i, row) {
-    additional_columns.forEach(column => {
+    additional_columns.forEach((column, index) => {
         const td = document.createElement("td");
-        td.appendChild(column(i));
+
+        try {
+            const result = column(i);
+            console.debug(`[DEBUG] column[${index}] returned:`, result);
+
+            if (result instanceof Node) {
+                td.appendChild(result);
+            } else if (typeof result === "string" || typeof result === "number") {
+                td.textContent = result;
+            } else if (result !== null && result !== undefined) {
+                td.textContent = JSON.stringify(result);
+            } else {
+                console.warn(`[WARN] column[${index}] returned null/undefined`);
+                td.textContent = ""; // Optional: placeholder text like "N/A"
+            }
+        } catch (error) {
+            console.error(`[ERROR] Failed to append column[${index}]:`, error);
+            td.textContent = "Error"; // Show something visible in the table
+        }
+
         row.appendChild(td);
     });
 }
@@ -678,7 +697,7 @@ async function fetch_images_filtered(filter) {
                         delete data["id"];
                     }
 
-                    function deleteColumn(index) {
+                    async function deleteColumn(index) {
                         const td = document.createElement("td");
                         const btn = document.createElement('input');
                         btn.type = "button";
@@ -710,7 +729,7 @@ async function fetch_images_filtered(filter) {
                                 pk_ids.splice(local_id, 1);
 
                                 createTableFromJSON("image-list", pk_ids, data, [1], deleteColumn);
-                                loadImgsInTable(filter);
+                                await loadImgsInTable(filter);
                             } else {
                                 console.error("no pk_ids");
                             }
@@ -1075,6 +1094,6 @@ document.getElementById("logout").onclick = function () {
     });
 }
 
-$(document).ready(function () {
-    load_project_page_data();
+$(document).ready(async function () {
+    await load_project_page_data();
 });

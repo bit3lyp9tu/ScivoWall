@@ -401,10 +401,10 @@ async function unedit_box() {
 		// console.log(inbtn);
 
 		// TODO: [BUG] editBox needs to be selected previously at least once for the change event to be detected
-		inbtn.addEventListener('change', function (event) {
+		inbtn.addEventListener('change', async function (event) {
 
 			const file = event.target.files[0];
-			importFile(selected_box, file);
+			await importFile(selected_box, file);
 		});
 
 		await loadImages();
