@@ -665,8 +665,12 @@ input[type="checkbox"]:checked {}
 
 .account-menu {
     position: fixed;
-    left: 0px;
-    top: 10%
+    right: 0px;
+    top: 5%
+}
+
+.account-menu-item>div>input[type="button"] {
+    background-color: var(--scads-blue);
 }
 
 @media (max-width: 1800px) {
@@ -704,3 +708,5 @@ div#authors {
     overflow-y: auto;
     overflow-x: hidden;
 }
+
+div.account-status {}

@@ -8,10 +8,18 @@
 
     include(__DIR__ . "/" . "poster_edit.php")
 ?>
-<body>
+<body class="bgimg">
     <div id="logo_headline">
         <img class="nomargin" id='scadslogo' src="img/scadslogo.png" draggable="false"/>
         <div class="header-video" style="float: right;"></div>
+
+        <div class="account-menu">
+            <div class="account-menu-item">
+                <div>
+                    <input type="button" id="logout" value="Logout">
+                </div>
+            </div>
+        </div>
     </div>
     <div id="titles">
         <div>

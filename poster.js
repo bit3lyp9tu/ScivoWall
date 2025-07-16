@@ -1110,3 +1110,21 @@ document.addEventListener("mouseover", function (event) {
     //     console.log(event.target);
     // }
 });
+
+document.getElementById("logout").onclick = function () {
+    $.ajax({
+        type: "POST",
+        url: "post_traffic.php",
+        data: {
+            action: 'logout'
+        },
+        success: function (response) {
+            // console.log(response);
+            window.location.href = "login.php";
+            toastr["success"](response);
+        },
+        error: function () {
+            toastr["error"]("An logout error occurred");
+        }
+    });
+}
