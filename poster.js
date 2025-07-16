@@ -467,44 +467,40 @@ async function edit_box_event(event) {
 
     //TODO:   check if session-id valid
     if (url["mode"] != null && url["mode"] == 'private') {
-
         // Edit Title
+        if (event.target.tagName === "DIV" && !event.target.id.startsWith("editBox") && event.target.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
 
-        if (typeof event !== 'undefined' && event.target) {
-            if (event.target.tagName === "DIV" && !event.target.id.startsWith("editBox") && event.target.id.startsWith("title") && selected_title === null) { // if new editBox gets selected
+            // change box to editable
+            const element = createArea("textarea", event.target.children[0].id, "", event.target.children[0].getAttribute("data-content"));
+            element.style.resize = "none"; //"vertical";
+            element.value = event.target.children[0].getAttribute("data-content");
+            event.target.children[0].parentNode.replaceChild(element, event.target.children[0]);
+            element.style['pointer-events'] = 'auto';
 
-                // change box to editable
-                const element = createArea("textarea", event.target.id, "", event.target.getAttribute("data-content"));
-                element.style.resize = "none"; //"vertical";
-                element.value = event.target.getAttribute("data-content");
-                event.target.parentNode.replaceChild(element, event.target);
-                element.style['pointer-events'] = 'auto';
+            element.focus();
+            element.setSelectionRange(element.value.length, element.value.length);
 
-                element.focus();
-                element.setSelectionRange(element.value.length, element.value.length);
+            // remember box as previously selected
+            selected_title = element;
 
-                // remember box as previously selected
-                selected_title = element;
+        } else if (selected_title && event.target !== selected_title) {// if there was something once selected and if the new selected is different from the old
 
-            } else if (selected_title && event.target !== selected_title) {// if there was something once selected and if the new selected is different from the old
+            // change old back to non-editable and save old edits
+            const element = createArea("div", selected_title.id, "", selected_title.value);
+            await typeset(element, () => marked.marked(selected_title.value));
+            selected_title.parentNode.replaceChild(element, selected_title);
+            element.style['pointer-events'] = 'none';
 
-                // change old back to non-editable and save old edits
-                const element = createArea("div", selected_title.id, "", selected_title.value);
-                await typeset(element, () => marked.marked(selected_title.value));
-                selected_title.parentNode.replaceChild(element, selected_title);
-                element.style['pointer-events'] = 'none';
-
-                // forget old selected
-                selected_title = null;
-            }
-        } else {
-            console.error("event.target is empty. event:", event);
+            // forget old selected
+            selected_title = null;
         }
-
         // Edit Boxes
-    }
+        //edit_box(event.target)
 
-    //await save_content();
+    } else {
+        console.error("event.target is empty. event:", event);
+    }
+    await save_content();
 }
 
 document.addEventListener("click", edit_box_event);
