@@ -383,11 +383,75 @@ div#toggle_register_box {
     display: flex;
     flex-direction: row;
 
-    display: none;
+    /* display: none; */
 
     border-bottom: 2px solid var(--scads-green);
 
     padding-right: 5px;
+}
+
+.account-box-moving {
+    /* position: absolute; */
+    /* left: 0; */
+    /* overscroll-behavior: contain; */
+}
+
+input.vertical-marker[type="button"] {
+    background-color: var(--scads-blue);
+}
+
+.account-box-item {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.account-box-item>div {
+    display: flex;
+
+    background-color: var(--light-green);
+
+    border-radius: 0px 15px 15px 0px;
+
+    padding: 15px 15px 15px 0px;
+    opacity: 0.9;
+}
+
+.account-box-moving .vertical-marker {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+
+    padding: 5px;
+}
+
+.account-box-item>div .stateA {
+    display: none;
+
+    width: 0%;
+}
+
+.account-box-item>div:hover .stateA {
+    display: block;
+
+    margin-left: 5px;
+
+    animation-name: form-expand;
+    animation-duration: 1s;
+
+    width: 100%;
+}
+
+.account-box-item:hover .vertical-marker {
+    display: none;
+}
+
+@keyframes form-expand {
+    0% {
+        width: 0%;
+    }
+
+    100% {
+        width: 100%;
+    }
 }
 
 #iframe-0 {

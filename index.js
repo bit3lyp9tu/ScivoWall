@@ -86,21 +86,6 @@ function loadStyle(href) {
     });
 }
 
-var toggle_login = document.getElementById("toggle_login_box");
-toggle_login.addEventListener("click", function () {
-
-    var box = document.getElementById("login-box");
-
-    if (box.style.display == "none") {
-
-        box.style.display = "block";
-        toggle_login.style.color = "#83d252";
-    } else {
-        box.style.display = "none";
-        toggle_login.style.color = "black";
-    }
-});
-
 document.getElementById("login-btn").addEventListener("click", function () {
     let username = document.getElementById("name");
     let password = document.getElementById("pw");
@@ -128,21 +113,6 @@ document.getElementById("login-btn").addEventListener("click", function () {
                 toastr["error"]("An error occurred...");
             }
         });
-    }
-});
-
-var toggle_register = document.getElementById("toggle_register_box");
-toggle_register.addEventListener("click", function () {
-
-    var box = document.getElementById("register-box");
-
-    if (box.style.display == "none") {
-
-        box.style.display = "block";
-        toggle_register.style.color = "#83d252";
-    } else {
-        box.style.display = "none";
-        toggle_register.style.color = "black";
     }
 });
 
