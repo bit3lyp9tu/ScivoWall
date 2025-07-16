@@ -26,7 +26,8 @@ from selenium.webdriver.firefox.service import Service as FirefoxService
 driver = None
 address = None
 
-def create_driver ():
+
+def create_driver():
     global driver, address
 
     options = Options()
@@ -43,6 +44,7 @@ def create_driver ():
     else:
         driver = webdriver.Firefox(options=options)
         address = "localhost"
+
 
 class PythonOrgSearch(unittest.TestCase):
 
@@ -226,15 +228,15 @@ class PythonOrgSearch(unittest.TestCase):
             "div#table-container>table>tr:nth-child(3)>td:nth-child(3)>input",
         )
         self.assertIsNotNone(check_btn.get_attribute("disabled"))
-        print(
-            [
-                i.text
-                for i in driver.find_elements(
-                    By.CSS_SELECTOR,
-                    "div#table-container>table>tr:nth-child(3)>td:nth-child(3)",
-                )
-            ]
-        )
+        # print(
+        #     [
+        #         i.text
+        #         for i in driver.find_elements(
+        #             By.CSS_SELECTOR,
+        #             "div#table-container>table>tr:nth-child(3)>td:nth-child(3)",
+        #         )
+        #     ]
+        # )
 
         time.sleep(self.wait_time)
 
@@ -492,7 +494,7 @@ class PythonOrgSearch(unittest.TestCase):
             ).get_attribute("data-content"),
         )
 
-        print(driver.current_url)
+        # print(driver.current_url)
         time.sleep(self.wait_time)
         # check authors
         authors = set(
@@ -504,7 +506,7 @@ class PythonOrgSearch(unittest.TestCase):
             ]
         )
         author_list = [set(data["authors"]["pre"]), set(data["authors"]["edited"])]
-        print(f"{authors} : {author_list}")
+        # print(f"{authors} : {author_list}")
         self.assertTrue(authors in author_list)
 
         # check empty authors
@@ -523,7 +525,7 @@ class PythonOrgSearch(unittest.TestCase):
                 By.CSS_SELECTOR, "div#authors>div.author-item"
             )
         ]
-        print(f"check add author: {changed_authors}")
+        # print(f"check add author: {changed_authors}")
         self.assertTrue(
             changed_authors
             in [data["authors"]["added"], data["authors"]["added-edited"]],
@@ -740,8 +742,8 @@ class PythonOrgSearch(unittest.TestCase):
             for el in driver.find_elements(By.CSS_SELECTOR, css_selector)
         ]
 
-        import pprint
-        pprint.pprint(found_elements)
+        # import pprint
+        # pprint.pprint(found_elements)
 
         self.assertListEqual(
             results,
@@ -1102,18 +1104,18 @@ class PythonOrgSearch(unittest.TestCase):
         self.check_filter(
             "div#author-list>table>*>td:nth-child(3)>input",
             [
-                'ChatGPT',
-                 'Alice Johnson',
-                 'Dr. Rahul Mehta',
-                 'ChatGPT',
-                 'Lina Chen abc',
-                 'ChatGPT',
-                 'Alice Johnson',
-                 'Lina Chen abc',
-                 'Author8',
-                 'Author5'
-                ]
-            )
+                "ChatGPT",
+                "Alice Johnson",
+                "Dr. Rahul Mehta",
+                "ChatGPT",
+                "Lina Chen abc",
+                "ChatGPT",
+                "Alice Johnson",
+                "Lina Chen abc",
+                "Author8",
+                "Author5",
+            ],
+        )
 
         # check filter results imgs - all
         self.check_filter(
@@ -1150,9 +1152,7 @@ class PythonOrgSearch(unittest.TestCase):
             ],
         )
         # check select view_mode
-        self.check_selected(
-            "select#select_view_mode", "-", ["-", "public", "private"]
-        )
+        self.check_selected("select#select_view_mode", "-", ["-", "public", "private"])
 
         # check select last_edit
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -1174,9 +1174,7 @@ class PythonOrgSearch(unittest.TestCase):
         self.check_selected("select#visibility", "-", ["-", "0", "1"])
 
         # check filter results posters change selector
-        self.change_selector(
-            "select#select_user", "max5", "input#submit-filter"
-        )
+        self.change_selector("select#select_user", "max5", "input#submit-filter")
         # check filter results posters - user
         self.check_filter(
             "div#table-container>table>*>td:nth-child(2)>input",
@@ -1228,9 +1226,7 @@ class PythonOrgSearch(unittest.TestCase):
         )
 
         # check with additional filter attribute - view_mode
-        self.change_selector(
-            "select#select_view_mode", "public", "input#submit-filter"
-        )
+        self.change_selector("select#select_view_mode", "public", "input#submit-filter")
         # check filter results posters - user, visibility, view_mode
         self.check_filter(
             "div#table-container>table>*>td:nth-child(2)>input",
@@ -1250,9 +1246,7 @@ class PythonOrgSearch(unittest.TestCase):
         )
 
         # reset filter attribute - view_mode
-        self.change_selector(
-            "select#select_view_mode", "-", "input#submit-filter"
-        )
+        self.change_selector("select#select_view_mode", "-", "input#submit-filter")
 
         # change filter attribute - visibility
         self.change_selector("select#visibility", "1", "input#submit-filter")
