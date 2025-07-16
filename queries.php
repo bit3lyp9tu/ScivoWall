@@ -35,7 +35,6 @@
 		return true;
 	}
 
-	# TODO:   true/false zurückgeben
 	function deleteQuery($sql, $types, ...$param) {
 		$stmt = $GLOBALS["conn"]->prepare($sql);
 		$stmt->bind_param($types, ...$param);

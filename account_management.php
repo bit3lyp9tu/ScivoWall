@@ -71,7 +71,6 @@
 	    return null;
     }
 
-    //TODO:   make id not required
     function isAdmin($user_id) {
         // if ($user_id == null) {
         //     $user_id = getValidUserFromSession();
