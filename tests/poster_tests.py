@@ -445,6 +445,31 @@ class PythonOrgSearch(unittest.TestCase):
         return g1[0] == g2[0]
         # and g1[1].split(":")[0] == g2[1].split(":")[0]
 
+    def check_suggested_authors(self, data):
+        time.sleep(self.wait_time)
+        ActionChains(driver).click(
+            driver.find_element(By.CSS_SELECTOR, "input#add_author")
+        ).send_keys("a").perform()
+
+        suggested_authors = {}
+        for i in driver.find_elements(By.CSS_SELECTOR, "ul.ui-menu>*"):
+            if i.get_attribute("class") == "ui-autocomplete-category":
+                key = i.get_attribute("innerText")
+                if key not in suggested_authors.keys():
+                    suggested_authors[key] = []
+
+            if i.get_attribute("class") == "ui-menu-item":
+                key2, value = i.get_attribute("aria-label").split(" : ")
+                if key2 in suggested_authors.keys():
+                    suggested_authors[key2].append(value)
+        time.sleep(self.wait_time)
+
+        # print(f"Ist:\t{suggested_authors}\nSoll:\t{data}")
+        self.assertDictEqual(suggested_authors, data)
+
+        time.sleep(self.wait_time)
+        ActionChains(driver).send_keys(Keys.BACKSPACE).perform()
+
     def poster_tests(self, css_selector, poster_id, data, isAdmin):
 
         # check right title
@@ -485,10 +510,10 @@ class PythonOrgSearch(unittest.TestCase):
         # time.sleep(self.wait_time)
 
         title3 = driver.find_element(By.CSS_SELECTOR, "div#titles>div>div#title>p")
-        self.assertEqual(data["title"] + " abc", title3.text)
+        self.assertEqual(data["title2"], title3.text)
         time.sleep(self.wait_time)
         self.assertEqual(
-            data["title"] + " abc",
+            data["title2"],
             driver.find_element(
                 By.CSS_SELECTOR, "div#titles>div>div#title"
             ).get_attribute("data-content"),
@@ -511,6 +536,9 @@ class PythonOrgSearch(unittest.TestCase):
 
         # check empty authors
 
+        # check suggested authors
+        self.check_suggested_authors(data["author_suggestions"])
+
         # check add author
         WebDriverWait(driver, 20).until(
             EC.element_to_be_clickable(
@@ -530,6 +558,16 @@ class PythonOrgSearch(unittest.TestCase):
             changed_authors
             in [data["authors"]["added"], data["authors"]["added-edited"]],
         )
+
+        # check suggested authors after added new one
+        self.check_suggested_authors(data["author_suggestions2"])
+
+        # check suggested authors add new one + page reload
+        driver.get(
+            f"http://{address}/scientific_poster_generator/poster.php?id={poster_id}&mode=private"
+        )
+        time.sleep(self.wait_time)
+        self.check_suggested_authors(data["author_suggestions2"])
 
         time.sleep(self.wait_time)
         # TODO:   check author list switch order
@@ -706,11 +744,15 @@ class PythonOrgSearch(unittest.TestCase):
             By.CSS_SELECTOR,
             f"#table-container>table>tr#table-container--nr-{local_index}>td:nth-last-child(2)>td>input",
         )
-        poster_id = poster_row.get_attribute("pk_id")
+        poster_id = driver.find_element(
+            By.CSS_SELECTOR,
+            f"#table-container>table>tr#table-container--nr-{local_index}",
+        ).get_attribute("pk_id")
         poster_row.click()
 
         data = {
             "title": "The Future of Urban Farming",
+            "title2": "The Future of Urban Farming abc",
             "authors": {
                 "pre": ["ChatGPT", "Alice Johnson", "Lina Chen"],
                 "edited": ["ChatGPT", "Alice Johnson", "Lina Chen abc"],
@@ -722,6 +764,33 @@ class PythonOrgSearch(unittest.TestCase):
                 "Impact",
                 "Increased yields with 70% less water usage. abc\nx",
             ],
+            "author_suggestions": {
+                "Climate Change Effects in the Arctic": [
+                    "ChatGPT",
+                    "Alice Johnson",
+                    "Dr. Rahul Mehta",
+                ],
+                "AI in Modern Healthcare": ["ChatGPT", "Lina Chen abc"],
+                "The Future of Urban Farming": [
+                    "ChatGPT",
+                    "Alice Johnson",
+                    "Lina Chen abc",
+                ],
+            },
+            "author_suggestions2": {
+                "Climate Change Effects in the Arctic": [
+                    "ChatGPT",
+                    "Alice Johnson",
+                    "Dr. Rahul Mehta",
+                ],
+                "AI in Modern Healthcare": ["ChatGPT", "Lina Chen abc"],
+                "The Future of Urban Farming abc": [
+                    "ChatGPT",
+                    "Alice Johnson",
+                    "Lina Chen abc",
+                    "Author",
+                ],
+            },
         }
 
         self.poster_tests("", poster_id, data, False)
@@ -944,6 +1013,7 @@ class PythonOrgSearch(unittest.TestCase):
 
         data = {
             "title": "test1",
+            "title2": "test1 abc",
             "authors": {
                 "pre": ["Author8", "Author5"],
                 "edited": ["Author8", "Author5 abc"],
@@ -955,6 +1025,34 @@ class PythonOrgSearch(unittest.TestCase):
                 "New Text abc",
                 "x",
             ],
+            "author_suggestions": {
+                "test1": ["Author8", "Author5"],
+                "Climate Change Effects in the Arctic": [
+                    "ChatGPT",
+                    "Alice Johnson",
+                    "Dr. Rahul Mehta",
+                ],
+                "AI in Modern Healthcare": ["ChatGPT", "Lina Chen abc"],
+                "The Future of Urban Farming abc": [
+                    "ChatGPT",
+                    "Alice Johnson",
+                    "Lina Chen abc",
+                ],
+            },
+            "author_suggestions2": {
+                "Climate Change Effects in the Arctic": [
+                    "ChatGPT",
+                    "Alice Johnson",
+                    "Dr. Rahul Mehta",
+                ],
+                "AI in Modern Healthcare": ["ChatGPT", "Lina Chen abc"],
+                "The Future of Urban Farming abc": [
+                    "ChatGPT",
+                    "Alice Johnson",
+                    "Lina Chen abc",
+                ],
+                "test1 abc": ["Author8", "Author5", "Author"],
+            },
         }
         self.poster_tests("", poster_id, data, True)
 
