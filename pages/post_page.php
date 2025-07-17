@@ -6,9 +6,9 @@
 <body>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 
-    <script src="../src/js/page_test.js"></script>
+    <script src="src/js/page_test.js"></script>
 
-    <link rel='stylesheet' type='text/css' href=../src/css/style_test.css>
+    <link rel='stylesheet' type='text/css' href="src/css/style_test.css">
 
 
     <div>
