@@ -1,4 +1,5 @@
 <?php
+/*
 include("functions.php");
 
 // 1. Voller REQUEST_URI, z.B. /scientific_poster_generator/index.php oder /scientific_poster_generator/post_page
@@ -67,6 +68,7 @@ safe_include($pagesPath);           // Datei in pages/
 safe_include($pagesPath . '.php');  // Datei in pages/ mit .php-Endung
 
 // 9. Nichts gefunden
+*/
 echo "ERROR: konnte den müll $fullPath nicht finden";
 exit;
 ?>
