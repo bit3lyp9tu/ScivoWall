@@ -5,3 +5,28 @@ AddDefaultCharset UTF-8
 </IfModule>
 
 RewriteEngine On
+
+RewriteEngine On
+RewriteBase /
+
+# 0. Wenn Datei oder Verzeichnis existiert, normal ausliefern
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# 1. Prüfe, ob .php im DocumentRoot existiert, intern weiterleiten
+RewriteCond %{DOCUMENT_ROOT}/$1.php -f
+RewriteRule ^(.+?)/?$ /$1.php [L]
+
+# 2. Prüfe, ob Datei oder Verzeichnis in /pages/ existiert, intern weiterleiten
+RewriteCond %{DOCUMENT_ROOT}/pages/$1 -f [OR]
+RewriteCond %{DOCUMENT_ROOT}/pages/$1 -d
+RewriteRule ^(.+?)/?$ /pages/$1 [L]
+
+# 3. Prüfe, ob .php in /pages/ existiert, intern weiterleiten
+RewriteCond %{DOCUMENT_ROOT}/pages/$1.php -f
+RewriteRule ^(.+?)/?$ /pages/$1.php [L]
+
+# 4. Wenn nichts gefunden, intern 404.php ausliefern
+RewriteRule ^.*$ 404.php [L]
+
