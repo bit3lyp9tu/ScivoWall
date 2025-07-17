@@ -1,3 +1,9 @@
+AddDefaultCharset UTF-8
+
+<IfModule mod_php.c>
+    php_value default_charset "UTF-8"
+</IfModule>
+
 RewriteEngine On
 
 # 1. Wenn Datei existiert (.php) → Umleitung ohne .php erlauben
@@ -21,10 +27,3 @@ RewriteRule ^([^/]+)$ /pages/$1 [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^.*$ /404.php [L]
-
-# Standard-Encoding
-AddDefaultCharset UTF-8
-
-<IfModule mod_php.c>
-    php_value default_charset "UTF-8"
-</IfModule>
