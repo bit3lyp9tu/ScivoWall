@@ -5,25 +5,4 @@ AddDefaultCharset UTF-8
 </IfModule>
 
 RewriteEngine On
-
-# 1. Wenn Datei existiert (.php) → Umleitung ohne .php erlauben
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME}.php -f
-RewriteCond %{REQUEST_URI} !\.php$
-RewriteRule ^([^/]+)$ $1.php [L]
-
-# 2. Wenn Datei nicht existiert, prüfe ob sie in /pages/ existiert (mit oder ohne .php)
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{DOCUMENT_ROOT}/pages/$1.php -f
-RewriteRule ^([^/]+)$ /pages/$1.php [L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{DOCUMENT_ROOT}/pages/$1 -f
-RewriteRule ^([^/]+)$ /pages/$1 [L]
-
-# 3. Wenn alles fehlschlägt, zu 404.php
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^.*$ /404.php [L]
+RewriteRule ^ 404.php [L]
