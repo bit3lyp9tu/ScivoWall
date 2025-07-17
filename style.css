@@ -391,8 +391,9 @@ div#toggle_register_box {
 }
 
 .account-box-moving {
-    /* position: absolute; */
-    /* left: 0; */
+    /* position: absolute;
+    left: 0px;
+    top: 15%; */
     /* overscroll-behavior: contain; */
 }
 
@@ -429,6 +430,15 @@ input.vertical-marker[type="button"] {
     width: 0%;
 }
 
+.account-box-item:hover {
+    display: block;
+
+    animation-name: form-expand-parent;
+    animation-duration: 0.5s;
+
+    width: 600px;
+}
+
 .account-box-item>div:hover .stateA {
     display: block;
 
@@ -440,17 +450,33 @@ input.vertical-marker[type="button"] {
     width: 100%;
 }
 
-.account-box-item:hover .vertical-marker {
+.account-box-item>div:hover .vertical-marker {
     display: none;
 }
 
 @keyframes form-expand {
+
     0% {
+        width: 0%;
+    }
+
+    15% {
         width: 0%;
     }
 
     100% {
         width: 100%;
+    }
+}
+
+@keyframes form-expand-parent {
+
+    0% {
+        width: 0px;
+    }
+
+    100% {
+        width: 600px;
     }
 }
 

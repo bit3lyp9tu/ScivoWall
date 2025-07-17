@@ -24,6 +24,7 @@
         <div class="header-video" style="float: right;"></div>
 
         <div class="account-box-moving">
+
             <div class="account-box-item">
                 <div>
                     <input type="text" id="name" class="stateA" placeholder="Enter your Username...">
