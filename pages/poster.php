@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang='en'>
 <?php
+
     $site_script="poster.js";
+    include(__DIR__ . "/../src/php/header.php");
 
-    include(__DIR__ . "/" . "account_management.php");
-    include(__DIR__ . "/" . "header.html");
-
-    include(__DIR__ . "/" . "poster_edit.php")
+    // include_once(__DIR__ . "/../src/php/account_management.php");
+    // include_once(__DIR__ . "/../src/php/poster_edit.php");
 ?>
 <body class="bgimg">
     <div id="logo_headline">

@@ -12,7 +12,7 @@ $(document).ready(function () {
         } else {
             $.ajax({
                 type: "POST",
-                url: "post_traffic.php",
+                url: "/scientific_poster_generator/api/post_traffic.php",
                 data: {
                     action: 'login',
                     name: username.value,

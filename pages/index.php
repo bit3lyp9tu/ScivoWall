@@ -11,11 +11,10 @@
 	//TODO:   remove content redundancy in .box elements
 
     $site_script="index.js";
+    include(__DIR__ . "/../src/php/header.php");
 
-    include(__DIR__ . "/" . "../src/php/account_management.php");
-    include(__DIR__ . "/" . "../src/header.html");
-
-    include(__DIR__ . "/" . "../src/php/poster_edit.php");
+    // include_once(__DIR__ . "/../src/php/account_management.php");
+    // include_once(__DIR__ . "/../src/php/poster_edit.php");
 
 ?>
 <body>

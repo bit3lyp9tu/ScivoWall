@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang='en'>
 <?php
-    include(__DIR__ . "/" . "account_management.php");
-    include(__DIR__ . "/" . "header.html");
+
+    $site_script="register.js";
+    include(__DIR__ . "/../src/php/header.php");
+
+    // include_once(__DIR__ . "/../src/php/account_management.php");
 ?>
 <body>
     <div>

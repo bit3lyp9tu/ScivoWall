@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang='en'>
 <?php
+
+    $site_script="projects.js";
+    include(__DIR__ . "/../src/php/header.php");
+
     // include_once(__DIR__ . "/" . "index.php");
-    include(__DIR__ . "/" . "account_management.php");
-    include(__DIR__ . "/" . "header.html");
+    // include_once(__DIR__ . "/../src/php/account_management.php");
+    // include_once(__DIR__ . "/../src/php/poster_edit.php");
 ?>
 <body class="bgimg">
     <div id="logo_headline">
