@@ -4,6 +4,10 @@ AddDefaultCharset UTF-8
     php_value default_charset "UTF-8"
 </IfModule>
 
+<Directory /var/www/html/scientific_poster_generator/>
+    AllowOverride All
+</Directory>
+
 RewriteEngine On
 RewriteBase /scientific_poster_generator/
 
