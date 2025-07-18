@@ -1078,7 +1078,7 @@ async function loadImgsInTable(filter) {
     }
 }
 
-document.getElementById("logout").onclick = function () {
+$(document).on("click", "#logout", function () {
     $.ajax({
         type: "POST",
         url: "/scientific_poster_generator/api/post_traffic.php",
@@ -1094,7 +1094,7 @@ document.getElementById("logout").onclick = function () {
             toastr["error"]("An logout error occurred");
         }
     });
-}
+});
 
 $(document).ready(async function () {
     await load_project_page_data();

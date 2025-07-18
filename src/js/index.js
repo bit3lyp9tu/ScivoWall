@@ -85,8 +85,7 @@ function loadStyle(href) {
         document.head.appendChild(style);
     });
 }
-
-document.getElementById("login-btn").addEventListener("click", function () {
+$(document).on("click", "#login-btn", function () {
     let username = document.getElementById("name");
     let password = document.getElementById("pw");
 
@@ -115,8 +114,7 @@ document.getElementById("login-btn").addEventListener("click", function () {
         });
     }
 });
-
-document.getElementById("register-btn").addEventListener("click", function () {
+$(document).on("click", "#register-btn", function () {
     let username = document.getElementById("username");
     let password = document.getElementById("password");
     let password2 = document.getElementById("password2");

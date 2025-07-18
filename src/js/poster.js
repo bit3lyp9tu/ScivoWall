@@ -62,20 +62,19 @@ async function request(data) {
 }
 
 async function hasValidUserSession() {
-    return await $.ajax({
-        type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
-        data: {
-            action: "has-valid-user-session"
-        },
-        success: function (response) {
-            return response;
-        },
-        error: function (err) {
-            console.error(err);
-            return false;
-        }
-    });
+    try {
+        const response = await $.ajax({
+            type: "POST",
+            url: "/scientific_poster_generator/api/post_traffic.php",
+            data: {
+                action: "has-valid-user-session"
+            }
+        });
+        return response;
+    } catch (err) {
+        console.error("Session check failed:", err);
+        return false;
+    }
 }
 async function imageUpload(data, poster_id) {
     await $.ajax({
@@ -151,22 +150,21 @@ async function getLoadedImg(poster_id, img_name, style) {
 }
 
 async function upload(id, data) {
-    return await $.ajax({
-        type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
-        data: {
-            action: "content-upload",
-            id: id,
-            data: data
-        },
-        success: function (response) {
-            return response;
-        },
-        error: function (err) {
-            console.error(err);
-            return err;
-        }
-    });
+    try {
+        const response = await $.ajax({
+            type: "POST",
+            url: "/scientific_poster_generator/api/post_traffic.php",
+            data: {
+                action: "content-upload",
+                id: id,
+                data: data
+            }
+        });
+        return response;
+    } catch (err) {
+        console.error("Upload failed:", err);
+        return false;
+    }
 }
 
 async function isEditView() {
@@ -502,7 +500,7 @@ async function edit_box_event(event) {
     }
     await save_content();
 }
-
+// $(document).on("click", edit_box_event);
 document.addEventListener("click", edit_box_event);
 
 //TODO:   check for invalid names during image upload
@@ -695,8 +693,7 @@ async function author_item(value) {
 
     return item;
 }
-
-document.addEventListener("focusout", async function (event) {
+$(document).on("focusout", async function (event) {
     if (event.target.id == "add_author") {
         if (event.target.value != "") {
             // convert target into item
@@ -1060,7 +1057,7 @@ var dragged_text = "";
 var is_draging = false;
 var dragend_item = null;
 
-document.addEventListener("dragstart", async function (event) {
+$(document).on("dragstart", async function (event) {
 
     console.log("drawstart event", event.target);
 
@@ -1076,7 +1073,7 @@ document.addEventListener("dragstart", async function (event) {
     await save_content();
 });
 
-document.addEventListener("dragover", function (event) {
+$(document).on("dragover", function (event) {
     event.preventDefault();
 });
 
@@ -1085,7 +1082,7 @@ document.addEventListener("dragover", function (event) {
 
 // });
 
-document.addEventListener("drop", async function (event) {
+$(document).on("drop", async function (event) {
     event.preventDefault();
 
     if (document.getElementById("add_author").contains(event.target)) {
@@ -1104,14 +1101,14 @@ document.addEventListener("drop", async function (event) {
     await save_content();
 });
 
-document.addEventListener("mouseover", function (event) {
+$(document).on("mouseover", function (event) {
     // if (is_draging) {
     //     console.log(is_draging);
     //     console.log(event.target);
     // }
 });
 
-document.getElementById("logout").onclick = function () {
+$(document).on("click", "#logout", function () {
     $.ajax({
         type: "POST",
         url: "/scientific_poster_generator/api/post_traffic.php",
@@ -1127,4 +1124,4 @@ document.getElementById("logout").onclick = function () {
             toastr["error"]("An logout error occurred");
         }
     });
-}
+});
