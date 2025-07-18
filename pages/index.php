@@ -12,10 +12,10 @@
 
     $site_script="index.js";
 
-    include(__DIR__ . "/" . "account_management.php");
-    include(__DIR__ . "/" . "header.html");
+    include(__DIR__ . "/" . "../src/php/account_management.php");
+    include(__DIR__ . "/" . "../src/header.html");
 
-    include(__DIR__ . "/" . "poster_edit.php");
+    include(__DIR__ . "/" . "../src/php/poster_edit.php");
 
 ?>
 <body>

@@ -29,9 +29,9 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
 
-    <link rel='stylesheet' type='text/css' href=style.css>
+    <link rel='stylesheet' type='text/css' href=css/style.css>
 
-    <script src="cryptography.js"></script>
+    <script src="js/cryptography.js"></script>
 
     <!-- <link rel="stylesheet" href="./bower_components/carousel-3d/dist/styles/jquery.carousel-3d.default.css"> -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
@@ -42,11 +42,13 @@
 
     <?php
         $script_path = $_SERVER["SCRIPT_FILENAME"];
+        error_log("---------------------------------------------------");
+        error_log($script_path);
         $script_path = preg_replace("/.*\//", "", $script_path);
         $script_path = preg_replace("/\.php$/", ".js", $script_path);
 
         if (file_exists($script_path)) {
-            print "<script src='$script_path' defer></script>";
+            print "<script src='js/" . $script_path . "' defer></script>";
         }
         if($script_path != "index.js") {
             print "<script src='https://cdn.plot.ly/plotly-3.0.0.min.js' charset='utf-8'></script>";
