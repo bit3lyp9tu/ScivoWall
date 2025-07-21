@@ -137,7 +137,6 @@ maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
 export inDocker="true"
 
 container_id=$(docker ps | grep scientific_poster_generator-poster_generator-1 | sed 's/^\([^ ]*\).*/\1/')
-echo $container_id
 
 echo "#########################"
 docker exec $container_id cp custom-000-default.conf /etc/apache2/sites-enabled/000-default.conf
