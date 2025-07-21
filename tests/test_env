@@ -35,6 +35,8 @@ if [[ "$GITHUB_ACTIONS" != "true" ]]; then
 		sudo mariadb -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
 		sudo mariadb $DB_NAME < ./tests/test_config2.sql
 		sudo mariadb $DB_NAME < ./tests/test_img.sql
+
+		export root_path="/scientific_poster_generator";
 	fi
 else
 	mariadb -h 127.0.0.1 -P 3800 -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO "poster_generator"@"%" IDENTIFIED BY "password"; FLUSH PRIVILEGES;'

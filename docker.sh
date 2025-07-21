@@ -131,3 +131,22 @@ function maria_db_exec {
 
 maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
+
+# maria_db_exec "SELECT * FROM poster_generator.user;"
+
+export inDocker="true"
+
+container_id=$(docker ps | grep scientific_poster_generator-poster_generator-1 | sed 's/^\([^ ]*\).*/\1/')
+echo $container_id
+
+echo "#########################"
+docker exec $container_id cp custom-000-default.conf /etc/apache2/sites-enabled/000-default.conf
+
+sudo systemctl reload apache2
+
+# docker exec $(docker ps | grep scientific_poster_generator-poster_generator-1 | sed 's/^\([^ ]*\).*/\1/') cat /etc/apache2/sites-enabled/000-default.conf
+# docker exec $container_id cat /etc/apache2/sites-enabled/000-default.conf
+
+curl http://localhost:1112/pages/login | grep title
+
+# sudo tail -f /var/log/apache2/error.log

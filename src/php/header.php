@@ -1,10 +1,15 @@
 <?php
+
+    // $path_prefix = "";
+    $path_prefix = "/../src/php";
     $root_path = "/scientific_poster_generator";
+
+    // print "inDocker: " . getenv("inDocker");
 
     include_once(__DIR__ . "/../header.html");
 
-    include_once(__DIR__ . "/../src/php/account_management.php");
-    include_once(__DIR__ . "/../src/php/poster_edit.php");
+    include_once(__DIR__ . $path_prefix . "/account_management.php");
+    include_once(__DIR__ . $path_prefix . "/poster_edit.php");
 
     // include_once(__DIR__ . "/../css/style_test.css");
     // print '<script src="' . $root_path . '/src/js/page_test.js"></script>';
@@ -15,5 +20,4 @@
     print '<script src="' . $root_path . '/src/js//marked.min.js"></script>';
 
     print '<script src="' . $root_path . '/src/js/' . $site_script . '"></script>';
-
 ?>
