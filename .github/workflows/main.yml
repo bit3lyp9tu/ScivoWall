@@ -190,6 +190,9 @@ jobs:
         ps aux | grep apache2
         sudo cp custom-000-default.conf /etc/apache2/sites-enabled/000-default.conf
         cat /etc/apache2/sites-enabled/000-default.conf
+        echo ##########################
+        sudo cp custom-ports.conf /etc/apache2/ports.conf
+        cat /etc/apache2/ports.conf
         sudo a2enmod rewrite
         sudo systemctl restart apache2
 
@@ -203,7 +206,15 @@ jobs:
     - name: Run test script
       continue-on-error: false
       run: |
-        ./tests/test_env >> $GITHUB_STEP_SUMMARY
+        curl http://localhost:1112/login.php | grep title
+        sleep 5
+        curl http://localhost:1112/pages/login.php | grep title
+        sleep 5
+        curl http://localhost:1112/scientific_poster_generator/login.php | grep title
+        sleep 5
+        curl http://localhost:1112/scientific_poster_generator/pages/login.php | grep title
+
+    # ./tests/test_env >> $GITHUB_STEP_SUMMARY
 
     # mariadb -h 127.0.0.1 -P 3800 -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO "poster_generator"@"%" IDENTIFIED BY "password"; FLUSH PRIVILEGES;'
     # mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword poster_generator < ./tests/test_config2.sql
