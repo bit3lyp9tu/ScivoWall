@@ -195,9 +195,9 @@ jobs:
     - name: Server Log
       run: |
         echo ##########################error
-        sudo tail /var/log/apache2/error.log
+        sudo cat /var/log/apache2/error.log
         echo ##########################other_vhosts_access
-        sudo tail /var/log/apache2/other_vhosts_access.log
+        sudo cat /var/log/apache2/other_vhosts_access.log
 
     - name: Run test script
       continue-on-error: false
