@@ -132,12 +132,10 @@ function maria_db_exec {
 maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
 
-# maria_db_exec "SELECT * FROM poster_generator.user;"
+docker-compose exec dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_config2.sql
+docker-compose exec dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_img.sql
 
-echo -----------------------------
-pwd
-ls -l
-echo -----------------------------
+# maria_db_exec "SELECT * FROM poster_generator.user;"
 
 export inDocker="true"
 
@@ -163,4 +161,32 @@ curl http://localhost:${LOCAL_PORT}/scientific_poster_generator/pages/login.php 
 # sudo tail -f /var/log/apache2/error.log
 # sudo tail -f /var/log/apache2/other_vhosts_access.log
 
-netstat -tuln
+# netstat -tuln
+
+echo Running Backend-Tests...
+
+echo Run tests on Test-DB: ${DB_NAME}
+
+php testing.php $DB_NAME
+CODE=$?
+
+php -r 'foreach(get_defined_functions()["internal"] as $i) {echo $i . "\n";};' > ./tests/php_build_in_func
+
+for i in __halt_compiler abstract and array as break callable case catch class clone const continue declare default die do echo else elseif empty enddeclare endfor endforeach endif endswitch endwhile eval exit extends final for foreach function global goto if implements include include_once instanceof insteadof interface isset list namespace new or print private protected public require require_once return static switch throw trait try unset use var while xor
+do
+ echo $i >> ./tests/php_build_in_func
+done
+
+cd tests
+export DB_NAME
+./run_tests $*
+CODE=$?
+cd ..
+
+echo --- Backend Coverage ---
+python3 ./tests/coverage.py ./testing.php 2 0 0
+
+echo --- Frontend Coverage ---
+echo -
+
+exit $CODE

@@ -25,12 +25,18 @@ from selenium.webdriver.firefox.service import Service as FirefoxService
 
 driver = None
 address = None
+sub_path = ""
 
 
 def create_driver():
-    global driver, address
+    global driver, address, sub_path
 
     options = Options()
+
+    print(f"In Docker: {os.environ.get("IND")}")
+    print(f"In Docker: {os.getenv("RUNNING_IN_DOCKER") == "true"}")
+
+    # sub_path = "scientific_poster_generator/"
 
     if os.environ.get("GITHUB_ACTIONS"):
         options.add_argument("--headless")
@@ -40,10 +46,10 @@ def create_driver():
             executable_path="/home/runner/cache/.driver/geckodriver"
         )
         driver = webdriver.Firefox(service=service, options=options)
-        address = "127.0.0.1:8080"
+        address = "127.0.0.1:1112"
     else:
         driver = webdriver.Firefox(options=options)
-        address = "localhost"
+        address = "localhost:1112"
 
 
 class PythonOrgSearch(unittest.TestCase):
@@ -52,10 +58,10 @@ class PythonOrgSearch(unittest.TestCase):
     address = ""
 
     def test_search_in_python_org(self):
-        driver.get(f"http://{address}/scientific_poster_generator/pages/login.php")
+        driver.get(f"http://{address}/{sub_path}pages/login.php")
         time.sleep(self.wait_time)
         print("Testing Page: " + driver.title)
-        driver.get(f"http://{address}/scientific_poster_generator/login.php")
+        driver.get(f"http://{address}/{sub_path}login.php")
         time.sleep(self.wait_time)
         print("Testing Page: " + driver.title)
         self.assertIn("Poster Generator", driver.title)
@@ -80,7 +86,7 @@ class PythonOrgSearch(unittest.TestCase):
         time.sleep(self.wait_time)
         driver.find_element(By.ID, "login").click()
         self.assertEqual(
-            f"http://{address}/scientific_poster_generator/login.php",
+            f"http://{address}/{sub_path}login.php",
             driver.current_url,
         )
         time.sleep(self.wait_time)
@@ -93,7 +99,7 @@ class PythonOrgSearch(unittest.TestCase):
         driver.find_element(By.ID, "login").click()
         time.sleep(self.wait_time)
         self.assertEqual(
-            f"http://{address}/scientific_poster_generator/login.php",
+            f"http://{address}/{sub_path}login.php",
             driver.current_url,
         )
         time.sleep(self.wait_time)
@@ -106,7 +112,7 @@ class PythonOrgSearch(unittest.TestCase):
         driver.find_element(By.ID, "login").click()
         time.sleep(self.wait_time)
         self.assertEqual(
-            f"http://{address}/scientific_poster_generator/login.php",
+            f"http://{address}/{sub_path}login.php",
             driver.current_url,
         )
         time.sleep(self.wait_time)
@@ -119,7 +125,7 @@ class PythonOrgSearch(unittest.TestCase):
         driver.find_element(By.ID, "login").click()
         time.sleep(self.wait_time)
         self.assertEqual(
-            f"http://{address}/scientific_poster_generator/projects.php",
+            f"http://{address}/{sub_path}projects.php",
             driver.current_url,
         )
 
@@ -133,7 +139,7 @@ class PythonOrgSearch(unittest.TestCase):
 
     def login_fill_form(self, name, pw):
         self.assertEqual(
-            f"http://{address}/scientific_poster_generator/login.php",
+            f"http://{address}/{sub_path}login.php",
             driver.current_url,
         )
         time.sleep(self.wait_time)
@@ -155,7 +161,7 @@ class PythonOrgSearch(unittest.TestCase):
         driver.find_element(By.ID, "pw").clear()
 
     def logout(self):
-        driver.get(f"http://{address}/scientific_poster_generator/projects.php")
+        driver.get(f"http://{address}/{sub_path}projects.php")
         time.sleep(self.wait_time)
         # check if page contains logout
         logout = driver.find_element(By.ID, "logout")
@@ -164,7 +170,7 @@ class PythonOrgSearch(unittest.TestCase):
         time.sleep(self.wait_time)
         logout.click()
         self.assertEqual(
-            f"http://{address}/scientific_poster_generator/login.php",
+            f"http://{address}/{sub_path}login.php",
             driver.current_url,
         )
 
@@ -181,7 +187,7 @@ class PythonOrgSearch(unittest.TestCase):
 
     def user_page(self):
         self.assertEqual(
-            f"http://{address}/scientific_poster_generator/projects.php",
+            f"http://{address}/{sub_path}projects.php",
             driver.current_url,
         )
         time.sleep(self.wait_time)
@@ -323,12 +329,12 @@ class PythonOrgSearch(unittest.TestCase):
         ).click()
         time.sleep(self.wait_time)
         self.assertEqual(
-            f"http://{address}/scientific_poster_generator/poster.php",
+            f"http://{address}/{sub_path}poster.php",
             driver.current_url.split("?")[0],
         )
 
         driver.get(
-            f"http://{address}/scientific_poster_generator/projects.php",
+            f"http://{address}/{sub_path}projects.php",
         )
 
         time.sleep(self.wait_time)
@@ -567,9 +573,7 @@ class PythonOrgSearch(unittest.TestCase):
         self.check_suggested_authors(data["author_suggestions2"])
 
         # check suggested authors add new one + page reload
-        driver.get(
-            f"http://{address}/scientific_poster_generator/poster.php?id={poster_id}&mode=private"
-        )
+        driver.get(f"http://{address}/{sub_path}poster.php?id={poster_id}&mode=private")
         time.sleep(self.wait_time)
         self.check_suggested_authors(data["author_suggestions2"])
 
@@ -719,7 +723,7 @@ class PythonOrgSearch(unittest.TestCase):
             .text,
         )
 
-        driver.get(f"http://{address}/scientific_poster_generator/projects.php")
+        driver.get(f"http://{address}/{sub_path}projects.php")
         time.sleep(self.wait_time)
         column_nr = 3 if isAdmin else 2
         row_nr = 2 if isAdmin else 4
@@ -739,7 +743,7 @@ class PythonOrgSearch(unittest.TestCase):
     def poster_page(self, local_index):
 
         driver.get(
-            f"http://{address}/scientific_poster_generator/projects.php",
+            f"http://{address}/{sub_path}projects.php",
         )
 
         time.sleep(3)
@@ -803,7 +807,7 @@ class PythonOrgSearch(unittest.TestCase):
         # TODO: check if other user cannot change
         # poster_id = 108
         # driver.get(
-        #     f"http://{address}/scientific_poster_generator/poster.php?id={poster_id}&mode=private"
+        #     f"http://{address}/{sub_path}poster.php?id={poster_id}&mode=private"
         # )
         # self.assertTrue(False)
 
@@ -856,7 +860,7 @@ class PythonOrgSearch(unittest.TestCase):
         pass
 
     def check_rename_row(self, css_cell, value, css_names, list):
-        page = f"http://{address}/scientific_poster_generator/projects.php"
+        page = f"http://{address}/{sub_path}projects.php"
         filter_config = [
             ("select#select_user", "max5", "input#submit-filter"),
             ("select#visibility", "1", "input#submit-filter"),
@@ -898,7 +902,7 @@ class PythonOrgSearch(unittest.TestCase):
         pass
 
     def check_delete_row(self, css_selector, css_names, list):
-        page = f"http://{address}/scientific_poster_generator/projects.php"
+        page = f"http://{address}/{sub_path}projects.php"
         filter_config = [
             ("select#select_user", "max5", "input#submit-filter"),
             ("select#visibility", "1", "input#submit-filter"),
@@ -928,7 +932,7 @@ class PythonOrgSearch(unittest.TestCase):
     def admin_user(self):
 
         # go to projects page
-        driver.get(f"http://{address}/scientific_poster_generator/projects.php")
+        driver.get(f"http://{address}/{sub_path}projects.php")
         time.sleep(self.wait_time)
 
         # logout
@@ -939,7 +943,7 @@ class PythonOrgSearch(unittest.TestCase):
         self.login_fill_form("Admin", "PwScaDS-2025")
         driver.find_element(By.ID, "login").click()
         self.assertEqual(
-            f"http://{address}/scientific_poster_generator/projects.php",
+            f"http://{address}/{sub_path}projects.php",
             driver.current_url,
         )
         time.sleep(self.wait_time)
@@ -962,14 +966,14 @@ class PythonOrgSearch(unittest.TestCase):
                 "div#table-container>table>tr#table-container--nr-1>td:nth-child(4)>input",
             )[0].get_attribute("value"),
         )
-        driver.get(f"http://{address}/scientific_poster_generator/index.php")
+        driver.get(f"http://{address}/{sub_path}index.php")
         self.assertIsNotNone(
             driver.find_elements(By.CSS_SELECTOR, "div#posters>div>iframe")
         )
 
         time.sleep(self.wait_time)
 
-        driver.get(f"http://{address}/scientific_poster_generator/projects.php")
+        driver.get(f"http://{address}/{sub_path}projects.php")
 
         time.sleep(self.wait_time)
 
@@ -991,7 +995,7 @@ class PythonOrgSearch(unittest.TestCase):
 
         time.sleep(self.wait_time)
 
-        driver.get(f"http://{address}/scientific_poster_generator/index.php")
+        driver.get(f"http://{address}/{sub_path}index.php")
 
         time.sleep(self.wait_time)
 
@@ -999,7 +1003,7 @@ class PythonOrgSearch(unittest.TestCase):
             [], driver.find_elements(By.CSS_SELECTOR, "div#posters>div>iframe")
         )
 
-        driver.get(f"http://{address}/scientific_poster_generator/projects.php")
+        driver.get(f"http://{address}/{sub_path}projects.php")
 
         # check if admin can change other posters
         time.sleep(self.wait_time)
@@ -1010,7 +1014,7 @@ class PythonOrgSearch(unittest.TestCase):
         ).click()
         time.sleep(self.wait_time)
         self.assertEqual(
-            f"http://{address}/scientific_poster_generator/poster.php?id={poster_id}&mode=private",
+            f"http://{address}/{sub_path}poster.php?id={poster_id}&mode=private",
             driver.current_url,
         )
         time.sleep(self.wait_time)
@@ -1061,7 +1065,7 @@ class PythonOrgSearch(unittest.TestCase):
         self.poster_tests("", poster_id, data, True)
 
         time.sleep(self.wait_time)
-        driver.get(f"http://{address}/scientific_poster_generator/projects.php")
+        driver.get(f"http://{address}/{sub_path}projects.php")
 
         # check set view_mode
         self.change_selector(
@@ -1071,14 +1075,14 @@ class PythonOrgSearch(unittest.TestCase):
         )
         # check if state stored after reload
         time.sleep(self.wait_time)
-        driver.get(f"http://{address}/scientific_poster_generator/projects.php")
+        driver.get(f"http://{address}/{sub_path}projects.php")
         self.check_selected(
             "div#table-container>table>tr:nth-child(2)>td:nth-child(5)>select",
             "public",
             ["public", "private"],
         )
         time.sleep(self.wait_time)
-        driver.get(f"http://{address}/scientific_poster_generator/index.php")
+        driver.get(f"http://{address}/{sub_path}index.php")
         time.sleep(self.wait_time * 2 + 2)
         self.assertEqual(
             3,
@@ -1087,7 +1091,7 @@ class PythonOrgSearch(unittest.TestCase):
             ),
         )
         time.sleep(self.wait_time)
-        driver.get(f"http://{address}/scientific_poster_generator/projects.php")
+        driver.get(f"http://{address}/{sub_path}projects.php")
 
         time.sleep(self.wait_time)
         driver.find_element(By.CSS_SELECTOR, "input#submit-filter").click()

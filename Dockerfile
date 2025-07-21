@@ -3,6 +3,8 @@ FROM php:8.2-apache
 ENV APACHE_PORT 8080
 ENV APACHE_DOCUMENT_ROOT /var/www/html
 
+ENV RUNNING_IN_DOCKER=true
+
 RUN apt update && apt install -y mariadb-client
 
 RUN docker-php-ext-install mysqli

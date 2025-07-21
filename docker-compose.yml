@@ -24,6 +24,8 @@ services:
       - poster_generator_network
     tmpfs:
       - /tmp:rw
+    environment:
+      - IND=true
 volumes:
   json:
 networks:
