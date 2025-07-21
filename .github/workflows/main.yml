@@ -190,8 +190,9 @@ jobs:
         ps aux | grep php
         sudo cp custom-000-default.conf /etc/apache2/sites-enabled/000-default.conf
         cat /etc/apache2/sites-enabled/000-default.conf
+        echo ##########################error
         sudo tail /var/log/apache2/error.log
-        echo ##########################
+        echo ##########################other_vhosts_access
         sudo tail /var/log/apache2/other_vhosts_access.log
       # sudo systemctl reload apache2
 
