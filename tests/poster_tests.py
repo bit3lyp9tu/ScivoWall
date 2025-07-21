@@ -52,10 +52,13 @@ class PythonOrgSearch(unittest.TestCase):
     address = ""
 
     def test_search_in_python_org(self):
+        driver.get(f"http://{address}/scientific_poster_generator/pages/login.php")
+        time.sleep(self.wait_time)
+        print("Testing Page: " + driver.title)
         driver.get(f"http://{address}/scientific_poster_generator/login.php")
         time.sleep(self.wait_time)
-        self.assertIn("Poster Generator", driver.title)
         print("Testing Page: " + driver.title)
+        self.assertIn("Poster Generator", driver.title)
 
         self.login_page()
 

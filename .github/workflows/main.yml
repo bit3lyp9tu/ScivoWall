@@ -188,8 +188,11 @@ jobs:
         sleep 5
         netstat -tuln
         ps aux | grep php
-        cat /etc/apache2/sites-enabled/000-default.conf
         sudo cp custom-000-default.conf /etc/apache2/sites-enabled/000-default.conf
+        cat /etc/apache2/sites-enabled/000-default.conf
+        tail /var/log/apache2/error.log
+        echo ##########################
+        tail /var/log/apache2/other_vhosts_access.log
       # sudo systemctl reload apache2
 
     - name: Run test script
