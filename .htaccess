@@ -5,28 +5,9 @@ AddDefaultCharset UTF-8
 </IfModule>
 
 RewriteEngine On
-RewriteBase /scientific_poster_generator/
 
-# 0. Existiert Datei oder Verzeichnis, normal ausliefern
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*\.php)$ /pages/$1 [L]
 
-# Hole den angefragten Pfad relativ zum Unterordner
-RewriteRule ^(.*)$ - [E=RPATH:$1]
-
-# 1. Prüfe, ob .php im Unterordner existiert, intern weiterleiten
-RewriteCond %{DOCUMENT_ROOT}/scientific_poster_generator/%{ENV:RPATH}.php -f
-RewriteRule ^(.*)$ %{ENV:RPATH}.php [L]
-
-# 2. Prüfe, ob Datei oder Verzeichnis in /scientific_poster_generator/pages/ existiert, intern weiterleiten
-RewriteCond %{DOCUMENT_ROOT}/scientific_poster_generator/pages/%{ENV:RPATH} -f [OR]
-RewriteCond %{DOCUMENT_ROOT}/scientific_poster_generator/pages/%{ENV:RPATH} -d
-RewriteRule ^(.*)$ pages/%{ENV:RPATH} [L]
-
-# 3. Prüfe, ob .php in /scientific_poster_generator/pages/ existiert, intern weiterleiten
-RewriteCond %{DOCUMENT_ROOT}/scientific_poster_generator/pages/%{ENV:RPATH}.php -f
-RewriteRule ^(.*)$ pages/%{ENV:RPATH}.php [L]
-
-# 4. Wenn nichts gefunden, intern 404.php ausliefern (im Unterordner)
-RewriteRule ^.*$ /scientific_poster_generator/404.php [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^scientific_poster_generator/(.*\.php)$ /scientific_poster_generator/pages/$1 [L]

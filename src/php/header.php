@@ -1,7 +1,7 @@
 <?php
 
-    // $path_prefix = "";
-    $path_prefix = "/../src/php";
+    $path_prefix = "";
+    //$path_prefix = "/../src/php";
     $root_path = "/scientific_poster_generator";
 
     // print "inDocker: " . getenv("inDocker");
