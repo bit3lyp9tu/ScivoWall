@@ -140,6 +140,7 @@ container_id=$(docker ps | grep scientific_poster_generator-poster_generator-1 |
 
 echo "#########################"
 docker exec $container_id cp custom-000-default.conf /etc/apache2/sites-enabled/000-default.conf
+docker exec $container_id cp custom-ports.conf /etc/apache2/ports.conf
 
 sudo systemctl reload apache2
 

@@ -164,7 +164,8 @@ jobs:
     - name: Grand folder permissions 2
       run: |
         sudo chmod -R 777 $HOME/cache/.apt
-
+        pwd
+        ls -l
 
     - name: load docker image
       run: |
