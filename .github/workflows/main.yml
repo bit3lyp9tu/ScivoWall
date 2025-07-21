@@ -187,7 +187,7 @@ jobs:
         sudo systemctl start apache2
         sleep 5
         netstat -tuln
-        ps aux | grep php
+        ps aux | grep apache2
         sudo cp custom-000-default.conf /etc/apache2/sites-enabled/000-default.conf
         cat /etc/apache2/sites-enabled/000-default.conf
         sudo a2enmod rewrite
