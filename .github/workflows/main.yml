@@ -75,6 +75,7 @@ jobs:
         sudo apt install -y firefox
         sudo apt install -y libx11-xcb-dev libxcb1-dev libdbus-1-3 libxtst6 libnss3 libgdk-pixbuf2.0-0
         sudo apt install -y mariadb-server
+        sudo apt install -y apache2
 
 
     - name: Install dependencies
@@ -183,14 +184,14 @@ jobs:
 
     - name: Manage Server
       run: |
-        php -S 0.0.0.0:8080 -t /home/runner/work/scientific_poster_generator &
-        php -r "date_default_timezone_set('Europe/Berlin');"
+        sudo systemctl start apache2
         sleep 5
         netstat -tuln
         ps aux | grep php
         sudo cp custom-000-default.conf /etc/apache2/sites-enabled/000-default.conf
         cat /etc/apache2/sites-enabled/000-default.conf
-        sudo systemctl reload apache2
+        sudo a2enmod rewrite
+        sudo systemctl restart apache2
 
     - name: Server Log
       run: |
