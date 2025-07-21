@@ -26,8 +26,8 @@
 
 FROM php:8.2-apache
 
-ENV APACHE_PORT 8080
-ENV APACHE_DOCUMENT_ROOT /var/www/html
+ENV APACHE_PORT 1112
+ENV APACHE_DOCUMENT_ROOT /home/runner/work/scientific_poster_generator/scientific_poster_generator/
 
 RUN apt update && apt install -y mariadb-client
 

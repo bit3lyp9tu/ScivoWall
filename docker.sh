@@ -152,15 +152,15 @@ sudo systemctl reload apache2
 # docker exec $(docker ps | grep scientific_poster_generator-poster_generator-1 | sed 's/^\([^ ]*\).*/\1/') cat /etc/apache2/sites-enabled/000-default.conf
 # docker exec $container_id cat /etc/apache2/sites-enabled/000-default.conf
 
-curl http://localhost:1112/login.php | grep title
-sleep 5
-curl http://localhost:1112/pages/login.php | grep title
-sleep 5
-curl http://localhost:1112/scientific_poster_generator/login.php | grep title
-sleep 5
-curl http://localhost:1112/scientific_poster_generator/pages/login.php | grep title
+curl http://localhost:${LOCAL_PORT}/login.php | grep title
+sleep 3
+curl http://localhost:${LOCAL_PORT}/pages/login.php | grep title
+sleep 3
+curl http://localhost:${LOCAL_PORT}/scientific_poster_generator/login.php | grep title
+sleep 3
+curl http://localhost:${LOCAL_PORT}/scientific_poster_generator/pages/login.php | grep title
 
 # sudo tail -f /var/log/apache2/error.log
 # sudo tail -f /var/log/apache2/other_vhosts_access.log
 
-netstat -tuln | grep :1112
+netstat -tuln | grep $LOCAL_PORT
