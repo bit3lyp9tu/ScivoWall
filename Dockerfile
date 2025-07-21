@@ -38,7 +38,7 @@ RUN a2enmod rewrite
 #RUN apt update
 #RUN apt install -y mariadb-client
 
-COPY . /var/www/html/
+COPY . /home/runner/work/scientific_poster_generator/scientific_poster_generator/
 
 #RUN echo $'Package: *\nPin: release o=LP-PPA-mozillateam\nPin-Priority: 1001' > /etc/apt/preferences.d/mozilla-firefox
 #RUN add-apt-repository -y ppa:mozillateam/ppa
