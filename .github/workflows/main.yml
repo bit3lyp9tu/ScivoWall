@@ -218,6 +218,8 @@ jobs:
     - name: Run test script
       continue-on-error: true
       run: |
+        curl -v http://localhost:8080/login.php
+        sleep 5
         curl http://localhost:8080/login.php | grep title
         sleep 5
         curl http://localhost:8080/pages/login.php | grep title
