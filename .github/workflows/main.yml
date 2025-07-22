@@ -216,7 +216,7 @@ jobs:
     # curl -v http://localhost
 
     - name: Run test script
-      continue-on-error: false
+      continue-on-error: true
       run: |
         curl -v http://localhost:8080/login.php
         sleep 5

@@ -2,6 +2,8 @@
 <html lang='en'>
 <?php
 
+    error_log("login: " . __DIR__);
+
     $site_script="login.js";
     include(__DIR__ . "/../src/php/header.php");
 
