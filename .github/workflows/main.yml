@@ -202,8 +202,8 @@ jobs:
       cat /etc/apache2/ports.conf
       sudo a2enmod rewrite
       sudo systemctl restart apache2
-    # sudo chown -R www-data:www-data /home/runner/work/scientific_poster_generator/scientific_poster_generator
-    # sudo chmod -R 755 /home/runner/work/scientific_poster_generator/scientific_poster_generator
+  # sudo chown -R www-data:www-data /home/runner/work/scientific_poster_generator/scientific_poster_generator
+  # sudo chmod -R 755 /home/runner/work/scientific_poster_generator/scientific_poster_generator
 
     - name: Server Log
       run: |
