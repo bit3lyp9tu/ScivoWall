@@ -166,6 +166,8 @@ jobs:
         sudo chmod -R 777 $HOME/cache/.apt
         pwd
         ls -l
+        echo ######################
+        ls -l /home/runner/work/scientific_poster_generator/scientific_poster_generator
 
     - name: load docker image
       run: |
@@ -185,6 +187,9 @@ jobs:
 
     - name: Manage Server
       run: |
+        sudo chown -R www-data:www-data /home/runner/work/scientific_poster_generator/scientific_poster_generator
+        sudo chmod -R 755 /home/runner/work/scientific_poster_generator/scientific_poster_generator
+        echo ##########################
         sudo systemctl start apache2
         sleep 5
         echo ##########################
@@ -211,7 +216,7 @@ jobs:
       run: |
         sudo systemctl status apache2
         sudo netstat -tulpn | grep apache
-        curl -v http://localhost
+    # curl -v http://localhost
 
     - name: Run test script
       continue-on-error: false

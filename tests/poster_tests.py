@@ -32,11 +32,12 @@ def create_driver():
     global driver, address, sub_path
 
     options = Options()
-
-    print(f"In Docker: {os.environ.get("IND")}")
-    print(f"In Docker: {os.getenv("RUNNING_IN_DOCKER") == "true"}")
-
     # sub_path = "scientific_poster_generator/"
+
+    # print(f"In Docker: {os.environ.get("IND")}")
+    # print(f"In Docker: {os.getenv("RUNNING_IN_DOCKER") == "true"}")
+
+    print(f"Running on Port: [{os.environ.get("LOCAL_PORT")}]")
 
     if os.environ.get("GITHUB_ACTIONS"):
         options.add_argument("--headless")
@@ -49,7 +50,7 @@ def create_driver():
         address = "127.0.0.1:8080"
     else:
         driver = webdriver.Firefox(options=options)
-        address = "localhost:1112"
+        address = f"127.0.0.1:{os.environ.get("LOCAL_PORT")}"
 
 
 class PythonOrgSearch(unittest.TestCase):
