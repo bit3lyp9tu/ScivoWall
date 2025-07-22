@@ -46,7 +46,7 @@ def create_driver():
             executable_path="/home/runner/cache/.driver/geckodriver"
         )
         driver = webdriver.Firefox(service=service, options=options)
-        address = "127.0.0.1:1112"
+        address = "127.0.0.1:8080"
     else:
         driver = webdriver.Firefox(options=options)
         address = "localhost:1112"
