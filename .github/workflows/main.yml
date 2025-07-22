@@ -216,18 +216,10 @@ jobs:
     # curl -v http://localhost
 
     - name: Run test script
-      continue-on-error: true
+      continue-on-error: false
       run: |
         curl -v http://localhost:8080/login.php
         sleep 5
-        curl http://localhost:8080/login.php | grep title
-        sleep 5
-        curl http://localhost:8080/pages/login.php | grep title
-        sleep 5
-        curl http://localhost:8080/scientific_poster_generator/login.php | grep title
-        sleep 5
-        curl http://localhost:8080/scientific_poster_generator/pages/login.php | grep title
-
         ./tests/test_env >> $GITHUB_STEP_SUMMARY
     # curl -v http://127.0.0.1:8080/login.php
 
