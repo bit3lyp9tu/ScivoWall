@@ -6,8 +6,9 @@ AddDefaultCharset UTF-8
 
 RewriteEngine On
 
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*\.php)$ /pages/$1 [L]
+RewriteRule ^$ pages/index.php [L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^scientific_poster_generator/(.*\.php)$ /scientific_poster_generator/pages/$1 [L]
+RewriteRule ^(.*\.php)$ pages/$1 [L]
+
+ErrorDocument 404 /pages/404.php

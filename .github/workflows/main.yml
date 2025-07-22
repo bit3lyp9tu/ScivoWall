@@ -187,23 +187,23 @@ jobs:
 
     - name: Manage Server
       run: |
-        sudo chown -R www-data:www-data /home/runner/work/scientific_poster_generator/scientific_poster_generator
-        sudo chmod -R 755 /home/runner/work/scientific_poster_generator/scientific_poster_generator
-        echo ##########################
-        sudo systemctl start apache2
-        sleep 5
-        echo ##########################
-        netstat -tuln
-        echo ##########################
-        ps aux | grep apache2
-        echo ##########################
-        sudo cp custom-000-default.conf /etc/apache2/sites-enabled/000-default.conf
-        cat /etc/apache2/sites-enabled/000-default.conf
-        echo ##########################
-        sudo cp custom-ports.conf /etc/apache2/ports.conf
-        cat /etc/apache2/ports.conf
-        sudo a2enmod rewrite
-        sudo systemctl restart apache2
+      echo ##########################
+      sudo systemctl start apache2
+      sleep 5
+      echo ##########################
+      netstat -tuln
+      echo ##########################
+      ps aux | grep apache2
+      echo ##########################
+      sudo cp custom-000-default.conf /etc/apache2/sites-enabled/000-default.conf
+      cat /etc/apache2/sites-enabled/000-default.conf
+      echo ##########################
+      sudo cp custom-ports.conf /etc/apache2/ports.conf
+      cat /etc/apache2/ports.conf
+      sudo a2enmod rewrite
+      sudo systemctl restart apache2
+    # sudo chown -R www-data:www-data /home/runner/work/scientific_poster_generator/scientific_poster_generator
+    # sudo chmod -R 755 /home/runner/work/scientific_poster_generator/scientific_poster_generator
 
     - name: Server Log
       run: |
