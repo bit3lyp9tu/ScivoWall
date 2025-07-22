@@ -5,8 +5,6 @@
     $site_script="login.js";
     include(__DIR__ . "/../src/php/header.php");
 
-    // include_once(__DIR__ . "/../src/php/account_management.php");
-
     // jquery in lokale datei statt über code.jquery.com
 ?>
 <body>

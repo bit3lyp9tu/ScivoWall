@@ -44,7 +44,7 @@ async function request(data) {
 
         $.ajax({
             type: "POST",
-            url: "/scientific_poster_generator/api/post_traffic.php",
+            url: "/api/post_traffic.php",
             data: {
                 action: "get-content",
                 key: key,
@@ -65,7 +65,7 @@ async function hasValidUserSession() {
     try {
         const response = await $.ajax({
             type: "POST",
-            url: "/scientific_poster_generator/api/post_traffic.php",
+            url: "/api/post_traffic.php",
             data: {
                 action: "has-valid-user-session"
             }
@@ -79,7 +79,7 @@ async function hasValidUserSession() {
 async function imageUpload(data, poster_id) {
     await $.ajax({
         type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
+        url: "/api/post_traffic.php",
         data: {
             action: "image-upload",
             data: data,
@@ -123,7 +123,7 @@ function style_parser(element, style) {
 async function getLoadedImg(poster_id, img_name, style) {
     const resp = await $.ajax({
         type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
+        url: "/api/post_traffic.php",
         data: {
             action: "get-image",
             //id: pk_id,
@@ -153,7 +153,7 @@ async function upload(id, data) {
     try {
         const response = await $.ajax({
             type: "POST",
-            url: "/scientific_poster_generator/api/post_traffic.php",
+            url: "/api/post_traffic.php",
             data: {
                 action: "content-upload",
                 id: id,
@@ -724,7 +724,7 @@ function getAuthorCollection() {
     return new Promise((resolve, reject) => {
         $.ajax({
             type: "POST",
-            url: "/scientific_poster_generator/api/post_traffic.php",
+            url: "/api/post_traffic.php",
             data: {
                 action: 'fetch_author_collection'
             },
@@ -1111,7 +1111,7 @@ $(document).on("mouseover", function (event) {
 $(document).on("click", "#logout", function () {
     $.ajax({
         type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
+        url: "/api/post_traffic.php",
         data: {
             action: 'logout'
         },

@@ -2,7 +2,7 @@
 async function fetchAvailablePosters() {
     return await $.ajax({
         type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
+        url: "/api/post_traffic.php",
         data: {
             action: "fetch-available-posters"
         },
@@ -94,7 +94,7 @@ $(document).on("click", "#login-btn", function () {
     } else {
         $.ajax({
             type: "POST",
-            url: "/scientific_poster_generator/api/post_traffic.php",
+            url: "/api/post_traffic.php",
             data: {
                 action: 'login',
                 name: username.value,
@@ -124,7 +124,7 @@ $(document).on("click", "#register-btn", function () {
     } else {
         $.ajax({
             type: "POST",
-            url: "/scientific_poster_generator/api/post_traffic.php",
+            url: "/api/post_traffic.php",
             data: {
                 action: 'register',
                 name: username.value,

@@ -5,7 +5,7 @@ async function test_request() {
 
     await $.ajax({
         type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
+        url: "/api/post_traffic.php",
         data: {
             action: "test-request"
         },

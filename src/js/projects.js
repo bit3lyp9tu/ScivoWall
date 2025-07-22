@@ -11,7 +11,7 @@ function createProject() {
 
     $.ajax({
         type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
+        url: "/api/post_traffic.php",
         data: {
             action: 'create_project',
             name: project_name.value
@@ -33,7 +33,7 @@ function createProject() {
 function delete_project(id) {
     $.ajax({
         type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
+        url: "/api/post_traffic.php",
         data: {
             action: 'delete_project',
             id: Number(id),
@@ -50,7 +50,7 @@ function delete_project(id) {
 function delete_author(id) {
     $.ajax({
         type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
+        url: "/api/post_traffic.php",
         data: {
             action: "delete-author",
             id: Number(id)
@@ -67,7 +67,7 @@ function delete_author(id) {
 function delete_image(id) {
     $.ajax({
         type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
+        url: "/api/post_traffic.php",
         data: {
             action: "delete-image",
             id: Number(id)
@@ -96,7 +96,7 @@ function deleteItem(parent_id, local_id) {
 function updateVisibility(id, value) {
     $.ajax({
         type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
+        url: "/api/post_traffic.php",
         data: {
             action: "update-visibility",
             id: id,
@@ -114,7 +114,7 @@ function updateVisibility(id, value) {
 function rename_author(_this, id) {
     $.ajax({
         type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
+        url: "/api/post_traffic.php",
         data: {
             action: "rename-author",
             name: _this.value,
@@ -132,7 +132,7 @@ function rename_author(_this, id) {
 function rename_image(_this, id) {
     $.ajax({
         type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
+        url: "/api/post_traffic.php",
         data: {
             action: "rename-image",
             name: _this.value,
@@ -150,7 +150,7 @@ function rename_image(_this, id) {
 function rename_poster(_this, id) {
     $.ajax({
         type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
+        url: "/api/post_traffic.php",
         data: {
             action: "rename_poster",
             name: _this.value,
@@ -242,7 +242,7 @@ async function getViewOptions() {
     try {
         const response = await $.ajax({
             type: "POST",
-            url: "/scientific_poster_generator/api/post_traffic.php",
+            url: "/api/post_traffic.php",
             data: {
                 action: "list-view-options"
             }
@@ -258,7 +258,7 @@ async function setViewOption(poster_id, view_id, is_global) {
     try {
         const response = await $.ajax({
             type: "POST",
-            url: "/scientific_poster_generator/api/post_traffic.php",
+            url: "/api/post_traffic.php",
             data: {
                 action: "set-view-option",
                 poster_id: poster_id,
@@ -399,7 +399,7 @@ async function edit_translation(local_id) {
 
     const result = await $.ajax({
         type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
+        url: "/api/post_traffic.php",
         data: {
             action: "edit-translation",
             local_id: local_id
@@ -419,7 +419,7 @@ async function isAdmin() {
     try {
         const response = await $.ajax({
             type: "POST",
-            url: "/scientific_poster_generator/api/post_traffic.php",
+            url: "/api/post_traffic.php",
             data: {
                 action: "is-admin"
             }
@@ -496,7 +496,7 @@ async function get_selectable_filters() {
     try {
         const response = await $.ajax({
             type: "POST",
-            url: "/scientific_poster_generator/api/post_traffic.php",
+            url: "/api/post_traffic.php",
             data: {
                 action: 'selectable_filters'
             }
@@ -531,7 +531,7 @@ async function fetch_projects_filtered(filter) {
 
     $.ajax({
         type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
+        url: "/api/post_traffic.php",
         data: {
             action: 'fetch_filtered_projects',
             filter: filter
@@ -619,7 +619,7 @@ async function fetch_authors_filtered(filter) {
 
     $.ajax({
         type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
+        url: "/api/post_traffic.php",
         data: {
             action: 'fetch_filtered_authors',
             filter: filter
@@ -681,7 +681,7 @@ async function fetch_images_filtered(filter) {
 
     $.ajax({
         type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
+        url: "/api/post_traffic.php",
         data: {
             action: 'fetch_filtered_images',
             filter: filter
@@ -1018,7 +1018,7 @@ async function load_project_page_data() {
 async function loadImgsInTable(filter) {
     var json_string = await $.ajax({
         type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
+        url: "/api/post_traffic.php",
         data: {
             action: 'fetch_img_data',
             filter: filter
@@ -1081,7 +1081,7 @@ async function loadImgsInTable(filter) {
 $(document).on("click", "#logout", function () {
     $.ajax({
         type: "POST",
-        url: "/scientific_poster_generator/api/post_traffic.php",
+        url: "/api/post_traffic.php",
         data: {
             action: 'logout'
         },
