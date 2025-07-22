@@ -148,6 +148,7 @@ sed -n -E "s/Listen [0-9]{4}/Listen ${LOCAL_PORT}/p" custom-ports.conf
 docker exec $container_id cp custom-ports.conf /etc/apache2/ports.conf
 
 sudo systemctl reload apache2
+echo "#########################"
 
 # docker exec $(docker ps | grep scientific_poster_generator-poster_generator-1 | sed 's/^\([^ ]*\).*/\1/') cat /etc/apache2/sites-enabled/000-default.conf
 # docker exec $container_id cat /etc/apache2/sites-enabled/000-default.conf

@@ -187,8 +187,11 @@ jobs:
       run: |
         sudo systemctl start apache2
         sleep 5
+        echo ##########################
         netstat -tuln
+        echo ##########################
         ps aux | grep apache2
+        echo ##########################
         sudo cp custom-000-default.conf /etc/apache2/sites-enabled/000-default.conf
         cat /etc/apache2/sites-enabled/000-default.conf
         echo ##########################
@@ -203,6 +206,12 @@ jobs:
         sudo cat /var/log/apache2/error.log
         echo ##########################other_vhosts_access
         sudo cat /var/log/apache2/other_vhosts_access.log
+
+    - name: Check Apache status
+      run: |
+        sudo systemctl status apache2
+        sudo netstat -tulpn | grep apache
+        curl -v http://localhost
 
     - name: Run test script
       continue-on-error: false
