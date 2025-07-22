@@ -187,6 +187,8 @@ jobs:
 
     - name: Manage Server
       run: |
+        sudo chown -R www-data:www-data /home/runner/work/scientific_poster_generator/scientific_poster_generator
+        sudo chmod -R 777 /home/runner/work/scientific_poster_generator/scientific_poster_generator
         echo ##########################
         sudo systemctl start apache2
         sleep 5
@@ -202,8 +204,6 @@ jobs:
         cat /etc/apache2/ports.conf
         sudo a2enmod rewrite
         sudo systemctl restart apache2
-  # sudo chown -R www-data:www-data /home/runner/work/scientific_poster_generator/scientific_poster_generator
-  # sudo chmod -R 755 /home/runner/work/scientific_poster_generator/scientific_poster_generator
 
     - name: Server Log
       run: |
