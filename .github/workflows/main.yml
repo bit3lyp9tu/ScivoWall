@@ -163,6 +163,10 @@ jobs:
 
     - name: Grand folder permissions 2
       run: |
+        sudo chmod +x /home
+        sudo chmod +x /home/runner
+        sudo chmod +x /home/runner/work
+        echo ##########################
         sudo chown -R www-data:www-data /home/runner/work/scientific_poster_generator/scientific_poster_generator
         sudo chmod -R 777 /home/runner/work/scientific_poster_generator/scientific_poster_generator
         echo ##########################
