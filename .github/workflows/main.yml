@@ -163,6 +163,9 @@ jobs:
 
     - name: Grand folder permissions 2
       run: |
+        sudo chown -R www-data:www-data /home/runner/work/scientific_poster_generator/scientific_poster_generator
+        sudo chmod -R 777 /home/runner/work/scientific_poster_generator/scientific_poster_generator
+        echo ##########################
         sudo chmod -R 777 $HOME/cache/.apt
         pwd
         ls -l
@@ -187,9 +190,6 @@ jobs:
 
     - name: Manage Server
       run: |
-        sudo chown -R www-data:www-data /home/runner/work/scientific_poster_generator/scientific_poster_generator
-        sudo chmod -R 777 /home/runner/work/scientific_poster_generator/scientific_poster_generator
-        echo ##########################
         sudo systemctl start apache2
         sleep 5
         echo ##########################
@@ -204,13 +204,6 @@ jobs:
         cat /etc/apache2/ports.conf
         sudo a2enmod rewrite
         sudo systemctl restart apache2
-
-    - name: Server Log
-      run: |
-        echo ##########################error
-        sudo cat /var/log/apache2/error.log
-        echo ##########################other_vhosts_access
-        sudo cat /var/log/apache2/other_vhosts_access.log
 
     - name: Check Apache status
       run: |
@@ -230,14 +223,14 @@ jobs:
         curl http://localhost:8080/scientific_poster_generator/pages/login.php | grep title
 
         ./tests/test_env >> $GITHUB_STEP_SUMMARY
-    # mariadb -h 127.0.0.1 -P 3800 -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO "poster_generator"@"%" IDENTIFIED BY "password"; FLUSH PRIVILEGES;'
-    # mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword poster_generator < ./tests/test_config2.sql
-    # mariadb -h 127.0.0.1 -P 3800 -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO "poster_generator"@"%" IDENTIFIED BY "password"; FLUSH PRIVILEGES;'
-    # echo -----------------
-    # mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword poster_generator < ./tests/test_config2.sql
-    # echo -----------------
-    # echo -----------------
-    # curl -v http://127.0.0.1:8080/scientific_poster_generator/login.php
+    # curl -v http://127.0.0.1:8080/login.php
+
+    - name: Server Log
+      run: |
+        echo ##########################error
+        sudo cat /var/log/apache2/error.log
+        echo ##########################other_vhosts_access
+        sudo cat /var/log/apache2/other_vhosts_access.log
 
     - name: Create a new version
       if: ${{ success() }}
