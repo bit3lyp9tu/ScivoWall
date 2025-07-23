@@ -113,8 +113,6 @@ if command -v php 2>/dev/null >/dev/null; then
 	fi
 fi
 
-#sudo mkdir -p /poster_generator_json/
-
 CURRENT_USER=$(whoami)
 
 if groups "$CURRENT_USER" | grep -q "\bdocker\b"; then
@@ -122,8 +120,6 @@ if groups "$CURRENT_USER" | grep -q "\bdocker\b"; then
 else
 	sudo docker-compose build && sudo docker-compose up -d || echo "Failed to build container"
 fi
-
-#    mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword poster_generator < ./tests/test_config2.sql
 
 function maria_db_exec {
 	docker-compose exec dockerdb mariadb -uroot -ppassword -e "$1"
@@ -134,8 +130,6 @@ maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@
 
 docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_config2.sql
 docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_img.sql
-
-# maria_db_exec "SELECT * FROM poster_generator.user;"
 
 export inDocker="true"
 
@@ -161,10 +155,6 @@ curl http://localhost:${LOCAL_PORT}/scientific_poster_generator/login.php | grep
 sleep 1
 curl http://localhost:${LOCAL_PORT}/scientific_poster_generator/pages/login.php | grep title
 
-# sudo tail -f /var/log/apache2/error.log
-# sudo tail -f /var/log/apache2/other_vhosts_access.log
-
-# netstat -tuln
 
 echo Running Backend-Tests...
 
@@ -182,9 +172,6 @@ docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./t
 docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_img.sql
 
 maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
-
-# maria_db_exec "USE poster_generator;"
-# maria_db_exec "USE poster_generator; SELECT * FROM user;"
 
 php -r 'foreach(get_defined_functions()["internal"] as $i) {echo $i . "\n";};' > ./tests/php_build_in_func
 
