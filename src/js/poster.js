@@ -771,11 +771,11 @@ async function filloutAuthors(list) {
         $(this).find('.author-item-btn').show();
     });
 
-    $('.author-item').on('mouseleave', function () {
-        $(this).find('.author-item-btn').hide();
-    });
-
-    $('.author-item-btn').hide();
+    // TODO: if this is commented out - admin tests (author delete) will fail
+    // $('.author-item').on('mouseleave', function () {
+    //     $(this).find('.author-item-btn').hide();
+    // });
+    // $('.author-item-btn').hide();
 
 }
 

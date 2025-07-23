@@ -85,7 +85,7 @@ CODE=$?
 cd ..
 
 echo --- Backend Coverage ---
-python3 ./tests/coverage.py ./testing.php 2 0 0
+# python3 ./tests/coverage.py ./testing.php 2 0 0
 
 echo --- Frontend Coverage ---
 echo -

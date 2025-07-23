@@ -629,6 +629,7 @@ class PythonOrgSearch(unittest.TestCase):
             By.CSS_SELECTOR, "div#authors>div:nth-last-child(2)"
         )
         ActionChains(driver).move_to_element(last_author).perform()
+        time.sleep(self.wait_time)
         driver.find_element(
             By.CSS_SELECTOR,
             "div#authors>div:nth-last-child(2)>button.remove-element",
