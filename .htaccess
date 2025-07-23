@@ -4,6 +4,11 @@ AddDefaultCharset UTF-8
     php_value default_charset "UTF-8"
 </IfModule>
 
+SetEnv DB_HOST 127.0.0.1
+SetEnv DB_USER poster_generator
+SetEnv DB_PASS password
+SetEnv DB_NAME poster_generator
+
 RewriteEngine On
 
 RewriteRule ^$ pages/index.php [L]
