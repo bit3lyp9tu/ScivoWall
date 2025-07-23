@@ -132,8 +132,8 @@ function maria_db_exec {
 maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
 maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 
-docker-compose exec dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_config2.sql
-docker-compose exec dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_img.sql
+docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_config2.sql
+docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_img.sql
 
 # maria_db_exec "SELECT * FROM poster_generator.user;"
 
@@ -177,8 +177,10 @@ CODE=$?
 
 maria_db_exec "DROP DATABASE IF EXISTS poster_generator;"
 maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
-docker-compose exec dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_config2.sql
-docker-compose exec dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_img.sql
+
+docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_config2.sql
+docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_img.sql
+
 maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 
 # maria_db_exec "USE poster_generator;"
