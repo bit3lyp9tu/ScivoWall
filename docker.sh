@@ -154,11 +154,11 @@ echo "#########################"
 # docker exec $container_id cat /etc/apache2/sites-enabled/000-default.conf
 
 curl http://localhost:${LOCAL_PORT}/login.php | grep title
-sleep 3
+sleep 1
 curl http://localhost:${LOCAL_PORT}/pages/login.php | grep title
-sleep 3
+sleep 1
 curl http://localhost:${LOCAL_PORT}/scientific_poster_generator/login.php | grep title
-sleep 3
+sleep 1
 curl http://localhost:${LOCAL_PORT}/scientific_poster_generator/pages/login.php | grep title
 
 # sudo tail -f /var/log/apache2/error.log
