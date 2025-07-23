@@ -27,6 +27,7 @@
 
 	// Create connection
 	try {
+		error_log("servername: " . $servername . " username: " . $username . " pw: " . $password . " db: " . $database . " port: " . $port);
 		$GLOBALS["conn"] = new mysqli($servername, $username, $password, $database, $port);
 
 		// Check connection

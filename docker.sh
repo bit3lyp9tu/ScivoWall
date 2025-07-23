@@ -163,6 +163,9 @@ echo Run tests on Test-DB: ${DB_NAME}
 php testing.php $DB_NAME
 CODE=$?
 
+echo "-----------------"
+sudo cat /var/log/apache2/error.log | grep servername
+
 # docker-compose exec dockerdb mariadb -uroot -ppassword poster_generator > ./tests/results_backend_test.sql
 
 maria_db_exec "DROP DATABASE IF EXISTS poster_generator;"
