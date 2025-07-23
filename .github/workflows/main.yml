@@ -195,6 +195,7 @@ jobs:
 
     - name: Manage Server
       run: |
+        ls /etc/apache2/mods-available
         sudo a2enmod php8.3
         sudo systemctl start apache2
         sleep 5
