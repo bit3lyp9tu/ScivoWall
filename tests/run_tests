@@ -77,8 +77,8 @@ else
 fi
 
 python3 poster_tests.py $*
-#  $*
 CODE=$?
+#  $*
 
 if [[ "$GITHUB_ACTIONS" != "true" ]]; then
 	sudo mariadb-dump $DB_NAME > ./results_frontend_test.sql

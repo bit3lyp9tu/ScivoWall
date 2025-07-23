@@ -27,6 +27,11 @@ driver = None
 address = None
 sub_path = ""
 
+# parser = argparse.ArgumentParser()
+# parser.add_argument("--mode", type=int, default=0)
+# parser.add_argument("--test", nargs="*")
+# args = parser.parse_args()
+
 
 def create_driver():
     global driver, address, sub_path
@@ -51,6 +56,14 @@ def create_driver():
     else:
         driver = webdriver.Firefox(options=options)
         address = f"127.0.0.1:{os.environ.get("LOCAL_PORT")}"
+
+    # if args.mode == 2:
+    #     options.add_argument("--headless")
+    #     options.binary_location = "/usr/bin/firefox"
+    #     driver = webdriver.Firefox(options=options)
+    #     print("Running Selenium headless mode")
+    # else:
+    #     print(args)
 
 
 class PythonOrgSearch(unittest.TestCase):
