@@ -9,8 +9,9 @@ on:
 permissions:
   contents: read
 
-env:
+env: |
   DB_USER: 'poster_generator'
+  LOCAL_PORT: 8080
 
 jobs:
   main-tests:
@@ -204,9 +205,11 @@ jobs:
         echo ##########################
         ps aux | grep apache2
         echo ##########################
+        sed -n -E "s/<VirtualHost \*:[0-9]{4}>/<VirtualHost \*:${{ env.LOCAL_PORT }}>/p" custom-000-default.conf
         sudo cp custom-000-default.conf /etc/apache2/sites-enabled/000-default.conf
         cat /etc/apache2/sites-enabled/000-default.conf
         echo ##########################
+        sed -n -E "s/Listen [0-9]{4}/Listen ${{ env.LOCAL_PORT }}/p" custom-ports.conf
         sudo cp custom-ports.conf /etc/apache2/ports.conf
         cat /etc/apache2/ports.conf
         sudo a2enmod rewrite
