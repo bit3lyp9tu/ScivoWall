@@ -12,10 +12,6 @@
 
     $site_script="index.js";
     include(__DIR__ . "/../src/php/header.php");
-
-    // include_once(__DIR__ . "/../src/php/account_management.php");
-    // include_once(__DIR__ . "/../src/php/poster_edit.php");
-
 ?>
 <body>
     <div id="logo_headline">

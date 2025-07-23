@@ -129,8 +129,8 @@ function maria_db_exec {
 	docker-compose exec dockerdb mariadb -uroot -ppassword -e "$1"
 }
 
-maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
+maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 
 docker-compose exec dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_config2.sql
 docker-compose exec dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_img.sql
@@ -172,6 +172,17 @@ echo Run tests on Test-DB: ${DB_NAME}
 
 php testing.php $DB_NAME
 CODE=$?
+
+# docker-compose exec dockerdb mariadb -uroot -ppassword poster_generator > ./tests/results_backend_test.sql
+
+maria_db_exec "DROP DATABASE IF EXISTS poster_generator;"
+maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
+docker-compose exec dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_config2.sql
+docker-compose exec dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_img.sql
+maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
+
+# maria_db_exec "USE poster_generator;"
+# maria_db_exec "USE poster_generator; SELECT * FROM user;"
 
 php -r 'foreach(get_defined_functions()["internal"] as $i) {echo $i . "\n";};' > ./tests/php_build_in_func
 
