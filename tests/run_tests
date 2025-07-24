@@ -10,8 +10,14 @@ fi
 python_version=$(python3 --version | sed -e 's#Python ##')
 VENV_DIR=$HOME/.poster_generator_test_suite_$python_version
 
-if ! [[ -e requirements.txt ]]; then
-	echo "requirements.txt not found"
+requirements=requirements.txt
+
+if [[ ! -e $requirements ]]; then
+	requirements="tests/$requirements"
+fi
+
+if ! [[ -e $requirements ]]; then
+	echo "$requirements not found"
 	exit 1
 fi
 
@@ -22,7 +28,7 @@ fi
 
 if [[ "$GITHUB_ACTIONS" != "true" ]]; then
 
-	requirements_hash=$(cat requirements.txt | md5sum | sed -e 's#\s.*##')
+	requirements_hash=$(cat $requirements | md5sum | sed -e 's#\s.*##')
 	create_venv=0
 
 	if ! [[ -d $VENV_DIR ]]; then
@@ -42,7 +48,7 @@ if [[ "$GITHUB_ACTIONS" != "true" ]]; then
 	venv_hash=$(cat "$VENV_DIR/hash" 2>/dev/null)
 
 	if [[ $venv_hash != $requirements_hash ]]; then
-		for install_me in $(cat requirements.txt); do
+		for install_me in $(cat $requirements); do
 			pip install $install_me
 		done
 
