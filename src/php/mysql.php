@@ -5,7 +5,7 @@
 	$username = (getenv('DB_USER') !== null) ? getenv('DB_USER') : "poster_generator";
 	$password = (getenv('DB_PASS') !== null) ? getenv('DB_PASS') : "password";
 	$database = (getenv('DB_NAME') !== null) ? getenv('DB_NAME') : "poster_generator";
-	$port = (getenv('DB_PORT') !== null) ? getenv('DB_PORT') : 3800;
+	$port = (int) (getenv('DB_PORT') !== null) ? getenv('DB_PORT') : 3800;
 
 	if (getenv("GITHUB_ACTIONS")) {
 		$servername = (getenv('DB_HOST') !== null) ? getenv('DB_HOST') : "127.0.0.1";
