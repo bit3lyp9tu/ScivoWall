@@ -10,10 +10,13 @@ fi
 python_version=$(python3 --version | sed -e 's#Python ##')
 VENV_DIR=$HOME/.poster_generator_test_suite_$python_version
 
-requirements=requirements.txt
+base_dir="./"
+
+requirements="${base_dir}requirements.txt"
 
 if [[ ! -e $requirements ]]; then
-	requirements="tests/$requirements"
+	base_dir="tests/"
+	requirements="${base_dir}requirements.txt"
 fi
 
 if ! [[ -e $requirements ]]; then
@@ -71,18 +74,18 @@ if [[ "$GITHUB_ACTIONS" != "true" ]]; then
 	# TODO:   doesnt seem to work correctly (local db poster_generator gets edited)
 	sudo mariadb -e "DROP DATABASE IF EXISTS ${DB_NAME};"
 	sudo mariadb -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
-	sudo mariadb $DB_NAME < ./test_config2.sql
-	sudo mariadb $DB_NAME < ./test_img.sql
+	sudo mariadb $DB_NAME < $base_dir/test_config2.sql
+	sudo mariadb $DB_NAME < $base_dir/test_img.sql
 	sudo mariadb -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 else
 	mariadb -h 127.0.0.1 -P 3800 -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO "poster_generator"@"%" IDENTIFIED BY "password"; FLUSH PRIVILEGES;'
 	mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword -e "DROP DATABASE IF EXISTS ${DB_NAME};"
 	mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
-	mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword $DB_NAME < ./test_config2.sql
-	mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword $DB_NAME < ./test_img.sql
+	mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword $DB_NAME < $base_dir/test_config2.sql
+	mariadb -h 127.0.0.1 -P 3800 -u poster_generator -ppassword $DB_NAME < $base_dir/test_img.sql
 fi
 
-python3 poster_tests.py $*
+python3 $base_dir/poster_tests.py $*
 CODE=$?
 #  $*
 
