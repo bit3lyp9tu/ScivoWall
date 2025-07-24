@@ -13,9 +13,9 @@ env:
   LOCAL_PORT: ${{ 8080 }}
   DB_HOST: '127.0.0.1'
   DB_USER: 'poster_generator'
-  DB_PASS: 'password'
   DB_NAME: 'poster_generator'
-  DB_PORT: ${{ 3800 }}
+  DB_PASS: 'password'
+  DB_PORT: ${{ 3306 }}
 
 jobs:
   main-tests:
