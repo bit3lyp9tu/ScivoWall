@@ -33,6 +33,7 @@
 		$username = "poster_generator";
 		$database = "poster_generator";
 		$password = "password";
+		$port = 3306;
 	}
 
 	if (file_exists($db_path)) {
