@@ -13,3 +13,4 @@ tests/test_log
 
 .env
 test.sh
+results_frontend_test.sql
