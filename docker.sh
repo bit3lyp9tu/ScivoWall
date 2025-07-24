@@ -195,11 +195,11 @@ echo Running Backend-Tests...
 
 echo Run tests on Test-DB: ${DB_NAME}
 
-docker exec $container_id php testing.php $DB_NAME
-CODE=$?
+# docker exec $container_id php testing.php $DB_NAME $*
+# CODE=$?
 
-echo "-----------------"
-sudo cat /var/log/apache2/error.log | grep servername
+echo -----------------
+# sudo cat /var/log/apache2/error.log | grep servername
 
 # docker-compose exec dockerdb mariadb -uroot -ppassword poster_generator > ./tests/results_backend_test.sql
 
@@ -218,10 +218,29 @@ do
  echo $i >> ./tests/php_build_in_func
 done
 
-cd tests
-./run_tests $*
+base_dir="./"
+requirements="${base_dir}requirements.txt"
+
+docker_run="docker.sh"
+
+if [[ ! -e $docker_run ]]; then
+	docker_run="../docker.sh"
+fi
+
+if [[ ! -e $requirements ]]; then
+	base_dir="tests/"
+	requirements="${base_dir}requirements.txt"
+fi
+
+if ! [[ -e $requirements ]]; then
+	echo "$requirements not found"
+	exit 1
+fi
+
+docker exec $container_id /venv/bin/pip install -r ${base_dir}requirements.txt
+
+docker exec $container_id /venv/bin/python /var/www/html/tests/poster_tests.py
 CODE=$?
-cd ..
 
 echo --- Backend Coverage ---
 # python3 ./tests/coverage.py ./testing.php 2 0 0
@@ -229,6 +248,6 @@ echo --- Backend Coverage ---
 echo --- Frontend Coverage ---
 echo -
 
-sudo cat /var/log/apache2/error.log | grep servername
+# sudo cat /var/log/apache2/error.log | grep servername
 
 exit $CODE
