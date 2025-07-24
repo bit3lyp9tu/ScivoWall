@@ -54,6 +54,12 @@ base_dir="./"
 
 requirements="${base_dir}requirements.txt"
 
+docker_run="docker.sh"
+
+if [[ ! -e $docker_run ]]; then
+	docker_run="../docker.sh"
+fi
+
 if [[ ! -e $requirements ]]; then
 	base_dir="tests/"
 	requirements="${base_dir}requirements.txt"
@@ -64,13 +70,14 @@ if ! [[ -e $requirements ]]; then
 	exit 1
 fi
 
+bash $docker_run --local-port $LOCAL_PORT
+
 if ! command -v python3 2>/dev/null >/dev/null; then
 	echo "python3 not found"
 	exit 1
 fi
 
 if [[ "$GITHUB_ACTIONS" != "true" ]]; then
-
 	requirements_hash=$(cat $requirements | md5sum | sed -e 's#\s.*##')
 	create_venv=0
 
