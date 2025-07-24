@@ -8,7 +8,7 @@ export LOCAL_PORT=""
 export DB_HOST="localhost"
 export DB_USER="poster_generator"
 export DB_PASS="password"
-export DB_PORT=3800
+export DB_PORT=3306
 export RESET_DB=${RESET_DB:-false}
 export DB_NAME="poster_generator"
 
@@ -175,7 +175,7 @@ docker exec $container_id cp custom-ports.conf /etc/apache2/ports.conf
 # echo "export DB_USER=poster_generator" | sudo tee -a /etc/apache2/envvars
 # echo "export DB_PASS=password" | sudo tee -a /etc/apache2/envvars
 # echo "export DB_NAME=poster_generator" | sudo tee -a /etc/apache2/envvars
-# echo "export DB_PORT=3800" | sudo tee -a /etc/apache2/envvars
+# echo "export DB_PORT=3306" | sudo tee -a /etc/apache2/envvars
 
 sudo a2enmod rewrite
 sudo systemctl restart apache2
