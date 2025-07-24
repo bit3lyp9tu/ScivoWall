@@ -8,7 +8,7 @@
 	$port = (int) (getenv('DB_PORT') !== null) ? getenv('DB_PORT') : 3800;
 
 	if (getenv("GITHUB_ACTIONS")) {
-		$servername = (getenv('DB_HOST') !== null) ? getenv('DB_HOST') : "127.0.0.1";
+		$servername = getenv('DB_HOST') ?: 'mysql';
 	}
 
 	if (file_exists($db_path)) {
