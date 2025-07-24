@@ -30,42 +30,9 @@
 	
 	if(isRunningInDocker()) {
 		$servername = "dockerdb";
-	} else {
-		echo "\n=== Docker Environment Check ===\n";
-		echo "Hostname: " . gethostname() . "\n";
-		echo "PHP SAPI: " . php_sapi_name() . "\n";
-		echo "User: " . get_current_user() . "\n";
-		echo "UID: " . posix_getuid() . " | GID: " . posix_getgid() . "\n";
-		echo "Running as root? " . (posix_getuid() === 0 ? 'Yes' : 'No') . "\n";
-
-		// Optional: Show network info
-		echo "IP addresses:\n";
-		$ips = gethostbynamel(gethostname());
-		if ($ips) {
-			foreach ($ips as $ip) {
-				echo " - $ip\n";
-			}
-		} else {
-			echo " - Could not resolve host IPs\n";
-		}
-
-		// Show some ENV variables
-		echo "ENV Variables:\n";
-		foreach (['HOSTNAME', 'IN_DOCKER', 'DOCKER', 'CONTAINER'] as $var) {
-			echo " - $var = " . getenv($var) . "\n";
-		}
-
-		echo "\nChecking for Docker...\n";
-		$inDocker = isRunningInDocker();
-
-		echo "\nResult: ";
-		if ($inDocker) {
-			echo "✅ RUNNING INSIDE DOCKER\n";
-		} else {
-			echo "❌ IS NOT RUNNING IN DOCKER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111111111!1111111!!!!!!!111!!!1111111!!!!11\n";
-		}
-
-		echo "\n===============================\n";
+		$username = "poster_generator";
+		$database = "poster_generator";
+		$password = "password";
 	}
 
 	if (file_exists($db_path)) {
