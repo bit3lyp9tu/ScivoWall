@@ -1,5 +1,45 @@
 #!/bin/bash
 
+# Standardwerte
+LOCAL_PORT=1112
+DB_HOST="localhost"
+
+# Hilfe-Funktion
+function show_help {
+  echo "Usage: $0 [--db_port PORT] [--db_host HOST] [--help]"
+  echo
+  echo "Optionen:"
+  echo "  --db_port PORT   Setzt den LOCAL_PORT (Standard: 1112)"
+  echo "  --db_host HOST   Setzt den DB_HOST (Standard: localhost)"
+  echo "  --help           Zeigt diese Hilfe an und beendet"
+  exit 0
+}
+
+# CLI-Parameter parsen
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --db_port)
+      LOCAL_PORT="$2"
+      shift 2
+      ;;
+    --db_host)
+      DB_HOST="$2"
+      shift 2
+      ;;
+    --help)
+      show_help
+      ;;
+    *)
+      echo "Unbekannter Parameter: $1"
+      echo "Nutze --help für Hilfe."
+      exit 1
+      ;;
+  esac
+done
+
+# Exportieren
+export LOCAL_PORT
+export DB_HOST
 
 if [[ -n $DB_NAME ]]; then
 	DB_NAME="$DB_NAME"

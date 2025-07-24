@@ -45,7 +45,7 @@
 
 	// Create connection
 	try {
-		print_r("servername:\t" . $servername . "\nusername:\t" . $username . "\npw:\t\t" . $password . "\ndb:\t\t" . $database . "\nport:\t\t" . $port . "\n");
+		#print_r("servername:\t" . $servername . "\nusername:\t" . $username . "\npw:\t\t" . $password . "\ndb:\t\t" . $database . "\nport:\t\t" . $port . "\n");
 		// error_log("servername:\t" . $servername . "\nusername:\t" . $username . "\npw:\t\t" . $password . "\ndb:\t\t" . $database . "\nport:\t\t" . $port . "\n");
 		$GLOBALS["conn"] = new mysqli($servername, $username, $password, $database, $port);
 
