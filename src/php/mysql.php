@@ -25,14 +25,12 @@
 	$port = (int) getenv('DB_PORT');
 
 	if(isRunningInDocker()) {
-		echo "is running in docker\n";
 		$servername = "dockerdb";
 		$username = "poster_generator";
 		$database = "poster_generator";
 		$password = "password";
 		$port = 3306;
 	} else if (getenv("GITHUB_ACTIONS")) {
-		echo "is running in github actions\n";
 		$servername = getenv('DB_HOST');
 	}
 	
@@ -41,7 +39,9 @@
 		$password = file_get_contents($db_path);
 		$password = chop($password);
 	} else {
-		error_log("error_log: $db_path not found! Trying default-pw");
+		if(!isRunningInDocker()) {
+			error_log("error_log: $db_path not found! Trying default-pw");
+		}
 	}
 
 	// Create connection
