@@ -51,9 +51,15 @@ def create_driver():
         )
         driver = webdriver.Firefox(service=service, options=options)
     else:
-        driver = webdriver.Firefox(options=options)
+        options.binary_location = "/usr/bin/firefox"
+        service = FirefoxService(
+            executable_path="/usr/local/bin/geckodriver"
+        )
+        driver = webdriver.Firefox(service=service, options=options)
 
-    address = f"{os.environ.get("DB_HOST")}:{os.environ.get("LOCAL_PORT")}"
+    print(os.environ.items())
+
+    address = f"{os.environ.get('DB_HOST')}:{os.environ.get('LOCAL_PORT')}"
     print(f"Running on [{address}]")
 
     # if args.mode == 2:

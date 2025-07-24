@@ -4,8 +4,18 @@ ENV APACHE_PORT=8080
 ENV APACHE_DOCUMENT_ROOT=/var/www/html
 ENV RUNNING_IN_DOCKER=true
 
+ENV GECKO_VERSION=0.36.0
+
 RUN apt update && \
-    apt install -y mariadb-client python3 python3-pip python3-venv
+    apt install -y mariadb-client \
+    wget \
+    python3 python3-pip python3-venv \
+    # gnome-browser-connector
+
+    RUN wget https://github.com/mozilla/geckodriver/releases/download/v$GECKO_VERSION/geckodriver-v$GECKO_VERSION-linux64.tar.gz && \
+    tar -xzf geckodriver-v$GECKO_VERSION-linux64.tar.gz && \
+    chmod +x geckodriver && \
+    mv geckodriver /usr/local/bin/
 
 RUN python3 -m venv /venv
 
