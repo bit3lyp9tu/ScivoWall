@@ -77,6 +77,8 @@
 		if(is_equal($x, $y)) {
 			print_red("Test [$name] failed");
 			$GLOBALS["tests_failed"]++;
+		
+			exit(1);
 		}
 	}
 
@@ -88,6 +90,8 @@
 			print("Expected:\n$y\n");
 			print("Got:\n$x\n");
 			$GLOBALS["tests_failed"]++;
+
+			exit(1);
 		}
 	}
 

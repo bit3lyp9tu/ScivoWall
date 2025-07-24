@@ -1,4 +1,21 @@
 <?php
+	function isRunningInDocker(): bool {
+		// Check /.dockerenv
+		if (is_file('/.dockerenv')) {
+			return true;
+		}
+
+		// Check cgroup info
+		if (is_file('/proc/1/cgroup')) {
+			$cgroup = file_get_contents('/proc/1/cgroup');
+			if (strpos($cgroup, 'docker') !== false || strpos($cgroup, 'containerd') !== false) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	$db_path = "/etc/dbpw";
 
 	$servername = getenv('DB_HOST');
@@ -11,8 +28,10 @@
 		$servername = getenv('DB_HOST');
 	}
 	
-	if(is_file("/.dockerenv")) {
+	if(isRunningInDocker()) {
 		$servername = "dockerdb";
+	} else {
+		print("\n\n\nIS NOT RUNNING IN DOCKER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111111111!1111111!!!!!!!111!!!1111111!!!!11\n\n\n");
 	}
 
 	if (file_exists($db_path)) {
