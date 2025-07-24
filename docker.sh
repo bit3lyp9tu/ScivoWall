@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Default values
 run_tests=0
 LOCAL_PORT=""
@@ -122,9 +124,9 @@ fi
 CURRENT_USER=$(whoami)
 
 if groups "$CURRENT_USER" | grep -q "\bdocker\b"; then
-	docker-compose build && docker-compose up -d || echo "Failed to build container"
+    docker-compose build && docker-compose up -d || { echo "Failed to build container"; exit 1; }
 else
-	sudo docker-compose build && sudo docker-compose up -d || echo "Failed to build container"
+    sudo docker-compose build && sudo docker-compose up -d || { echo "Failed to build container"; exit 1; }
 fi
 
 function maria_db_exec {
