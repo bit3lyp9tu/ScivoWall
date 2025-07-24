@@ -195,7 +195,7 @@ echo Running Backend-Tests...
 
 echo Run tests on Test-DB: ${DB_NAME}
 
-php testing.php $DB_NAME
+docker exec $container_id php testing.php $DB_NAME
 CODE=$?
 
 echo "-----------------"
