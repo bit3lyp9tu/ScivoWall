@@ -233,14 +233,16 @@ jobs:
     # curl -v http://localhost
 
     - name: Run test script
-      continue-on-error: true
+      continue-on-error: false
       run: |
         curl -v http://localhost:8080/login.php
+        echo "----------------------------"
         sleep 3
         ./tests/test_env >> $GITHUB_STEP_SUMMARY
     # curl -v http://127.0.0.1:8080/login.php
 
     - name: Server Log
+      if: ${{ always() }}
       run: |
         echo ##########################error
         sudo cat /var/log/apache2/error.log
