@@ -1,14 +1,14 @@
 <?php
 	$db_path = "/etc/dbpw";
 
-	$servername = (getenv('DB_HOST') !== null) ? getenv('DB_HOST') : "localhost";
-	$username = (getenv('DB_USER') !== null) ? getenv('DB_USER') : "poster_generator";
-	$password = (getenv('DB_PASS') !== null) ? getenv('DB_PASS') : "password";
-	$database = (getenv('DB_NAME') !== null) ? getenv('DB_NAME') : "poster_generator";
-	$port = (int) (getenv('DB_PORT') !== null) ? getenv('DB_PORT') : 3800;
+	$servername = getenv('DB_HOST');
+	$username = getenv('DB_USER');
+	$password = getenv('DB_PASS');
+	$database = getenv('DB_NAME');
+	$port = (int) getenv('DB_PORT');
 
 	if (getenv("GITHUB_ACTIONS")) {
-		$servername = getenv('DB_HOST') ?: 'mysql';
+		$servername = getenv('DB_HOST');
 	}
 
 	if (file_exists($db_path)) {
@@ -20,7 +20,8 @@
 
 	// Create connection
 	try {
-		error_log("servername: " . $servername . " username: " . $username . " pw: " . $password . " db: " . $database . " port: " . $port);
+		print_r("servername:\t" . $servername . "\nusername:\t" . $username . "\npw:\t\t" . $password . "\ndb:\t\t" . $database . "\nport:\t\t" . $port . "\n");
+		// error_log("servername:\t" . $servername . "\nusername:\t" . $username . "\npw:\t\t" . $password . "\ndb:\t\t" . $database . "\nport:\t\t" . $port . "\n");
 		$GLOBALS["conn"] = new mysqli($servername, $username, $password, $database, $port);
 
 		// Check connection

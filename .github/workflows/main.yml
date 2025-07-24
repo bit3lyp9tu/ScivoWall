@@ -11,7 +11,7 @@ permissions:
 
 env:
   LOCAL_PORT: ${{ 8080 }}
-  DB_HOST: mysql
+  DB_HOST: '127.0.0.1'
   DB_USER: 'poster_generator'
   DB_PASS: 'password'
   DB_NAME: 'poster_generator'
@@ -235,7 +235,7 @@ jobs:
       continue-on-error: false
       run: |
         curl -v http://${{ env.DB_HOST }}:${{ env.LOCAL_PORT }}/login.php
-        echo "----------------------------"
+        echo ##########################
         sleep 3
         ./tests/test_env >> $GITHUB_STEP_SUMMARY
 

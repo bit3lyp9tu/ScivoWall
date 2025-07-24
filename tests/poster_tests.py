@@ -42,8 +42,6 @@ def create_driver():
     # print(f"In Docker: {os.environ.get("IND")}")
     # print(f"In Docker: {os.getenv("RUNNING_IN_DOCKER") == "true"}")
 
-    print(f"Running on Port: [{os.environ.get("LOCAL_PORT")}]")
-
     if os.environ.get("GITHUB_ACTIONS"):
         options.add_argument("--headless")
 
@@ -52,10 +50,11 @@ def create_driver():
             executable_path="/home/runner/cache/.driver/geckodriver"
         )
         driver = webdriver.Firefox(service=service, options=options)
-        address = "127.0.0.1:8080"
     else:
         driver = webdriver.Firefox(options=options)
-        address = f"127.0.0.1:{os.environ.get("LOCAL_PORT")}"
+
+    address = f"{os.environ.get("DB_HOST")}:{os.environ.get("LOCAL_PORT")}"
+    print(f"Running on [{address}]")
 
     # if args.mode == 2:
     #     options.add_argument("--headless")

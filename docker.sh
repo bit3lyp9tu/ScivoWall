@@ -3,7 +3,12 @@
 # Default values
 run_tests=0
 LOCAL_PORT=""
+export DB_HOST="localhost"
+export DB_USER="poster_generator"
+export DB_PASS="password"
 export DB_NAME="poster_generator"
+export DB_PORT=3800
+DB_NAME="poster_generator"
 
 # Help message
 help_message() {
@@ -142,15 +147,17 @@ docker exec $container_id cp custom-000-default.conf /etc/apache2/sites-enabled/
 sed -n -E "s/Listen [0-9]{4}/Listen ${LOCAL_PORT}/p" custom-ports.conf
 docker exec $container_id cp custom-ports.conf /etc/apache2/ports.conf
 
-echo "export DB_HOST=localhost" | sudo tee -a /etc/apache2/envvars
-echo "export DB_USER=poster_generator" | sudo tee -a /etc/apache2/envvars
-echo "export DB_PASS=password" | sudo tee -a /etc/apache2/envvars
-echo "export DB_NAME=${DB_NAME}" | sudo tee -a /etc/apache2/envvars
-echo "export DB_PORT=3800" | sudo tee -a /etc/apache2/envvars
+# echo "export DB_HOST=localhost" | sudo tee -a /etc/apache2/envvars
+# echo "export DB_USER=poster_generator" | sudo tee -a /etc/apache2/envvars
+# echo "export DB_PASS=password" | sudo tee -a /etc/apache2/envvars
+# echo "export DB_NAME=poster_generator" | sudo tee -a /etc/apache2/envvars
+# echo "export DB_PORT=3800" | sudo tee -a /etc/apache2/envvars
 
 sudo a2enmod rewrite
-sudo systemctl reload apache2
+sudo systemctl restart apache2
 echo "#########################"
+
+# sudo netstat -tuln
 
 # docker exec $(docker ps | grep scientific_poster_generator-poster_generator-1 | sed 's/^\([^ ]*\).*/\1/') cat /etc/apache2/sites-enabled/000-default.conf
 # docker exec $container_id cat /etc/apache2/sites-enabled/000-default.conf
@@ -158,10 +165,6 @@ echo "#########################"
 curl http://localhost:${LOCAL_PORT}/login.php | grep title
 sleep 1
 curl http://localhost:${LOCAL_PORT}/pages/login.php | grep title
-sleep 1
-curl http://localhost:${LOCAL_PORT}/scientific_poster_generator/login.php | grep title
-sleep 1
-curl http://localhost:${LOCAL_PORT}/scientific_poster_generator/pages/login.php | grep title
 
 
 echo Running Backend-Tests...
@@ -192,7 +195,6 @@ do
 done
 
 cd tests
-export DB_NAME
 ./run_tests $*
 CODE=$?
 cd ..
@@ -202,5 +204,7 @@ echo --- Backend Coverage ---
 
 echo --- Frontend Coverage ---
 echo -
+
+sudo cat /var/log/apache2/error.log | grep servername
 
 exit $CODE
