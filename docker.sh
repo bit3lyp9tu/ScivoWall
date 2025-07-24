@@ -3,20 +3,21 @@
 set -e
 
 # Default values
-run_tests=0
-LOCAL_PORT=""
+export run_tests=0
+export LOCAL_PORT=""
 export DB_HOST="localhost"
 export DB_USER="poster_generator"
 export DB_PASS="password"
-export DB_NAME="poster_generator"
 export DB_PORT=3800
-DB_NAME="poster_generator"
+export RESET_DB=${RESET_DB:-false}
+export DB_NAME="poster_generator"
 
 # Help message
 help_message() {
 	echo "Usage: display_mongodb_gui.sh [OPTIONS]"
 	echo "Options:"
 	echo "  --local-port       Local port to bind for the GUI"
+	echo "  --reset_db         Reset DB"
 	echo "  --run_tests        Run tests before starting"
 	echo "  --help             Show this help message"
 }
@@ -24,6 +25,9 @@ help_message() {
 # Parse command-line arguments
 while [[ "$#" -gt 0 ]]; do
 	case $1 in
+		--reset_db)
+			RESET_DB="true"
+			;;
 		--run_tests)
 			run_tests=1
 			shift
@@ -123,6 +127,15 @@ fi
 
 CURRENT_USER=$(whoami)
 
+if [ "$RESET_DB" = true ]; then
+    echo "Resetting DB container and volume..."
+    if groups "$CURRENT_USER" | grep -q "\bdocker\b"; then
+        docker-compose down -v --remove-orphans
+    else
+        sudo docker-compose down -v --remove-orphans
+    fi
+fi
+
 if groups "$CURRENT_USER" | grep -q "\bdocker\b"; then
     docker-compose build && docker-compose up -d || { echo "Failed to build container"; exit 1; }
 else
@@ -132,6 +145,15 @@ fi
 function maria_db_exec {
 	docker-compose exec dockerdb mariadb -uroot -ppassword -e "$1"
 }
+
+echo "⏳ Waiting for MariaDB to be ready..."
+
+while ! docker-compose exec dockerdb mariadb -uroot -ppassword -e "SELECT 1;" > /dev/null 2>&1; do
+	echo "⏳ MariaDB not ready yet... waiting 1s"
+	sleep 1
+done
+
+echo "✅ MariaDB is ready."
 
 maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
 maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
