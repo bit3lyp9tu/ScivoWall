@@ -24,17 +24,18 @@
 	$database = getenv('DB_NAME');
 	$port = (int) getenv('DB_PORT');
 
-	if (getenv("GITHUB_ACTIONS")) {
-		$servername = getenv('DB_HOST');
-	}
-	
 	if(isRunningInDocker()) {
+		echo "is running in docker\n";
 		$servername = "dockerdb";
 		$username = "poster_generator";
 		$database = "poster_generator";
 		$password = "password";
 		$port = 3306;
+	} else if (getenv("GITHUB_ACTIONS")) {
+		echo "is running in github actions\n";
+		$servername = getenv('DB_HOST');
 	}
+	
 
 	if (file_exists($db_path)) {
 		$password = file_get_contents($db_path);
