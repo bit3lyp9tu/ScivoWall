@@ -118,7 +118,7 @@ echo Running Frontend-Tests...
 echo Run tests on Test-DB: ${DB_NAME}
 
 if [[ -z $DB_PORT ]]; then
-	DB_PORT=3306
+	DB_PORT=3800
 fi
 
 if [[ "$GITHUB_ACTIONS" != "true" ]]; then

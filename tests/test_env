@@ -3,7 +3,7 @@
 set -e
 
 if [[ -z $DB_PORT ]]; then
-	DB_PORT=3306
+	DB_PORT=3800
 fi
 
 is_in_docker() {

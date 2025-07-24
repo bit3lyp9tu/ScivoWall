@@ -15,7 +15,7 @@ env:
   DB_USER: 'poster_generator'
   DB_NAME: 'poster_generator'
   DB_PASS: 'password'
-  DB_PORT: ${{ 3306 }}
+  DB_PORT: ${{ 3800 }}
 
 jobs:
   main-tests:
