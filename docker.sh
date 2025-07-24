@@ -143,10 +143,10 @@ sed -n -E "s/Listen [0-9]{4}/Listen ${LOCAL_PORT}/p" custom-ports.conf
 docker exec $container_id cp custom-ports.conf /etc/apache2/ports.conf
 
 echo "export DB_HOST=localhost" | sudo tee -a /etc/apache2/envvars
-echo "export DB_PORT=3800" | sudo tee -a /etc/apache2/envvars
-echo "export DB_NAME=${DB_NAME}" | sudo tee -a /etc/apache2/envvars
 echo "export DB_USER=poster_generator" | sudo tee -a /etc/apache2/envvars
 echo "export DB_PASS=password" | sudo tee -a /etc/apache2/envvars
+echo "export DB_NAME=${DB_NAME}" | sudo tee -a /etc/apache2/envvars
+echo "export DB_PORT=3800" | sudo tee -a /etc/apache2/envvars
 
 sudo a2enmod rewrite
 sudo systemctl reload apache2

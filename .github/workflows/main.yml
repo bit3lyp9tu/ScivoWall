@@ -10,12 +10,12 @@ permissions:
   contents: read
 
 env:
-  LOCAL_PORT: 8080
+  LOCAL_PORT: ${{ 8080 }}
   DB_HOST: '127.0.0.1'
   DB_USER: 'poster_generator'
   DB_PASS: 'password'
   DB_NAME: 'poster_generator'
-  DB_PORT: 3800
+  DB_PORT: ${{ 3800 }}
 
 jobs:
   main-tests:
@@ -218,10 +218,10 @@ jobs:
         cat /etc/apache2/ports.conf
         echo ##########################
         echo "export DB_HOST=${{ env.DB_HOST }}" | sudo tee -a /etc/apache2/envvars
-        echo "export DB_PORT=${{ env.DB_PASS }}" | sudo tee -a /etc/apache2/envvars
-        echo "export DB_NAME=${{ env.DB_NAME }}" | sudo tee -a /etc/apache2/envvars
         echo "export DB_USER=${{ env.DB_USER }}" | sudo tee -a /etc/apache2/envvars
         echo "export DB_PASS=${{ env.DB_PASS }}" | sudo tee -a /etc/apache2/envvars
+        echo "export DB_NAME=${{ env.DB_NAME }}" | sudo tee -a /etc/apache2/envvars
+        echo "export DB_PORT=${{ env.DB_PASS }}" | sudo tee -a /etc/apache2/envvars
         echo ##########################
         sudo a2enmod rewrite
         sudo systemctl restart apache2
@@ -230,16 +230,14 @@ jobs:
       run: |
         sudo systemctl status apache2
         sudo netstat -tulpn | grep apache
-    # curl -v http://localhost
 
     - name: Run test script
       continue-on-error: false
       run: |
-        curl -v http://localhost:8080/login.php
+        curl -v http://${{ env.DB_HOST }}:${{ env.LOCAL_PORT }}/login.php
         echo "----------------------------"
         sleep 3
         ./tests/test_env >> $GITHUB_STEP_SUMMARY
-    # curl -v http://127.0.0.1:8080/login.php
 
     - name: Server Log
       if: ${{ always() }}
