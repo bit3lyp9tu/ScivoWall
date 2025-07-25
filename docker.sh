@@ -125,10 +125,6 @@ if command -v php 2>/dev/null >/dev/null; then
 		echo "Tests failed";
 		exit 1
 	fi
-
-	# if [[ "$run_tests" -eq "1" ]]; then
-	# 	php testing.php && echo "Syntax checks for PHP Ok" || die "Syntax Checks for PHP failed"
-	# fi
 fi
 
 CURRENT_USER=$(whoami)
