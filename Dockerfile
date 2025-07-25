@@ -2,8 +2,6 @@ FROM php:8.2-apache
 
 ENV APACHE_PORT=8080
 ENV APACHE_DOCUMENT_ROOT=/var/www/html
-ENV RUNNING_IN_DOCKER=true
-
 ENV GECKO_VERSION=0.36.0
 
 RUN apt update && \
@@ -13,9 +11,10 @@ RUN apt update && \
 # gnome-browser-connector
 
 RUN wget https://github.com/mozilla/geckodriver/releases/download/v$GECKO_VERSION/geckodriver-v$GECKO_VERSION-linux64.tar.gz && \
-    tar -xzf geckodriver-v$GECKO_VERSION-linux64.tar.gz && \
+    tar -xzf geckodriver-v${GECKO_VERSION}-linux64.tar.gz && \
     chmod +x geckodriver && \
-    mv geckodriver /usr/local/bin/
+    mv geckodriver /usr/local/bin/ && \
+    rm geckodriver-v${GECKO_VERSION}-linux64.tar.gz
 
 COPY tests/requirements.txt /tmp/requirements.txt
 
