@@ -240,8 +240,6 @@ fi
 docker exec $container_id whereis firefox
 
 
-docker exec $container_id /venv/bin/pip install -r ${base_dir}requirements.txt
-
 docker exec $container_id /venv/bin/python /var/www/html/tests/poster_tests.py
 CODE=$?
 

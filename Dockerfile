@@ -17,7 +17,11 @@ RUN wget https://github.com/mozilla/geckodriver/releases/download/v$GECKO_VERSIO
     chmod +x geckodriver && \
     mv geckodriver /usr/local/bin/
 
-RUN python3 -m venv /venv
+COPY tests/requirements.txt /tmp/requirements.txt
+
+RUN python3 -m venv /venv && \
+    /venv/bin/pip install --upgrade pip && \
+    /venv/bin/pip install -r /tmp/requirements.txt
 
 RUN docker-php-ext-install mysqli
 
