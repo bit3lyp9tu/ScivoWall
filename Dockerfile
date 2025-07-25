@@ -9,10 +9,10 @@ ENV GECKO_VERSION=0.36.0
 RUN apt update && \
     apt install -y mariadb-client \
     wget \
-    python3 python3-pip python3-venv \
-    # gnome-browser-connector
+    python3 python3-pip python3-venv
+# gnome-browser-connector
 
-    RUN wget https://github.com/mozilla/geckodriver/releases/download/v$GECKO_VERSION/geckodriver-v$GECKO_VERSION-linux64.tar.gz && \
+RUN wget https://github.com/mozilla/geckodriver/releases/download/v$GECKO_VERSION/geckodriver-v$GECKO_VERSION-linux64.tar.gz && \
     tar -xzf geckodriver-v$GECKO_VERSION-linux64.tar.gz && \
     chmod +x geckodriver && \
     mv geckodriver /usr/local/bin/
