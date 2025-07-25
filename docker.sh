@@ -19,23 +19,29 @@ help_message() {
 	echo "Options:"
 	echo "  --local-port       Local port to bind for the GUI"
 	echo "  --reset_db         Reset DB"
-	echo "  --run_tests        Run tests before starting"
+	echo "  --run-tests        Run tests before starting"
 	echo "  --help             Show this help message"
 }
 
 # Parse command-line arguments
 while [[ "$#" -gt 0 ]]; do
-	case $1 in
+	case "$1" in
 		--reset_db)
 			RESET_DB="true"
+			shift
 			;;
-		--run_tests)
+		--run-tests)
 			run_tests=1
 			shift
 			;;
 		--local-port)
-			LOCAL_PORT="$2"
-			shift
+			if [[ -n "$2" && "$2" != --* ]]; then
+				LOCAL_PORT="$2"
+				shift 2
+			else
+				echo "Error: --local-port requires a value."
+				exit 1
+			fi
 			;;
 		--help)
 			help_message
@@ -46,7 +52,6 @@ while [[ "$#" -gt 0 ]]; do
 			exit 1
 			;;
 	esac
-	shift
 done
 
 # Check for required parameters
@@ -162,9 +167,6 @@ maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@
 docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_config2.sql
 docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_img.sql
 
-export inDocker="true"
-
-echo "#########################"
 docker-compose exec poster_generator sed -i -E "s|<VirtualHost \*:[0-9]+>|<VirtualHost *:${LOCAL_PORT}>|" custom-000-default.conf
 docker-compose exec poster_generator sed -i -E "s|Listen [0-9]+|Listen ${LOCAL_PORT}|" custom-ports.conf
 
@@ -173,73 +175,74 @@ docker-compose exec poster_generator cp custom-ports.conf /etc/apache2/ports.con
 
 docker-compose exec poster_generator bash -c "echo 'ServerName localhost' >> /etc/apache2/apache2.conf"
 
-docker-compose exec poster_generator a2enmod rewrite
 docker-compose exec poster_generator apachectl graceful
-echo "#########################"
 
-docker-compose exec poster_generator cat /etc/apache2/sites-enabled/000-default.conf
+echo "Apache2 is ready."
+echo "Running on Port:${LOCAL_PORT}"
 
-docker-compose exec poster_generator apachectl configtest
+if [[ "$run_tests" -eq "1" ]]; then
+	echo Running Test Sequence...
 
-docker-compose exec poster_generator curl http://${LOCAL_HOST}:${LOCAL_PORT}/login.php | grep title
-sleep 1
-docker-compose exec poster_generator curl http://${LOCAL_HOST}:${LOCAL_PORT}/pages/login.php | grep title
+	docker-compose exec poster_generator apachectl configtest
 
-echo Running Backend-Tests...
+	docker-compose exec poster_generator curl http://${LOCAL_HOST}:${LOCAL_PORT}/login.php | grep title
+	sleep 1
+	docker-compose exec poster_generator curl http://${LOCAL_HOST}:${LOCAL_PORT}/pages/login.php | grep title
 
-echo Run tests on Test-DB: ${DB_NAME}
+	echo Running Backend-Tests...
 
-docker-compose exec poster_generator php testing.php $DB_NAME $*
-CODE=$?
+	echo Run tests on Test-DB: ${DB_NAME}
 
-echo -----------------
-# sudo cat /var/log/apache2/error.log | grep servername
+	docker-compose exec poster_generator php testing.php $DB_NAME $*
+	CODE=$?
 
-# docker-compose exec dockerdb mariadb -uroot -ppassword poster_generator > ./tests/results_backend_test.sql
+	echo -----------------
+	# sudo cat /var/log/apache2/error.log | grep servername
 
-maria_db_exec "DROP DATABASE IF EXISTS poster_generator;"
-maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
+	# docker-compose exec dockerdb mariadb -uroot -ppassword poster_generator > ./tests/results_backend_test.sql
 
-docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_config2.sql
-docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_img.sql
+	maria_db_exec "DROP DATABASE IF EXISTS poster_generator;"
+	maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
 
-maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
+	docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_config2.sql
+	docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_img.sql
 
-php -r 'foreach(get_defined_functions()["internal"] as $i) {echo $i . "\n";};' > ./tests/php_build_in_func
+	maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 
-for i in __halt_compiler abstract and array as break callable case catch class clone const continue declare default die do echo else elseif empty enddeclare endfor endforeach endif endswitch endwhile eval exit extends final for foreach function global goto if implements include include_once instanceof insteadof interface isset list namespace new or print private protected public require require_once return static switch throw trait try unset use var while xor
-do
- echo $i >> ./tests/php_build_in_func
-done
+	php -r 'foreach(get_defined_functions()["internal"] as $i) {echo $i . "\n";};' > ./tests/php_build_in_func
 
-base_dir="./"
-requirements="${base_dir}requirements.txt"
+	for i in __halt_compiler abstract and array as break callable case catch class clone const continue declare default die do echo else elseif empty enddeclare endfor endforeach endif endswitch endwhile eval exit extends final for foreach function global goto if implements include include_once instanceof insteadof interface isset list namespace new or print private protected public require require_once return static switch throw trait try unset use var while xor
+	do
+	echo $i >> ./tests/php_build_in_func
+	done
 
-docker_run="docker.sh"
-
-if [[ ! -e $docker_run ]]; then
-	docker_run="../docker.sh"
-fi
-
-if [[ ! -e $requirements ]]; then
-	base_dir="tests/"
+	base_dir="./"
 	requirements="${base_dir}requirements.txt"
+
+	docker_run="docker.sh"
+
+	if [[ ! -e $docker_run ]]; then
+		docker_run="../docker.sh"
+	fi
+
+	if [[ ! -e $requirements ]]; then
+		base_dir="tests/"
+		requirements="${base_dir}requirements.txt"
+	fi
+
+	if ! [[ -e $requirements ]]; then
+		echo "$requirements not found"
+		exit 1
+	fi
+
+	docker-compose exec -e LOCAL_HOST=${LOCAL_HOST} -e LOCAL_PORT=${LOCAL_PORT} poster_generator /venv/bin/python /var/www/html/tests/poster_tests.py
+	CODE=$?
+
+	echo --- Backend Coverage ---
+	# python3 ./tests/coverage.py ./testing.php 2 0 0
+
+	echo --- Frontend Coverage ---
+	echo -
 fi
-
-if ! [[ -e $requirements ]]; then
-	echo "$requirements not found"
-	exit 1
-fi
-
-docker-compose exec -e LOCAL_HOST=${LOCAL_HOST} -e LOCAL_PORT=${LOCAL_PORT} poster_generator /venv/bin/python /var/www/html/tests/poster_tests.py
-CODE=$?
-
-echo --- Backend Coverage ---
-# python3 ./tests/coverage.py ./testing.php 2 0 0
-
-echo --- Frontend Coverage ---
-echo -
-
-# sudo cat /var/log/apache2/error.log | grep servername
 
 exit $CODE
