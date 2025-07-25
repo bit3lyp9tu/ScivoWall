@@ -8,7 +8,25 @@ RUN apt update && \
     apt install -y mariadb-client \
     wget \
     python3 python3-pip python3-venv
-# gnome-browser-connector
+
+RUN apt-get update && apt-get install -y \
+    firefox-esr \
+    libdbus-glib-1-2 \
+    libgtk-3-0 \
+    libasound2 \
+    libx11-xcb1 \
+    libdbus-1-3 \
+    libxss1 \
+    libnss3 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxrandr2 \
+    libgbm1 \
+    xauth \
+    x11-xserver-utils \
+    xvfb && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN wget https://github.com/mozilla/geckodriver/releases/download/v$GECKO_VERSION/geckodriver-v$GECKO_VERSION-linux64.tar.gz && \
     tar -xzf geckodriver-v${GECKO_VERSION}-linux64.tar.gz && \

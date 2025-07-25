@@ -27,12 +27,6 @@ driver = None
 address = None
 sub_path = ""
 
-# parser = argparse.ArgumentParser()
-# parser.add_argument("--mode", type=int, default=0)
-# parser.add_argument("--test", nargs="*")
-# args = parser.parse_args()
-
-
 def create_driver():
     global driver, address, sub_path
 
@@ -43,32 +37,26 @@ def create_driver():
     # print(f"In Docker: {os.getenv("RUNNING_IN_DOCKER") == "true"}")
 
     if os.environ.get("GITHUB_ACTIONS"):
-        options.add_argument("--headless")
 
+        options.add_argument("--headless")
         options.binary_location = "/usr/bin/firefox"
         service = FirefoxService(
             executable_path="/home/runner/cache/.driver/geckodriver"
         )
         driver = webdriver.Firefox(service=service, options=options)
+
     else:
         options.binary_location = "/usr/bin/firefox"
-        service = FirefoxService(
-            executable_path="/usr/local/bin/geckodriver"
-        )
+        options.add_argument("--headless")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+
+        service = FirefoxService(executable_path="/usr/local/bin/geckodriver")
+
         driver = webdriver.Firefox(service=service, options=options)
 
-    print(os.environ.items())
-
-    address = f"{os.environ.get('DB_HOST')}:{os.environ.get('LOCAL_PORT')}"
+    address = f"{os.environ.get('LOCAL_HOST')}:{os.environ.get('LOCAL_PORT')}"
     print(f"Running on [{address}]")
-
-    # if args.mode == 2:
-    #     options.add_argument("--headless")
-    #     options.binary_location = "/usr/bin/firefox"
-    #     driver = webdriver.Firefox(options=options)
-    #     print("Running Selenium headless mode")
-    # else:
-    #     print(args)
 
 
 class PythonOrgSearch(unittest.TestCase):
