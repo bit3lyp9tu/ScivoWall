@@ -190,28 +190,28 @@ echo Running Backend-Tests...
 
 echo Run tests on Test-DB: ${DB_NAME}
 
-# docker-compose exec poster_generator php testing.php $DB_NAME $*
-# CODE=$?
+docker-compose exec poster_generator php testing.php $DB_NAME $*
+CODE=$?
 
 echo -----------------
 # sudo cat /var/log/apache2/error.log | grep servername
 
 # docker-compose exec dockerdb mariadb -uroot -ppassword poster_generator > ./tests/results_backend_test.sql
 
-# maria_db_exec "DROP DATABASE IF EXISTS poster_generator;"
-# maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
+maria_db_exec "DROP DATABASE IF EXISTS poster_generator;"
+maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
 
-# docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_config2.sql
-# docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_img.sql
+docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_config2.sql
+docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_img.sql
 
-# maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
+maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 
-# php -r 'foreach(get_defined_functions()["internal"] as $i) {echo $i . "\n";};' > ./tests/php_build_in_func
+php -r 'foreach(get_defined_functions()["internal"] as $i) {echo $i . "\n";};' > ./tests/php_build_in_func
 
-# for i in __halt_compiler abstract and array as break callable case catch class clone const continue declare default die do echo else elseif empty enddeclare endfor endforeach endif endswitch endwhile eval exit extends final for foreach function global goto if implements include include_once instanceof insteadof interface isset list namespace new or print private protected public require require_once return static switch throw trait try unset use var while xor
-# do
-#  echo $i >> ./tests/php_build_in_func
-# done
+for i in __halt_compiler abstract and array as break callable case catch class clone const continue declare default die do echo else elseif empty enddeclare endfor endforeach endif endswitch endwhile eval exit extends final for foreach function global goto if implements include include_once instanceof insteadof interface isset list namespace new or print private protected public require require_once return static switch throw trait try unset use var while xor
+do
+ echo $i >> ./tests/php_build_in_func
+done
 
 base_dir="./"
 requirements="${base_dir}requirements.txt"
