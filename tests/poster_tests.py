@@ -83,10 +83,12 @@ class PythonOrgSearch(unittest.TestCase):
         # self.logout()
 
     def tearDown(self):
+        print("Try to tear down")
         if os.environ.get("GITHUB_ACTIONS"):
             driver.close()
 
     def login_page(self):
+        print("Login Tests")
 
         # check both empty
         self.login_fill_form("", "")
@@ -168,6 +170,8 @@ class PythonOrgSearch(unittest.TestCase):
         driver.find_element(By.ID, "pw").clear()
 
     def logout(self):
+        # print("Logout")
+
         driver.get(f"http://{address}/{sub_path}projects.php")
         time.sleep(self.wait_time)
         # check if page contains logout
@@ -193,6 +197,8 @@ class PythonOrgSearch(unittest.TestCase):
         pass
 
     def user_page(self):
+        print("User Page Tests")
+
         self.assertEqual(
             f"http://{address}/{sub_path}projects.php",
             driver.current_url,
@@ -488,6 +494,7 @@ class PythonOrgSearch(unittest.TestCase):
         ActionChains(driver).send_keys(Keys.BACKSPACE).perform()
 
     def poster_tests(self, css_selector, poster_id, data, isAdmin):
+        print(f"Poster Tests \tposter_id:{poster_id}\tisAdmin:[{isAdmin}]")
 
         # check right title
         title = driver.find_element(By.CSS_SELECTOR, "div#title")
@@ -938,6 +945,7 @@ class PythonOrgSearch(unittest.TestCase):
         pass
 
     def admin_user(self):
+        print("User Admin Tests")
 
         # go to projects page
         driver.get(f"http://{address}/{sub_path}projects.php")
@@ -1431,6 +1439,8 @@ class PythonOrgSearch(unittest.TestCase):
 
     # TODO: test index page
     def index_page(self):
+        print("Index Page Tests")
+
         # check spinner
         # check register
         # check login
