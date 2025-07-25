@@ -181,10 +181,9 @@ docker-compose exec poster_generator cat /etc/apache2/sites-enabled/000-default.
 
 docker-compose exec poster_generator apachectl configtest
 
-docker-compose exec poster_generator curl http://localhost:${LOCAL_PORT}/login.php | grep title
+docker-compose exec poster_generator curl http://${LOCAL_HOST}:${LOCAL_PORT}/login.php | grep title
 sleep 1
-docker-compose exec poster_generator curl http://localhost:${LOCAL_PORT}/pages/login.php | grep title
-
+docker-compose exec poster_generator curl http://${LOCAL_HOST}:${LOCAL_PORT}/pages/login.php | grep title
 
 echo Running Backend-Tests...
 
