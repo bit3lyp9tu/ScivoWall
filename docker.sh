@@ -143,10 +143,6 @@ else
     sudo docker-compose build && sudo docker-compose up -d || { echo "Failed to build container"; exit 1; }
 fi
 
-container_id=$(docker ps | grep scientific_poster_generator-poster_generator-1 | sed 's/^\([^ ]*\).*/\1/')
-docker ps
-echo $container_id
-
 function maria_db_exec {
 	docker-compose exec dockerdb mariadb -uroot -ppassword -e "$1"
 }
@@ -169,25 +165,32 @@ docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./t
 export inDocker="true"
 
 echo "#########################"
-docker-compose exec poster_generator sed -n -E "s/<VirtualHost \*:[0-9]{4}>/<VirtualHost \*:${LOCAL_PORT}>/p" custom-000-default.conf
+docker-compose exec poster_generator sed -i -E "s|<VirtualHost \*:[0-9]+>|<VirtualHost *:${LOCAL_PORT}>|" custom-000-default.conf
+docker-compose exec poster_generator sed -i -E "s|Listen [0-9]+|Listen ${LOCAL_PORT}|" custom-ports.conf
+
 docker-compose exec poster_generator cp custom-000-default.conf /etc/apache2/sites-enabled/000-default.conf
-docker-compose exec poster_generator sed -n -E "s/Listen [0-9]{4}/Listen ${LOCAL_PORT}/p" custom-ports.conf
 docker-compose exec poster_generator cp custom-ports.conf /etc/apache2/ports.conf
+
+docker-compose exec poster_generator bash -c "echo 'ServerName localhost' >> /etc/apache2/apache2.conf"
 
 docker-compose exec poster_generator a2enmod rewrite
 docker-compose exec poster_generator apachectl graceful
 echo "#########################"
 
-docker-compose exec poster_generator curl -v http://localhost:${LOCAL_PORT}/login.php | grep title
+docker-compose exec poster_generator cat /etc/apache2/sites-enabled/000-default.conf
+
+docker-compose exec poster_generator apachectl configtest
+
+docker-compose exec poster_generator curl http://localhost:${LOCAL_PORT}/login.php | grep title
 sleep 1
-docker-compose exec poster_generator curl -v http://localhost:${LOCAL_PORT}/pages/login.php | grep title
+docker-compose exec poster_generator curl http://localhost:${LOCAL_PORT}/pages/login.php | grep title
 
 
 echo Running Backend-Tests...
 
 echo Run tests on Test-DB: ${DB_NAME}
 
-# docker exec $container_id php testing.php $DB_NAME $*
+# docker-compose exec poster_generator php testing.php $DB_NAME $*
 # CODE=$?
 
 echo -----------------
