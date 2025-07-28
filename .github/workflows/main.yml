@@ -153,7 +153,7 @@ jobs:
     - name: Run test script
       continue-on-error: false
       run: |
-        bash docker.sh --local-port 8080 --run-tests >> $GITHUB_STEP_SUMMARY
+        bash docker.sh --local-port 8080 --run-tests | tee -a "$GITHUB_STEP_SUMMARY"
 
     - name: Create a new version
       if: ${{ success() }}
