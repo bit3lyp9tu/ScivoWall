@@ -53,8 +53,7 @@ jobs:
       if: steps.apt-cache.outputs.cache-hit != 'true'
       run: |
         docker pull mariadb:latest
-        docker save -o $HOME/cache/.docker/image.tar mariadb:latest
-    # docker save -o $HOME/cache/.docker/poster_generator.tar scientific_poster_generator-poster_generator
+        docker save -o $HOME/cache/.docker/mariadb.tar mariadb:latest
 
     - name: install check
       run: |
@@ -63,8 +62,8 @@ jobs:
 
     - name: load Docker images
       run: |
-        if [ -f "$HOME/cache/.docker/image.tar" ]; then
-          docker load -i $HOME/cache/.docker/image.tar
+        if [ -f "$HOME/cache/.docker/mariadb.tar" ]; then
+          docker load -i $HOME/cache/.docker/mariadb.tar
         fi
         if [ -f "$HOME/cache/.docker/poster_generator.tar" ]; then
           docker load -i $HOME/cache/.docker/poster_generator.tar
@@ -88,10 +87,8 @@ jobs:
         bash docker.sh --local-port ${{ env.LOCAL_PORT }} --run-tests | tee -a "$GITHUB_STEP_SUMMARY"
 
     - name: Save poster_generator image
-      if:
       run: |
-        docker ps
-        docker ps --format '{{.ID}}' | head -1
+        docker build -t scientific_poster_generator_poster_generator .
         docker save -o $HOME/cache/.docker/poster_generator.tar scientific_poster_generator_poster_generator
 
     - name: Create a new version
