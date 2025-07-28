@@ -65,7 +65,7 @@ jobs:
       with:
         path: |
           ~/cache/.docker
-        key: all-packages-${{ runner.os }}-${{ hashFiles('.github/workflows/main.yml') }}
+        key: all-packages-${{ runner.os }}-${{ hashFiles('.github/workflows/main.yml', 'Dockerfile', 'docker-compose.yml', 'docker.sh') }}
         restore-keys: |
           all-packages-${{ runner.os }}-
 
@@ -91,24 +91,6 @@ jobs:
 
         ls -a $HOME/cache/.docker
 
-    # - name: Grant folder permissions
-    #   run: |
-    #     sudo chmod +x /home
-    #     sudo chmod +x $HOME
-    #     echo "================================"
-    #     echo $GITHUB_WORKSPACE
-    #     echo "================================"
-    #     ls -a $HOME
-    #     sudo chmod +x $HOME/work
-    #     echo ##########################
-    #     sudo chown -R www-data:www-data $HOME/work/scientific_poster_generator/scientific_poster_generator
-    #     sudo chmod -R 777 $HOME/work/scientific_poster_generator/scientific_poster_generator
-    #     echo ##########################
-    #     pwd
-    #     ls -l
-    #     echo ######################
-    #     ls -l $HOME/work/scientific_poster_generator/scientific_poster_generator
-
     # - name: load docker image
     #   run: |
     #     docker load -i $HOME/cache/.docker/image.tar
@@ -125,35 +107,10 @@ jobs:
         mysql user: ${{ env.DB_USER }}
         mysql password: ${{ env.DB_PASS }}
 
-    # - name: Manage Server
-    #   run: |
-    #     ls /etc/apache2/mods-available
-    #     sudo a2enmod php8.3
-    #     sudo systemctl start apache2
-    #     sleep 5
-    #     echo ##########################
-    #     netstat -tuln
-    #     echo ##########################
-    #     ps aux | grep apache2
-    #     echo ##########################
-    #     sed -i -E "s|<VirtualHost \*:[0-9]+>|<VirtualHost *:${LOCAL_PORT}>|" custom-000-default.conf
-    #     sed -i -E "s|Listen [0-9]+|Listen ${LOCAL_PORT}|" custom-ports.conf
-    #     cp custom-000-default.conf /etc/apache2/sites-enabled/000-default.conf
-    #     cp custom-ports.conf /etc/apache2/ports.conf
-    #     echo ##########################
-    #     bash -c "echo 'ServerName localhost' >> /etc/apache2/apache2.conf"
-    #     sudo a2enmod rewrite
-    #     sudo systemctl apachectl graceful
-
-    # - name: Check Apache status
-    #   run: |
-    #     sudo systemctl status apache2
-    #     sudo netstat -tulpn | grep apache
-
     - name: Run test script
       continue-on-error: false
       run: |
-        bash docker.sh --local-port 8080 --run-tests | tee -a "$GITHUB_STEP_SUMMARY"
+        bash docker.sh --local-port ${{ env.LOCAL_PORT }} --run-tests | tee -a "$GITHUB_STEP_SUMMARY"
 
     - name: Create a new version
       if: ${{ success() }}
@@ -178,14 +135,14 @@ jobs:
           ./tests/results_backend_test.sql
           ./tests/results_frontend_test.sql
 
-  # todo-to-issue:
-  #   runs-on: "ubuntu-latest"
-  #   environment: Production
-  #   permissions:
-  #     issues: write
-  #   steps:
-  #     - uses: "actions/checkout@v4"
-  #     - name: "TODO to Issue"
-  #       uses: "alstr/todo-to-issue-action@v5"
-  #       with:
-  #         CLOSE_ISSUES: "true"
+  todo-to-issue:
+    runs-on: "ubuntu-latest"
+    environment: Production
+    permissions:
+      issues: write
+    steps:
+      - uses: "actions/checkout@v4"
+      - name: "TODO to Issue"
+        uses: "alstr/todo-to-issue-action@v5"
+        with:
+          CLOSE_ISSUES: "true"
