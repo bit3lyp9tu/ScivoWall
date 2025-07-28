@@ -75,7 +75,6 @@ class PythonOrgSearch(unittest.TestCase):
         self.poster_page(3)
         self.admin_user()
         self.index_page()
-
         # self.logout()
 
     def tearDown(self):
