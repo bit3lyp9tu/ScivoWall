@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Standardwerte
+LOCAL_HOST=127.0.0.1
 LOCAL_PORT=1112
 DB_HOST="localhost"
 
@@ -38,6 +39,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Exportieren
+export LOCAL_HOST
 export LOCAL_PORT
 export DB_HOST
 
@@ -129,11 +131,11 @@ if [[ "$GITHUB_ACTIONS" != "true" ]]; then
 	sudo mariadb $DB_NAME < $base_dir/test_img.sql
 	sudo mariadb -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 else
-	mariadb -h 127.0.0.1 -P $DB_PORT -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO "poster_generator"@"%" IDENTIFIED BY "password"; FLUSH PRIVILEGES;'
-	mariadb -h 127.0.0.1 -P $DB_PORT -u poster_generator -ppassword -e "DROP DATABASE IF EXISTS ${DB_NAME};"
-	mariadb -h 127.0.0.1 -P $DB_PORT -u poster_generator -ppassword -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
-	mariadb -h 127.0.0.1 -P $DB_PORT -u poster_generator -ppassword $DB_NAME < $base_dir/test_config2.sql
-	mariadb -h 127.0.0.1 -P $DB_PORT -u poster_generator -ppassword $DB_NAME < $base_dir/test_img.sql
+	mariadb -h ${LOCAL_HOST} -P $DB_PORT -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO "poster_generator"@"%" IDENTIFIED BY "password"; FLUSH PRIVILEGES;'
+	mariadb -h ${LOCAL_HOST} -P $DB_PORT -u poster_generator -ppassword -e "DROP DATABASE IF EXISTS ${DB_NAME};"
+	mariadb -h ${LOCAL_HOST} -P $DB_PORT -u poster_generator -ppassword -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
+	mariadb -h ${LOCAL_HOST} -P $DB_PORT -u poster_generator -ppassword $DB_NAME < $base_dir/test_config2.sql
+	mariadb -h ${LOCAL_HOST} -P $DB_PORT -u poster_generator -ppassword $DB_NAME < $base_dir/test_img.sql
 fi
 
 python3 $base_dir/poster_tests.py $*
@@ -148,8 +150,8 @@ if [[ "$GITHUB_ACTIONS" != "true" ]]; then
 	sudo mariadb poster_generator < $base_dir/test_config2.sql
 	sudo mariadb poster_generator < $base_dir/test_img.sql
 else
-	mariadb-dump -h 127.0.0.1 -P $DB_PORT -u poster_generator -ppassword $DB_NAME > $base_dir/results_frontend_test.sql
-	mariadb -h 127.0.0.1 -P $DB_PORT -u poster_generator -ppassword -e "DROP DATABASE ${DB_NAME};"
+	mariadb-dump -h ${LOCAL_HOST} -P $DB_PORT -u poster_generator -ppassword $DB_NAME > $base_dir/results_frontend_test.sql
+	mariadb -h ${LOCAL_HOST} -P $DB_PORT -u poster_generator -ppassword -e "DROP DATABASE ${DB_NAME};"
 fi
 
 # coverage run -p poster_tests.py
