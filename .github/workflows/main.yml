@@ -90,7 +90,9 @@ jobs:
     - name: Save poster_generator image
       if:
       run: |
-        docker save -o $HOME/cache/.docker/poster_generator.tar scientific_poster_generator-poster_generator
+        docker ps
+        docker ps --format '{{.ID}}' | head -1
+        docker save -o $HOME/cache/.docker/poster_generator.tar ${docker ps --format '{{.ID}}' | head -1}
 
     - name: Create a new version
       if: ${{ success() }}
