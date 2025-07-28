@@ -52,12 +52,6 @@ jobs:
     - name: Install dependencies
       if: steps.apt-cache.outputs.cache-hit != 'true'
       run: |
-        echo -------------------------------apt
-        ls -la $HOME/cache/.apt
-        echo -------------------------------pip
-        ls -la $HOME/cache/.pip
-        echo -------------------------------driver
-
         docker pull mariadb:latest
         docker save -o $HOME/cache/.docker/image.tar mariadb:latest
     # docker save -o $HOME/cache/.docker/poster_generator.tar scientific_poster_generator-poster_generator
