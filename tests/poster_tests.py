@@ -31,10 +31,6 @@ def create_driver():
     global driver, address, sub_path
 
     options = Options()
-    # sub_path = "scientific_poster_generator/"
-
-    # print(f"In Docker: {os.environ.get("IND")}")
-    # print(f"In Docker: {os.getenv("RUNNING_IN_DOCKER") == "true"}")
 
     if os.environ.get("GITHUB_ACTIONS"):
 
