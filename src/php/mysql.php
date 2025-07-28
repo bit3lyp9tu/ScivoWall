@@ -33,7 +33,6 @@
 	} else if (getenv("GITHUB_ACTIONS")) {
 		$servername = getenv('DB_HOST');
 	}
-	
 
 	if (file_exists($db_path)) {
 		$password = file_get_contents($db_path);
