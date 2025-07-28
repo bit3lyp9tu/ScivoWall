@@ -87,9 +87,10 @@ jobs:
         bash docker.sh --local-port ${{ env.LOCAL_PORT }} --run-tests | tee -a "$GITHUB_STEP_SUMMARY"
 
     - name: Save poster_generator image
+      if: steps.apt-cache.outputs.cache-hit != 'true'
       run: |
-        docker build -t scientific_poster_generator_poster_generator .
         docker save -o $HOME/cache/.docker/poster_generator.tar scientific_poster_generator_poster_generator
+    # docker build -t scientific_poster_generator_poster_generator .
 
     - name: Create a new version
       if: ${{ success() }}
