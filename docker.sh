@@ -257,7 +257,7 @@ if [[ "$run_tests" -eq "1" ]]; then
 		exit 1
 	fi
 
-	docker-compose exec -e LOCAL_HOST=${LOCAL_HOST} -e LOCAL_PORT=${LOCAL_PORT} poster_generator /venv/bin/python /var/www/html/tests/poster_tests.py
+	docker-compose exec -T -e LOCAL_HOST=${LOCAL_HOST} -e LOCAL_PORT=${LOCAL_PORT} poster_generator /venv/bin/python /var/www/html/tests/poster_tests.py
 	CODE=$?
 
 	echo --- Backend Coverage ---
