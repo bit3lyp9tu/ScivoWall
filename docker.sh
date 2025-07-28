@@ -176,7 +176,7 @@ function maria_db_exec {
 
 echo "⏳ Waiting for MariaDB to be ready..."
 
-while ! docker-compose exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD -e "SELECT 1;" > /dev/null 2>&1; do
+while ! docker-compose exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD -e "SELECT 1;" 2>&1; do
 	echo "⏳ MariaDB not ready yet... waiting 1s"
 	sleep 1
 done
