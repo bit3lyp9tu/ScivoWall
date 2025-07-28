@@ -29,10 +29,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Cleanup Docker Environment
-      run: |
-        docker-compose down -v || true
-      # docker system prune -a --volumes -f || true
+    # - name: Cleanup Docker Environment
+    #   run: |
+    #     docker-compose down -v || true
+    # docker system prune -a --volumes -f || true
 
     - name: prepare cache environment
       run: |
@@ -62,6 +62,9 @@ jobs:
 
     - name: load Docker images
       run: |
+        if [ -f "$HOME/cache/.docker/image.tar" ]; then
+          rm $HOME/cache/.docker/image.tar
+        fi
         if [ -f "$HOME/cache/.docker/mariadb.tar" ]; then
           docker load -i $HOME/cache/.docker/mariadb.tar
         fi
