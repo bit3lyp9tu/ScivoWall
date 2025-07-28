@@ -12,6 +12,8 @@ export DB_PASS="password"
 export DB_PORT=3306
 export RESET_DB=${RESET_DB:-false}
 export DB_NAME="poster_generator"
+export MYSQL_USERNAME="root"
+export MYSQL_PASSWORD="password"
 
 # Help message
 help_message() {
@@ -169,12 +171,12 @@ else
 fi
 
 function maria_db_exec {
-	docker-compose exec dockerdb mariadb -uroot -ppassword -e "$1"
+	docker-compose exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD -e "$1"
 }
 
 echo "⏳ Waiting for MariaDB to be ready..."
 
-while ! docker-compose exec dockerdb mariadb -uroot -ppassword -e "SELECT 1;" > /dev/null 2>&1; do
+while ! docker-compose exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD -e "SELECT 1;" > /dev/null 2>&1; do
 	echo "⏳ MariaDB not ready yet... waiting 1s"
 	sleep 1
 done
@@ -184,8 +186,8 @@ echo "✅ MariaDB is ready."
 maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
 maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 
-docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_config2.sql
-docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_img.sql
+docker-compose exec -T dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_config2.sql
+docker-compose exec -T dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_img.sql
 
 docker-compose exec poster_generator sed -i -E "s|<VirtualHost \*:[0-9]+>|<VirtualHost *:${LOCAL_PORT}>|" custom-000-default.conf
 docker-compose exec poster_generator sed -i -E "s|Listen [0-9]+|Listen ${LOCAL_PORT}|" custom-ports.conf
@@ -219,13 +221,13 @@ if [[ "$run_tests" -eq "1" ]]; then
 	echo -----------------
 	# sudo cat /var/log/apache2/error.log | grep servername
 
-	# docker-compose exec dockerdb mariadb -uroot -ppassword poster_generator > ./tests/results_backend_test.sql
+	# docker-compose exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator > ./tests/results_backend_test.sql
 
 	maria_db_exec "DROP DATABASE IF EXISTS poster_generator;"
 	maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
 
-	docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_config2.sql
-	docker-compose exec -T dockerdb mariadb -uroot -ppassword poster_generator < ./tests/test_img.sql
+	docker-compose exec -T dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_config2.sql
+	docker-compose exec -T dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_img.sql
 
 	maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 
