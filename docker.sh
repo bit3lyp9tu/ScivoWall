@@ -189,15 +189,15 @@ maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@
 docker-compose exec -T dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_config2.sql
 docker-compose exec -T dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_img.sql
 
-docker-compose exec poster_generator sed -i -E "s|<VirtualHost \*:[0-9]+>|<VirtualHost *:${LOCAL_PORT}>|" custom-000-default.conf
-docker-compose exec poster_generator sed -i -E "s|Listen [0-9]+|Listen ${LOCAL_PORT}|" custom-ports.conf
+docker-compose exec -T poster_generator sed -i -E "s|<VirtualHost \*:[0-9]+>|<VirtualHost *:${LOCAL_PORT}>|" custom-000-default.conf
+docker-compose exec -T poster_generator sed -i -E "s|Listen [0-9]+|Listen ${LOCAL_PORT}|" custom-ports.conf
 
-docker-compose exec poster_generator cp custom-000-default.conf /etc/apache2/sites-enabled/000-default.conf
-docker-compose exec poster_generator cp custom-ports.conf /etc/apache2/ports.conf
+docker-compose exec -T poster_generator cp custom-000-default.conf /etc/apache2/sites-enabled/000-default.conf
+docker-compose exec -T poster_generator cp custom-ports.conf /etc/apache2/ports.conf
 
-docker-compose exec poster_generator bash -c "echo 'ServerName localhost' >> /etc/apache2/apache2.conf"
+docker-compose exec -T poster_generator bash -c "echo 'ServerName localhost' >> /etc/apache2/apache2.conf"
 
-docker-compose exec poster_generator apachectl graceful
+docker-compose exec -T poster_generator apachectl graceful
 
 echo "Apache2 is ready."
 echo "Running on Port:${LOCAL_PORT}"
@@ -205,17 +205,17 @@ echo "Running on Port:${LOCAL_PORT}"
 if [[ "$run_tests" -eq "1" ]]; then
 	echo Running Test Sequence...
 
-	docker-compose exec poster_generator apachectl configtest
+	docker-compose exec -T poster_generator apachectl configtest
 
-	docker-compose exec poster_generator curl http://${LOCAL_HOST}:${LOCAL_PORT}/login.php | grep title
+	docker-compose exec -T poster_generator curl http://${LOCAL_HOST}:${LOCAL_PORT}/login.php | grep title
 	sleep 1
-	docker-compose exec poster_generator curl http://${LOCAL_HOST}:${LOCAL_PORT}/pages/login.php | grep title
+	docker-compose exec -T poster_generator curl http://${LOCAL_HOST}:${LOCAL_PORT}/pages/login.php | grep title
 
 	echo Running Backend-Tests...
 
 	echo Run tests on Test-DB: ${DB_NAME}
 
-	docker-compose exec poster_generator php testing.php $DB_NAME $*
+	docker-compose exec -T poster_generator php testing.php $DB_NAME $*
 	CODE=$?
 
 	echo -----------------
