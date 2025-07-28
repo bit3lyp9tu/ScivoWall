@@ -138,7 +138,7 @@ else
 	mariadb -h ${LOCAL_HOST} -P $DB_PORT -u poster_generator -ppassword $DB_NAME < $base_dir/test_img.sql
 fi
 
-python3 $base_dir/poster_tests.py $*
+/venv/bin/python /var/www/html/tests/poster_tests.py
 CODE=$?
 #  $*
 

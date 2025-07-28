@@ -74,8 +74,8 @@ jobs:
 
     - name: install apt
       run: |
-        apt update && apt install -y mariadb-client wget python3 python3-pip python3-venv
-        apt-get update && apt-get install -y firefox-esr libdbus-glib-1-2 libgtk-3-0 libasound2 libx11-xcb1 libdbus-1-3 libxss1 libnss3 libxcomposite1 libxcursor1 libxdamage1 libxrandr2 libgbm1 xauth x11-xserver-utils xvfb && rm -rf /var/lib/apt/lists/*
+        sudo apt update && apt install -y mariadb-client wget python3 python3-pip python3-venv
+        sudo apt-get update && apt-get install -y firefox-esr libdbus-glib-1-2 libgtk-3-0 libasound2 libx11-xcb1 libdbus-1-3 libxss1 libnss3 libxcomposite1 libxcursor1 libxdamage1 libxrandr2 libgbm1 xauth x11-xserver-utils xvfb && rm -rf /var/lib/apt/lists/*
 
     - name: Install dependencies
       if: steps.apt-cache.outputs.cache-hit != 'true'
@@ -103,14 +103,6 @@ jobs:
 
         docker pull mariadb:latest
         docker save -o $HOME/cache/.docker/image.tar mariadb:latest
-
-      # echo $'Package: *\nPin: release o=LP-PPA-mozillateam\nPin-Priority: 1001' | sudo tee /etc/apt/preferences.d/mozilla-firefox
-      # sudo add-apt-repository -y ppa:mozillateam/ppa
-      # sudo apt-get update
-      # sudo apt install --reinstall -y mariadb-server
-      # sudo apt-get install --reinstall -y firefox
-      # sudo apt-get install --reinstall -y libx11-xcb-dev libxcb1-dev libdbus-1-3 libxtst6 libnss3 libgdk-pixbuf2.0-0
-
 
     - name: install check
       run: |
