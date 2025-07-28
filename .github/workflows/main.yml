@@ -37,27 +37,7 @@ jobs:
     - name: prepare cache environment
       run: |
         mkdir -p $HOME/cache
-
-        mkdir -p $HOME/cache/.apt
-        sudo chmod -R 777 $HOME/cache/.apt
-
-        echo $USER
-        echo "Ownership:"
-        sudo ls -ld  $HOME/cache/.apt
-
-
-        mkdir -p $HOME/cache/.pip
-        pip config set global.cache-dir $HOME/cache/.pip
-        echo "[global]" > $HOME/.config/pip/pip.conf
-        echo "target = $HOME/cache/.pip" >> $HOME/.config/pip/pip.conf
-        echo "PYTHONPATH=$HOME/cache/.pip" >> $GITHUB_ENV
-
-
-        mkdir -p ~/cache/.driver
-
         mkdir -p ~/cache/.docker
-      # echo 'Dir::Cache::archives "$HOME/cache/.apt";' | sudo tee /etc/apt/apt.conf.d/99custom-cache
-
 
     - name: Cache Packages
       id: apt-cache
@@ -78,22 +58,23 @@ jobs:
         ls -la $HOME/cache/.pip
         echo -------------------------------driver
 
-      # docker pull mariadb:latest
-      # docker save -o $HOME/cache/.docker/image.tar mariadb:latest
+        docker pull mariadb:latest
+        docker save -o $HOME/cache/.docker/image.tar mariadb:latest
+    # docker save -o $HOME/cache/.docker/poster_generator.tar scientific_poster_generator-poster_generator
 
     - name: install check
       run: |
-        echo -----------------------------------------------------------cache
-
         ls -a $HOME/cache
-
-        echo -----------------------------------------------------------apt
-
         ls -a $HOME/cache/.docker
 
-    # - name: load docker image
-    #   run: |
-    #     docker load -i $HOME/cache/.docker/image.tar
+    - name: load Docker images
+      run: |
+        if [ -f "$HOME/cache/.docker/image.tar" ]; then
+          docker load -i $HOME/cache/.docker/image.tar
+        fi
+        if [ -f "$HOME/cache/.docker/poster_generator.tar" ]; then
+          docker load -i $HOME/cache/.docker/poster_generator.tar
+        fi
 
     - uses: getong/mariadb-action@v1.11
       with:
@@ -111,6 +92,11 @@ jobs:
       continue-on-error: false
       run: |
         bash docker.sh --local-port ${{ env.LOCAL_PORT }} --run-tests | tee -a "$GITHUB_STEP_SUMMARY"
+
+    - name: Save poster_generator image
+      if:
+      run: |
+        docker save -o $HOME/cache/.docker/poster_generator.tar scientific_poster_generator-poster_generator
 
     - name: Create a new version
       if: ${{ success() }}
