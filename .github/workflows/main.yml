@@ -92,7 +92,7 @@ jobs:
       run: |
         docker ps
         docker ps --format '{{.ID}}' | head -1
-        docker save -o $HOME/cache/.docker/poster_generator.tar $(docker ps --format '{{.ID}}' | head -1)
+        docker save -o $HOME/cache/.docker/poster_generator.tar scientific_poster_generator_poster_generator
 
     - name: Create a new version
       if: ${{ success() }}
