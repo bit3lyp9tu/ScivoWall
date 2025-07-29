@@ -94,6 +94,7 @@ jobs:
       if: steps.apt-cache.outputs.cache-hit != 'true'
       run: |
         docker save -o $HOME/cache/.docker/poster_generator.tar scientific_poster_generator_poster_generator
+        docker history scientific_poster_generator_poster_generator
     # docker build -t scientific_poster_generator_poster_generator .
 
     - name: Create a new version

@@ -165,10 +165,23 @@ if [ "$RESET_DB" = true ]; then
 fi
 
 if groups "$CURRENT_USER" | grep -q "\bdocker\b"; then
-    docker-compose build && docker-compose up -d || { echo "Failed to build container"; exit 1; }
+    DOCKER="docker"
+    DOCKER_COMPOSE="docker-compose"
 else
-    sudo docker-compose build && sudo docker-compose up -d || { echo "Failed to build container"; exit 1; }
+    DOCKER="sudo docker"
+    DOCKER_COMPOSE="sudo docker-compose"
 fi
+
+echo "Checking if Docker image '$IMAGE_NAME' exists..."
+if ! $DOCKER image inspect "$IMAGE_NAME" > /dev/null 2>&1; then
+    echo "Image not found. Building with docker-compose..."
+    $DOCKER_COMPOSE build || { echo "❌ Failed to build container"; exit 1; }
+else
+    echo "✅ Image '$IMAGE_NAME' already exists. Skipping build."
+fi
+
+echo "Starting container using docker-compose..."
+$DOCKER_COMPOSE up -d || { echo "❌ Failed to start container"; exit 1; }
 
 function maria_db_exec {
 	docker-compose exec -T dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD -e "$1"
