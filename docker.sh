@@ -15,6 +15,8 @@ export DB_NAME="poster_generator"
 export MYSQL_USERNAME="root"
 export MYSQL_PASSWORD="password"
 
+IMAGE_NAME="scientific_poster_generator_poster_generator"
+
 # Help message
 help_message() {
 	echo "Usage: display_mongodb_gui.sh [OPTIONS]"
@@ -278,6 +280,8 @@ if [[ "$run_tests" -eq "1" ]]; then
 
 	echo --- Frontend Coverage ---
 	echo -
+
+	echo Finish Testing
 fi
 
 exit $CODE
