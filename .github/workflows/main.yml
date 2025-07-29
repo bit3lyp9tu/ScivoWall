@@ -87,6 +87,7 @@ jobs:
     - name: Run test script
       continue-on-error: false
       run: |
+        docker image ls
         bash docker.sh --local-port ${{ env.LOCAL_PORT }} --run-tests | tee -a "$GITHUB_STEP_SUMMARY"
 
     - name: Save poster_generator image
