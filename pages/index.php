@@ -18,7 +18,7 @@
         <img class="nomargin" id='scadslogo' src="img/scadslogo.png" draggable="false"/>
         <div class="header-video" style="float: right;"></div>
 
-        <div class="account-box-moving">
+        <!-- <div class="account-box-moving">
 
             <div class="account-box-item">
                 <div>
@@ -28,8 +28,8 @@
 
                     <input id="login-btn" class="vertical-marker" type="button" value="Login"/>
 
-                    <!-- <p id="login-response"></p> -->
-                </div>
+                    <!- <p id="login-response"></p> -->
+                <!--</div>
             </div>
             <div class="account-box-item">
                 <div>
@@ -40,11 +40,62 @@
                     <input id="register-btn" type="button" class="stateA" value="Register"/>
 
                     <input id="register-btn" class="vertical-marker" type="button" value="Register"/>
-
+-->
                     <!-- <p id="register-response"></p> -->
-                </div>
+                <!--</div>
             </div>
-        </div>
+        </div> -->
+    </div>
+
+    <div class="my-flipster" style="display: flex; flex-direction: row; width: 100%; height: 100%; justify-content: center;">
+        <ul>
+            <div data-flip-category="Category">
+                <p>test</p>
+                <iframe src="https://en.wikipedia.org/wiki/Special:Random" style="width: 1200px; height: 800px;"></iframe>
+            </div>
+        </ul>
+        <ul>
+            <div data-flip-category="Category">
+                <p>test</p>
+                <iframe src="https://en.wikipedia.org/wiki/Special:Random" style="width: 1200px; height: 800px;"></iframe>
+            </div>
+        </ul>
+        <ul>
+            <div data-flip-category="Category">
+                <p>test</p>
+                <iframe src="https://en.wikipedia.org/wiki/Special:Random" style="width: 1200px; height: 800px;"></iframe>
+            </div>
+        </ul>
+        <ul>
+            <div data-flip-category="Category">
+                <p>test</p>
+                <iframe src="https://en.wikipedia.org/wiki/Special:Random" style="width: 1200px; height: 800px;"></iframe>
+            </div>
+        </ul>
+        <ul>
+            <div data-flip-category="Category">
+                <p>test</p>
+                <iframe src="https://en.wikipedia.org/wiki/Special:Random" style="width: 1200px; height: 800px;"></iframe>
+            </div>
+        </ul>
+        <ul>
+            <div data-flip-category="Category">
+                <p>test</p>
+                <iframe src="https://en.wikipedia.org/wiki/Special:Random" style="width: 1200px; height: 800px;"></iframe>
+            </div>
+        </ul>
+        <ul>
+            <div data-flip-category="Category">
+                <p>test</p>
+                <iframe src="https://en.wikipedia.org/wiki/Special:Random" style="width: 1200px; height: 800px;"></iframe>
+            </div>
+        </ul>
+        <ul>
+            <div data-flip-category="Category">
+                <p>test</p>
+                <iframe src="https://en.wikipedia.org/wiki/Special:Random" style="width: 1200px; height: 800px;"></iframe>
+            </div>
+        </ul>
     </div>
 
     <div id="posters" class="poster-slide"></div>

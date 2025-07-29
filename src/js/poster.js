@@ -618,11 +618,11 @@ window.onload = async function () {
     if (isInIframe()) {
         console.log("in IFrame");
 
-        document.getElementById("add_author").style.display = "none";
+        // document.getElementById("add_author").style.display = "none";
 
-        document.getElementById("img-load").style.display = "none";
+        // document.getElementById("img-load").style.display = "none";
 
-        document.getElementsByTagName("footer")[0].style.display = "none";
+        // document.getElementsByTagName("footer")[0].style.display = "none";
     }
 
     const state = await isEditView();
