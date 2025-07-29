@@ -6,8 +6,8 @@ ENV GECKO_VERSION=0.36.0
 
 RUN apt update && \
     apt install -y mariadb-client \
-    python3 python3-pip python3-venv \
-    wget
+    wget \
+    python3 python3-pip python3-venv
 
 RUN apt-get update && apt-get install -y \
     firefox-esr \
