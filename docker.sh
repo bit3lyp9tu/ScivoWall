@@ -27,6 +27,8 @@ help_message() {
 	echo "  --help             Show this help message"
 }
 
+echo $GITHUB_ACTIONS
+
 # Parse command-line arguments
 while [[ "$#" -gt 0 ]]; do
 	case "$1" in
@@ -191,15 +193,22 @@ else
     sudo docker-compose build && sudo docker-compose up -d || { echo "Failed to build container"; exit 1; }
 fi
 
+function docker_exec_env {
+    local service="$1"
+    shift
+
+	if [ -n "$GITHUB_ACTIONS" ]; then
+		docker-compose exec -T "$service" "$@"
+	else
+		docker-compose exec "$service" "$@"
+	fi
+}
+
 function docker_exec {
     local service="$1"
     shift
 
-    if groups "$CURRENT_USER" | grep -q "\bdocker\b"; then
-        docker-compose exec "$service" "$@"
-    else
-        docker-compose exec -T "$service" "$@"
-    fi
+	docker-compose exec -T "$service" "$@"
 }
 
 function maria_db_exec {
@@ -289,7 +298,7 @@ if [[ "$run_tests" -eq "1" ]]; then
 		exit 1
 	fi
 
-	docker_exec -e LOCAL_HOST=${LOCAL_HOST} -e LOCAL_PORT=${LOCAL_PORT} poster_generator /venv/bin/python /var/www/html/tests/poster_tests.py
+	docker_exec_env -e LOCAL_HOST=${LOCAL_HOST} -e LOCAL_PORT=${LOCAL_PORT} poster_generator /venv/bin/python /var/www/html/tests/poster_tests.py
 	CODE=$?
 
 	echo --- Backend Coverage ---
