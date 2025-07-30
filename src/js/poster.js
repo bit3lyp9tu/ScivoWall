@@ -490,7 +490,13 @@ async function edit_box_event(event) {
 
             // change old back to non-editable and save old edits
             const element = createArea("div", selected_title.id, "", selected_title.value);
-            await typeset(element, () => marked.marked(selected_title.value));
+
+            if (selected_title.value == "") {
+                await typeset(element, () => marked.marked("Title"));
+            } else {
+                await typeset(element, () => marked.marked(selected_title.value));
+            }
+
             selected_title.parentNode.replaceChild(element, selected_title);
             element.style['pointer-events'] = 'none';
 
@@ -800,7 +806,10 @@ async function save_content() {
     const header = url_to_json();
 
     const content = [];
-    const title = document.getElementById("title").getAttribute("data-content");//innerText;
+    var title = document.getElementById("title").getAttribute("data-content");//innerText;
+    if (title == "") {
+        title = "Title";
+    }
     const authors = getAuthorItems();
 
     const container = document.getElementById("boxes");
