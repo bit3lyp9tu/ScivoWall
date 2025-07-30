@@ -386,28 +386,33 @@ async function unedit_box() {
 
     // change old back to non-editable and save old edits
     if (selected_box) {
-        const element = createArea("div", selected_box.id, "box", selected_box.value);
 
-        await typeset(element, () => marked.marked(selected_box.value));
-        if (selected_box && selected_box.parentNode) {
-            selected_box.parentNode.replaceChild(element, selected_box);
+        if (selected_box.value == "") {
+            selected_box.remove();
+
+        } else {
+            const element = createArea("div", selected_box.id, "box", selected_box.value);
+
+            await typeset(element, () => marked.marked(selected_box.value));
+            if (selected_box && selected_box.parentNode) {
+                selected_box.parentNode.replaceChild(element, selected_box);
+            }
+
+            element.appendChild(createMenu());
+
+            var inbtn = document.querySelector('#' + selected_box.id + '>input[type="file"]');
+            // console.log(inbtn);
+
+            // TODO: [BUG] editBox needs to be selected previously at least once for the change event to be detected
+            inbtn.addEventListener('change', async function (event) {
+
+                const file = event.target.files[0];
+                await importFile(selected_box, file);
+            });
+
+            await loadImages();
+            await loadPlots();
         }
-
-        element.appendChild(createMenu());
-
-        var inbtn = document.querySelector('#' + selected_box.id + '>input[type="file"]');
-        // console.log(inbtn);
-
-        // TODO: [BUG] editBox needs to be selected previously at least once for the change event to be detected
-        inbtn.addEventListener('change', async function (event) {
-
-            const file = event.target.files[0];
-            await importFile(selected_box, file);
-        });
-
-        await loadImages();
-
-        await loadPlots();
 
         // forget old selected
         selected_box = null;

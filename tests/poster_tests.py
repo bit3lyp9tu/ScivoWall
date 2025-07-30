@@ -488,6 +488,13 @@ class PythonOrgSearch(unittest.TestCase):
         time.sleep(self.wait_time)
         ActionChains(driver).send_keys(Keys.BACKSPACE).perform()
 
+    def check_boxes(self, list):
+        results = [i.get_attribute("id") for i in driver.find_elements(By.CSS_SELECTOR, "div#boxes>*")]
+        self.assertListEqual(
+            list,
+            results
+        )
+
     def poster_tests(self, css_selector, poster_id, data, isAdmin):
         print(f"Poster Tests \tposter_id:{poster_id}\tisAdmin:[{isAdmin}]")
 
@@ -641,10 +648,9 @@ class PythonOrgSearch(unittest.TestCase):
         )
 
         # check add box
-        boxes = [i for i in driver.find_elements(By.CSS_SELECTOR, "div#boxes>div")]
+        self.check_boxes(['editBox-0', 'editBox-1', 'editBox-2'])
         driver.find_element(By.CSS_SELECTOR, "input#add-box").click()
-        boxes2 = [i for i in driver.find_elements(By.CSS_SELECTOR, "div#boxes>div")]
-        self.assertEqual(len(boxes) + 1, len(boxes2))
+        self.check_boxes(['editBox-0', 'editBox-1', 'editBox-2', 'editBox-3'])
 
         # check basic edit box
         new_box = driver.find_element(By.CSS_SELECTOR, "div#boxes>div:nth-child(3)")
@@ -663,6 +669,20 @@ class PythonOrgSearch(unittest.TestCase):
             data["boxes"][0],
             changed_box.get_attribute("data-content"),
         )
+
+        # check box delete
+        self.check_boxes(['editBox-0', 'editBox-1', 'editBox-2', 'editBox-3'])
+        driver.find_element(By.CSS_SELECTOR, "input#add-box").click()
+        self.check_boxes(['editBox-0', 'editBox-1', 'editBox-2', 'editBox-3', 'editBox-4'])
+
+        new_box = driver.find_element(By.CSS_SELECTOR, "div#boxes>div:nth-child(5)")
+        ActionChains(driver).move_to_element(new_box).click(new_box).perform()
+        ActionChains(driver).click(
+            driver.find_element(By.CSS_SELECTOR, "div#boxes>textarea#editBox-4")
+        ).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).click(
+            driver.find_element(By.CSS_SELECTOR, "img#scadslogo")
+        ).perform()
+        self.check_boxes(['editBox-0', 'editBox-1', 'editBox-2', 'editBox-3'])
 
         # check box markdown render
         self.assertEqual(

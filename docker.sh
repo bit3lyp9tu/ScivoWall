@@ -252,12 +252,12 @@ if [[ "$run_tests" -eq "1" ]]; then
 
 	maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 
-	php -r 'foreach(get_defined_functions()["internal"] as $i) {echo $i . "\n";};' > ./tests/php_build_in_func
+	# php -r 'foreach(get_defined_functions()["internal"] as $i) {echo $i . "\n";};' > ./tests/php_build_in_func
 
-	for i in __halt_compiler abstract and array as break callable case catch class clone const continue declare default die do echo else elseif empty enddeclare endfor endforeach endif endswitch endwhile eval exit extends final for foreach function global goto if implements include include_once instanceof insteadof interface isset list namespace new or print private protected public require require_once return static switch throw trait try unset use var while xor
-	do
-	echo $i >> ./tests/php_build_in_func
-	done
+	# for i in __halt_compiler abstract and array as break callable case catch class clone const continue declare default die do echo else elseif empty enddeclare endfor endforeach endif endswitch endwhile eval exit extends final for foreach function global goto if implements include include_once instanceof insteadof interface isset list namespace new or print private protected public require require_once return static switch throw trait try unset use var while xor
+	# do
+	# echo $i >> ./tests/php_build_in_func
+	# done
 
 	base_dir="./"
 	requirements="${base_dir}requirements.txt"
@@ -278,7 +278,7 @@ if [[ "$run_tests" -eq "1" ]]; then
 		exit 1
 	fi
 
-	docker-compose exec -T -e LOCAL_HOST=${LOCAL_HOST} -e LOCAL_PORT=${LOCAL_PORT} poster_generator /venv/bin/python /var/www/html/tests/poster_tests.py
+	docker-compose exec -e LOCAL_HOST=${LOCAL_HOST} -e LOCAL_PORT=${LOCAL_PORT} poster_generator /venv/bin/python /var/www/html/tests/poster_tests.py
 	CODE=$?
 
 	echo --- Backend Coverage ---
