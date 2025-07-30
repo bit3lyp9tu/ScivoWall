@@ -47,58 +47,32 @@
         </div> -->
     </div>
 
-    <div class="my-flipster" style="display: flex; flex-direction: row; width: 100%; height: 100%; justify-content: center;">
+    <div id="posters" class="poster-slide">
         <ul>
-            <div data-flip-category="Category">
-                <p>test</p>
-                <iframe src="https://en.wikipedia.org/wiki/Special:Random" style="width: 1200px; height: 800px;"></iframe>
-            </div>
+            <iframe src="https://en.wikipedia.org/wiki/Special:Random"></iframe>
         </ul>
         <ul>
-            <div data-flip-category="Category">
-                <p>test</p>
-                <iframe src="https://en.wikipedia.org/wiki/Special:Random" style="width: 1200px; height: 800px;"></iframe>
-            </div>
+            <iframe src="https://en.wikipedia.org/wiki/Special:Random"></iframe>
         </ul>
         <ul>
-            <div data-flip-category="Category">
-                <p>test</p>
-                <iframe src="https://en.wikipedia.org/wiki/Special:Random" style="width: 1200px; height: 800px;"></iframe>
-            </div>
+            <iframe src="https://en.wikipedia.org/wiki/Special:Random"></iframe>
         </ul>
         <ul>
-            <div data-flip-category="Category">
-                <p>test</p>
-                <iframe src="https://en.wikipedia.org/wiki/Special:Random" style="width: 1200px; height: 800px;"></iframe>
-            </div>
+            <iframe src="https://en.wikipedia.org/wiki/Special:Random"></iframe>
         </ul>
         <ul>
-            <div data-flip-category="Category">
-                <p>test</p>
-                <iframe src="https://en.wikipedia.org/wiki/Special:Random" style="width: 1200px; height: 800px;"></iframe>
-            </div>
+            <iframe src="https://en.wikipedia.org/wiki/Special:Random"></iframe>
         </ul>
         <ul>
-            <div data-flip-category="Category">
-                <p>test</p>
-                <iframe src="https://en.wikipedia.org/wiki/Special:Random" style="width: 1200px; height: 800px;"></iframe>
-            </div>
+            <iframe src="https://en.wikipedia.org/wiki/Special:Random"></iframe>
         </ul>
         <ul>
-            <div data-flip-category="Category">
-                <p>test</p>
-                <iframe src="https://en.wikipedia.org/wiki/Special:Random" style="width: 1200px; height: 800px;"></iframe>
-            </div>
+            <iframe src="https://en.wikipedia.org/wiki/Special:Random"></iframe>
         </ul>
         <ul>
-            <div data-flip-category="Category">
-                <p>test</p>
-                <iframe src="https://en.wikipedia.org/wiki/Special:Random" style="width: 1200px; height: 800px;"></iframe>
-            </div>
+            <iframe src="https://en.wikipedia.org/wiki/Special:Random"></iframe>
         </ul>
     </div>
-
-    <div id="posters" class="poster-slide"></div>
 
     <span id="spinner" class="loader"></span>
 
