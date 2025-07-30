@@ -191,13 +191,24 @@ else
     sudo docker-compose build && sudo docker-compose up -d || { echo "Failed to build container"; exit 1; }
 fi
 
+function docker_exec {
+    local service="$1"
+    shift
+
+    if groups "$CURRENT_USER" | grep -q "\bdocker\b"; then
+        docker-compose exec "$service" "$@"
+    else
+        docker-compose exec -T "$service" "$@"
+    fi
+}
+
 function maria_db_exec {
-	docker-compose exec -T dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD -e "$1"
+	docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD -e "$1"
 }
 
 echo "⏳ Waiting for MariaDB to be ready..."
 
-while ! docker-compose exec -T dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD -e "SELECT 1;" >/dev/null; do
+while ! docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD -e "SELECT 1;" >/dev/null; do
 	echo "⏳ MariaDB not ready yet... waiting 1s"
 	sleep 1
 done
@@ -207,18 +218,18 @@ echo "✅ MariaDB is ready."
 maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
 maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 
-docker-compose exec -T dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_config2.sql
-docker-compose exec -T dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_img.sql
+docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_config2.sql
+docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_img.sql
 
-docker-compose exec -T poster_generator sed -i -E "s|<VirtualHost \*:[0-9]+>|<VirtualHost *:${LOCAL_PORT}>|" custom-000-default.conf
-docker-compose exec -T poster_generator sed -i -E "s|Listen [0-9]+|Listen ${LOCAL_PORT}|" custom-ports.conf
+docker_exec poster_generator sed -i -E "s|<VirtualHost \*:[0-9]+>|<VirtualHost *:${LOCAL_PORT}>|" custom-000-default.conf
+docker_exec poster_generator sed -i -E "s|Listen [0-9]+|Listen ${LOCAL_PORT}|" custom-ports.conf
 
-docker-compose exec -T poster_generator cp custom-000-default.conf /etc/apache2/sites-enabled/000-default.conf
-docker-compose exec -T poster_generator cp custom-ports.conf /etc/apache2/ports.conf
+docker_exec poster_generator cp custom-000-default.conf /etc/apache2/sites-enabled/000-default.conf
+docker_exec poster_generator cp custom-ports.conf /etc/apache2/ports.conf
 
-docker-compose exec -T poster_generator bash -c "echo 'ServerName localhost' >> /etc/apache2/apache2.conf"
+docker_exec poster_generator bash -c "echo 'ServerName localhost' >> /etc/apache2/apache2.conf"
 
-docker-compose exec -T poster_generator apachectl graceful
+docker_exec poster_generator apachectl graceful
 
 echo "Apache2 is ready."
 echo "Running on Port:${LOCAL_PORT}"
@@ -226,17 +237,17 @@ echo "Running on Port:${LOCAL_PORT}"
 if [[ "$run_tests" -eq "1" ]]; then
 	echo Running Test Sequence...
 
-	docker-compose exec -T poster_generator apachectl configtest
+	docker_exec poster_generator apachectl configtest
 
-	docker-compose exec -T poster_generator curl http://${LOCAL_HOST}:${LOCAL_PORT}/login.php | grep title
+	docker_exec poster_generator curl http://${LOCAL_HOST}:${LOCAL_PORT}/login.php | grep title
 	sleep 1
-	docker-compose exec -T poster_generator curl http://${LOCAL_HOST}:${LOCAL_PORT}/pages/login.php | grep title
+	docker_exec poster_generator curl http://${LOCAL_HOST}:${LOCAL_PORT}/pages/login.php | grep title
 
 	echo Running Backend-Tests...
 
 	echo Run tests on Test-DB: ${DB_NAME}
 
-	docker-compose exec -T poster_generator php testing.php $DB_NAME $*
+	docker_exec poster_generator php testing.php $DB_NAME $*
 	CODE=$?
 
 	echo -----------------
@@ -247,8 +258,8 @@ if [[ "$run_tests" -eq "1" ]]; then
 	maria_db_exec "DROP DATABASE IF EXISTS poster_generator;"
 	maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
 
-	docker-compose exec -T dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_config2.sql
-	docker-compose exec -T dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_img.sql
+	docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_config2.sql
+	docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_img.sql
 
 	maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 
@@ -278,7 +289,7 @@ if [[ "$run_tests" -eq "1" ]]; then
 		exit 1
 	fi
 
-	docker-compose exec -e LOCAL_HOST=${LOCAL_HOST} -e LOCAL_PORT=${LOCAL_PORT} poster_generator /venv/bin/python /var/www/html/tests/poster_tests.py
+	docker_exec -e LOCAL_HOST=${LOCAL_HOST} -e LOCAL_PORT=${LOCAL_PORT} poster_generator /venv/bin/python /var/www/html/tests/poster_tests.py
 	CODE=$?
 
 	echo --- Backend Coverage ---
