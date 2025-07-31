@@ -1,5 +1,3 @@
-var sleeper = 2000;
-
 async function fetchAvailablePosters() {
     return await $.ajax({
         type: "POST",
@@ -17,6 +15,8 @@ async function fetchAvailablePosters() {
     });
 }
 
+var intervalId = null;
+var counter = 0;
 function showPoster(selector, index) {
     var posters = document.querySelectorAll(selector);
     var l = index % posters.length;
@@ -30,6 +30,43 @@ function showPoster(selector, index) {
     }
     posters[l].classList.remove("hide");
 }
+function showPosterAll() {
+    const selector = "div.poster-slide>ul>iframe";
+
+    showPoster(selector, counter);
+    counter++;
+}
+
+function restart(time) {
+    if (intervalId !== null) {
+        clearInterval(intervalId);
+    }
+    console.info("Set interval to", time);
+    intervalId = setInterval(showPosterAll, time);
+}
+function stop() {
+    if (intervalId !== null) {
+        clearInterval(intervalId);
+        intervalId = null;
+        console.info("Stopped interval");
+    } else {
+        console.info("No interval running");
+    }
+}
+function shiftCounter(value) {
+    const selector = "div.poster-slide>ul>iframe";
+
+    counter += value % document.querySelectorAll(selector).length;
+    showPoster(selector, counter);
+    console.info("Counter shifted by ", value);
+}
+function setCounter(value) {
+    const selector = "div.poster-slide>ul>iframe";
+
+    counter = value % document.querySelectorAll(selector).length;
+    showPoster(selector, counter);
+    console.info("Set Counter to ", counter);
+}
 
 window.onload = async function () {
 
@@ -39,31 +76,32 @@ window.onload = async function () {
 
     const content = await JSON.parse(await fetchAvailablePosters());
 
-    console.log("len", content.poster_id.length);
-
-    document.getElementById("posters").setAttribute("data-carousel-3d", "");
-
     const cont = document.getElementById("posters");
-    for (const elem in content.poster_id) {
-        const ul = document.createElement("UL");
-        const b = document.createElement("IFRAME");
-        b.id = "iframe-" + elem;
-        // console.log(content.title[elem]);
-        b.setAttribute("src", "poster.php?id=" + content.poster_id[elem] + "&mode=public");
 
-        ul.appendChild(b)
-        cont.appendChild(ul);
-    }
+    console.log(content.poster_id.length);
 
-    document.getElementById("spinner").style.display = "none";
+    if (content.poster_id.length > 0) {
+        for (const elem in content.poster_id) {
+            const ul = document.createElement("UL");
+            const b = document.createElement("IFRAME");
+            b.id = "iframe-" + elem;
+            // console.log(content.title[elem]);
+            b.setAttribute("src", "poster.php?id=" + content.poster_id[elem] + "&mode=public");
 
-    while (true) {
-        for (var i = 0; i < document.querySelectorAll("div.poster-slide>ul>iframe").length; i++) {
-
-            showPoster("div.poster-slide>ul>iframe", i);
-            await new Promise(r => setTimeout(r, sleeper));
+            ul.appendChild(b)
+            cont.appendChild(ul);
         }
+
+        document.getElementById("spinner").style.display = "none";
+
+        intervalId = setInterval(showPosterAll, 2000);
+    } else {
+
+        const elem = document.createElement("h2");
+        elem.innerText = "There are no public posters available at the moment.";
+        cont.appendChild(elem);
     }
+
 }
 
 function loadScript(src) {

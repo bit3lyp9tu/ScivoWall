@@ -47,6 +47,13 @@
         </div> -->
     </div>
 
+    <div>
+        <button onclick="shiftCounter(-1)"><</button>
+        <button onclick="restart(2000)">Play</button>
+        <button onclick="stop()">Stop</button>
+        <button onclick="shiftCounter(1)">></button>
+    </div>
+
     <div id="posters" class="poster-slide"></div>
 
     <span id="spinner" class="loader"></span>

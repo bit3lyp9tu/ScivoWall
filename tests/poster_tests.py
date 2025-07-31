@@ -1458,6 +1458,7 @@ class PythonOrgSearch(unittest.TestCase):
         # check spinner
         # check register
         # check login
+        # check check empty poster list
         # check poster count
         # check poster#1 content
         # check prevent editing:
