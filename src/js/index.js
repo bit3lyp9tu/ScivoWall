@@ -1,4 +1,5 @@
-// TODO: change carousel to https://www.jqueryscript.net/demo/image-cover-flow-flipster/
+var sleeper = 2000;
+
 async function fetchAvailablePosters() {
     return await $.ajax({
         type: "POST",
@@ -79,7 +80,7 @@ window.onload = async function () {
         for (var i = 0; i < document.querySelectorAll("div.poster-slide>ul>iframe").length; i++) {
 
             showPoster("div.poster-slide>ul>iframe", i);
-            await new Promise(r => setTimeout(r, 2000));
+            await new Promise(r => setTimeout(r, sleeper));
         }
     }
 }
@@ -107,58 +108,4 @@ function loadStyle(href) {
         document.head.appendChild(style);
     });
 }
-$(document).on("click", "#login-btn", function () {
-    let username = document.getElementById("name");
-    let password = document.getElementById("pw");
 
-    if (username.value == "" || password.value == "") {
-        toastr["warning"]("Ensure you input a value in both fields!");
-    } else {
-        $.ajax({
-            type: "POST",
-            url: "/api/post_traffic.php",
-            data: {
-                action: 'login',
-                name: username.value,
-                pw: password.value
-            },
-            success: function (response) {
-                if (response == "Correct Password") {
-                    toastr["success"]("Logged in");
-                    window.location.href = "projects.php";
-                } else {
-                    toastr["warning"](response);
-                }
-            },
-            error: function () {
-                toastr["error"]("An error occurred...");
-            }
-        });
-    }
-});
-$(document).on("click", "#register-btn", function () {
-    let username = document.getElementById("username");
-    let password = document.getElementById("password");
-    let password2 = document.getElementById("password2");
-
-    if (username.value == "" || password.value == "" || password2.value == "" || password.value != password2.value) {
-        toastr["warning"]("Ensure you input a value in all fields!");
-    } else {
-        $.ajax({
-            type: "POST",
-            url: "/api/post_traffic.php",
-            data: {
-                action: 'register',
-                name: username.value,
-                pw: password.value
-            },
-            success: function (response) {
-                toastr["warning"](response);
-                window.location.href = "login.php";
-            },
-            error: function () {
-                toastr["error"]("An error occurred");
-            }
-        });
-    }
-});
