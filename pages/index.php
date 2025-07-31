@@ -47,32 +47,7 @@
         </div> -->
     </div>
 
-    <div id="posters" class="poster-slide">
-        <ul>
-            <iframe src="https://en.wikipedia.org/wiki/Special:Random"></iframe>
-        </ul>
-        <ul>
-            <iframe src="https://en.wikipedia.org/wiki/Special:Random"></iframe>
-        </ul>
-        <ul>
-            <iframe src="https://en.wikipedia.org/wiki/Special:Random"></iframe>
-        </ul>
-        <ul>
-            <iframe src="https://en.wikipedia.org/wiki/Special:Random"></iframe>
-        </ul>
-        <ul>
-            <iframe src="https://en.wikipedia.org/wiki/Special:Random"></iframe>
-        </ul>
-        <ul>
-            <iframe src="https://en.wikipedia.org/wiki/Special:Random"></iframe>
-        </ul>
-        <ul>
-            <iframe src="https://en.wikipedia.org/wiki/Special:Random"></iframe>
-        </ul>
-        <ul>
-            <iframe src="https://en.wikipedia.org/wiki/Special:Random"></iframe>
-        </ul>
-    </div>
+    <div id="posters" class="poster-slide"></div>
 
     <span id="spinner" class="loader"></span>
 

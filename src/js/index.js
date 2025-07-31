@@ -37,42 +37,23 @@ window.onload = async function () {
     //              but going to poster after and back to index
     //              resets the session validation and public content is deactivated???
 
-    // const content = await JSON.parse(await fetchAvailablePosters());
+    const content = await JSON.parse(await fetchAvailablePosters());
 
-    // console.log("len", content.poster_id.length);
+    console.log("len", content.poster_id.length);
 
-    // document.getElementById("posters").setAttribute("data-carousel-3d", "");
+    document.getElementById("posters").setAttribute("data-carousel-3d", "");
 
-    // const cont = document.getElementById("posters");
-    // for (const elem in content.poster_id) {
-    //     // const a = document.createElement("DIV");
+    const cont = document.getElementById("posters");
+    for (const elem in content.poster_id) {
+        const ul = document.createElement("UL");
+        const b = document.createElement("IFRAME");
+        b.id = "iframe-" + elem;
+        // console.log(content.title[elem]);
+        b.setAttribute("src", "poster.php?id=" + content.poster_id[elem] + "&mode=public");
 
-
-    //     const b = document.createElement("IFRAME");
-    //     b.id = "iframe-" + elem;
-
-    //     b.setAttribute("src", "poster.php?id=" + content.poster_id[elem] + "&mode=public");
-    //     b.setAttribute("width", 600);
-    //     b.setAttribute("height", 600);
-
-    //     // a.appendChild(b);
-    //     cont.appendChild(b);
-
-    //     // console.log(content.title[elem]);
-    // }
-
-    // if (cont.children.length >= 1) {
-    //     document.getElementById("iframe-0").setAttribute("selected", "");
-    // }
-
-    // await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jquery.waitforimages/2.4.0/jquery.waitforimages.js');
-    // await loadScript('https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js');
-
-    // await loadScript('./bower_components/modernizr/modernizr.js');
-    // await loadScript('./bower_components/carousel-3d/dist/jquery.carousel-3d.js');
-
-    // await loadStyle("./bower_components/carousel-3d/dist/styles/jquery.carousel-3d.default.css");
-    // await loadStyle("./src/css/style_index.css");
+        ul.appendChild(b)
+        cont.appendChild(ul);
+    }
 
     document.getElementById("spinner").style.display = "none";
 
