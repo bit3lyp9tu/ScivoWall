@@ -254,8 +254,10 @@ async function show(response) {
     // document.getElementById("authors").value = response.authors != null ? response.authors.toString(", ") : "";
     await filloutAuthors(response.authors);
 
-    const data = await getAuthorCollection();
-    setAuthorSuggestions("#add_author", data);
+    if (!isInIframe()) {
+        const data = await getAuthorCollection();
+        setAuthorSuggestions("#add_author", data);
+    }
 
     const boxes = document.getElementById("boxes");
 
@@ -466,50 +468,51 @@ async function initEditBoxes() {
 }
 
 async function edit_box_event(event) {
-    const url = url_to_json();
+    if (!isInIframe()) {
+        const url = url_to_json();
+        //TODO:   check if session-id valid
+        if (url["mode"] != null && url["mode"] == 'private') {
+            // Edit Title
+            if (event.target.tagName === "DIV" && !event.target.id.startsWith("editBox") && event.target.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
 
-    //TODO:   check if session-id valid
-    if (url["mode"] != null && url["mode"] == 'private') {
-        // Edit Title
-        if (event.target.tagName === "DIV" && !event.target.id.startsWith("editBox") && event.target.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
+                // change box to editable
+                const element = createArea("textarea", event.target.children[0].id, "", event.target.children[0].getAttribute("data-content"));
+                element.style.resize = "none"; //"vertical";
+                element.value = event.target.children[0].getAttribute("data-content");
+                event.target.children[0].parentNode.replaceChild(element, event.target.children[0]);
+                element.style['pointer-events'] = 'auto';
 
-            // change box to editable
-            const element = createArea("textarea", event.target.children[0].id, "", event.target.children[0].getAttribute("data-content"));
-            element.style.resize = "none"; //"vertical";
-            element.value = event.target.children[0].getAttribute("data-content");
-            event.target.children[0].parentNode.replaceChild(element, event.target.children[0]);
-            element.style['pointer-events'] = 'auto';
+                element.focus();
+                element.setSelectionRange(element.value.length, element.value.length);
 
-            element.focus();
-            element.setSelectionRange(element.value.length, element.value.length);
+                // remember box as previously selected
+                selected_title = element;
 
-            // remember box as previously selected
-            selected_title = element;
+            } else if (selected_title && event.target !== selected_title) {// if there was something once selected and if the new selected is different from the old
 
-        } else if (selected_title && event.target !== selected_title) {// if there was something once selected and if the new selected is different from the old
+                // change old back to non-editable and save old edits
+                const element = createArea("div", selected_title.id, "", selected_title.value);
 
-            // change old back to non-editable and save old edits
-            const element = createArea("div", selected_title.id, "", selected_title.value);
+                if (selected_title.value == "") {
+                    await typeset(element, () => marked.marked("Title"));
+                } else {
+                    await typeset(element, () => marked.marked(selected_title.value));
+                }
 
-            if (selected_title.value == "") {
-                await typeset(element, () => marked.marked("Title"));
-            } else {
-                await typeset(element, () => marked.marked(selected_title.value));
+                selected_title.parentNode.replaceChild(element, selected_title);
+                element.style['pointer-events'] = 'none';
+
+                // forget old selected
+                selected_title = null;
             }
+            // Edit Boxes
+            //edit_box(event.target)
 
-            selected_title.parentNode.replaceChild(element, selected_title);
-            element.style['pointer-events'] = 'none';
-
-            // forget old selected
-            selected_title = null;
+        } else {
+            console.error("event.target is empty. event:", event);
         }
-        // Edit Boxes
-        //edit_box(event.target)
-
-    } else {
-        console.error("event.target is empty. event:", event);
+        await save_content();
     }
-    await save_content();
 }
 // $(document).on("click", edit_box_event);
 document.addEventListener("click", edit_box_event);
@@ -629,11 +632,9 @@ window.onload = async function () {
     if (isInIframe()) {
         console.log("in IFrame");
 
-        // document.getElementById("add_author").style.display = "none";
-
-        // document.getElementById("img-load").style.display = "none";
-
-        // document.getElementsByTagName("footer")[0].style.display = "none";
+        document.getElementById("add_author").style.display = "none";
+        document.getElementById("logout").style.display = "none";
+        document.getElementsByTagName("footer")[0].style.display = "none";
     }
 
     const state = await isEditView();

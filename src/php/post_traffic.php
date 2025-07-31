@@ -238,13 +238,11 @@
             $poster_id = (isset($_POST['key']) && $_POST['key']=='id' && isset($_POST['value'])) ? $_POST['value'] : '';
             $user_id = getValidUserFromSession();
 
-            if ($user_id != null) {
-
-                echo load_content($poster_id);
-            }else{
-
-                echo json_encode(array('status' => 'error', 'message' => 'Invalid user'));
-            }
+            echo load_content($poster_id);
+            // if ($user_id != null) {
+            // }else{
+            //     echo json_encode(array('status' => 'error', 'message' => 'Invalid user'));
+            // }
         }
         if ($_POST['action'] == 'content-upload') {
             //TODO:   check if mode=private + session-id correct

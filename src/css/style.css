@@ -273,7 +273,10 @@ mjx-container,
 }
 
 .poster-slide {
-    width: 100%;
+    padding-left: 25px;
+    padding-right: 25px;
+
+    width: auto;
     height: 100%;
 }
 
@@ -496,11 +499,6 @@ input.vertical-marker[type="button"] {
     100% {
         width: 600px;
     }
-}
-
-#iframe-0 {
-    /* border: 0px; */
-    border: 1px solid red;
 }
 
 #posters {
