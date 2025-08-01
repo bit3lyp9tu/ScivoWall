@@ -88,7 +88,7 @@ class PythonOrgSearch(unittest.TestCase):
         # check both empty
         self.login_fill_form("", "")
         time.sleep(self.wait_time)
-        driver.find_element(By.ID, "login").click()
+        driver.find_element(By.ID, "login-btn").click()
         self.assertEqual(
             f"http://{address}/{sub_path}login.php",
             driver.current_url,
@@ -100,7 +100,7 @@ class PythonOrgSearch(unittest.TestCase):
         # check wrong name
         self.login_fill_form("Max Mustermann" + "123", "AbC123-98xy")
         time.sleep(self.wait_time)
-        driver.find_element(By.ID, "login").click()
+        driver.find_element(By.ID, "login-btn").click()
         time.sleep(self.wait_time)
         self.assertEqual(
             f"http://{address}/{sub_path}login.php",
@@ -113,7 +113,7 @@ class PythonOrgSearch(unittest.TestCase):
         # check wrong pw
         self.login_fill_form("Max Mustermann", "AbC123-98xy" + "abc")
         time.sleep(self.wait_time)
-        driver.find_element(By.ID, "login").click()
+        driver.find_element(By.ID, "login-btn").click()
         time.sleep(self.wait_time)
         self.assertEqual(
             f"http://{address}/{sub_path}login.php",
@@ -126,7 +126,7 @@ class PythonOrgSearch(unittest.TestCase):
         # check right name+pw
         self.login_fill_form("max5", "abc")
         # time.sleep(self.wait_time)
-        driver.find_element(By.ID, "login").click()
+        driver.find_element(By.ID, "login-btn").click()
         time.sleep(self.wait_time)
         self.assertEqual(
             f"http://{address}/{sub_path}projects.php",
@@ -972,7 +972,7 @@ class PythonOrgSearch(unittest.TestCase):
 
         # login as admin
         self.login_fill_form("Admin", "PwScaDS-2025")
-        driver.find_element(By.ID, "login").click()
+        driver.find_element(By.ID, "login-btn").click()
         self.assertEqual(
             f"http://{address}/{sub_path}projects.php",
             driver.current_url,

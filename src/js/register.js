@@ -1,12 +1,9 @@
 $(document).ready(function () {
-    let registerForm = document.getElementById("form");
+    document.getElementById("register-btn").onclick = function () {
 
-    registerForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-
-        let username = document.getElementById("username");
-        let password = document.getElementById("password");
-        let password2 = document.getElementById("password2");
+        const username = document.getElementById("username");
+        const password = document.getElementById("password");
+        const password2 = document.getElementById("password2");
 
         if (username.value == "" || password.value == "" || password2.value == "" || password.value != password2.value) {
             toastr["warning"]("Ensure you input a value in all fields!");
@@ -28,5 +25,5 @@ $(document).ready(function () {
                 }
             });
         }
-    });
+    }
 });

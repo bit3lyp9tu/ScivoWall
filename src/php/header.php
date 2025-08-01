@@ -22,14 +22,7 @@
     print '<script src="' . $root_path . '/src/js/' . $site_script . '"></script>';
 
     if ($site_script == "index.js") {
-
-        // print '<link rel="stylesheet" href="' . $root_path . '/blueimp-gallery/css/blueimp-gallery.css">';
-        // print '<link rel="stylesheet" href="' . $root_path . '/blueimp-gallery/css/blueimp-gallery-video.css">';
-        // print '<link rel="stylesheet" href="' . $root_path . '/blueimp-gallery/css/blueimp-gallery-indicator.css">';
-
-        // print '<script src="' . $root_path . '/blueimp-gallery/js/blueimp-gallery.min.js"></script>';
-
-        // print '<link rel="stylesheet" href="' . $root_path . '/jquery-flipster/jquery.flipster.css">';
-        // print '<script src="' . $root_path . '/jquery-flipster/jquery.flipster.min.js"></script>';
+        print '<script src="' . $root_path . '/src/js/login.js"></script>';
+        print '<script src="' . $root_path . '/src/js/register.js"></script>';
     }
 ?>

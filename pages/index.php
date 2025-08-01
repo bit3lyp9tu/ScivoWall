@@ -17,37 +17,36 @@
     <div id="logo_headline">
         <img class="nomargin" id='scadslogo' src="img/scadslogo.png" draggable="false"/>
         <div class="header-video" style="float: right;"></div>
-
-        <!-- <div class="account-box-moving">
-
-            <div class="account-box-item">
-                <div>
-                    <input type="text" id="name" class="stateA" placeholder="Enter your Username...">
-                    <input type="password" id="pw" class="stateA" placeholder="Enter your Password...">
-                    <input id="login-btn" type="button" class="stateA" value="Login"/>
-
-                    <input id="login-btn" class="vertical-marker" type="button" value="Login"/>
-
-                    <!- <p id="login-response"></p> -->
-                <!--</div>
-            </div>
-            <div class="account-box-item">
-                <div>
-                    <input type="text" id="username"  class="stateA" placeholder="Enter your Username...">
-                    <input type="password" id="password"  class="stateA" placeholder="Enter your Password...">
-                    <input type="password" id="password2"  class="stateA" placeholder="Repeat your Password...">
-
-                    <input id="register-btn" type="button" class="stateA" value="Register"/>
-
-                    <input id="register-btn" class="vertical-marker" type="button" value="Register"/>
--->
-                    <!-- <p id="register-response"></p> -->
-                <!--</div>
-            </div>
-        </div> -->
     </div>
 
-    <div>
+    <div class="account-box-moving">
+        <div class="account-box-item">
+            <div>
+                <input type="text" id="name" class="stateA" placeholder="Enter your Username...">
+                <input type="password" id="pw" class="stateA" placeholder="Enter your Password...">
+                <input id="login-btn" type="button" class="stateA" value="Login"/>
+
+                <input id="login-btn" class="vertical-marker" type="button" value="Login"/>
+
+                <!-- <p id="login-response"></p> -->
+            </div>
+        </div>
+        <div class="account-box-item">
+            <div>
+                <input type="text" id="username"  class="stateA" placeholder="Enter your Username...">
+                <input type="password" id="password"  class="stateA" placeholder="Enter your Password...">
+                <input type="password" id="password2"  class="stateA" placeholder="Repeat your Password...">
+
+                <input id="register-btn" type="button" class="stateA" value="Register"/>
+
+                <input id="register-btn" class="vertical-marker" type="button" value="Register"/>
+
+                <!-- <p id="register-response"></p> -->
+            </div>
+        </div>
+    </div>
+
+    <div class="slider-controls">
         <button onclick="shiftCounter(-1)"><</button>
         <button onclick="restart(2000)">Play</button>
         <button onclick="stop()">Stop</button>

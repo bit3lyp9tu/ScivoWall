@@ -11,12 +11,12 @@
 ?>
 <body>
     <div>
-        <form action="" id="login-form">
+        <div>
             <h1>Login</h1>
             <input type="text" id="name" class="form-control" placeholder="Enter your Username...">
             <input type="password" id="pw" class="form-control" placeholder="Enter your Password...">
-            <button id="login" type="submit">Submit</button>
-        </form>
+            <button id="login-btn">Submit</button>
+        </div>
         <p id="login-response"></p>
     </div>
 </body>

@@ -1,11 +1,8 @@
 $(document).ready(function () {
-    let registerForm = document.getElementById("login-form");
+    document.getElementById("login-btn").onclick = function () {
 
-    registerForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-
-        let username = document.getElementById("name");
-        let password = document.getElementById("pw");
+        const username = document.getElementById("name");
+        const password = document.getElementById("pw");
 
         if (username.value == "" || password.value == "") {
             toastr["warning"]("Ensure you input a value in both fields!");
@@ -31,5 +28,5 @@ $(document).ready(function () {
                 }
             });
         }
-    });
+    }
 });

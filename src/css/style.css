@@ -273,8 +273,8 @@ mjx-container,
 }
 
 .poster-slide {
-    padding-left: 25px;
-    padding-right: 25px;
+    padding-left: 35px;
+    padding-right: 35px;
 
     width: auto;
     height: 100%;
@@ -412,10 +412,11 @@ div#toggle_register_box {
 }
 
 .account-box-moving {
-    /* position: absolute;
+    position: absolute;
     left: 0px;
-    top: 15%; */
-    /* overscroll-behavior: contain; */
+    top: 120px;
+
+    overscroll-behavior: contain;
 }
 
 input.vertical-marker[type="button"] {
@@ -435,7 +436,7 @@ input.vertical-marker[type="button"] {
     border-radius: 0px 15px 15px 0px;
 
     padding: 15px 15px 15px 0px;
-    opacity: 0.9;
+    opacity: 0.98;
 }
 
 .account-box-moving .vertical-marker {
@@ -817,3 +818,7 @@ div#authors {
 }
 
 div.account-status {}
+
+.slider-controls {
+    margin-left: 35px;
+}
