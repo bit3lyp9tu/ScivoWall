@@ -52,6 +52,7 @@
         <button onclick="restart(2000)">Play</button>
         <button onclick="stop()">Stop</button>
         <button onclick="shiftCounter(1)">></button>
+        <p id="counter">0/0</p>
     </div>
 
     <div id="posters" class="poster-slide"></div>

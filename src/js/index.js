@@ -32,8 +32,10 @@ function showPoster(selector, index) {
 }
 function showPosterAll() {
     const selector = "div.poster-slide>ul>iframe";
+    const length = document.querySelectorAll(selector).length;
 
     showPoster(selector, counter);
+    document.getElementById("counter").innerText = (counter % length + 1) + "/" + length;
     counter++;
 }
 
@@ -55,16 +57,20 @@ function stop() {
 }
 function shiftCounter(value) {
     const selector = "div.poster-slide>ul>iframe";
+    const length = document.querySelectorAll(selector).length;
 
-    counter += value % document.querySelectorAll(selector).length;
+    counter += value % length;
     showPoster(selector, counter);
+    document.getElementById("counter").innerText = (counter % length + 1) + "/" + length;
     console.info("Counter shifted by ", value);
 }
 function setCounter(value) {
     const selector = "div.poster-slide>ul>iframe";
+    const length = document.querySelectorAll(selector).length;
 
-    counter = value % document.querySelectorAll(selector).length;
+    counter = value % length;
     showPoster(selector, counter);
+    document.getElementById("counter").innerText = (counter % length + 1) + "/" + length;
     console.info("Set Counter to ", counter);
 }
 
