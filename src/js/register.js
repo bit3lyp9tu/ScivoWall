@@ -17,8 +17,12 @@ $(document).ready(function () {
                     pw: password.value
                 },
                 success: function (response) {
+                    console.debug(response);
+
                     toastr["warning"](response);
-                    window.location.href = "login.php";
+                    if (response != "Password not complex enough") {
+                        window.location.href = "login.php";
+                    }
                 },
                 error: function () {
                     toastr["error"]("An error occurred");
