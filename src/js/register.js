@@ -19,9 +19,11 @@ $(document).ready(function () {
                 success: function (response) {
                     console.debug(response);
 
-                    toastr["warning"](response);
-                    if (response != "Password not complex enough") {
+                    if (response == "1") {
                         window.location.href = "login.php";
+                    } else {
+                        toastr["warning"](response);
+                        toastr["warning"]("Please try again");
                     }
                 },
                 error: function () {
