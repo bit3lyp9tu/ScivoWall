@@ -360,6 +360,13 @@ p[placeholder="plotly"] {
     width: 100%;
     height: 500px;
     /* object-fit: cover; */
+
+    visibility: hidden;
+    font-size: 0;
+}
+
+p[placeholder="plotly"] div {
+    visibility: visible;
 }
 
 /* TODO:   find a better way to prevent overflow*/

@@ -36,18 +36,18 @@
     <script src="./bower_components/modernizr/modernizr.js"></script>
     <script src="./bower_components/carousel-3d/dist/jquery.carousel-3d.js"></script> -->
 
-    <!-- <?php
+    <?php
         $script_path = $_SERVER["SCRIPT_FILENAME"];
         error_log("---------------------------------------------------");
         error_log($script_path);
         $script_path = preg_replace("/.*\//", "", $script_path);
         $script_path = preg_replace("/\.php$/", ".js", $script_path);
 
-        if (file_exists($script_path)) {
-            print "<script src='js/" . $script_path . "' defer></script>";
-        }
-        if($script_path != "index.js") {
+        //if (file_exists($script_path)) {
+        //    print "<script src='js/" . $script_path . "' defer></script>";
+        //}
+        if($script_path == "poster.js") {
             print "<script src='https://cdn.plot.ly/plotly-3.0.0.min.js' charset='utf-8'></script>";
         }
-    ?> -->
+    ?>
 </head>

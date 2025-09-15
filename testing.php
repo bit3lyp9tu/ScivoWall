@@ -77,7 +77,6 @@
 		if(is_equal($x, $y)) {
 			print_red("Test [$name] failed");
 			$GLOBALS["tests_failed"]++;
-		
 			exit(1);
 		}
 	}

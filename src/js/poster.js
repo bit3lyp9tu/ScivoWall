@@ -916,7 +916,7 @@ async function loadPlots() {
         const head_data = data_content.match(/(?<=\<p\s)[\s,placeholder\=\"plotly\",(\w+\=\"?\'?\w+\"?\'?)]+(?=\>)/sgm);
         const body = data_content.match(/(?<=<p\s?[\s,(\w+\=\"?\'?\w+\"?\'?)]*>).*?(?=\<\/p\>)/gsm);
 
-        if (head_data) {
+        if (head_data && body) {
             const placeholder_list = parent_element.querySelectorAll('p[placeholder]');
 
             for (let j = 0; j < placeholder_list.length; j++) {
