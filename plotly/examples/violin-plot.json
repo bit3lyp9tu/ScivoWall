@@ -1,5 +1,6 @@
 {
-"data": [ {
+    "data": [
+        {
             "text": "sample length: 32",
             "hoveron": "points+kde",
             "meanline": {
@@ -67,7 +68,8 @@
                 18.78
             ],
             "orientation": "h"
-        },{
+        },
+        {
             "text": "sample length: 30",
             "hoveron": "points+kde",
             "meanline": {
@@ -133,7 +135,8 @@
                 20.53
             ],
             "orientation": "h"
-        }, {
+        },
+        {
             "text": "sample length: 9",
             "hoveron": "points+kde",
             "meanline": {
@@ -178,7 +181,8 @@
                 10.09
             ],
             "orientation": "h"
-        },{
+        },
+        {
             "text": "sample length: 10",
             "hoveron": "points+kde",
             "meanline": {
@@ -224,7 +228,8 @@
                 13.42
             ],
             "orientation": "h"
-        },{
+        },
+        {
             "text": "sample length: 28",
             "hoveron": "points+kde",
             "meanline": {
@@ -288,7 +293,8 @@
                 27.18
             ],
             "orientation": "h"
-        },{
+        },
+        {
             "text": "sample length: 59",
             "hoveron": "points+kde",
             "meanline": {
@@ -383,7 +389,8 @@
                 17.82
             ],
             "orientation": "h"
-        },{
+        },
+        {
             "text": "sample length: 18",
             "hoveron": "points+kde",
             "meanline": {
@@ -437,7 +444,8 @@
                 18.15
             ],
             "orientation": "h"
-        },{
+        },
+        {
             "text": "sample length: 58",
             "hoveron": "points+kde",
             "meanline": {
@@ -531,9 +539,9 @@
                 15.69
             ],
             "orientation": "h"
-        }],
-
-"layout": {
+        }
+    ],
+    "layout": {
         "hovermode": "closest",
         "width": 400,
         "yaxis": {
@@ -550,5 +558,4 @@
         "violinmode": "overlay",
         "height": 700
     }
-
 }

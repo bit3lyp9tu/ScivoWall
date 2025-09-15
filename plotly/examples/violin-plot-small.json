@@ -1,5 +1,6 @@
 {
-"data": [ {
+    "data": [
+        {
             "text": "sample length: 32",
             "hoveron": "points+kde",
             "legendgroup": "F",
@@ -64,7 +65,8 @@
                 18.78
             ],
             "orientation": "h"
-        },{
+        },
+        {
             "text": "sample length: 30",
             "hoveron": "points+kde",
             "meanline": {
@@ -130,8 +132,9 @@
                 20.53
             ],
             "orientation": "h"
-        }],
-"layout": {
+        }
+    ],
+    "layout": {
         "hovermode": "closest",
         "width": 400,
         "yaxis": {
@@ -148,5 +151,4 @@
         "violinmode": "overlay",
         "height": 700
     }
-
 }
