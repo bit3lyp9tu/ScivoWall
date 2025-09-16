@@ -585,6 +585,8 @@ class PythonOrgSearch(unittest.TestCase):
             in [data["authors"]["added"], data["authors"]["added-edited"]],
         )
 
+        # TODO: check add author by pressing enter
+
         # check suggested authors after added new one
         self.check_suggested_authors(data["author_suggestions2"])
 

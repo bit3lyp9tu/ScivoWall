@@ -706,9 +706,12 @@ async function author_item(value) {
 
     return item;
 }
-$(document).on("focusout", async function (event) {
+$(document).on("focusout keydown", async function (event) {
     if (event.target.id == "add_author") {
-        if (event.target.value != "") {
+        if (
+            (event.type === "focusout" && event.target.value != "") ||
+            (event.type === "keydown" && event.key === "Enter" && event.target.value != "")
+        ) {
             // convert target into item
 
             const field = event.target;
