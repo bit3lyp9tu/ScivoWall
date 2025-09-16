@@ -473,7 +473,7 @@ async function edit_box_event(event) {
         //TODO:   check if session-id valid
         if (url["mode"] != null && url["mode"] == 'private') {
             // Edit Title
-            if (event.target.tagName === "DIV" && !event.target.id.startsWith("editBox") && event.target.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
+            if (event.target.children[0] && event.target.tagName === "DIV" && !event.target.id.startsWith("editBox") && event.target.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
 
                 // change box to editable
                 const element = createArea("textarea", event.target.children[0].id, "", event.target.children[0].getAttribute("data-content"));

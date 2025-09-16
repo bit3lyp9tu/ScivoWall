@@ -52,7 +52,7 @@ Title
 
 Authors
 : The Authors of the poster, to add a new author write in the textfield and deselect the textfield.
-If authors are already added, they will be shown in the autocomplete options. ==Throws Error???==
+If authors are already added, they will be shown in the autocomplete options.
 To remove an author, hover on the author element and click on the ```[X]``` button.
 *[The author order can be changed via drag and drop ==(feature currently broken)==]*.
 
