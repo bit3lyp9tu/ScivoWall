@@ -98,8 +98,6 @@ window.onload = async function () {
             cont.appendChild(ul);
         }
 
-        document.getElementById("spinner").style.display = "none";
-
         intervalId = setInterval(showPosterAll, 2000);
     } else {
 
@@ -108,6 +106,7 @@ window.onload = async function () {
         cont.appendChild(elem);
     }
 
+    document.getElementById("spinner").style.display = "none";
 }
 
 function loadScript(src) {
