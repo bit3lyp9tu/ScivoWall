@@ -233,14 +233,15 @@ function setAuthorSuggestions(selector, data) {
             });
             $.customCatcompleteDefined = false;
         }
-    } else {
-        console.error("no or unusual author suggestions");
-    }
 
-    $(selector).catcomplete({
-        delay: 0,
-        source: data
-    });
+        $(selector).catcomplete({
+            delay: 0,
+            source: data
+        });
+
+    } else {
+        console.debug("no or unusual author suggestions", data);
+    }
 }
 
 async function show(response) {
