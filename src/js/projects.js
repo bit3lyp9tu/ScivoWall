@@ -387,10 +387,10 @@ async function createTableFromJSON(id, pk_ids, data, editable_columns, ...additi
         document.getElementById(id).appendChild(table);
 
     } else {
-        const no_data = document.createElement("p");
-        no_data.innerText = "No Data Available";
+        // const no_data = document.createElement("p");
+        // no_data.innerText = "No Data Available";
 
-        document.getElementById(id).appendChild(no_data);
+        // document.getElementById(id).appendChild(no_data);
     }
 }
 
