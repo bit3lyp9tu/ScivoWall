@@ -101,6 +101,8 @@ window.onload = async function () {
         intervalId = setInterval(showPosterAll, 2000);
     } else {
 
+        document.getElementsByClassName("slider-controls")[0].style.display = "none";
+
         const elem = document.createElement("h2");
         elem.innerText = "There are no public posters available at the moment.";
         cont.appendChild(elem);
