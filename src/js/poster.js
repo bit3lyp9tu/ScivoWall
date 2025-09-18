@@ -1075,36 +1075,97 @@ function repairJson(input) {
 var dragged_text = "";
 var is_draging = false;
 var dragend_item = null;
+var drop_target = null;
 
 $(document).on("dragstart", async function (event) {
 
     console.log("drawstart event", event.target);
 
-    if (document.getElementById("add_author").contains(event.target)) {
+    if (document.getElementById("authors").contains(event.target)) {
         event.target.style.border = "dashed";
         event.target.style.borderColor = "#83d252";
         event.target.style.border.width = "thin";
 
-        dragend_item = event.target;
+        dragend_item = event.target;//.cloneNode(true);
+        // event.target.style.display = "none";
     }
     is_draging = true;
 
     await save_content();
 });
 
+function remove_ghost_author() {
+    var ghosts = document.querySelectorAll('[is_ghost="true"]');
+    for (var i = 0; i < ghosts.length; i++) {
+        ghosts[i].remove();
+    }
+}
+
 $(document).on("dragover", function (event) {
     event.preventDefault();
+
+    if (document.getElementById("authors").contains(event.target) && $(event.target).prop("class") == "author-item") {
+
+        const mouseX = event.clientX;
+        const mouseY = event.clientY;
+
+        const rect = event.target.getBoundingClientRect();
+        const { x, y, width, height } = rect;
+
+        if (dragend_item != event.target) {
+            if (document.querySelectorAll('[is_ghost="true"]').length <= 0) {
+
+                const p = document.createElement("p");
+                p.innerText = "";
+                const ghost_author = document.createElement("div");
+                ghost_author.classList.add("author-item");
+                ghost_author.classList.add("ghost-author");
+                ghost_author.setAttribute("is_ghost", "true");
+                ghost_author.appendChild(p);
+
+                if (mouseX >= x + width / 2 && mouseX <= x + width) {
+
+                    if (!$(event.target).next().is('[is_ghost="true"]')) {
+                        if ($(event.target).prop("tagName") == "P") {
+                            $(event.target).parent().after(ghost_author);
+                        } else {
+                            event.target.after(ghost_author);
+                        }
+                        drop_target = event.target;
+                    }
+                }
+                if (mouseX > x && mouseX < x + width / 2) {
+
+                    if (!$(event.target).prev().is('[is_ghost="true"]')) {
+                        if ($(event.target).prop("tagName") == "P") {
+                            $(event.target).parent().before(ghost_author);
+                        } else {
+                            event.target.before(ghost_author);
+                        }
+                        drop_target = event.target;
+                    }
+                }
+            } else {
+                if (drop_target != event.target) {
+                    remove_ghost_author();
+                    drop_target = null;
+                }
+            }
+        }
+    } else {
+        remove_ghost_author();
+        drop_target = null;
+    }
 });
 
 // document.addEventListener("dragend", function (event) {
-//     console.log("C: ", event.target);
-
+//     console.log("C: ", event.target)
 // });
 
 $(document).on("drop", async function (event) {
     event.preventDefault();
 
-    if (document.getElementById("add_author").contains(event.target)) {
+    if (document.getElementById("authors").contains(event.target)) {
         if (event.target.tagName == "P") {
             event.target.parentElement.after(dragend_item);
         } else {
@@ -1116,6 +1177,15 @@ $(document).on("drop", async function (event) {
     dragend_item.style.borderWidth = "1px";
 
     is_draging = false;
+
+    var ghosts = document.querySelectorAll('[is_ghost="true"]');
+    for (var i = 0; i < ghosts.length; i++) {
+        ghosts[i].remove();
+    }
+
+    // document.querySelectorAll('#authors>.author-item').forEach(element => {
+    //     element.style.display = "show";
+    // });
 
     await save_content();
 });

@@ -337,6 +337,12 @@ input#typeahead.tt-input {
     display: block;
 }
 
+.ghost-author {
+    border: dashed;
+    border-color: #83d252;
+    border-width: thick;
+}
+
 .typeahead-standalone {
     display: flex;
     align-items: stretch;
