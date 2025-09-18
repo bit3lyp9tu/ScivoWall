@@ -326,7 +326,7 @@ input#typeahead.tt-input {
     justify-content: space-between;
 
     font-size: 1rem;
-    width: 7rem;
+    width: auto;
 }
 
 .author-item:hover:not([in-iframe]) {

@@ -1079,12 +1079,8 @@ var drop_target = null;
 
 $(document).on("dragstart", async function (event) {
 
-    console.log("drawstart event", event.target);
-
     if (document.getElementById("authors").contains(event.target)) {
-        event.target.style.border = "dashed";
-        event.target.style.borderColor = "#83d252";
-        event.target.style.border.width = "thin";
+        event.target.classList.add("ghost-author");
 
         dragend_item = event.target;//.cloneNode(true);
         // event.target.style.display = "none";
@@ -1123,8 +1119,9 @@ $(document).on("dragover", function (event) {
                 ghost_author.setAttribute("is_ghost", "true");
                 ghost_author.appendChild(p);
 
-                if (mouseX >= x + width / 2 && mouseX <= x + width) {
+                ghost_author.style.width = "5rem";
 
+                if (mouseX >= x + width / 2 && mouseX <= x + width) {
                     if (!$(event.target).next().is('[is_ghost="true"]')) {
                         if ($(event.target).prop("tagName") == "P") {
                             $(event.target).parent().after(ghost_author);
@@ -1135,7 +1132,6 @@ $(document).on("dragover", function (event) {
                     }
                 }
                 if (mouseX > x && mouseX < x + width / 2) {
-
                     if (!$(event.target).prev().is('[is_ghost="true"]')) {
                         if ($(event.target).prop("tagName") == "P") {
                             $(event.target).parent().before(ghost_author);
@@ -1145,6 +1141,7 @@ $(document).on("dragover", function (event) {
                         drop_target = event.target;
                     }
                 }
+
             } else {
                 if (drop_target != event.target) {
                     remove_ghost_author();
@@ -1172,9 +1169,7 @@ $(document).on("drop", async function (event) {
             event.target.after(dragend_item);
         }
     }
-    dragend_item.style.border = "solid";
-    dragend_item.style.borderColor = "#83d252";
-    dragend_item.style.borderWidth = "1px";
+    dragend_item.classList.remove("ghost-author");
 
     is_draging = false;
 
