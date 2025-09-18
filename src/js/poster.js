@@ -72,7 +72,7 @@ async function hasValidUserSession() {
         });
         return response;
     } catch (err) {
-        console.error("Session check failed:", err);
+        console.debug("Session check failed:", err);
         return false;
     }
 }
@@ -162,7 +162,7 @@ async function upload(id, data) {
         });
         return response;
     } catch (err) {
-        console.error("Upload failed:", err);
+        console.debug("Upload failed:", err);
         return false;
     }
 }
@@ -1193,6 +1193,8 @@ $(document).on("mouseover", function (event) {
 });
 
 $(document).on("click", "#logout", function () {
+    console.debug("logout");
+
     $.ajax({
         type: "POST",
         url: "/api/post_traffic.php",
