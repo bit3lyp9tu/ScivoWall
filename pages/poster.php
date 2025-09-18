@@ -18,6 +18,9 @@
                 <div>
                     <input type="button" id="logout" value="Logout">
                 </div>
+                <div>
+                    <input type="button" id="projects" value="To Projects" onclick="window.location.href='projects.php'">
+                </div>
             </div>
         </div>
     </div>

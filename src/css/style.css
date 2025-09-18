@@ -797,11 +797,23 @@ input[type="checkbox"]:checked {}
 .account-menu {
     position: fixed;
     right: 0px;
-    top: 5%
+    top: 5px;
+}
+
+.account-menu-item>div {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-bottom: 10px;
 }
 
 .account-menu-item>div>input[type="button"] {
+    width: 100%;
     background-color: var(--scads-blue);
+
+    text-align: right;
 }
 
 @media (max-width: 1800px) {
