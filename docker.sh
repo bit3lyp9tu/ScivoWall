@@ -132,11 +132,11 @@ export LOCAL_PORT
 echo "#!/bin/bash" > .env
 echo "LOCAL_PORT=$LOCAL_PORT" >> .env
 
-echo "=== Current git hash before auto-pulling ==="
-git rev-parse HEAD
-echo "=== Current git hash before auto-pulling ==="
+# echo "=== Current git hash before auto-pulling ==="
+# git rev-parse HEAD
+# echo "=== Current git hash before auto-pulling ==="
 
-git pull
+# git pull
 
 function die {
 	echo $1
