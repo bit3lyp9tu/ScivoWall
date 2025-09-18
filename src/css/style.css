@@ -426,8 +426,8 @@ div#toggle_register_box {
 
 .account-box-moving {
     position: absolute;
-    left: 0px;
-    top: 120px;
+    right: 0px;
+    top: 80px;
 
     overscroll-behavior: contain;
 }
@@ -446,10 +446,12 @@ input.vertical-marker[type="button"] {
 
     background-color: var(--light-green);
 
-    border-radius: 0px 15px 15px 0px;
+    border-radius: 15px 0px 0px 15px;
 
     padding: 15px 15px 15px 0px;
     opacity: 0.98;
+
+    margin-bottom: 5px;
 }
 
 .account-box-moving .vertical-marker {
@@ -464,6 +466,14 @@ input.vertical-marker[type="button"] {
 
     width: 0%;
 }
+
+/*
+@keyframes form-contract {
+
+    0% {
+        width: 0%;
+    }
+} */
 
 .account-box-item:hover {
     display: block;
@@ -495,7 +505,7 @@ input.vertical-marker[type="button"] {
         width: 0%;
     }
 
-    15% {
+    40% {
         width: 0%;
     }
 
