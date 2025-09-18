@@ -20,7 +20,28 @@ $(document).ready(function () {
                     console.debug(response);
 
                     if (response == "1") {
-                        window.location.href = "login.php";
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/api/post_traffic.php",
+                            data: {
+                                action: 'login',
+                                name: username.value,
+                                pw: password.value
+                            },
+                            success: function (response) {
+                                if (response == "Correct Password") {
+                                    toastr["success"]("Logged in");
+                                    window.location.href = "projects.php";
+                                } else {
+                                    toastr["warning"](response);
+                                }
+                            },
+                            error: function () {
+                                toastr["error"]("An error occurred...");
+                            }
+                        });
+
                     } else {
                         toastr["warning"](response);
                         toastr["warning"]("Please try again");
