@@ -146,3 +146,24 @@ function loadStyle(href) {
     });
 }
 
+document.addEventListener("keydown", (event) => {
+
+    if (document.querySelectorAll("div.poster-slide>ul>iframe").length > 0) {
+        if (event.key === "ArrowRight") {
+            shiftCounter(1);
+        }
+        if (event.key === "ArrowLeft") {
+            shiftCounter(-1);
+        }
+        if (event.code === "Space") {
+            if (intervalId === null) {
+                console.info("restart poster slider");
+                restart(2000);
+            } else {
+                console.info("stop poster slider");
+                stop();
+            }
+        }
+    }
+
+});
