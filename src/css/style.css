@@ -3,6 +3,9 @@
     --light-green: #8ecc73;
 
     --scads-blue: #1275ab;
+
+    --deep-red: #a83434;
+    --light-red: #e4615c;
 }
 
 #titles {
@@ -856,4 +859,12 @@ div.account-status {}
 
 .slider-controls {
     margin-left: 35px;
+}
+
+input[value="Delete"] {
+    background-color: var(--deep-red);
+}
+
+input[value="Delete"]:hover {
+    background-color: var(--light-red);
 }
