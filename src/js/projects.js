@@ -1065,7 +1065,7 @@ async function loadImgsInTable(filter) {
     var elem_children = elem.children;
 
     if (elem_children.length == 0) {
-        console.error(`loadImgsInTable: elem has no children: `, elem);
+        // console.error(`loadImgsInTable: elem has no children: `, elem);
         return null;
     }
 
