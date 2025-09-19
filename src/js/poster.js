@@ -636,6 +636,9 @@ window.onload = async function () {
         document.getElementById("add_author").style.display = "none";
         document.getElementById("logout").style.display = "none";
         document.getElementsByTagName("footer")[0].style.display = "none";
+
+        document.getElementById("projects").style.display = "none";
+
     }
 
     const state = await isEditView();
