@@ -574,8 +574,6 @@ th {
 
 .filter-container input[type='button'] {}
 
-.filter-category {}
-
 /* https://cssloaders.github.io/ */
 .loader {
     width: 80px;
@@ -870,5 +868,9 @@ input[value="Delete"] {
 }
 
 input[value="Delete"]:hover {
+    background-color: var(--light-red);
+}
+
+input.filter-category:hover {
     background-color: var(--light-red);
 }
