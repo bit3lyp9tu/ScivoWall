@@ -332,6 +332,10 @@ input#typeahead.tt-input {
     width: auto;
 }
 
+.author-item>p {
+    margin-right: 10pt;
+}
+
 .author-item:hover:not([in-iframe]) {
     background-color: #83d2522d;
 }
