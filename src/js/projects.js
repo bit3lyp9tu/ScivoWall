@@ -431,6 +431,22 @@ async function isAdmin() {
     }
 }
 
+async function isLoggedIn() {
+    try {
+        const response = await $.ajax({
+            type: "POST",
+            url: "/api/post_traffic.php",
+            data: {
+                action: "has-valid-user-session"
+            }
+        });
+        return !!response;
+    } catch (err) {
+        console.error(`Error while checking isLoggedIn: ${err}`);
+        return false;
+    }
+}
+
 function parse_id_name(_this) {
     var elem = null;
     if (!_this) {
@@ -1099,3 +1115,10 @@ $(document).on("click", "#logout", function () {
 $(document).ready(async function () {
     await load_project_page_data();
 });
+
+window.onload = async function () {
+    if (!await isLoggedIn()) {
+        console.warn("User is not logged in");
+        document.getElementById("logout").style.display = "none";
+    }
+}
