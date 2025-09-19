@@ -638,7 +638,6 @@ window.onload = async function () {
         document.getElementsByTagName("footer")[0].style.display = "none";
 
         document.getElementById("projects").style.display = "none";
-
     }
 
     const state = await isEditView();
@@ -646,7 +645,8 @@ window.onload = async function () {
         console.log("logged in");
         createEditMenu();
     } else {
-        console.log("logged out");
+        console.warn("User is not logged in");
+        document.getElementById("logout").style.display = "none";
     }
 
     try {
