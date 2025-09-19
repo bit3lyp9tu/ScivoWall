@@ -15,11 +15,19 @@ async function fetchAvailablePosters() {
     });
 }
 
+function mod(n, m) {
+    return ((n % m) + m) % m;
+}
+
+function index_converter(i, l) {
+    return i < 0 ? mod((i + l * (mod(-i, l))), l) : i % l;
+}
+
 var intervalId = null;
 var counter = 0;
 function showPoster(selector, index) {
     var posters = document.querySelectorAll(selector);
-    var l = index % posters.length;
+    var l = index_converter(index, posters.length);
 
     for (var i = 0; i < posters.length; i++) {
         const element = posters[i];
@@ -28,14 +36,17 @@ function showPoster(selector, index) {
             element.classList.add("hide");
         }
     }
+    console.log(l, index, posters[l], posters);
+
     posters[l].classList.remove("hide");
+
 }
 function showPosterAll() {
     const selector = "div.poster-slide>ul>iframe";
     const length = document.querySelectorAll(selector).length;
 
     showPoster(selector, counter);
-    document.getElementById("counter").innerText = (counter % length + 1) + "/" + length;
+    document.getElementById("counter").innerText = (index_converter(counter, length) + 1) + "/" + length;
     counter++;
 }
 
@@ -61,7 +72,7 @@ function shiftCounter(value) {
 
     counter += value % length;
     showPoster(selector, counter);
-    document.getElementById("counter").innerText = (counter % length + 1) + "/" + length;
+    document.getElementById("counter").innerText = (index_converter(counter, length) + 1) + "/" + length;
     console.info("Counter shifted by ", value);
 }
 function setCounter(value) {
@@ -70,7 +81,7 @@ function setCounter(value) {
 
     counter = value % length;
     showPoster(selector, counter);
-    document.getElementById("counter").innerText = (counter % length + 1) + "/" + length;
+    document.getElementById("counter").innerText = (index_converter(counter, length) + 1) + "/" + length;
     console.info("Set Counter to ", counter);
 }
 
