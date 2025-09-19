@@ -426,6 +426,13 @@ async function unedit_box() {
     await initEditBoxes();
 }
 
+document.addEventListener("keydown", async (event) => {
+
+    if (event.ctrlKey && event.code === "Enter") {
+        await unedit_box();
+    }
+});
+
 async function edit_box(_target) {
     if (_target.tagName === "DIV" && _target.id.startsWith("editBox") && selected_box === null) { // if new editBox gets selected
         edit_box_if_no_other_was_selected(_target)
