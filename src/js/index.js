@@ -85,6 +85,26 @@ function setCounter(value) {
     console.info("Set Counter to ", counter);
 }
 
+var idleTime = 0;
+$(document).ready(function () {
+    var idleInterval = setInterval(timerIncrement, 60 * 1000);
+
+    $(this).mousemove(function (e) {
+        idleTime = 0;
+    });
+    $(this).keydown(function (e) {
+        idleTime = 0;
+    });
+});
+
+function timerIncrement() {
+    idleTime = idleTime + 1;
+    if (idleTime > 60) {
+        window.location.reload();
+        console.warn("Idle time exceeded, reloading...");
+    }
+}
+
 window.onload = async function () {
 
     //TODO:   [BUG]   accessing index-view works,
