@@ -945,7 +945,11 @@ async function loadPlots() {
                     } else {
 
                         if (placeholder_list[j].hasAttribute("chart") && !["scatter", "line", "bar", "pie"].includes(placeholder_list[j].getAttribute("chart"))) {
-                            console.error("Unknown Chart Type");
+                            const type = placeholder_list[j].getAttribute("chart");
+                            const msg = "Unsupported chart type: [" + type + "]";
+
+                            console.warn(msg);
+                            toastr["warning"](msg);
                         } else {
 
                             if (body[j] != "") {
@@ -1009,15 +1013,20 @@ function simple_plot(type, content) {
 
                     point_group["type"] = "pie";
                 } else {
+                    const msg = "Unsupported chart type: [" + type + "]";
 
-                    console.warn("Unsupported chart type: [" + type + "]");
+                    console.warn(msg);
+                    toastr["warning"](msg);
                 }
 
                 list.push(point_group);
             }
             template_content["data"] = list;
         } else {
-            console.warn("Unsupported input", content);
+            const msg = "Unsupported input: Uneven Columns";
+
+            console.warn(msg, content);
+            toastr["warning"](msg);
         }
     }
     return template_content;
