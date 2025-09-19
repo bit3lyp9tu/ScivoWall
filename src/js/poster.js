@@ -847,10 +847,10 @@ function buttonEvents() {
 
         const container = document.getElementById("boxes");
 
-        const content = "Content";
+        const content = "## *Content here* \n\n*For more information go to the [documentation](https://github.com/bit3lyp9tu/scientific_poster_generator/blob/main/README.md).*";
 
         const box = createArea("div", "editBox-" + (container.children.length), "box", content);
-        box.innerHTML = content;
+        await typeset(box, () => marked.marked(content));
 
         container.appendChild(box);
 
