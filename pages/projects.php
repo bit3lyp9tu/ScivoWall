@@ -90,8 +90,8 @@
         </div>
     </div>
 
-    <div class="bottom-div">
+    <!-- <div class="bottom-div">
         <video id="bottom_video" autoplay="true" loop="true" muted="muted" [muted]="'muted'" class="bottompattern" src="img/footer.mp4" draggable="false" disablePictureInPicture></video>
-    </div>
+    </div> -->
 </footer>
 </html>
