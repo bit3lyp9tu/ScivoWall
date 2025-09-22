@@ -53,7 +53,7 @@
             <img src="img/qrcode.png" class="large_logo" alt="logo" draggable="false">
         </div>
         <div class="item">
-            <img src="img/tudlogo.png" class="small_logo" alt="logo" draggable="false">
+            <img src="img/tudlogo.svg" class="small_logo" alt="logo" draggable="false">
         </div>
         <div class="item">
             <img src="img/leipzig.png" class="small_logo" alt="logo" draggable="false">

@@ -693,9 +693,9 @@
 
 	// rename_image
 	test_equal("rename image no user", rename_image("abc", 221, 0), "No or invalid session");
-	test_equal("rename image pre-check", implode(",", getterQuery("SELECT file_name FROM image")["file_name"]), "tudlogo.png,scadslogo.png,leipzig.png,test-img");
+	test_equal("rename image pre-check", implode(",", getterQuery("SELECT file_name FROM image")["file_name"]), "tudlogo-old.png,scadslogo.png,leipzig.png,test-img");
 	rename_image("abc", 224, 85);
-	test_equal("rename image pre-check", implode(",", getterQuery("SELECT file_name FROM image")["file_name"]), "tudlogo.png,scadslogo.png,leipzig.png,abc");
+	test_equal("rename image pre-check", implode(",", getterQuery("SELECT file_name FROM image")["file_name"]), "tudlogo-old.png,scadslogo.png,leipzig.png,abc");
 
 	// delete_author
 	test_equal("delete author - preview", implode(",", json_decode(fetch_authors_all(85, ""), true)["id"]), "16,18,370,371,372,379,387,388,389");

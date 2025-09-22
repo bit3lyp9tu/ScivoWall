@@ -453,7 +453,7 @@ class PythonOrgSearch(unittest.TestCase):
                 By.CSS_SELECTOR, "#image-list>table>*>td:nth-child(2)>input"
             )
         ]
-        self.assertListEqual(imgs, ["tudlogo.png", "leipzig.png"])
+        self.assertListEqual(imgs, ["tudlogo-old.png", "leipzig.png"])
         pass
 
     def date_compair_day(self, date1, date2):
@@ -681,7 +681,7 @@ class PythonOrgSearch(unittest.TestCase):
         ActionChains(driver).move_to_element(new_box).click(new_box).perform()
         ActionChains(driver).click(
             driver.find_element(By.CSS_SELECTOR, "div#boxes>textarea#editBox-4")
-        ).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).click(
+        ).key_down(Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).send_keys(Keys.BACKSPACE).click(
             driver.find_element(By.CSS_SELECTOR, "img#scadslogo")
         ).perform()
         self.check_boxes(['editBox-0', 'editBox-1', 'editBox-2', 'editBox-3'])
@@ -707,7 +707,7 @@ class PythonOrgSearch(unittest.TestCase):
         # TODO:   check box plotly render   ???
 
         # TODO: check image upload
-        # img_path = os.path.abspath("scientific_poster_generator/img/tudlogo.png")
+        # img_path = os.path.abspath("scientific_poster_generator/img/tudlogo-old.png")
         # print(img_path)
 
         # self.assertTrue(os.path.isfile(img_path))
@@ -729,7 +729,7 @@ class PythonOrgSearch(unittest.TestCase):
         # ActionChains(driver).click(
         #     driver.find_element(By.CSS_SELECTOR, "div#boxes>textarea#editBox-3")
         # ).send_keys(Keys.DOWN).send_keys(" abc").send_keys(Keys.ENTER).send_keys(
-        #     '<p placeholder="image">includegraphics{tudlogo.png}</p>'
+        #     '<p placeholder="image">includegraphics{tudlogo-old.png}</p>'
         # ).click(
         #     driver.find_element(By.CSS_SELECTOR, "img#scadslogo")
         # ).perform()
@@ -1258,7 +1258,7 @@ class PythonOrgSearch(unittest.TestCase):
         # check filter results imgs - all
         self.check_filter(
             "div#image-list>table>*>td:nth-child(2)>input",
-            ["tudlogo.png", "leipzig.png"],
+            ["tudlogo-old.png", "leipzig.png"],
         )
         # check image data
         time.sleep(self.wait_time)
@@ -1339,7 +1339,7 @@ class PythonOrgSearch(unittest.TestCase):
         # check filter results imgs - user
         self.check_filter(
             "div#image-list>table>*>td:nth-child(2)>input",
-            ["tudlogo.png", "leipzig.png"],
+            ["tudlogo-old.png", "leipzig.png"],
         )
 
         # check with additional filter attribute - visibility
@@ -1409,7 +1409,7 @@ class PythonOrgSearch(unittest.TestCase):
         # check filter results imgs - user, visibility, poster
         self.check_filter(
             "div#image-list>table>*>td:nth-child(2)>input",
-            ["tudlogo.png", "leipzig.png"],
+            ["tudlogo-old.png", "leipzig.png"],
         )
 
         # check correct rename - author
@@ -1443,7 +1443,7 @@ class PythonOrgSearch(unittest.TestCase):
             "div#image-list>table>tr:nth-child(2)>td:nth-child(2)",
             " abc",
             "div#image-list>table>*>td:nth-child(2)>input",
-            ["tudlogo.png abc", "leipzig.png"],
+            ["tudlogo-old.png abc", "leipzig.png"],
         )
 
         # check correct delete - image
