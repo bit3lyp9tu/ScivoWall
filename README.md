@@ -17,6 +17,8 @@ If you want to know if everything is setup correctly, optionally you can use:
 bash docker.sh --local-port 1112 --run-tests
 ```
 
+After executing the setup script you can access the page in a browser of your choice at ```http://localhost:1112/```.
+
 # Index-Page
 For a poster to be shown on the index-page, two requrments need to be meed:
 1. The poster needs to be set from ```private``` to ```public``` *(by admin, user)*
@@ -63,7 +65,7 @@ Boxes (Text fields)
 : Contain the actual text content of the poster.
 To add a new Box, click on the ```[Add Box]``` button.
 To remove a Box remove all text from the Box and deselect the textfield.
-To edit a Box, click on the Box, the user can now edit the textfield, deselect said textfield afterwards. The poster-boxes support Markdown and LaTeX redering *(see below)* and file uploads *(see below)*.
+To edit a Box, click on the Box, the user can now edit the textfield, deselect said textfield afterwards or press *Ctrl*+*Enter*. The poster-boxes support Markdown and LaTeX redering *(see below)* and file uploads *(see below)*.
 
 ## Using Markdown
 <!-- ![Basic](documentation/img/markdown_basic.png) -->
