@@ -50,15 +50,29 @@ function showPosterAll() {
     counter++;
 }
 
+function untoggleAll() {
+    const selector = ".slider-controls>*.toggled";
+    document.querySelectorAll(selector).forEach(element => {
+        element.classList.remove("toggled");
+    });
+}
+
 function restart(time) {
     if (intervalId !== null) {
         clearInterval(intervalId);
     }
+
+    untoggleAll();
+    document.querySelector(".slider-controls>input[value='Play']").classList.add("toggled");
+
     console.info("Set interval to", time);
     intervalId = setInterval(showPosterAll, time);
 }
 function stop() {
     if (intervalId !== null) {
+        untoggleAll();
+        document.querySelector(".slider-controls>input[value='Stop']").classList.add("toggled");
+
         clearInterval(intervalId);
         intervalId = null;
         console.info("Stopped interval");

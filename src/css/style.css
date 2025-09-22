@@ -781,6 +781,7 @@ input[type="button"] {
     opacity: 0.94;
 }
 
+.slider-controls>input[type="button"].toggled,
 input[type="button"]:hover {
     background-color: var(--scads-blue);
     transform: translateY(-2px);
@@ -862,6 +863,8 @@ div.account-status {}
 .slider-controls {
     margin-left: 35px;
 }
+
+.slider-controls>button {}
 
 input[value="Delete"] {
     background-color: var(--deep-red);
