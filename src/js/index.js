@@ -103,6 +103,10 @@ function timerIncrement() {
         window.location.reload();
         console.warn("Idle time exceeded, reloading...");
     }
+    if (idleTime > 5) {
+        restart(2000);
+        console.warn("Manual time limit of 5min exceeded, Restarting sequence...");
+    }
 }
 
 window.onload = async function () {
