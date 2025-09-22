@@ -681,7 +681,7 @@ class PythonOrgSearch(unittest.TestCase):
         ActionChains(driver).move_to_element(new_box).click(new_box).perform()
         ActionChains(driver).click(
             driver.find_element(By.CSS_SELECTOR, "div#boxes>textarea#editBox-4")
-        ).key_down(Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).send_keys(Keys.BACKSPACE).click(
+        ).key_down(Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL)306.send_keys(Keys.BACKSPACE).click(
             driver.find_element(By.CSS_SELECTOR, "img#scadslogo")
         ).perform()
         self.check_boxes(['editBox-0', 'editBox-1', 'editBox-2', 'editBox-3'])
