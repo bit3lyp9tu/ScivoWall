@@ -89,6 +89,8 @@ Markdown features that are not supported (yet):
 ## Using LaTeX
 TBD
 
+To align your LaTeX content, use ```$$ your content $$``` for center and ```\\( your content \\)``` for left alignment.
+
 ## Upload
 To upload, hover over the Box you want add content to and click on the [```Browse...```] button. Now select your file. Now the content of your file should be inside a placeholder, you can click outside of your selected Box.
 
