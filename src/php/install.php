@@ -114,7 +114,7 @@
 			webkit_relative_path varchar(256) NOT NULL,
 			data longblob not null,
 			fk_poster INT NOT NULL,
-			CONSTRAINT fk_poster FOREIGN KEY (fk_poster) REFERENCES poster(poster_id)
+			CONSTRAINT fk_poster FOREIGN KEY (fk_poster) REFERENCES poster(poster_id) ON DELETE CASCADE
 		)",
 		"create table if not exists box (
 			box_id int primary key auto_increment,

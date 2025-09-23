@@ -39,7 +39,12 @@ function delete_project(id) {
             id: Number(id),
         },
         success: function (response) {
-            console.log(response);
+            if (response == "1") {
+                console.log(response);
+            } else {
+                toastr["error"]("An error occurred");
+                console.error(response);
+            }
         },
         error: function () {
             toastr["error"]("An error occurred");
@@ -192,11 +197,63 @@ function create_and_append_image_container(td) {
     td.appendChild(container);
 }
 
+function minimal_update(poster_id) {
+    //  cases:
+    //      poster delete --> remove only coresponding authors and images
+    //      IGNORE---- poster_name --> author.title, image.title ----IGNORE
+    //      author.name --> author.name --> update only with same author title
+    //
+
+    // poster
+    //      - rename title - [reanme author titles; rename image titles]
+    //      - delete - [delete authors; delete images]
+    // author
+    //      - rename author - [update authors of same title]
+    //      - delete - [Done]
+    // image
+}
+
+function hasText(element) {
+    return element.innerText.trim() !== "";
+}
+
+function table_to_dict(table_element) {
+    var dict = {
+        id: table_element.id,
+        children: []
+    };
+    var rows = Array.from(table_element.querySelectorAll("tr")).slice(1);
+
+    rows.forEach(tr => {
+        var sub_dict = {
+            pk_id: tr.hasAttribute("pk_id") ? tr.getAttribute("pk_id") : "",
+            str: []
+        };
+        Array.from(tr.querySelectorAll("td")).forEach(td => {
+
+            var input = td.querySelector("input[type='text']");
+            if (input) {
+                sub_dict.str.push(input.value);
+            } else if (td.innerText.trim() !== "") {
+                sub_dict.str.push(td.innerText.trim());
+            }
+        });
+        dict.children.push(sub_dict);
+    });
+
+    return dict;
+}
+
+function getTableChildren(type) {
+    console.log(document.querySelectorAll("div#" + type + " tr[pk_id]"));
+}
+
 async function change_action() {
     const is_global = $(this).closest("tr")[0].hasAttribute("pk_id");
     var param = parse_id_name(this);
     var id = Number(param[1]);
 
+    // console.log(is_global, param, id);
 
     if (is_global) {
         id = $(this).closest("tr")[0].getAttribute("pk_id");
@@ -225,6 +282,7 @@ async function change_action() {
         rename_image(this, id);
     }
     await load_project_page_data();
+    // console.log($(this).closest("tr")[0]);
 }
 
 function make_column_editable(data, header, i, td) {

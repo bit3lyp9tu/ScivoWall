@@ -154,7 +154,7 @@ CREATE TABLE `image` (
   `fk_poster` int(11) NOT NULL,
   PRIMARY KEY (`image_id`),
   KEY `fk_poster` (`fk_poster`),
-  CONSTRAINT `image_ibfk_1` FOREIGN KEY (`fk_poster`) REFERENCES `poster` (`poster_id`)
+  CONSTRAINT `image_ibfk_1` FOREIGN KEY (`fk_poster`) REFERENCES `poster` (`poster_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=221 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
