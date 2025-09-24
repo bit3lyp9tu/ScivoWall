@@ -126,22 +126,6 @@
     border-bottom: 1px solid;
 }
 
-.box-menu {
-    /* background-color: #83d252; */
-
-    display: flex;
-    align-self: flex-start;
-    /* height: 1.2rem; */
-    width: 4.35rem;
-    /* border-radius: 1.2rem; */
-
-    position: absolute;
-    top: 0;
-    right: 0rem;
-
-    display: none;
-}
-
 .box-img {
     width: 100%;
     object-fit: cover;
@@ -340,9 +324,9 @@ input#typeahead.tt-input {
     background-color: #83d2522d;
 }
 
-.author-item:hover .author-item-btn {
+/* .author-item:hover .author-item-btn {
     display: block;
-}
+} */
 
 .ghost-author {
     border: dashed;
@@ -356,17 +340,55 @@ input#typeahead.tt-input {
 }
 
 .author-item-btn {
+    all: unset;
+
     display: flex;
     align-self: flex-start;
     height: 1.2rem;
     width: 1.2rem;
     border-radius: 1.2rem;
 
-    //display: none;
+    align-items: center;
+    justify-content: center;
 }
 
-.remove-element::before {
-    content: "X";
+.box-menu::file-selector-button {}
+
+.box-menu-wrapper {
+    display: inline-flex;
+    align-items: flex-start;
+    border-radius: 6px;
+    transition: background 0.2s;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+}
+
+.box-menu-wrapper:hover {
+    background: #e0e0e0;
+}
+
+.box-menu-wrapper .icon {
+    width: 30px;
+    height: 30px;
+
+    display: none;
+}
+
+div[data-content]:hover:not([in-iframe]) .icon {
+    display: block;
+}
+
+img.icon {
+    display: flex;
+    align-self: center;
+
+    width: 36px;
+    height: 36px;
+}
+
+img.icon:hover {
+    transform: translateY(1px);
 }
 
 p[placeholder="plotly"] {

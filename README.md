@@ -128,3 +128,18 @@ Valid chart types are: ```scatter```, ```line```, ```bar```, ```pie```
 To modify the chart type, replace the chart type with one of the other types e.g.: ```chart="bar"```
 
 - ```json``` (for rendering more complex charts, high customization potential; see path: ```/plotly/examples/*.json```, *For some reason some won't work Issue: #334*). All example charts are from the [Official Plotly documentation](https://plotly.com/javascript/plotly-fundamentals/) and converted into a workable ```json``` format.
+
+
+
+# Copyright
+
+- ```/img/icons/Icons8_flat_delete_generic.svg``` from [here](https://commons.wikimedia.org/wiki/File:Icons8_flat_delete_generic.svg)
+- ```/img/icons/Icons8_flat_opened_folder.svg``` from [here](https://commons.wikimedia.org/wiki/File:Icons8_flat_opened_folder.svg)
+- ```/img/icons/Edit_Notepad_Icon.svg``` from [here](https://commons.wikimedia.org/wiki/File:Edit_Notepad_Icon.svg)
+
+Copyright © *Icons8 2016*
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+The Software is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the Software or the use or other dealings in the Software.
