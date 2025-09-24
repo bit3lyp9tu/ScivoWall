@@ -4,6 +4,7 @@ const warn = console.warn;
 
 function createProject() {
     const project_name = document.getElementById("project-name");
+    const prefix_name = "# ";
 
     if (project_name.value == "") {
         return;
@@ -14,7 +15,7 @@ function createProject() {
         url: "/api/post_traffic.php",
         data: {
             action: 'create_project',
-            name: project_name.value
+            name: prefix_name + project_name.value
         },
         success: async function (response) {
             if (response == "ERROR" || response == "No or invalid session") {

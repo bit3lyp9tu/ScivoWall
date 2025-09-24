@@ -32,6 +32,7 @@ There exists the following three tables:
 - Images
 
 To create a new Poster the user has to fill out the form with a new name and click on the ```[Create New Project]``` button.
+Note: *By Default the poster title is automatically reformated into a Markdown headline by adding ```# ``` as a prefix.*
 ![](documentation/img/projects_new.png)
 New Authors and Images are automaticaly added to the tables when they are included on the Poster-Page.
 Those tables can be used to manage e.g. excessive data.
