@@ -29,6 +29,8 @@ function createProject() {
             toastr["error"]("An error occurred");
         }
     });
+
+    document.getElementById("project-name").value = "";
 }
 
 function delete_project(id) {
@@ -1181,3 +1183,9 @@ window.onload = async function () {
         document.getElementById("logout").style.display = "none";
     }
 }
+
+$(this).keydown(function (e) {
+    if (e.code == "Enter") {
+        createProject();
+    }
+});
