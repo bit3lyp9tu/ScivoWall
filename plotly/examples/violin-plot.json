@@ -1,7 +1,8 @@
 {
     "data": [
         {
-            "text": "sample length: 32",
+            "text": "sample",
+            "length": 32,
             "hoveron": "points+kde",
             "meanline": {
                 "visible": "true"
@@ -70,7 +71,8 @@
             "orientation": "h"
         },
         {
-            "text": "sample length: 30",
+            "text": "sample",
+            "length": 30,
             "hoveron": "points+kde",
             "meanline": {
                 "visible": "true"
@@ -137,7 +139,8 @@
             "orientation": "h"
         },
         {
-            "text": "sample length: 9",
+            "text": "sample",
+            "length": 9,
             "hoveron": "points+kde",
             "meanline": {
                 "visible": "true"
@@ -183,7 +186,8 @@
             "orientation": "h"
         },
         {
-            "text": "sample length: 10",
+            "text": "sample",
+            "length": 10,
             "hoveron": "points+kde",
             "meanline": {
                 "visible": "true"
@@ -230,7 +234,8 @@
             "orientation": "h"
         },
         {
-            "text": "sample length: 28",
+            "text": "sample",
+            "length": 28,
             "hoveron": "points+kde",
             "meanline": {
                 "visible": "true"
@@ -295,7 +300,8 @@
             "orientation": "h"
         },
         {
-            "text": "sample length: 59",
+            "text": "sample",
+            "length": 59,
             "hoveron": "points+kde",
             "meanline": {
                 "visible": "true"
@@ -391,7 +397,8 @@
             "orientation": "h"
         },
         {
-            "text": "sample length: 18",
+            "text": "sample",
+            "length": 18,
             "hoveron": "points+kde",
             "meanline": {
                 "visible": "true"
@@ -446,7 +453,8 @@
             "orientation": "h"
         },
         {
-            "text": "sample length: 58",
+            "text": "sample",
+            "length": 58,
             "hoveron": "points+kde",
             "meanline": {
                 "visible": "true"

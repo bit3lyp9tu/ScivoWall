@@ -127,4 +127,4 @@ x,y
 Valid chart types are: ```scatter```, ```line```, ```bar```, ```pie```
 To modify the chart type, replace the chart type with one of the other types e.g.: ```chart="bar"```
 
-- ```json``` (for rendering more complex charts, high customization potential; see path: ```/plotly/examples/*.json```, For some reason some won't work Issue: #203; #204)
+- ```json``` (for rendering more complex charts, high customization potential; see path: ```/plotly/examples/*.json```, *For some reason some won't work Issue: #334*). All example charts are from the [Official Plotly documentation](https://plotly.com/javascript/plotly-fundamentals/) and converted into a workable ```json``` format.
