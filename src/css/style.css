@@ -888,6 +888,10 @@ div.account-status {}
 
 .slider-controls {
     margin-left: 35px;
+
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .slider-controls>button {}
