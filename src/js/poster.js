@@ -227,7 +227,7 @@ function createMenu(parent_id) {
 
         await select_box(element);
 
-        await loadPlots();
+        await renderBox();
     });
     wrapper.appendChild(input);
 
@@ -443,8 +443,7 @@ async function unedit_box() {
             //     await importFile(selected_box, file);
             // });
 
-            await loadImages();
-            await loadPlots();
+            await renderBox();
         }
 
         // forget old selected
@@ -635,7 +634,7 @@ async function imgDragDrop() {
 
                         await imageUpload(data, url["id"]);
 
-                        await loadImages();
+                        await renderBox();
                     };
 
                     reader.readAsDataURL(file); // Read the file as base64
@@ -722,9 +721,8 @@ window.onload = async function () {
     if (response.status != 'error') {
         //TODO:   iterate single functions over a shared loop
         await show(response);
-        await loadImages();
 
-        await loadPlots();
+        await renderBox();
 
         buttonEvents();
 
@@ -918,34 +916,69 @@ function buttonEvents() {
 
         container.appendChild(box);
 
-        await loadPlots();
+        await renderBox();
     };
 }
 
-function match_placeholder_image(str) {
-    return str.replace("\n", "").match(/\<p\splaceholder\=\"image\"\>includegraphics\{[\w+,\/,\-]+\.(png|jpg|gif)\}\<\/p\>/g);
+function drawChart(box_index, placeholders, local_index, content) {
+    placeholders[local_index].id = "plotly-" + box_index + "-" + local_index;
+    Plotly.newPlot(placeholders[local_index], content["data"], content["layout"], content["config"]);
+    placeholders[local_index].innerHTML = placeholders[local_index].innerHTML.replace(/\{[\{,\},\[,\],\,\:,\",\',\-,\s,\w+]*\}/gm, "");
 }
 
-//TODO:   make load on page reload
-async function loadImages() {
+async function renderBox(inclImg = true, inclPlotly = true) {
     const url = url_to_json();
-
     const boxes = document.getElementById("boxes");
 
+    var error_msg = "";
+
     for (let i = 0; i < boxes.children.length; i++) {
+        const placeholders = boxes.children[i].querySelectorAll("p[placeholder]");
 
-        const word = match_placeholder_image(boxes.children[i].innerHTML);
-        if (word) {
-            const box_images = boxes.children[i].querySelectorAll("p[placeholder]");
-            for (let k = 0; k < word.length; k++) {
-                var name = word[k].match(/[\w+,\/,\-]+?\.(png|jpg|gif)/)[0];
+        for (var j = 0; j < placeholders.length; j++) {
 
-                if (box_images[k].getAttribute("placeholder") == "image") {
-                    const el = await getLoadedImg(url["id"], name);
-                    boxes.children[i].replaceChild(el, box_images[k], "");
+            if (inclImg && placeholders[j].getAttribute("placeholder") == "image") {
+                const img_info = placeholders[j].innerHTML.replace("\n", "").match(/includegraphics\{[\w+,\/,\-]+\.(png|jpg|gif)\}/g);
+                if (img_info && img_info[0]) {
+                    var name = img_info[0].match(/[\w+,\/,\-]+?\.(png|jpg|gif)/)[0];
+                    const img = await getLoadedImg(url["id"], name);
+                    boxes.children[i].replaceChild(img, placeholders[j], "");
+
+                } else {
+                    error_msg = "No image data";
+                }
+            }
+            if (inclPlotly && placeholders[j].getAttribute("placeholder") == "plotly") {
+                if (placeholders[j].hasAttribute("chart") && ["scatter", "line", "bar", "pie"].includes(placeholders[j].getAttribute("chart"))) {   // inport csv
+                    var content = simple_plot(placeholders[j].getAttribute("chart"), placeholders[j].innerHTML);
+                    console.debug("templete", content);
+
+                    if (content) {
+                        drawChart(i, placeholders, j, content);
+                    }
+
+                } else if (!placeholders[j].hasAttribute("chart")) {  // inport json
+
+                    if (placeholders[j].innerHTML) {
+                        var content = json_parse(repairJson(placeholders[j].innerHTML));
+
+                        if (content) {
+                            drawChart(i, placeholders, j, content);
+                        }
+                    } else {
+                        error_msg = "File empty";
+                    }
+
+                } else {    // error
+                    error_msg = "Unsupported chart type";
                 }
             }
         }
+    }
+
+    if (error_msg) {
+        console.warn(error_msg);
+        toastr["warning"](error_msg);
     }
 }
 
@@ -963,78 +996,11 @@ function json_parse(data) {
             return {};
         }
     } catch (e) {
-        console.error(e);
-        console.error("This JSON caused this to happen:", data)
+        console.error("Invalid JSON:", data, e);
+        toastr["warning"]("Invalid JSON");
     }
 
     return null;
-}
-
-async function loadPlots() {
-    // TODO:   plotly json with with breaks gets read but also converted into markdown
-
-    var boxes = document.getElementById("boxes");
-
-    for (let i = 0; i < boxes.children.length; i++) {
-        var parent_element = boxes.children[i];
-        const data_content = parent_element.getAttribute("data-content");
-
-        // console.log("content", parent_element.innerText);
-
-        const head_data = data_content.match(/(?<=\<p\s)[\s,placeholder\=\"plotly\",(\w+\=\"?\'?\w+\"?\'?)]+(?=\>)/sgm);
-        const body = data_content.match(/(?<=<p\s?[\s,(\w+\=\"?\'?\w+\"?\'?)]*>).*?(?=\<\/p\>)/gsm);
-
-        if (head_data && body) {
-            const placeholder_list = parent_element.querySelectorAll('p[placeholder]');
-
-            for (let j = 0; j < placeholder_list.length; j++) {
-                if (placeholder_list[j].getAttribute("placeholder") == "plotly") {
-
-                    var content = {};
-                    if (placeholder_list[j].hasAttribute("chart") && placeholder_list[j].getAttribute("chart") !== "" && ["scatter", "line", "bar", "pie"].includes(placeholder_list[j].getAttribute("chart"))) {
-                        chart_path = "./plotly/" + placeholder_list[j].getAttribute("chart") + ".json";
-
-                        // console.log("type", placeholder_list[j].getAttribute("chart"));
-                        // console.log("body", body[j]);
-
-                        var template_content = simple_plot(placeholder_list[j].getAttribute("chart"), body[j]);
-
-                        content = template_content;
-                        // placeholder_list[j].innerHTML = JSON.stringify(template_content);
-                        // placeholder_list[j].setAttribute("data-content", JSON.stringify(template_content));
-
-                        console.log("templete", template_content);
-                        // console.log("p-element", placeholder_list[j].innerHTML);
-
-                    } else {
-
-                        if (placeholder_list[j].hasAttribute("chart") && !["scatter", "line", "bar", "pie"].includes(placeholder_list[j].getAttribute("chart"))) {
-                            const type = placeholder_list[j].getAttribute("chart");
-                            const msg = "Unsupported chart type: [" + type + "]";
-
-                            console.warn(msg);
-                            toastr["warning"](msg);
-                        } else {
-
-                            if (body[j] != "") {
-                                // console.log(body[j]);
-
-                                content = json_parse(repairJson(body[j]));
-                            } else {
-                                content = {};
-                            }
-                        }
-                    }
-
-                    if (content && Object.keys(content).length != 0) {
-                        placeholder_list[j].id = "plotly-" + i + "-" + j;
-                        Plotly.newPlot(placeholder_list[j], content["data"], content["layout"], content["config"]);
-                        placeholder_list[j].innerHTML = placeholder_list[j].innerHTML.replace(/\{[\{,\},\[,\],\,\:,\",\',\-,\s,\w+]*\}/gm, "");
-                    }
-                }
-            }
-        }
-    }
 }
 
 function simple_plot(type, content) {
