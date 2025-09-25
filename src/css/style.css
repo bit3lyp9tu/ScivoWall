@@ -899,3 +899,7 @@ input[value="Delete"]:hover {
 input.filter-category:hover {
     background-color: var(--light-red);
 }
+
+#filter>table>tr:nth-child(4) {
+    display: none;
+}
