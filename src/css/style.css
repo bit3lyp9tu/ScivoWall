@@ -427,6 +427,10 @@ img.table-img:hover {
     overflow: visible;
 }
 
+div[data-content] {
+    background-color: white;
+}
+
 div[data-content]:hover:not([in-iframe]) {
     border: solid;
     border-color: var(--scads-green);
