@@ -520,7 +520,7 @@ async function select_box(element) {
             if (element.children[0] && element.tagName === "DIV" && !element.id.startsWith("editBox") && element.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
 
                 // change box to editable
-                const element = createArea("textarea", element.children[0].id, "", element.children[0].getAttribute("data-content"));
+                const box = createArea("textarea", element.children[0].id, "", element.children[0].getAttribute("data-content"));
 
                 // if (!element.id.startsWith("editBox") && element.children[0].id.startsWith("title")) {
                 // } else if (element.id.startsWith("editBox")) {
@@ -530,30 +530,30 @@ async function select_box(element) {
                 //     return;
                 // }
 
-                element.style.resize = "none"; //"vertical";
-                element.value = element.children[0].getAttribute("data-content");
-                element.children[0].parentNode.replaceChild(element, element.children[0]);
-                element.style['pointer-events'] = 'auto';
+                box.style.resize = "none"; //"vertical";
+                box.value = element.children[0].getAttribute("data-content");
+                element.children[0].parentNode.replaceChild(box, element.children[0]);
+                box.style['pointer-events'] = 'auto';
 
-                element.focus();
-                element.setSelectionRange(element.value.length, element.value.length);
+                box.focus();
+                box.setSelectionRange(box.value.length, box.value.length);
 
                 // remember box as previously selected
-                selected_title = element;
+                selected_title = box;
 
             } else if (selected_title && element !== selected_title) {// if there was something once selected and if the new selected is different from the old
 
                 // change old back to non-editable and save old edits
-                const element = createArea("div", selected_title.id, "", selected_title.value);
+                const box = createArea("div", selected_title.id, "", selected_title.value);
 
                 if (selected_title.value == "") {
-                    await typeset(element, () => marked.marked("Title"));
+                    await typeset(box, () => marked.marked("Title"));
                 } else {
-                    await typeset(element, () => marked.marked(selected_title.value));
+                    await typeset(box, () => marked.marked(selected_title.value));
                 }
 
-                selected_title.parentNode.replaceChild(element, selected_title);
-                element.style['pointer-events'] = 'none';
+                selected_title.parentNode.replaceChild(box, selected_title);
+                box.style['pointer-events'] = 'none';
 
                 // forget old selected
                 selected_title = null;
