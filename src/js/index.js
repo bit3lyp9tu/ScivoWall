@@ -136,6 +136,9 @@ window.onload = async function () {
     console.log(content.poster_id.length);
 
     if (content.poster_id.length > 0) {
+        if (content.poster_id.length == 1) {
+            document.getElementsByClassName("slider-controls")[0].style.display = "none";
+        }
         for (const elem in content.poster_id) {
             const ul = document.createElement("UL");
             const b = document.createElement("IFRAME");
