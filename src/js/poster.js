@@ -942,7 +942,7 @@ async function renderBox(inclImg = true, inclPlotly = true) {
                 if (img_info && img_info[0]) {
                     var name = img_info[0].match(/[\w+,\/,\-]+?\.(png|jpg|gif)/)[0];
                     const img = await getLoadedImg(url["id"], name);
-                    boxes.children[i].replaceChild(img, placeholders[j], "");
+                    boxes.children[i].replaceChild(img, placeholders[j]);
 
                 } else {
                     error_msg = "No image data";
@@ -960,11 +960,24 @@ async function renderBox(inclImg = true, inclPlotly = true) {
                 } else if (!placeholders[j].hasAttribute("chart")) {  // inport json
 
                     if (placeholders[j].innerHTML) {
-                        var content = json_parse(repairJson(placeholders[j].innerHTML));
+                        if (!placeholders[j].innerHTML.match(/\<\w+\>/g)) {
 
-                        if (content) {
-                            drawChart(i, placeholders, j, content);
+                            var content = json_parse(repairJson(placeholders[j].innerHTML));
+                            if (content) {
+                                drawChart(i, placeholders, j, content);
+                            }
+                        } else {
+                            console.log(placeholders[j]);
+                            const regex = /<\/?\w+[^>]*>/g;
+                            const matches = placeholders[j].innerHTML.matchAll(regex);
+
+                            for (const match of matches) {
+                                console.log("Match:", match[0], "at index:", match.index);
+                            }
+
+                            error_msg = "JSON contains HTML-Tag";
                         }
+
                     } else {
                         error_msg = "File empty";
                     }
@@ -996,7 +1009,9 @@ function json_parse(data) {
             return {};
         }
     } catch (e) {
-        console.error("Invalid JSON:", data, e);
+        console.error("Invalid JSON:", data, "msg: ", e);
+        console.log(data);
+
         toastr["warning"]("Invalid JSON");
     }
 

@@ -66,7 +66,7 @@
     ],
     "layout": {
         "title": {
-            "text": "Profit and loss statement 2018<br>waterfall chart displaying positive and negative"
+            "text": "Profit and loss statement 2018 waterfall chart displaying positive and negative"
         },
         "yaxis": {
             "type": "category",
