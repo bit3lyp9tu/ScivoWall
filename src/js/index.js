@@ -129,6 +129,7 @@ var startX = 0;
 var endX = 0;
 
 window.addEventListener("load", async function () {
+    var loaded_iframes = 0;
 
     //TODO:   [BUG]   accessing index-view works,
     //              but going to poster after and back to index
@@ -151,6 +152,15 @@ window.addEventListener("load", async function () {
             iframe.id = "iframe-" + index;
             iframe.src = "poster.php?id=" + posterId + "&mode=public";
 
+            iframe.addEventListener("load", () => {
+                loaded_iframes++;
+
+                if (content.poster_id.length == loaded_iframes + 1) {
+                    // console.log("all frames loaded");
+                    document.getElementById("spinner").style.display = "none";
+                }
+            });
+
             ul.appendChild(iframe);
             cont.appendChild(ul);
         });
@@ -162,15 +172,14 @@ window.addEventListener("load", async function () {
         }
 
     } else {
-
         document.getElementsByClassName("slider-controls")[0].style.display = "none";
 
         const elem = document.createElement("h2");
         elem.innerText = "There are no public posters available at the moment.";
         cont.appendChild(elem);
-    }
 
-    document.getElementById("spinner").style.display = "none";
+        document.getElementById("spinner").style.display = "none";
+    }
 });
 
 function handleGesture() {
