@@ -13,7 +13,7 @@
     $site_script="index.js";
     include(__DIR__ . "/../src/php/header.php");
 ?>
-<body>
+<body class="bgimg">
     <div id="logo_headline">
         <img class="nomargin" id='scadslogo' src="img/scadslogo.png" draggable="false"/>
         <div class="header-video" style="float: right;"></div>

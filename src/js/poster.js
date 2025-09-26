@@ -699,6 +699,9 @@ window.onload = async function () {
         document.getElementsByTagName("footer")[0].style.display = "none";
 
         document.getElementById("projects").style.display = "none";
+
+        document.body.classList.remove("bgimg");
+        document.getElementById("scadslogo").src = "";
     }
 
     const state = await isEditView();
