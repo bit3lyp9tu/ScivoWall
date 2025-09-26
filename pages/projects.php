@@ -35,6 +35,7 @@
     <div class="tables">
         <div>
             <div>
+                <h2>Poster</h2>
                 <div id="table-container" class="table"></div>
             </div>
             <div>
