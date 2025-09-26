@@ -942,7 +942,7 @@ async function renderBox(inclImg = true, inclPlotly = true) {
                 if (img_info && img_info[0]) {
                     var name = img_info[0].match(/[\w+,\/,\-]+?\.(png|jpg|gif)/)[0];
                     const img = await getLoadedImg(url["id"], name);
-                    boxes.children[i].replaceChild(img, placeholders[j]);
+                    boxes.children[i].replaceChild(img, placeholders[j], "");
 
                 } else {
                     error_msg = "No image data";
@@ -960,22 +960,13 @@ async function renderBox(inclImg = true, inclPlotly = true) {
                 } else if (!placeholders[j].hasAttribute("chart")) {  // inport json
 
                     if (placeholders[j].innerHTML) {
-                        if (!placeholders[j].innerHTML.match(/\<\w+\>/g)) {
+                        const regex = /<\/?\w+[^>]*>/g;
 
-                            var content = json_parse(repairJson(placeholders[j].innerHTML));
-                            if (content) {
-                                drawChart(i, placeholders, j, content);
-                            }
-                        } else {
-                            console.log(placeholders[j]);
-                            const regex = /<\/?\w+[^>]*>/g;
-                            const matches = placeholders[j].innerHTML.matchAll(regex);
+                        var content = json_parse(repairJson(placeholders[j].innerHTML.replaceAll(regex, "")));
+                        console.debug(content);
 
-                            for (const match of matches) {
-                                console.log("Match:", match[0], "at index:", match.index);
-                            }
-
-                            error_msg = "JSON contains HTML-Tag";
+                        if (content) {
+                            drawChart(i, placeholders, j, content);
                         }
 
                     } else {
@@ -988,7 +979,6 @@ async function renderBox(inclImg = true, inclPlotly = true) {
             }
         }
     }
-
     if (error_msg) {
         console.warn(error_msg);
         toastr["warning"](error_msg);
