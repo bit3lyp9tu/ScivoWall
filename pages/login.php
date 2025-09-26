@@ -9,8 +9,8 @@
 
     // jquery in lokale datei statt über code.jquery.com
 ?>
-<body>
-    <div>
+<body class="account">
+    <div class="account-box">
         <div>
             <h1>Login</h1>
             <input type="text" id="name" class="form-control" placeholder="Enter your Username...">

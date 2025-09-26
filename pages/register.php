@@ -7,8 +7,8 @@
 
     // include_once(__DIR__ . "/../src/php/account_management.php");
 ?>
-<body>
-    <div>
+<body class="account">
+    <div class="account-box">
         <div>
             <h1>Register</h1>
             <input type="text" id="username" class="form-control" placeholder="Enter your Username...">
