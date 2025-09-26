@@ -29,7 +29,9 @@ function login() {
 }
 
 $(document).ready(function () {
-    document.getElementById("login-btn").onclick = login;
+    if (document.getElementById("login-btn")) {
+        document.getElementById("login-btn").onclick = login;
+    }
 });
 
 $(this).keydown(function (e) {

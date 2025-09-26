@@ -53,7 +53,9 @@ function register() {
 }
 
 $(document).ready(function () {
-    document.getElementById("register-btn").onclick = register;
+    if (document.getElementById("register-btn")) {
+        document.getElementById("register-btn").onclick = register;
+    }
 });
 
 $(this).keydown(function (e) {

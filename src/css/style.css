@@ -286,6 +286,9 @@ mjx-container,
     display: none;
 }
 
+.poster-slide:not(ul) {
+    text-align: center;
+}
 
 /* #boxes>div {
     border-style: dashed;
@@ -912,4 +915,20 @@ input.filter-category:hover {
 
 #filter>table>tr:nth-child(4) {
     display: none;
+}
+
+.account-container {
+    position: absolute;
+    top: 0px;
+    right: 10px;
+
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+}
+
+.account-btn {
+    padding: 2px 10px 5px 10px !important;
+
+    background-color: var(--scads-blue) !important;
 }

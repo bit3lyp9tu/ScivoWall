@@ -45,9 +45,11 @@ function showPosterAll() {
     const selector = "div.poster-slide>ul>iframe";
     const length = document.querySelectorAll(selector).length;
 
-    showPoster(selector, counter);
-    document.getElementById("counter").innerText = (index_converter(counter, length) + 1) + "/" + length;
-    counter++;
+    if (length > 0) {
+        showPoster(selector, counter);
+        document.getElementById("counter").innerText = (index_converter(counter, length) + 1) + "/" + length;
+        counter++;
+    }
 }
 
 function untoggleAll() {
@@ -153,7 +155,12 @@ window.addEventListener("load", async function () {
             cont.appendChild(ul);
         });
 
-        intervalId = setInterval(showPosterAll, 2000);
+        if (content.poster_id.length != 1) {
+            intervalId = setInterval(showPosterAll, 2000);
+        } else {
+            intervalId = null;
+        }
+
     } else {
 
         document.getElementsByClassName("slider-controls")[0].style.display = "none";
@@ -167,13 +174,16 @@ window.addEventListener("load", async function () {
 });
 
 function handleGesture() {
-    if (endX < startX - 50) {
-        console.log("swipeleft");
-        shiftCounter(1);
-    }
-    if (endX > startX + 50) {
-        console.log("swiperight");
-        shiftCounter(-1);
+
+    if (!document.querySelector(".poster-slide>h2")) {
+        if (endX < startX - 50) {
+            console.log("swipeleft");
+            shiftCounter(1);
+        }
+        if (endX > startX + 50) {
+            console.log("swiperight");
+            shiftCounter(-1);
+        }
     }
 }
 
