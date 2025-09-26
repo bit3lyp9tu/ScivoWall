@@ -35,13 +35,15 @@
     <div class="tables">
         <div>
             <div>
-                <h2>Poster</h2>
+                <h2>Posters</h2>
                 <div id="table-container" class="table"></div>
             </div>
             <div>
+                <h2>Authors</h2>
                 <div id="author-list" class="table"></div>
             </div>
             <div>
+                <h2>Images</h2>
                 <div id="image-list" class="table"></div>
             </div>
         </div>

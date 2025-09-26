@@ -727,6 +727,16 @@ th {
     padding-bottom: 30px;
 }
 
+.tables>div>div>h2 {
+    display: block;
+
+    font-weight: bold;
+}
+
+div:has(.table:empty)>h2 {
+    display: none;
+}
+
 table>tr>td {
     padding-left: 4px;
     padding-right: 4px;
