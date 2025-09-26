@@ -123,7 +123,10 @@ function timerIncrement() {
     }
 }
 
-window.onload = async function () {
+var startX = 0;
+var endX = 0;
+
+window.addEventListener("load", async function () {
 
     //TODO:   [BUG]   accessing index-view works,
     //              but going to poster after and back to index
@@ -139,16 +142,16 @@ window.onload = async function () {
         if (content.poster_id.length == 1) {
             document.getElementsByClassName("slider-controls")[0].style.display = "none";
         }
-        for (const elem in content.poster_id) {
-            const ul = document.createElement("UL");
-            const b = document.createElement("IFRAME");
-            b.id = "iframe-" + elem;
-            // console.log(content.title[elem]);
-            b.setAttribute("src", "poster.php?id=" + content.poster_id[elem] + "&mode=public");
 
-            ul.appendChild(b)
+        content.poster_id.forEach((posterId, index) => {
+            const ul = document.createElement("UL");
+            const iframe = document.createElement("IFRAME");
+            iframe.id = "iframe-" + index;
+            iframe.src = "poster.php?id=" + posterId + "&mode=public";
+
+            ul.appendChild(iframe);
             cont.appendChild(ul);
-        }
+        });
 
         intervalId = setInterval(showPosterAll, 2000);
     } else {
@@ -161,7 +164,27 @@ window.onload = async function () {
     }
 
     document.getElementById("spinner").style.display = "none";
+});
+
+function handleGesture() {
+    if (endX < startX - 50) {
+        console.log("swipeleft");
+        shiftCounter(1);
+    }
+    if (endX > startX + 50) {
+        console.log("swiperight");
+        shiftCounter(-1);
+    }
 }
+
+document.addEventListener("pointerdown", function (e) {
+    startX = e.clientX;
+}, false);
+
+document.addEventListener("pointerup", function (e) {
+    endX = e.clientX;
+    handleGesture();
+}, false);
 
 function loadScript(src) {
     return new Promise((resolve, reject) => {
@@ -206,5 +229,4 @@ document.addEventListener("keydown", (event) => {
             }
         }
     }
-
 });
