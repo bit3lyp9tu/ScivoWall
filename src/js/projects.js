@@ -31,6 +31,7 @@ function createProject() {
     });
 
     document.getElementById("project-name").value = "";
+    document.activeElement.blur();
 }
 
 function delete_project(id) {
