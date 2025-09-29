@@ -397,8 +397,6 @@ async function importFile(output, file) {
 
     } else if (file.type === 'application/json' || file.name.endsWith('.json')) {
 
-        // TODO:    polar-sub-chart.json only works occasionally
-
         const reader = new FileReader();
         reader.onload = function (e) {
             try {
