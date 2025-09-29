@@ -446,6 +446,13 @@ div[data-content]:hover:not([in-iframe]) .box-menu {
     display: block;
 }
 
+.found-error,
+.found-error:hover {
+    border: solid !important;
+    border-color: red !important;
+    border-width: 2px !important;
+}
+
 .toggle-btn {
     /* color: #83d252; */
 }

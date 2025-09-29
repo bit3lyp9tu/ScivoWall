@@ -129,7 +129,6 @@ async function getLoadedImg(poster_id, img_name, style) {
         url: "/api/post_traffic.php",
         data: {
             action: "get-image",
-            //id: pk_id,
             poster_id: poster_id,
             name: img_name
         },
@@ -140,16 +139,22 @@ async function getLoadedImg(poster_id, img_name, style) {
             return error;
         }
     });
-    // console.log("data: ", JSON.parse(resp).data);
-    // console.log(JSON.parse(resp));
 
     const container = document.createElement("div");
     const img = document.createElement("img");
     img.classList.add("box-img");
-    img.src = JSON.parse(resp).data;
+
+    var data = JSON.parse(resp).data;
+
+    if (data.length == 1) {
+        img.src = data;
+    } else {
+        img.src = "";
+        // console.info('Image not found');
+    }
 
     container.appendChild(img);
-    return container;
+    return [data.length == 1, container];
 }
 
 async function upload(id, data) {
@@ -179,12 +184,12 @@ async function isEditView() {
     return (data["mode"] != null && data["mode"] == 'private' && isValid == 1);
 }
 
-function createArea(type, id, class_name, value) {
+function createArea(type, id, classes, value) {
 
     const element = document.createElement(type);
     element.id = id;
-    if (class_name != "") {
-        //element.classList.add(class_name);
+    if (classes) {
+        element.className = classes;
     }
     element.setAttribute("data-content", value);
 
@@ -300,7 +305,7 @@ async function show(response) {
 
     for (const key in response.boxes) {
         if (response.boxes[key]) {
-            const obj = createArea("div", "editBox-" + key, "box", response.boxes[key]);
+            const obj = createArea("div", "editBox-" + key, "", response.boxes[key]);
 
             if (0) {
                 obj.innerHTML = response.boxes[key];
@@ -335,7 +340,7 @@ async function show(response) {
 
 function edit_box_if_no_other_was_selected(_target) {
     // change box to editable
-    const element = createArea("textarea", _target.id, "", _target.getAttribute("data-content"));
+    const element = createArea("textarea", _target.id, _target.className, _target.getAttribute("data-content"));
     element.rows = Math.round((_target.innerHTML.match(/(<br>|\n)/g) || []).length * 1.5) + 1;
     element.style.resize = "none"; //"vertical";
     element.value = _target.getAttribute("data-content");
@@ -426,7 +431,7 @@ async function unedit_box() {
             selected_box.remove();
 
         } else {
-            const element = createArea("div", selected_box.id, "box", selected_box.value);
+            const element = createArea("div", selected_box.id, selected_box.className, selected_box.value);
 
             await typeset(element, () => marked.marked(selected_box.value));
             if (selected_box && selected_box.parentNode) {
@@ -520,7 +525,7 @@ async function select_box(element) {
             if (element.children[0] && element.tagName === "DIV" && !element.id.startsWith("editBox") && element.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
 
                 // change box to editable
-                const box = createArea("textarea", element.children[0].id, "", element.children[0].getAttribute("data-content"));
+                const box = createArea("textarea", element.children[0].id, element.children[0].className, element.children[0].getAttribute("data-content"));
 
                 // if (!element.id.startsWith("editBox") && element.children[0].id.startsWith("title")) {
                 // } else if (element.id.startsWith("editBox")) {
@@ -544,7 +549,7 @@ async function select_box(element) {
             } else if (selected_title && element !== selected_title) {// if there was something once selected and if the new selected is different from the old
 
                 // change old back to non-editable and save old edits
-                const box = createArea("div", selected_title.id, "", selected_title.value);
+                const box = createArea("div", selected_title.id, element.children[0].className, selected_title.value);
 
                 if (selected_title.value == "") {
                     await typeset(box, () => marked.marked("Title"));
@@ -904,7 +909,7 @@ function buttonEvents() {
 
         const content = "## *Content here* \n\n*For more information go to the [documentation](https://github.com/bit3lyp9tu/scientific_poster_generator/blob/main/README.md).*";
 
-        const box = createArea("div", "editBox-" + (container.children.length), "box", content);
+        const box = createArea("div", "editBox-" + (container.children.length), "", content);
         await typeset(box, () => marked.marked(content));
 
         container.appendChild(box);
@@ -919,6 +924,12 @@ function drawChart(box_index, placeholders, local_index, content) {
     placeholders[local_index].innerHTML = placeholders[local_index].innerHTML.replace(/\{[\{,\},\[,\],\,\:,\",\',\-,\s,\w+]*\}/gm, "");
 }
 
+function soft_remove_class(element, class_name) {
+    if (element.classList.contains(class_name)) {
+        element.classList.remove(class_name);
+    }
+}
+
 async function renderBox(inclImg = true, inclPlotly = true) {
     const url = url_to_json();
     const boxes = document.getElementById("boxes");
@@ -928,13 +939,26 @@ async function renderBox(inclImg = true, inclPlotly = true) {
     for (let i = 0; i < boxes.children.length; i++) {
         const placeholders = boxes.children[i].querySelectorAll("p[placeholder]");
 
+        soft_remove_class(boxes.children[i], "found-error");
+
         for (var j = 0; j < placeholders.length; j++) {
 
             if (inclImg && placeholders[j].getAttribute("placeholder") == "image") {
                 const img_info = placeholders[j].innerHTML.replace("\n", "").match(/includegraphics\{[\w+,\/,\-]+\.(png|jpg|gif)\}/g);
                 if (img_info && img_info[0]) {
                     var name = img_info[0].match(/[\w+,\/,\-]+?\.(png|jpg|gif)/)[0];
-                    const img = await getLoadedImg(url["id"], name);
+                    var loaded_img = await getLoadedImg(url["id"], name);
+                    var img = loaded_img[1];
+
+                    if (!loaded_img[0]) {
+                        boxes.children[i].classList.add("found-error");
+
+                        const msg = "Image [" + name + "] not found";
+
+                        console.warn(msg);
+                        toastr["warning"](msg);
+                    }
+
                     boxes.children[i].replaceChild(img, placeholders[j], "");
 
                 } else {
