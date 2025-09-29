@@ -408,6 +408,10 @@ function append_additional_columns(additional_columns, i, row) {
     });
 }
 
+function reformat_header(str) {
+    return str.toUpperCase().replace(/_/g, " ");
+}
+
 // TODO:   may need an overwork
 async function createTableFromJSON(id, pk_ids, data, editable_columns, ...additional_columns) {
 
@@ -420,14 +424,14 @@ async function createTableFromJSON(id, pk_ids, data, editable_columns, ...additi
 
         headers.forEach(header => {
             const th = document.createElement("th");
-            th.innerText = header;
+            th.innerText = reformat_header(header);
             headerRow.appendChild(th);
         });
 
         additional_columns.forEach(element => {
             if (element.hasOwnProperty("header")) {
                 const th = document.createElement("th");
-                th.innerText = element.header;
+                th.innerText = reformat_header(element.header);
                 headerRow.appendChild(th);
             }
         });
