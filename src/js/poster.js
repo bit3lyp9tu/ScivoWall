@@ -848,16 +848,6 @@ async function filloutAuthors(list) {
         author_names.push(list[i]);
         await insertElementAtIndex(document.getElementById("authors"), author_item(list[i]), i);
     }
-
-    // $('.author-item').on('mouseenter', function () {
-    //     $(this).find('.author-item-btn').show();
-    // });
-    // TODO: if this is commented out - admin tests (author delete) will fail
-    // $('.author-item').on('mouseleave', function () {
-    //     $(this).find('.author-item-btn').hide();
-    // });
-    // $('.author-item-btn').hide();
-
 }
 
 function getAuthorItems() {
