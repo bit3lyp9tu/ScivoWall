@@ -424,6 +424,14 @@ async function createTableFromJSON(id, pk_ids, data, editable_columns, ...additi
             headerRow.appendChild(th);
         });
 
+        additional_columns.forEach(element => {
+            if (element.hasOwnProperty("header")) {
+                const th = document.createElement("th");
+                th.innerText = element.header;
+                headerRow.appendChild(th);
+            }
+        });
+
         table.appendChild(headerRow);
 
         if (data !== "") {
@@ -623,6 +631,8 @@ async function fetch_projects_filtered(filter) {
 
                     var textfield_indexes = await isAdmin() ? [1] : [0];
 
+                    console.info("data", data);
+
                     if (Object.keys(data).includes("id")) {
                         pk_ids = data["id"];
                         delete data["id"];
@@ -630,6 +640,7 @@ async function fetch_projects_filtered(filter) {
 
                     const editColumn = (index) => {
                         const td = document.createElement("td");
+
 
                         const elem = document.createElement("INPUT");
                         elem.type = "button";
@@ -642,6 +653,7 @@ async function fetch_projects_filtered(filter) {
 
                         return td;
                     };
+                    editColumn.header = "Edit";
 
                     function deleteColumn(index) {
                         const td = document.createElement("td");
@@ -669,6 +681,7 @@ async function fetch_projects_filtered(filter) {
                         td.appendChild(btn);
                         return td;
                     };
+                    deleteColumn.header = "Delete";
 
                     await createTableFromJSON("table-container", pk_ids, data, textfield_indexes, editColumn, deleteColumn);
 
@@ -742,6 +755,7 @@ async function fetch_authors_filtered(filter) {
                         td.appendChild(btn);
                         return td;
                     };
+                    deleteColumn.header = "Delete";
 
                     await createTableFromJSON("author-list", pk_ids, data, textfield_indexes, deleteColumn);
                 }
@@ -816,6 +830,7 @@ async function fetch_images_filtered(filter) {
                         td.appendChild(btn);
                         return td;
                     };
+                    deleteColumn.header = "Delete";
 
                     await createTableFromJSON("image-list", pk_ids, data, [1], deleteColumn);
                 }
