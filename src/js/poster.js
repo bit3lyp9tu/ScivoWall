@@ -738,6 +738,15 @@ window.onload = async function () {
 
     await initEditBoxes();
     await initUneditHandler();
+
+    if (!await hasValidUserSession()) {
+        document.getElementById("add_author").style.display = "none";
+
+        document.getElementById("titles").classList.add("prevent-pointer-events");
+        document.getElementById("boxes").classList.add("prevent-pointer-events");
+
+        toastr["warning"]("Not Logged in");
+    }
 };
 
 async function author_item(value) {
@@ -828,7 +837,7 @@ function getAuthorCollection() {
 
                     resolve(data);
                 } else {
-                    resolve({});
+                    resolve([]);
                 }
             },
             error: function (err) {
@@ -868,31 +877,37 @@ function getAuthorItems() {
 async function save_content() {
     const header = url_to_json();
 
-    const content = [];
-    var title = document.getElementById("title").getAttribute("data-content");//innerText;
-    if (title == "") {
-        title = "Title";
-    }
-    const authors = getAuthorItems();
+    if (await hasValidUserSession()) {
+        const content = [];
+        var title = document.getElementById("title").getAttribute("data-content");//innerText;
+        if (title == "") {
+            title = "Title";
+        }
+        const authors = getAuthorItems();
 
-    const container = document.getElementById("boxes");
-    for (let i = 0; i < container.children.length; i++) {
-        const element = container.children[i];
+        const container = document.getElementById("boxes");
+        for (let i = 0; i < container.children.length; i++) {
+            const element = container.children[i];
 
-        content[i] = element.getAttribute("data-content");
-    }
-    const visibility = document.getElementById("view-mode").value;
-    const response = await upload(header.id, JSON.stringify(prepareJSON(title, authors, content, visibility)));
+            content[i] = element.getAttribute("data-content");
+        }
+        const visibility = document.getElementById("view-mode").value;
+        const response = await upload(header.id, JSON.stringify(prepareJSON(title, authors, content, visibility)));
 
-    if (response == -1) {
+        console.log(response);
 
-    } else if (response != "ERROR") {
-        if (response != "") {
-            console.log(response);
+        if (response == -1) {
+
+        } else if (response != "ERROR") {
+            if (response != "") {
+                console.log(response);
+            }
+        } else {
+            console.error(response);
+            toastr["error"]("An error occurred");
         }
     } else {
-        console.error(response);
-        toastr["error"]("An error occurred");
+        console.info('User session is not valid');
     }
 }
 

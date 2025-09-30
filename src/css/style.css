@@ -1034,3 +1034,9 @@ pre code {
     font-size: 0.9em;
     display: block;
 }
+
+.prevent-pointer-events {
+    -webkit-user-drag: none in !important;
+    user-select: none in !important;
+    pointer-events: none !important;
+}
