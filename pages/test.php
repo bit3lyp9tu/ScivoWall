@@ -4,38 +4,45 @@
 ?>
 <!DOCTYPE html>
 <html lang='en'>
-    <head>
-        <script>
-            window.addEventListener("load", function () {
-                let startX = 0;
-                let endX = 0;
-
-                function handleGesture() {
-                    if (endX < startX - 50) {
-                        console.log("swipeleft");
-                    }
-                    if (endX > startX + 50) {
-                        console.log("swiperight");
-                    }
-                }
-
-                document.addEventListener("pointerdown", function (e) {
-                    startX = e.clientX;
-                }, false);
-
-                document.addEventListener("pointerup", function (e) {
-                    endX = e.clientX;
-                    handleGesture();
-                }, false);
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <div id="content"></div>
+    <script>
+        fetch('README.md')
+            .then(response => response.text())
+            .then(text => {
+            document.getElementById('content').innerHTML = marked.parse(text);
             });
-        </script>
+    </script>
 
-    </head>
+    <style>
 
-    <body>
-        <div class="ui-widget">
-            <!-- <label for="tags">Tags: </label> -->
-            <input id="testest" type="text">
-        </div>
-    </body>
+        #content {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        code {
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        /* Block code (from triple backticks) */
+        pre {
+            background-color: #f5f5f5;
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+            /* Horizontal scroll if long lines */
+        }
+
+        pre code {
+            background: none;
+            /* Prevent double background */
+            padding: 0;
+            font-size: 0.9em;
+            display: block;
+        }
+    </style>
 </html>
