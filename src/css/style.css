@@ -1056,8 +1056,8 @@ div[data-content]>table,
 
 div[data-content]>table th,
 div[data-content]>table td,
-.content>table th,
-.content>table td {
+#content>table th,
+#content>table td {
     border: 1px solid var(--scads-blue);
     padding: 6px 13px;
 }
