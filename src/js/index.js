@@ -173,13 +173,9 @@ window.addEventListener("load", async function () {
         });
 
         if (content.poster_id.length != 1) {
-            // intervalId = setInterval(showPosterAll, 2000);
             setCounter(0);
             restart();
-        } else {
-            // intervalId = null;
         }
-
 
     } else {
         document.getElementsByClassName("slider-controls")[0].style.display = "none";
