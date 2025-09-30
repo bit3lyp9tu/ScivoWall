@@ -84,7 +84,7 @@
 
 .bottom-div {
     grid-column: 1 / span 7;
-
+    background-color: #011e53;
     user-select: none;
 }
 
