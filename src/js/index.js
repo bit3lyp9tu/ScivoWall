@@ -23,6 +23,7 @@ function index_converter(i, l) {
     return i < 0 ? mod((i + l * (mod(-i, l))), l) : i % l;
 }
 
+var timer = 1000 * 20;
 var intervalId = null;
 var counter = 0;
 function showPoster(selector, index) {
@@ -59,7 +60,7 @@ function untoggleAll() {
     });
 }
 
-function restart(time) {
+function restart(time = timer) {
     if (intervalId !== null) {
         clearInterval(intervalId);
     }
@@ -116,12 +117,12 @@ $(document).ready(function () {
 function timerIncrement() {
     idleTime = idleTime + 1;
     if (idleTime > 60) {
-        window.location.reload();
         console.warn("Idle time exceeded, reloading...");
+        window.location.reload();
     }
-    if (idleTime > 5) {
-        restart(2000);
-        console.warn("Manual time limit of 5min exceeded, Restarting sequence...");
+    if (idleTime > 5 && intervalId === null) {
+        console.warn("Manual time limit of 5min [Stop] exceeded, Restarting sequence...");
+        restart();
     }
 }
 
@@ -152,11 +153,17 @@ window.addEventListener("load", async function () {
             iframe.id = "iframe-" + index;
             iframe.src = "poster.php?id=" + posterId + "&mode=public";
 
+            if (index != 0) {
+                iframe.classList.add("hide");
+            }
+
             iframe.addEventListener("load", () => {
                 loaded_iframes++;
 
-                if (content.poster_id.length == loaded_iframes + 1) {
-                    // console.log("all frames loaded");
+                console.info("loading poster...", index, content.poster_id.length, loaded_iframes);
+
+                if (content.poster_id.length == loaded_iframes) {
+                    console.log("All posters loaded", content.poster_id.length, loaded_iframes);
                     document.getElementById("spinner").style.display = "none";
                 }
             });
@@ -166,10 +173,13 @@ window.addEventListener("load", async function () {
         });
 
         if (content.poster_id.length != 1) {
-            intervalId = setInterval(showPosterAll, 2000);
+            // intervalId = setInterval(showPosterAll, 2000);
+            setCounter(0);
+            restart();
         } else {
-            intervalId = null;
+            // intervalId = null;
         }
+
 
     } else {
         document.getElementsByClassName("slider-controls")[0].style.display = "none";
@@ -241,7 +251,7 @@ document.addEventListener("keydown", (event) => {
         if (event.code === "Space") {
             if (intervalId === null) {
                 console.info("restart poster slider");
-                restart(2000);
+                restart();
             } else {
                 console.info("stop poster slider");
                 stop();

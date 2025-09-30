@@ -26,7 +26,7 @@
 
     <div class="slider-controls">
         <input type="button" value="<" onclick="shiftCounter(-1)"></input>
-        <input type="button" value="Play" onclick="restart(2000)" class="toggled"></input>
+        <input type="button" value="Play" onclick="restart()" class="toggled"></input>
         <input type="button" value="Stop" onclick="stop()"></input>
         <input type="button" value=">" onclick="shiftCounter(1)"></input>
         <p id="counter">0/0</p>
