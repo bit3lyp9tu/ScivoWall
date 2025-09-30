@@ -115,12 +115,14 @@ $(document).ready(function () {
 });
 
 function timerIncrement() {
+    const size = document.querySelectorAll("#posters>*").length;
+
     idleTime = idleTime + 1;
-    if (idleTime > 60) {
+    if (idleTime > 60 && size > 1) {
         console.warn("Idle time exceeded, reloading...");
         window.location.reload();
     }
-    if (idleTime > 5 && intervalId === null) {
+    if (idleTime > 5 && size > 1 && intervalId === null) {
         console.warn("Manual time limit of 5min [Stop] exceeded, Restarting sequence...");
         restart();
     }
@@ -160,10 +162,8 @@ window.addEventListener("load", async function () {
             iframe.addEventListener("load", () => {
                 loaded_iframes++;
 
-                console.info("loading poster...", index, content.poster_id.length, loaded_iframes);
-
                 if (content.poster_id.length == loaded_iframes) {
-                    console.log("All posters loaded", content.poster_id.length, loaded_iframes);
+                    console.log("All posters loaded");
                     document.getElementById("spinner").style.display = "none";
                 }
             });
