@@ -1035,6 +1035,34 @@ pre code {
     display: block;
 }
 
+blockquote {
+    margin: 16px 20px;
+    padding: 0 15px;
+    color: #5c5c5c;
+    background-color: #f0f0f0;
+    border-left: 4px solid #d6d6d6
+}
+
+div[data-content]>table,
+.content>table {
+    margin: 10px 0 15px 0;
+    border-collapse: collapse;
+    border-width: 1px;
+    border-spacing: 0;
+    display: block;
+    width: 100%;
+    overflow: auto;
+}
+
+div[data-content]>table th,
+div[data-content]>table td,
+.content>table th,
+.content>table td {
+    border: 1px solid var(--scads-blue);
+    padding: 6px 13px;
+}
+
+
 .prevent-pointer-events {
     -webkit-user-drag: none in !important;
     user-select: none in !important;

@@ -56,7 +56,7 @@ Title
 Authors
 : The Authors of the poster, to add a new author write in the textfield and deselect the textfield.
 If authors are already added, they will be shown in the autocomplete options.
-To remove an author, hover on the author element and click on the ```[X]``` button.
+To remove an author, hover on the author element and click on the <img src="/img/icons/Icons8_flat_delete_generic.svg" width="25" style="position: relative; top: 10px;"/>-Button.
 The author order can be changed via drag and drop.
 
 view_mode
@@ -74,11 +74,7 @@ To edit a Box, click on the Box, the user can now edit the textfield, deselect s
 
 Using [this Cheatsheet](https://www.markdownguide.org/cheat-sheet/) as a comparison.
 Markdown features that are not supported (yet):
-- Blockquote: ```> blockquote```
-- Code: `code`
 - Image: ```![alt text](link.png)``` *(see image upload)*
-- Table
-- Fenced Code Block
 - Footnote
 - Heading ID
 - Definition List
@@ -90,10 +86,10 @@ Markdown features that are not supported (yet):
 ## Using LaTeX
 TBD
 
-To align your LaTeX content, use ```$$ your content $$``` for center and ```\\( your content \\)``` for left alignment.
+To align your LaTeX content, use ```$$ your content $$``` for display mode and ```\\( your content \\)``` for inline mode.
 
 ## Upload
-To upload, hover over the Box you want add content to and click on the [```Browse...```] button. Now select your file. Now the content of your file should be inside a placeholder, you can click outside of your selected Box.
+To upload, hover over the Box you want add content to and click on the <img src="/img/icons/Icons8_flat_opened_folder.svg" width="25" style="position: relative; top: 7px;"/>-Button. Now select your file. Now the content of your file should be inside a placeholder, you can click outside of your selected Box.
 
 Now, the text with the placeholder should disappear and the content should be correctly redered.
 If not please check if the file content has the correct formating.
