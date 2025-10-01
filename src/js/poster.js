@@ -705,6 +705,7 @@ window.onload = async function () {
 
         document.body.classList.remove("bgimg");
         document.getElementById("scadslogo").src = "";
+        document.getElementById("logo_headline").style.display = "none";
     }
 
     const state = await isEditView();
