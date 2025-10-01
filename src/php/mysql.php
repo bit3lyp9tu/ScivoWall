@@ -1,18 +1,12 @@
 <?php
 	function isRunningInDocker(): bool {
-		// Check /.dockerenv
 		if (is_file('/.dockerenv')) {
 			return true;
 		}
-
-		// Check cgroup info
 		if (is_file('/proc/1/cgroup')) {
 			$cgroup = file_get_contents('/proc/1/cgroup');
-			if (strpos($cgroup, 'docker') !== false || strpos($cgroup, 'containerd') !== false) {
-				return true;
-			}
+			return strpos($cgroup, 'docker') !== false || strpos($cgroup, 'containerd') !== false;
 		}
-
 		return false;
 	}
 
@@ -24,7 +18,7 @@
 	$database = getenv('DB_NAME');
 	$port = (int) getenv('DB_PORT');
 
-	if(isRunningInDocker()) {
+	if (isRunningInDocker()) {
 		$servername = "dockerdb";
 		$username = "poster_generator";
 		$database = "poster_generator";
@@ -35,34 +29,19 @@
 	}
 
 	if (file_exists($db_path)) {
-		$password = file_get_contents($db_path);
-		$password = chop($password);
+		$password = trim(file_get_contents($db_path));
 	} else {
-		if(!isRunningInDocker()) {
+		if (!isRunningInDocker()) {
 			error_log("error_log: $db_path not found! Trying default-pw");
 		}
 	}
 
-	// Create connection
+	mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
 	try {
-		#print_r("servername:\t" . $servername . "\nusername:\t" . $username . "\npw:\t\t" . $password . "\ndb:\t\t" . $database . "\nport:\t\t" . $port . "\n");
-		// error_log("servername:\t" . $servername . "\nusername:\t" . $username . "\npw:\t\t" . $password . "\ndb:\t\t" . $database . "\nport:\t\t" . $port . "\n");
-		$GLOBALS["conn"] = new mysqli($servername, $username, $password, $database, $port);
-
-		// Check connection
-		if ($GLOBALS["conn"]->connect_error) {
-			error_log("Connection failed: " . $GLOBALS["conn"]->connect_error);
-
-			exit(1);
-		}
+		$GLOBALS["conn"] = @new mysqli($servername, $username, $password, $database, $port);
 	} catch (\Throwable $e) {
-		echo "<pre>";
-		if (preg_match('/Class "mysqli" not found/', $e)) {
-			echo "The Module mysqli not found. Try installing it with\nsudo apt-get install php-mysqli";
-		} else {
-			echo "Error trying to initialize database connection: $e";
-		}
-		echo "</pre>";
-		exit(2);
+		include $_SERVER['DOCUMENT_ROOT'] . "/pages/404.php";
+		exit;
 	}
 ?>
