@@ -1070,3 +1070,8 @@ div[data-content]>table td,
     user-select: none in !important;
     pointer-events: none !important;
 }
+
+.js-plotly-plot,
+.plot-container {
+    display: inline;
+}
