@@ -373,27 +373,33 @@ async function importFile(output, file) {
         reader.readAsText(file);
     } else if (file.type.startsWith('image/')) {
 
-        const url = url_to_json();
+        if (file.size <= 8388608) {
+            const url = url_to_json();
 
-        const reader = new FileReader();
-        reader.onload = async function (e) {
-            const data = {
-                "name": file.name,
-                "type": file.type,
-                "size": file.size,
-                "last_modified": 0,//file.lastModified,
-                "webkit_relative_path": file.webkitRelativePath,
-                "data": e.target.result
+            const reader = new FileReader();
+            reader.onload = async function (e) {
+                const data = {
+                    "name": file.name,
+                    "type": file.type,
+                    "size": file.size,
+                    "last_modified": 0,//file.lastModified,
+                    "webkit_relative_path": file.webkitRelativePath,
+                    "data": e.target.result
+                };
+
+                await imageUpload(data, url["id"]);
+
+                const text = '\n<p placeholder="image">\includegraphics{' + file.name + "}</p>";
+                output.setAttribute("data-content", output.getAttribute("data-content") + text);
+                output.value = output.value + text;
+
             };
-
-            await imageUpload(data, url["id"]);
-
-            const text = '\n<p placeholder="image">\includegraphics{' + file.name + "}</p>";
-            output.setAttribute("data-content", output.getAttribute("data-content") + text);
-            output.value = output.value + text;
-
-        };
-        reader.readAsDataURL(file);
+            reader.readAsDataURL(file);
+        } else {
+            const msg = "File too large. Maximum file size is 8.38MB";
+            console.info(msg);
+            toastr["warning"](msg);
+        }
 
     } else if (file.type === 'application/json' || file.name.endsWith('.json')) {
 
@@ -894,8 +900,6 @@ async function save_content() {
         }
         const visibility = document.getElementById("view-mode").value;
         const response = await upload(header.id, JSON.stringify(prepareJSON(title, authors, content, visibility)));
-
-        console.log(response);
 
         if (response == -1) {
 
