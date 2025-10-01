@@ -616,6 +616,22 @@ function getIndex(element) {
     return index - 1;
 }
 
+function remove_rows(selector, title, index) {
+    document.querySelectorAll(selector).forEach(element => {
+        if (element.hasAttribute("pk_id")) {
+            if (element.children[index].innerText == title) {
+                console.log("removing " + element.id + " in " + selector);
+
+                document.getElementById(element.id).remove();
+            }
+        }
+    });
+
+    if (document.querySelectorAll(selector).length == 1) {
+        document.querySelector(selector.split(">")[0]).children[0].remove();
+    }
+}
+
 async function fetch_projects_filtered(filter) {
     document.getElementById("table-container").replaceChildren();
 
@@ -670,6 +686,7 @@ async function fetch_projects_filtered(filter) {
 
                             if (pk_ids) {
                                 var id = $(this).closest("tr")[0].getAttribute("pk_id");
+                                var value = $(this).closest("tr")[0].querySelector("input[type='text']").value;
 
                                 delete_project(id);
                                 $("#table-container").empty();
@@ -679,6 +696,9 @@ async function fetch_projects_filtered(filter) {
                                 pk_ids.splice(local_id, 1);
 
                                 await createTableFromJSON("table-container", pk_ids, data, textfield_indexes, editColumn, deleteColumn);
+
+                                remove_rows("#author-list>table>*", value, 1);
+                                remove_rows("#image-list>table>*", value, 3);
                             } else {
                                 console.error("no pk_ids");
                             }

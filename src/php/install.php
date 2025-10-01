@@ -151,7 +151,7 @@
 	}
 	*/
 
-	foreach ($create_queries as $query) {
-		$result = run_query("$query\n");
-	}
+	// foreach ($create_queries as $query) {
+	// 	$result = run_query("$query\n");
+	// }
 ?>
