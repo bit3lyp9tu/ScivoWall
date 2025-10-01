@@ -553,7 +553,7 @@ async function select_box(element) {
             } else if (selected_title && element !== selected_title) {// if there was something once selected and if the new selected is different from the old
 
                 // change old back to non-editable and save old edits
-                const box = createArea("div", selected_title.id, element.children[0].className, selected_title.value);
+                const box = createArea("div", selected_title.id, selected_title.className, selected_title.value);
 
                 if (selected_title.value == "") {
                     await typeset(box, () => marked.marked("Title"));
