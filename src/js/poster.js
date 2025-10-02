@@ -365,7 +365,7 @@ async function importFile(output, file) {
     if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
         const reader = new FileReader();
         reader.onload = function (e) {
-            const text = `\n<p placeholder="plotly" chart="scatter">\n` + e.target.result + `</p>`;
+            const text = "\n```plotly-scatter\n" + e.target.result + "\n```";
 
             output.setAttribute("data-content", output.getAttribute("data-content") + text);
             output.value = output.value + text;
@@ -389,7 +389,7 @@ async function importFile(output, file) {
 
                 await imageUpload(data, url["id"]);
 
-                const text = '\n<p placeholder="image">\includegraphics{' + file.name + "}</p>";
+                const text = "\n![file not found](" + file.name + ")";
                 output.setAttribute("data-content", output.getAttribute("data-content") + text);
                 output.value = output.value + text;
 
@@ -407,7 +407,7 @@ async function importFile(output, file) {
         reader.onload = function (e) {
             try {
                 const json = JSON.parse(e.target.result);
-                const text = `\n<p placeholder="plotly">\n` + JSON.stringify(json, null, 2) + `\n</p>`;
+                const text = "\n```plotly\n" + JSON.stringify(json, null, 2) + "\n```";
                 output.setAttribute("data-content", output.getAttribute("data-content") + text);
                 output.value = output.value + text;
 
@@ -948,6 +948,26 @@ function soft_remove_class(element, class_name) {
     }
 }
 
+function class_to_data(class_str) {
+    if (class_str) {
+        var tag = "";
+        if (class_str.includes(" ")) {
+            tag = class_str.split(" ")[0];
+        } else {
+            tag = class_str;
+        }
+        if (tag.includes("language-")) {
+            const placeholder = tag.split("language-")[1];
+            if (placeholder.includes("-")) {
+                return { "placeholder": placeholder.split("-")[0], "chart": placeholder.split("-")[1] };
+            } else {
+                return { "placeholder": placeholder, "chart": "" };
+            }
+        }
+    }
+
+}
+
 async function renderBox(inclImg = true, inclPlotly = true) {
     const url = url_to_json();
     const boxes = document.getElementById("boxes");
@@ -955,61 +975,74 @@ async function renderBox(inclImg = true, inclPlotly = true) {
     var error_msg = "";
 
     for (let i = 0; i < boxes.children.length; i++) {
-        const placeholders = boxes.children[i].querySelectorAll("p[placeholder]");
+        const placeholders = boxes.children[i].querySelectorAll("p>img, pre>code.language-plotly, pre>code.language-plotly-scatter, pre>code.language-plotly-line, pre>code.language-plotly-bar, pre>code.language-plotly-pie");
 
         soft_remove_class(boxes.children[i], "found-error");
 
         for (var j = 0; j < placeholders.length; j++) {
+            if (inclImg && placeholders[j].parentNode.querySelector("img")) {
+                const img_info = placeholders[j].parentNode.innerHTML.match(/\<img\ssrc\=\"[^\"\.]*\.(png|jpg|gif)\"\salt\=\"[^\"]+\"\>/gm);
 
-            if (inclImg && placeholders[j].getAttribute("placeholder") == "image") {
-                const img_info = placeholders[j].innerHTML.replace("\n", "").match(/includegraphics\{[\w+,\/,\-]+\.(png|jpg|gif)\}/g);
-                if (img_info && img_info[0]) {
-                    var name = img_info[0].match(/[\w+,\/,\-]+?\.(png|jpg|gif)/)[0];
-                    var loaded_img = await getLoadedImg(url["id"], name);
-                    var img = loaded_img[1];
+                if (img_info) {
+                    if (img_info[0]) {
+                        var name = img_info[0].match(/[^\"\.]*\.(png|jpg|gif)/)[0];
+                        var loaded_img = await getLoadedImg(url["id"], name);
+                        var img = loaded_img[1];
 
-                    if (!loaded_img[0]) {
-                        boxes.children[i].classList.add("found-error");
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(img.innerHTML, "text/html");
+                        const img_new = doc.body.querySelector('img');
 
-                        const msg = "Image [" + name + "] not found";
+                        if (!loaded_img[0]) {
+                            boxes.children[i].classList.add("found-error");
 
-                        console.warn(msg);
-                        toastr["warning"](msg);
+                            const msg = "Image [" + name + "] not found";
+
+                            console.warn(msg);
+                            toastr["warning"](msg);
+                        }
+                        placeholders[j].parentNode.querySelector("img").src = img_new.src;
+
+                    } else {
+                        error_msg = "No image data";
                     }
-
-                    boxes.children[i].replaceChild(img, placeholders[j], "");
-
-                } else {
-                    error_msg = "No image data";
                 }
             }
-            if (inclPlotly && placeholders[j].getAttribute("placeholder") == "plotly") {
-                if (placeholders[j].hasAttribute("chart") && ["scatter", "line", "bar", "pie"].includes(placeholders[j].getAttribute("chart"))) {   // inport csv
-                    var content = simple_plot(placeholders[j].getAttribute("chart"), placeholders[j].innerHTML);
-                    console.debug("templete", content);
 
-                    if (content) {
-                        drawChart(i, placeholders, j, content);
-                    }
-
-                } else if (!placeholders[j].hasAttribute("chart")) {  // inport json
-
-                    if (placeholders[j].innerHTML) {
-                        const regex = /<\/?\w+[^>]*>/g;
-
-                        var content = json_parse(repairJson(placeholders[j].innerHTML.replaceAll(regex, "")));
-                        console.debug(content);
+            const data = class_to_data(placeholders[j].getAttribute("class"));
+            if (data) {
+                if (inclPlotly && data["placeholder"] == "plotly") {
+                    if (data["chart"] && ["scatter", "line", "bar", "pie"].includes(data["chart"])) {   // inport csv
+                        var content = simple_plot(data["chart"], placeholders[j].innerHTML);
+                        console.debug("templete", content);
 
                         if (content) {
                             drawChart(i, placeholders, j, content);
                         }
 
-                    } else {
-                        error_msg = "File empty";
-                    }
+                    } else if (data["chart"] == "") {  // inport json
+                        console.groupCollapsed("JSON data");
+                        console.info(placeholders[j].innerHTML);
+                        console.groupEnd();
 
-                } else {    // error
-                    error_msg = "Unsupported chart type";
+                        if (placeholders[j].innerHTML) {
+                            const regex = /<\/?\w+[^>]*>/g;
+
+                            var content = json_parse(repairJson(placeholders[j].innerHTML.replaceAll(regex, "")));
+                            console.debug(content);
+
+                            if (content) {
+                                drawChart(i, placeholders, j, content);
+                            }
+
+                        } else {
+                            error_msg = "File empty";
+                        }
+
+                    } else {    // error
+                        error_msg = "Unsupported chart type";
+                        console.warn("data", data);
+                    }
                 }
             }
         }

@@ -1065,7 +1065,8 @@ div[data-content]>table td,
 }
 
 
-.prevent-pointer-events {
+.prevent-pointer-events,
+.cursor-crosshair {
     -webkit-user-drag: none in !important;
     user-select: none in !important;
     pointer-events: none !important;
@@ -1074,4 +1075,25 @@ div[data-content]>table td,
 .js-plotly-plot,
 .plot-container {
     display: inline;
+
+    -webkit-user-drag: none;
+    user-select: none;
+    pointer-events: none;
+}
+
+code.js-plotly-plot {
+    font-size: 0 !important;
+    line-height: 0 !important;
+    height: 0px;
+    /* display: none; */
+}
+
+code.js-plotly-plot .plot-container {
+    /* font-size: initial; */
+
+    /* display: block !important; */
+}
+
+div[data-content]>p>img {
+    width: 100%;
 }
