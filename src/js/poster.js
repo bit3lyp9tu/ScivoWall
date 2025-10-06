@@ -229,8 +229,6 @@ function createMenu(parent_id) {
 
         await importFile(element, file);
 
-        // await select_box(element);
-
         const index = $(event.target).closest("div")[0].id.split("-")[1];
         console.log(index);
         await renderBox(index);
@@ -339,26 +337,6 @@ async function show(response) {
     }
 }
 
-// function edit_box_if_no_other_was_selected(_target) {
-//     // change box to editable
-//     const element = createArea("textarea", _target.id, _target.className, _target.getAttribute("data-content"));
-//     element.rows = Math.round((_target.innerHTML.match(/(<br>|\n)/g) || []).length * 1.5) + 1;
-//     element.style.resize = "none"; //"vertical";
-//     element.value = _target.getAttribute("data-content");
-
-//     element.querySelectorAll('p[placeholder="plotly"]').forEach(e => {
-//         e.remove();
-//     });
-
-//     _target.parentNode.replaceChild(element, _target);
-
-//     element.focus();
-//     element.setSelectionRange(element.value.length, element.value.length);
-
-//     //  remember box as previously selected
-//     selected_editBox = element;
-// }
-
 async function importFile(output, file) {
 
     if (!file) return;
@@ -422,172 +400,6 @@ async function importFile(output, file) {
         console.error('Unsupported file type.');
     }
 }
-
-// async function unedit_box() {
-//     //console.log("TESTETSTSTTSTTS", selected_editBox.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``));
-//     // selected_editBox = selected_editBox.value.replaceAll("\n", "").replace(/(?<=\>).*(?=\<\/p\>)/g, ``);
-//     // if (element.querySelector("p[placeholder='plotly']")) {
-//     // }
-
-//     // change old back to non-editable and save old edits
-//     if (selected_editBox) {
-
-//         if (selected_editBox.value == "") {
-//             selected_editBox.remove();
-
-//         } else {
-//             const element = createArea("div", selected_editBox.id, selected_editBox.className, selected_editBox.value);
-
-//             await typeset(element, () => marked.marked(selected_editBox.value));
-//             if (selected_editBox && selected_editBox.parentNode) {
-//                 selected_editBox.parentNode.replaceChild(element, selected_editBox);
-//             }
-//             element.appendChild(createMenu(element.id));
-
-//             // var inbtn = document.querySelector('#' + selected_editBox.id + '>label>input[type="file"]');
-//             // console.log(inbtn);
-//             // // TODO: [BUG] editBox needs to be selected previously at least once for the change event to be detected
-//             // inbtn.addEventListener('change', async function (event) {
-//             //     const file = event.target.files[0];
-//             //     console.log("change", selected_editBox, file);
-//             //     await importFile(selected_editBox, file);
-//             // });
-
-//             await renderBox();
-//         }
-
-//         // forget old selected
-//         selected_editBox = null;
-
-//         await save_content();
-//     }
-
-//     await initEditBoxes();
-// }
-
-// async function edit_box(_target) {
-//     if (_target.tagName === "DIV" && _target.id.startsWith("editBox") && selected_editBox === null) { // if new editBox gets selected
-//         edit_box_if_no_other_was_selected(_target)
-//     } else if (selected_editBox && _target !== selected_editBox) {// if there was something once selected and if the new selected is different from the old
-//         await unedit_box();
-//     }
-// }
-
-// function initUneditHandler() {
-//     document.addEventListener('click', async function (event) {
-//         // Prüfe, ob der Klick *innerhalb* einer editBox war
-//         const isInsideEditBox = event.target.closest('[id^="editBox-"]');
-
-//         // Wenn NICHT innerhalb einer editBox → unedit_box() aufrufen
-//         if (!isInsideEditBox) {
-//             await unedit_box();
-//         }
-//     });
-// }
-
-// async function initEditBoxes() {
-//     if (await isEditView()) {
-//         const editBoxes = Array.from(document.querySelectorAll('[id^="editBox-"]'));
-
-//         editBoxes.forEach(box => {
-//             // Prüfen, ob der Listener bereits gesetzt wurde
-//             if (!box._hasEditBoxClickListener) {
-//                 box.addEventListener('click', function (event) {
-//                     // Abbrechen, wenn das geklickte Element Teil der Plotly-UI ist
-//                     if (event.target.closest('.modebar-container, .plotly, .zoomlayer')) {
-//                         return; // Ignoriere Plotly-interne Klicks
-//                     }
-
-//                     edit_box(this);
-//                 });
-
-//                 box._hasEditBoxClickListener = true;
-//             }
-//         });
-//     }
-// }
-
-// async function select_box(element) {
-//     if (!isInIframe()) {
-//         const url = url_to_json();
-//         //TODO:   check if session-id valid
-//         if (url["mode"] != null && url["mode"] == 'private') {
-
-//             // if (element.classList.contains("icon")) {
-//             //     element = element.parentElement.parentElement;
-//             //     console.log("is icon", element);
-//             // }
-
-//             // if (element.children[0] && element.tagName === "DIV" && selected_title === null && ((element.id.startsWith("editBox") || !element.id.startsWith("editBox") && element.children[0].id.startsWith("title")))) { // if new editBox gets selected
-//             // Edit Title
-//             if (element.children[0] && element.tagName === "DIV" && !element.id.startsWith("editBox") && element.children[0].id.startsWith("title") && selected_title === null) { // if new editBox gets selected
-
-//                 // change box to editable
-//                 const box = createArea("textarea", element.children[0].id, element.children[0].className, element.children[0].getAttribute("data-content"));
-
-//                 // if (!element.id.startsWith("editBox") && element.children[0].id.startsWith("title")) {
-//                 // } else if (element.id.startsWith("editBox")) {
-//                 //     const element = createArea("textarea", element.id, "", element.getAttribute("data-content"));
-//                 // } else {
-//                 //     console.error("Error: element not found", element);
-//                 //     return;
-//                 // }
-
-//                 box.style.resize = "none"; //"vertical";
-//                 box.value = element.children[0].getAttribute("data-content");
-//                 element.children[0].parentNode.replaceChild(box, element.children[0]);
-//                 box.style['pointer-events'] = 'auto';
-
-//                 box.focus();
-//                 box.setSelectionRange(box.value.length, box.value.length);
-
-//                 // remember box as previously selected
-//                 selected_title = box;
-
-//             } else if (selected_title && element !== selected_title) {// if there was something once selected and if the new selected is different from the old
-
-//                 // change old back to non-editable and save old edits
-//                 const box = createArea("div", selected_title.id, selected_title.className, selected_title.value);
-
-//                 if (selected_title.value == "") {
-//                     await typeset(box, () => marked.marked("Title"));
-//                 } else {
-//                     await typeset(box, () => marked.marked(selected_title.value));
-//                 }
-
-//                 selected_title.parentNode.replaceChild(box, selected_title);
-//                 box.style['pointer-events'] = 'none';
-
-//                 // forget old selected
-//                 selected_title = null;
-//             }
-//             // else {
-//             //     console.log("is not a Box: ", element);
-//             //     console.log(element.children[0], element.tagName === "DIV", !element.id.startsWith("editBox"), element.children[0].id.startsWith("title"), selected_title === null);
-//             // }
-
-//             // Edit Boxes
-//             //edit_box(element)
-
-//         } else {
-//             console.error("event.target is empty. event:", element);
-//         }
-//         await save_content();
-//     }
-// }
-
-// async function edit_box_event(event) {
-//     // console.log(event.target);
-
-//     await select_box(event.target);
-// }
-// document.addEventListener("keydown", async (event) => {
-
-//     if (event.ctrlKey && event.code === "Enter") {
-//         // await unedit_box();
-//     }
-// });
-// document.addEventListener("click", edit_box_event);
 
 //TODO:   check for invalid names during image upload
 async function imgDragDrop() {
