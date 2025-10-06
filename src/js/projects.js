@@ -410,7 +410,14 @@ function append_additional_columns(additional_columns, i, row) {
 }
 
 function reformat_header(str) {
-    return str.toUpperCase().replace(/_/g, " ");
+    var result = [];
+
+    const words = str.replace(/_/g, " ").split(" ");
+    for (var i = 0; i < words.length; i++) {
+        result.push(words[i].charAt(0).toUpperCase() + words[i].slice(1).toLowerCase());
+    }
+
+    return result.join(" ");
 }
 
 // TODO:   may need an overwork
