@@ -4,7 +4,6 @@ var author_names = [];
 var log = console.log;
 
 var selected_editBox = null;
-// var selected_title = null;
 
 function isInIframe() {
     try {
@@ -232,7 +231,9 @@ function createMenu(parent_id) {
 
         // await select_box(element);
 
-        await renderBox();
+        const index = $(event.target).closest("div")[0].id.split("-")[1];
+        console.log(index);
+        await renderBox(index);
     });
     wrapper.appendChild(input);
 
@@ -643,7 +644,8 @@ async function imgDragDrop() {
 
                         await imageUpload(data, url["id"]);
 
-                        await renderBox();
+                        const index = event.target.id.split("-")[1];
+                        await renderBox(index);
                     };
 
                     reader.readAsDataURL(file); // Read the file as base64
@@ -743,9 +745,6 @@ window.onload = async function () {
         toastr["warning"]("Not Logged in");
     }
 
-    // await initEditBoxes();
-    // await initUneditHandler();
-
     if (!await hasValidUserSession()) {
         document.getElementById("add_author").style.display = "none";
 
@@ -757,7 +756,6 @@ window.onload = async function () {
 };
 
 function selectEvent(target) {
-    // unpackSelectable(target);
 
     // change box to editable
     const element = createArea("textarea", target.id, target.className, target.getAttribute("data-content"));
@@ -1083,94 +1081,95 @@ function class_to_data(class_str) {
 
 }
 
-async function renderBox(index = -1, inclImg = true, inclPlotly = true) {
-    const url = url_to_json();
-    const boxes = document.getElementById("boxes");
+function warn_msg(msg) {
+    console.warn(msg);
+    toastr["warning"](msg);
+}
 
-    var error_msg = "";
+async function renderSingleBox(url, boxes, index, inclImg, inclPlotly) {
+    const placeholders = boxes.children[index].querySelectorAll("p>img, pre>code.language-plotly, pre>code.language-plotly-scatter, pre>code.language-plotly-line, pre>code.language-plotly-bar, pre>code.language-plotly-pie");
 
-    if (Number.isInteger(Number(index)) && index >= 0) {
+    soft_remove_class(boxes.children[index], "found-error");
 
-    } else {
+    for (var j = 0; j < placeholders.length; j++) {
+        if (inclImg && placeholders[j].parentNode.querySelector("img")) {
+            const img_info = placeholders[j].parentNode.innerHTML.match(/\<img\ssrc\=\"[^\"\.]*\.(png|jpg|gif)\"\salt\=\"[^\"]+\"\>/gm);
 
-    }
-    for (let i = 0; i < boxes.children.length; i++) {
-        const placeholders = boxes.children[i].querySelectorAll("p>img, pre>code.language-plotly, pre>code.language-plotly-scatter, pre>code.language-plotly-line, pre>code.language-plotly-bar, pre>code.language-plotly-pie");
+            if (img_info) {
+                if (img_info[0]) {
+                    var name = img_info[0].match(/[^\"\.]*\.(png|jpg|gif)/)[0];
+                    var loaded_img = await getLoadedImg(url["id"], name);
+                    var img = loaded_img[1];
 
-        soft_remove_class(boxes.children[i], "found-error");
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(img.innerHTML, "text/html");
+                    const img_new = doc.body.querySelector('img');
 
-        for (var j = 0; j < placeholders.length; j++) {
-            if (inclImg && placeholders[j].parentNode.querySelector("img")) {
-                const img_info = placeholders[j].parentNode.innerHTML.match(/\<img\ssrc\=\"[^\"\.]*\.(png|jpg|gif)\"\salt\=\"[^\"]+\"\>/gm);
+                    if (!loaded_img[0]) {
+                        boxes.children[index].classList.add("found-error");
 
-                if (img_info) {
-                    if (img_info[0]) {
-                        var name = img_info[0].match(/[^\"\.]*\.(png|jpg|gif)/)[0];
-                        var loaded_img = await getLoadedImg(url["id"], name);
-                        var img = loaded_img[1];
+                        const msg = "Image [" + name + "] not found";
 
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(img.innerHTML, "text/html");
-                        const img_new = doc.body.querySelector('img');
-
-                        if (!loaded_img[0]) {
-                            boxes.children[i].classList.add("found-error");
-
-                            const msg = "Image [" + name + "] not found";
-
-                            console.warn(msg);
-                            toastr["warning"](msg);
-                        }
-                        placeholders[j].parentNode.querySelector("img").src = img_new.src;
-
-                    } else {
-                        error_msg = "No image data";
+                        console.warn(msg);
+                        toastr["warning"](msg);
                     }
+                    placeholders[j].parentNode.querySelector("img").src = img_new.src;
+
+                } else {
+                    warn_msg("No image data");
                 }
             }
+        }
 
-            const data = class_to_data(placeholders[j].getAttribute("class"));
-            if (data) {
-                if (inclPlotly && data["placeholder"] == "plotly") {
-                    if (data["chart"] && ["scatter", "line", "bar", "pie"].includes(data["chart"])) {   // inport csv
-                        var content = simple_plot(data["chart"], placeholders[j].innerHTML);
-                        console.debug("templete", content);
+        const data = class_to_data(placeholders[j].getAttribute("class"));
+        if (data) {
+            if (inclPlotly && data["placeholder"] == "plotly") {
+                if (data["chart"] && ["scatter", "line", "bar", "pie"].includes(data["chart"])) {   // inport csv
+                    var content = simple_plot(data["chart"], placeholders[j].innerHTML);
+                    console.debug("templete", content);
+
+                    if (content) {
+                        drawChart(index, placeholders, j, content);
+                    }
+
+                } else if (data["chart"] == "") {  // inport json
+                    console.groupCollapsed("JSON data");
+                    console.info(placeholders[j].innerHTML);
+                    console.groupEnd();
+
+                    if (placeholders[j].innerHTML) {
+                        const regex = /<\/?\w+[^>]*>/g;
+
+                        var content = json_parse(repairJson(placeholders[j].innerHTML.replaceAll(regex, "")));
+                        console.debug(content);
 
                         if (content) {
-                            drawChart(i, placeholders, j, content);
+                            drawChart(index, placeholders, j, content);
                         }
 
-                    } else if (data["chart"] == "") {  // inport json
-                        console.groupCollapsed("JSON data");
-                        console.info(placeholders[j].innerHTML);
-                        console.groupEnd();
-
-                        if (placeholders[j].innerHTML) {
-                            const regex = /<\/?\w+[^>]*>/g;
-
-                            var content = json_parse(repairJson(placeholders[j].innerHTML.replaceAll(regex, "")));
-                            console.debug(content);
-
-                            if (content) {
-                                drawChart(i, placeholders, j, content);
-                            }
-
-                        } else {
-                            error_msg = "File empty";
-                        }
-
-                    } else {    // error
-                        error_msg = "Unsupported chart type";
-                        console.warn("data", data);
+                    } else {
+                        warn_msg("File empty");
                     }
+
+                } else {    // error
+                    warn_msg("Unsupported chart type");
+                    console.warn("data", data);
                 }
             }
         }
     }
+}
 
-    if (error_msg) {
-        console.warn(error_msg);
-        toastr["warning"](error_msg);
+async function renderBox(index = -1, inclImg = true, inclPlotly = true) {
+    const url = url_to_json();
+    const boxes = document.getElementById("boxes");
+
+    if (Number.isInteger(Number(index)) && index >= 0) {
+        renderSingleBox(url, boxes, index, inclImg, inclPlotly);
+    } else {
+        for (let i = 0; i < boxes.children.length; i++) {
+            renderSingleBox(url, boxes, i, inclImg, inclPlotly);
+        }
     }
 }
 
