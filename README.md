@@ -129,6 +129,10 @@ To modify the chart type, replace the chart type with one of the other types e.g
 
 # Copyright
 
+Creative Commons Attribution-Share Alike 4.0 International license:
+- ```/img/icons/Loading_icon.gif``` from [here](https://commons.wikimedia.org/wiki/File:Loading_icon.gif#/media/File:Loading_icon.gif)
+
+MIT licence:
 - ```/img/icons/Icons8_flat_delete_generic.svg``` from [here](https://commons.wikimedia.org/wiki/File:Icons8_flat_delete_generic.svg)
 - ```/img/icons/Icons8_flat_opened_folder.svg``` from [here](https://commons.wikimedia.org/wiki/File:Icons8_flat_opened_folder.svg)
 - ```/img/icons/Edit_Notepad_Icon.svg``` from [here](https://commons.wikimedia.org/wiki/File:Edit_Notepad_Icon.svg)

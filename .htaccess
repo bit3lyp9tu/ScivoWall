@@ -12,6 +12,6 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*\.php)$ pages/$1 [L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule \.(jpe?g|png|gif|svg|webp)$ /img/icons/Icons8_flat_delete_generic.svg [L]
+RewriteRule \.(jpe?g|png|gif|svg|webp)$ /img/icons/Loading_icon.gif [L]
 
 ErrorDocument 404 /pages/404.php
