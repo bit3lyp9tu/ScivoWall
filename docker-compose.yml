@@ -15,19 +15,15 @@ services:
     ports:
       - $LOCAL_PORT:$LOCAL_PORT
     volumes:
-      - type: volume
-        source: json
-        target: /poster_generator_json:rw
-        volume:
-          nocopy: true
+      - ./src:/var/www/html/scientific_poster_generator/:rw
+      - ./custom-000-default.conf:/etc/apache2/sites-enabled/000-default.conf:ro
+      - ./custom-ports.conf:/etc/apache2/ports.conf:ro
     networks:
       - poster_generator_network
     tmpfs:
       - /tmp:rw
     environment:
       - IND=true
-volumes:
-  json:
 networks:
   poster_generator_network:
     driver: bridge
