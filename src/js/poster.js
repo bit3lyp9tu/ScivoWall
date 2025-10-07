@@ -334,6 +334,8 @@ async function show(response) {
             select.appendChild(opt);
         }
         select.value = response.visibility - 1;
+
+        select.onchange = await save_content;
     }
 }
 
@@ -806,6 +808,8 @@ function getAuthorItems() {
 }
 
 async function save_content() {
+    console.debug("save content");
+
     const header = url_to_json();
 
     if (await hasValidUserSession()) {
