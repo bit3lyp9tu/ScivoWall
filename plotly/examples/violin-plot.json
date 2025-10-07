@@ -556,7 +556,7 @@
             "showgrid": "true"
         },
         "title": {
-            "text": "Total bill distribution<br><i>scaled by number of bills per gender"
+            "text": "Total bill distribution scaled by number of bills per gender"
         },
         "legend": {
             "tracegroupgap": 0
