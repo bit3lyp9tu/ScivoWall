@@ -942,6 +942,7 @@ async function renderSingleBox(url, boxes, index, inclImg, inclPlotly) {
                     console.debug("templete", content);
 
                     if (content) {
+                        boxes.children[index].querySelectorAll("pre>code")[j].innerHTML = placeholders[j].innerHTML.replaceAll(/[\n]/gm, "");
                         drawChart(index, placeholders, j, content);
                     }
 
@@ -957,6 +958,7 @@ async function renderSingleBox(url, boxes, index, inclImg, inclPlotly) {
                         console.debug(content);
 
                         if (content) {
+                            boxes.children[index].querySelectorAll("pre>code")[j].innerHTML = placeholders[j].innerHTML.replaceAll(/[\n]/gm, "");
                             drawChart(index, placeholders, j, content);
                         }
 
