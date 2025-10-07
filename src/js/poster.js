@@ -943,7 +943,7 @@ async function renderSingleBox(url, boxes, index, inclImg, inclPlotly) {
             if (inclPlotly && data["placeholder"] == "plotly") {
                 if (data["chart"] && ["scatter", "line", "bar", "pie"].includes(data["chart"])) {   // inport csv
                     var content = simple_plot(data["chart"], placeholders[j].innerHTML);
-                    console.debug("templete", content);
+                    console.debug("template", content);
 
                     if (content) {
                         boxes.children[index].querySelectorAll("pre>code")[j].innerHTML = placeholders[j].innerHTML.replaceAll(/[\n]/gm, "");
