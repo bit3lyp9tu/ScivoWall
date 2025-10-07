@@ -669,7 +669,7 @@ const handler = async (event) => {
     }
 
     if (event.type == "keydown") {
-        if (event.ctrlKey && event.code === "Enter") {
+        if ((event.ctrlKey && event.code === "Enter") || event.code === "Escape") {
             if (selected_editBox) {
                 const index = selected_editBox.id.split("-")[1];
                 // console.log(index);
