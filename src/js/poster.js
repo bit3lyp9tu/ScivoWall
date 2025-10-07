@@ -588,8 +588,7 @@ function selectEvent(target) {
     selected_editBox = element;
 }
 
-async function unselectEvent(index, target) {
-    // unpackSelectable(target);
+async function unselectEvent(index) {
 
     if (selected_editBox) {
 
@@ -603,7 +602,9 @@ async function unselectEvent(index, target) {
             if (selected_editBox && selected_editBox.parentNode) {
                 selected_editBox.parentNode.replaceChild(element, selected_editBox);
             }
-            element.appendChild(createMenu(element.id));
+            if (selected_editBox.id != "title") {
+                element.appendChild(createMenu(element.id));
+            }
 
             await renderBox(index);
         }
@@ -640,28 +641,28 @@ const handler = async (event) => {
         if (selected_editBox == null && closest.length > 0 && boxes[0] !== closest[0] && boxes.has(closest).length) {
             // select box
 
-            console.info('select box', closest[0]);
             selectEvent(closest[0]);
 
         } else if (selected_editBox != null && closest.length > 0 && selected_editBox.id == closest[0].id) {
             // selected same box again
+
+        } else if (getSelectedTitle(event.target) && selected_editBox == null) {
+            // select title
+
+            const title_elem = getSelectedTitle(event.target);
+            selectEvent(title_elem);
+
+        } else if (getSelectedTitle(event.target) && selected_editBox && !boxes[0].contains(selected_editBox)) {
+            // select title again
 
         } else {
             // deselect box
 
             if (selected_editBox) {
                 const index = selected_editBox.id.split("-")[1];
-                console.log(index);
-
-                console.info('unselect2', event.target);
+                // console.log(index);
                 await unselectEvent(index);
             }
-        }
-
-        const title_elem = getSelectedTitle(event.target);
-        if (title_elem && selected_editBox == null) {
-            console.info('select title', title_elem);
-            selectEvent(title_elem);
         }
     }
 
@@ -669,7 +670,7 @@ const handler = async (event) => {
         if (event.ctrlKey && event.code === "Enter") {
             if (selected_editBox) {
                 const index = selected_editBox.id.split("-")[1];
-                console.log(index);
+                // console.log(index);
                 await unselectEvent(index);
             }
         }
