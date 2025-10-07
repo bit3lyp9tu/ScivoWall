@@ -1255,7 +1255,11 @@ $(document).on("click", "#logout", function () {
         success: function (response) {
             // console.log(response);
             window.location.href = "login.php";
-            toastr["success"](response);
+            if (response == "1") {
+                toastr["success"]("Logout Successful");
+            } else {
+                toastr["error"]("An logout error occurred");
+            }
         },
         error: function () {
             toastr["error"]("An logout error occurred");
