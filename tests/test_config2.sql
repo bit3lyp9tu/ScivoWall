@@ -103,7 +103,7 @@ DROP TABLE IF EXISTS `box`;
 CREATE TABLE `box` (
   `box_id` int(11) NOT NULL AUTO_INCREMENT,
   `poster_id` int(11) DEFAULT NULL,
-  `content` blob NOT NULL,
+  `content` MEDIUMBLOB NOT NULL,
   PRIMARY KEY (`box_id`),
   KEY `poster_id` (`poster_id`),
   CONSTRAINT `box_ibfk_1` FOREIGN KEY (`poster_id`) REFERENCES `poster` (`poster_id`) ON DELETE CASCADE

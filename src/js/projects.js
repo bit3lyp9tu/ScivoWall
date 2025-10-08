@@ -252,6 +252,15 @@ function getTableChildren(type) {
     console.log(document.querySelectorAll("div#" + type + " tr[pk_id]"));
 }
 
+function preventTextOverflow(element) {
+    if (element.value.length * 4 >= 1024) {
+        console.warn("Too Much Text");
+        toastr["warning"]("Too Much Text");
+        return true;
+    }
+    return false;
+}
+
 async function change_action() {
     const is_global = $(this).closest("tr")[0].hasAttribute("pk_id");
     var param = parse_id_name(this);
@@ -265,7 +274,10 @@ async function change_action() {
             var filter_elements = getFilterElements();
         }
     }
+
     if (param[0] == 'author-list') {
+        if (preventTextOverflow(this)) { return; }
+
         rename_author(this, id);
         if (is_global && await isAdmin()) {
             await fetch_authors_filtered(
@@ -280,9 +292,13 @@ async function change_action() {
         }
     }
     if (param[0] == 'table-container') {
+        if (preventTextOverflow(this)) { return; }
+
         rename_poster(this, id);
     }
     if (param[0] == 'image-list') {
+        if (preventTextOverflow(this)) { return; }
+
         rename_image(this, id);
     }
     await load_project_page_data();

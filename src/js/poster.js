@@ -598,6 +598,13 @@ async function unselectEvent(index) {
             selected_editBox.remove();
 
         } else {
+            if ((selected_editBox.id == "title" && selected_editBox.value.length * 4 >= 1024) || (selected_editBox.value.length * 4 >= 16777215)) {
+                console.warn("Too Much Text");
+                toastr["warning"]("Too Much Text");
+                return;
+            }
+            // console.info(selected_editBox.value.length * 4, "bytes");
+
             const element = createArea("div", selected_editBox.id, selected_editBox.className, selected_editBox.value);
 
             await typeset(element, () => marked.marked(selected_editBox.value));
@@ -699,8 +706,9 @@ async function author_item(value) {
         //btn.id = "remove-element";
         btn.classList.add("author-item-btn");
         btn.classList.add("remove-element");
-        btn.onclick = function () {
+        btn.onclick = async function () {
             this.closest("div").remove();
+            await save_content();
         };
         btn.appendChild(createIcon("/img/icons/Icons8_flat_delete_generic.svg"));
 
@@ -723,6 +731,13 @@ $(document).on("focusout keydown", async function (event) {
             (event.type === "focusout" && event.target.value != "") ||
             (event.type === "keydown" && event.key === "Enter" && event.target.value != "")
         ) {
+            if (event.target.value.length * 4 >= 1024) {
+                console.warn("Too Much Text");
+                toastr["warning"]("Too Much Text");
+                return;
+            }
+            // console.info(event.target.value.length * 4, "bytes");
+
             // convert target into item
 
             const field = event.target;
@@ -863,6 +878,8 @@ function buttonEvents() {
         container.appendChild(box);
 
         await renderBox();
+
+        await save_content();
     };
 }
 
