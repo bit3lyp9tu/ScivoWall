@@ -230,12 +230,6 @@ maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@
 docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_config2.sql
 docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_img.sql
 
-docker_exec poster_generator sed -i -E "s|<VirtualHost \*:[0-9]+>|<VirtualHost *:${LOCAL_PORT}>|" custom-000-default.conf
-docker_exec poster_generator sed -i -E "s|Listen [0-9]+|Listen ${LOCAL_PORT}|" custom-ports.conf
-
-docker_exec poster_generator cp custom-000-default.conf /etc/apache2/sites-enabled/000-default.conf
-docker_exec poster_generator cp custom-ports.conf /etc/apache2/ports.conf
-
 docker_exec poster_generator bash -c "echo 'ServerName localhost' >> /etc/apache2/apache2.conf"
 
 docker_exec poster_generator apachectl graceful
