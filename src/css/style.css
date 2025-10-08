@@ -278,7 +278,7 @@ mjx-container {
 
     pointer-events: none;
 
-    /* border: none; */
+    border: none;
 }
 
 .poster-slide iframe.hide {
