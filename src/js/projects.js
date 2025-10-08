@@ -993,7 +993,7 @@ function createTable(parent, data) {
 
         const row = document.createElement("tr");
         const name = document.createElement("th");
-        name.innerText = key;
+        name.innerText = reformat_header(key);
 
         row.appendChild(name);
         row.appendChild(value);
