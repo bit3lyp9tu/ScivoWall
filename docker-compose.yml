@@ -15,9 +15,9 @@ services:
     ports:
       - $LOCAL_PORT:$LOCAL_PORT
     volumes:
-      - ./src:/var/www/html/scientific_poster_generator/:rw
-      - ./custom-000-default.conf:/etc/apache2/sites-enabled/000-default.conf:ro
-      - ./custom-ports.conf:/etc/apache2/ports.conf:ro
+      - .:/var/www/html/:rw
+    #- ./custom-000-default.conf:/etc/apache2/sites-enabled/000-default.conf:ro
+    #- ./custom-ports.conf:/etc/apache2/ports.conf:ro
     networks:
       - poster_generator_network
     tmpfs:
