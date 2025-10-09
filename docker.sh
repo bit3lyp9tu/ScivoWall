@@ -228,7 +228,7 @@ maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
 maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 
 docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_config2.sql
-# docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_img.sql
+docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_img.sql
 
 docker_exec poster_generator bash -c "echo 'ServerName localhost' >> /etc/apache2/apache2.conf"
 
@@ -262,7 +262,7 @@ if [[ "$run_tests" -eq "1" ]]; then
 	maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
 
 	docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_config2.sql
-	# docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_img.sql
+	docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/test_img.sql
 
 	maria_db_exec "GRANT ALL PRIVILEGES ON poster_generator.* TO 'poster_generator'@'%' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 
