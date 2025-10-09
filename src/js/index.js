@@ -166,6 +166,20 @@ window.addEventListener("load", async function () {
                     console.log("All posters loaded");
                     document.getElementById("spinner").style.display = "none";
                 }
+
+                try {
+                    const idoc = iframe.contentDocument || iframe.contentWindow.document;
+
+                    idoc.addEventListener('pointerdown', (e) => {
+                        startX = e.clientX;
+                    });
+                    idoc.addEventListener('pointerup', (e) => {
+                        endX = e.clientX;
+                        handleGesture();
+                    });
+                } catch (err) {
+                    console.warn('Could not access iframe document (cross-origin?)', err);
+                }
             });
 
             ul.appendChild(iframe);

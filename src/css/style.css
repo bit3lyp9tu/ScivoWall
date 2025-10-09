@@ -263,7 +263,7 @@ mjx-container {
     padding-right: 35px;
 
     width: auto;
-    height: 100%;
+    /* height: 100%; */
 }
 
 .poster-slide>ul {
@@ -276,7 +276,7 @@ mjx-container {
     width: 100%;
     height: 900px;
 
-    pointer-events: none;
+    pointer-events: auto;
 
     border: none;
 }
@@ -805,7 +805,7 @@ td>input {
 }
 
 html {
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 footer {
@@ -1098,4 +1098,17 @@ code.js-plotly-plot .plot-container {
 
 div[data-content]>p>img {
     width: 100%;
+}
+
+html:has(+ iframe),
+body:has(+ iframe) {
+    height: 100% !important;
+    overflow: hidden !important;
+}
+
+
+html:has(+ #posters),
+body:has(+ #posters) {
+    overflow: auto !important;
+    height: auto !important;
 }

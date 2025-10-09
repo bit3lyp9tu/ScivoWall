@@ -534,6 +534,9 @@ window.onload = async function () {
         document.body.classList.remove("bgimg");
         document.getElementById("scadslogo").src = "";
         document.getElementById("logo_headline").style.display = "none";
+
+        document.querySelector("body").style.pointerEvents = "none";
+        document.querySelector("body").style.userSelect = "none";
     }
 
     const state = await isEditView();
@@ -648,45 +651,47 @@ function getSelectedTitle(target) {
 
 const handler = async (event) => {
 
-    if (event.type == "click") {
+    if (await hasValidUserSession() && !isInIframe()) {
 
-        const boxes = $("#boxes");
-        const closest = $(event.target).closest("[data-content]");
+        if (event.type == "click") {
+            const boxes = $("#boxes");
+            const closest = $(event.target).closest("[data-content]");
 
-        if (selected_editBox == null && closest.length > 0 && boxes[0] !== closest[0] && boxes.has(closest).length) {
-            // select box
+            if (selected_editBox == null && closest.length > 0 && boxes[0] !== closest[0] && boxes.has(closest).length) {
+                // select box
 
-            selectEvent(closest[0]);
+                selectEvent(closest[0]);
 
-        } else if (selected_editBox != null && closest.length > 0 && selected_editBox.id == closest[0].id) {
-            // selected same box again
+            } else if (selected_editBox != null && closest.length > 0 && selected_editBox.id == closest[0].id) {
+                // selected same box again
 
-        } else if (getSelectedTitle(event.target) && selected_editBox == null) {
-            // select title
+            } else if (getSelectedTitle(event.target) && selected_editBox == null) {
+                // select title
 
-            const title_elem = getSelectedTitle(event.target);
-            selectEvent(title_elem);
+                const title_elem = getSelectedTitle(event.target);
+                selectEvent(title_elem);
 
-        } else if (getSelectedTitle(event.target) && selected_editBox && !boxes[0].contains(selected_editBox)) {
-            // select title again
+            } else if (getSelectedTitle(event.target) && selected_editBox && !boxes[0].contains(selected_editBox)) {
+                // select title again
 
-        } else {
-            // deselect box
+            } else {
+                // deselect box
 
-            if (selected_editBox) {
-                const index = selected_editBox.id.split("-")[1];
-                // console.log(index);
-                await unselectEvent(index);
+                if (selected_editBox) {
+                    const index = selected_editBox.id.split("-")[1];
+                    // console.log(index);
+                    await unselectEvent(index);
+                }
             }
         }
-    }
 
-    if (event.type == "keydown") {
-        if ((event.ctrlKey && event.code === "Enter") || event.code === "Escape") {
-            if (selected_editBox) {
-                const index = selected_editBox.id.split("-")[1];
-                // console.log(index);
-                await unselectEvent(index);
+        if (event.type == "keydown") {
+            if ((event.ctrlKey && event.code === "Enter") || event.code === "Escape") {
+                if (selected_editBox) {
+                    const index = selected_editBox.id.split("-")[1];
+                    // console.log(index);
+                    await unselectEvent(index);
+                }
             }
         }
     }
