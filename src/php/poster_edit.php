@@ -141,28 +141,41 @@
 
     function addImage($json_data, $poster_id) {
 
-        $count = getterQuery("SELECT COUNT(image_id) as cnt_image_id FROM image WHERE file_name=? AND fk_poster=?", $json_data["name"], $poster_id);
-        #dier($count["cnt_image_id"][0]);
+        $result = insertQuery(
+            "INSERT INTO image (file_name, type, size, last_modified, webkit_relative_path, data, fk_poster)
+            VALUE (?, ?, ?, ?, ?, ?, ?)", "ssiissi",
+            $json_data["name"], $json_data["type"], $json_data["size"],
+            $json_data["last_modified"], $json_data["webkit_relative_path"], $json_data["data"], $poster_id
+        );
 
-        #error_log(print_r(array($count), true));
+        $register = getterQuery(
+            "SELECT image_id, file_name, last_edit_date, data_hash,  COUNT(*) OVER (PARTITION BY data_hash) AS hash_count
+            FROM image
+            WHERE fk_poster=?
+            ORDER BY last_edit_date DESC;",
+            $poster_id
+        );
 
-        if($count["cnt_image_id"][0] > 0) {
-            $result = editQuery(
-                "UPDATE image
-                SET file_name = ?, type = ?, size = ?, last_modified = ?, webkit_relative_path = ?, data = ?, fk_poster = ?
-                WHERE file_name = ? AND fk_poster = ?",
-                "ssiissisi", $json_data["name"], $json_data["type"], $json_data["size"], $json_data["last_modified"], $json_data["webkit_relative_path"], $json_data["data"], $poster_id, $json_data["name"], $poster_id
-            );
-            return $result;
-        }else{
-            $result = insertQuery(
-                "INSERT INTO image (file_name, type, size, last_modified, webkit_relative_path, data, fk_poster)
-                VALUE (?, ?, ?, ?, ?, ?, ?)", "ssiissi",
-                $json_data["name"], $json_data["type"], $json_data["size"],
-                $json_data["last_modified"], $json_data["webkit_relative_path"], $json_data["data"], $poster_id
-            );
-            return $result;
+        $index = $register["hash_count"][0];
+        if ($index > 1) {
+            // duplicate detected
+
+            // rename duplicate
+            if (in_array($json_data["name"], $register["file_name"])) { // if new_image.name already exists
+
+                // give filename index
+                $new_name = str_replace(".", $index . ".", $json_data["name"]);
+
+                $result = editQuery(
+                    "UPDATE image
+                    SET file_name = ?
+                    WHERE image_id=?",
+                    "si", $new_name, $register["image_id"][0]
+                );
+                return $new_name;
+            }
         }
+        return $json_data["name"];
     }
 
     function deleteBox($local_id, $poster_id) {

@@ -79,21 +79,23 @@ async function hasValidUserSession() {
     }
 }
 async function imageUpload(data, poster_id) {
-    await $.ajax({
-        type: "POST",
-        url: "/api/post_traffic.php",
-        data: {
-            action: "image-upload",
-            data: data,
-            id: poster_id
-        },
-        success: function (response) {
-            console.log(response);
-        },
-        error: function (error) {
-            console.error("Error", error);
-        }
-    });
+    try {
+        const response = await $.ajax({
+            type: "POST",
+            url: "/api/post_traffic.php",
+            data: {
+                action: "image-upload",
+                data: data,
+                id: poster_id
+            },
+        });
+        console.log(response);
+        return response;
+
+    } catch (err) {
+        console.error("Error", error);
+        return false;
+    }
 }
 
 function converter(element, attribute, value) {
@@ -368,9 +370,13 @@ async function importFile(output, file) {
                     "data": e.target.result
                 };
 
-                await imageUpload(data, url["id"]);
+                const new_name = await imageUpload(data, url["id"]);
 
-                const text = "\n![file not found](" + file.name + ")";
+                var text = "\n![file not found](" + file.name + ")";
+                if (typeof new_name === 'string') {
+                    text = "\n![file not found](" + new_name + ")";
+                }
+
                 output.setAttribute("data-content", output.getAttribute("data-content") + text);
                 output.value = output.value + text;
 
@@ -947,7 +953,7 @@ async function renderSingleBox(url, boxes, index, inclImg, inclPlotly) {
                         console.warn(msg);
                         toastr["warning"](msg);
                     }
-                    placeholders[j].parentNode.querySelector("img").src = img_new.src;
+                    boxes.children[index].querySelectorAll("p>img")[j].src = img_new.src;
 
                 } else {
                     warn_msg("No image data");
