@@ -140,68 +140,61 @@
     // }
 
     function addImage($json_data, $poster_id) {
-	    $data_hash = hash("sha512", $json_data["data"]);
-
-	    $file_name = $json_data["name"];
-
-	    // Hole die Info ob das Bild bereits existiert
-	    $image_already_exists_filename = getterQuery(
-		    "SELECT file_name, data_hash FROM image where (file_name = ? or data_hash = ?) and fk_poster = ?",
-		    $file_name, $data_hash, $poster_id
-	    );
-
-	    if(!preg_match("/^\d+$/", $poster_id)) {
+	    if (!preg_match("/^\d+$/", $poster_id)) {
 		    die("Poster-ID is not an integer");
 	    }
 
-	    // Wenn es noch nicht existiert, füge es ein und returne einfach den Dateinamen
-	    // Wenn ein Bild mit diesem Dateinamen bereits existiert aber der Inhalt anders ist, ändere den Dateinamen mit einem Suffix
+	    $data_hash = hash("sha512", $json_data["data"]);
+	    $file_name = $json_data["name"];
 
-	    if(count($image_already_exists_filename["file_name"]) == 0) {
-		    $result = insertQuery(
-			    "INSERT INTO image (file_name, type, size, last_modified, webkit_relative_path, data, fk_poster, data_hash)
-			    VALUE (?, ?, ?, ?, ?, ?, ?, ?)", "ssiissis",
-			    $json_data["name"], $json_data["type"], $json_data["size"],
-			    $json_data["last_modified"], $json_data["webkit_relative_path"], $json_data["data"], $poster_id, $data_hash
-		    );
-	    } else {
-		    // Wenn es unter dem Filename bereits existiert und der Inhalt anders ist, füge die Datei mit anderem Filename ein
-
-		    if (in_array($data_hash, $existing_hashes)) {
-			    $index = 0;
-
-			    while (true) {
-				    $new_name = str_replace(".", $index++ . ".", $json_data["name"]);
-
-				    $image_already_exists_filename = getterQuery(
-					    "SELECT file_name FROM image where file_name = ? and fk_poster = ?",
-					    $new_name, $poster_id
-				    );
-
-				    if(count($image_already_exists_filename["file_name"]) == 0) {
-					    break;
-				    }
-			    }
-
-			    $result = insertQuery(
-				    "INSERT INTO image (file_name, type, size, last_modified, webkit_relative_path, data, fk_poster, data_hash)
-				    VALUE (?, ?, ?, ?, ?, ?, ?, ?)", "ssiissis",
-				    $new_name, $json_data["type"], $json_data["size"],
-				    $json_data["last_modified"], $json_data["webkit_relative_path"], $json_data["data"], $poster_id, $data_hash
-			    );
-		    }
-	    }
-
-	    $image_already_exists_filename = getterQuery(
-		    "SELECT file_name FROM image where data_hash = ? and fk_poster = ?",
+	    // 1. Check ob die Datei (gleicher Hash) schon existiert
+	    $existing_same_hash = getterQuery(
+		    "SELECT file_name FROM image WHERE data_hash = ? AND fk_poster = ?",
 		    $data_hash, $poster_id
 	    );
 
-	    if(!count($image_already_exists_filename["file_name"])) {
-		    die("FEHLER!!!! War leer!!!!! Inserting war irgendwie kaputt");
+	    if (count($existing_same_hash["file_name"]) > 0) {
+		    // Gleiche Datei existiert schon -> einfach zurückgeben
+		    return $existing_same_hash["file_name"][0];
 	    }
 
-	    return $image_already_exists_filename["file_name"][0];
+	    // 2. Check, ob ein Eintrag mit gleichem Namen existiert (aber anderem Hash)
+	    $existing_same_name = getterQuery(
+		    "SELECT file_name FROM image WHERE file_name = ? AND fk_poster = ?",
+		    $file_name, $poster_id
+	    );
+
+	    if (count($existing_same_name["file_name"]) > 0) {
+		    // Dateiname schon belegt, also neuen erzeugen
+		    $index = 0;
+		    do {
+			    $new_name = preg_replace('/(\.[^.]*)$/', "_{$index}$1", $file_name);
+			    $check = getterQuery(
+				    "SELECT file_name FROM image WHERE file_name = ? AND fk_poster = ?",
+				    $new_name, $poster_id
+			    );
+			    $index++;
+		    } while (count($check["file_name"]) > 0);
+
+		    $file_name = $new_name;
+	    }
+
+	    // 3. Jetzt endgültig einfügen
+	    $result = insertQuery(
+		    "INSERT INTO image (file_name, type, size, last_modified, webkit_relative_path, data, fk_poster, data_hash)
+		    VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+		    "ssiissis",
+			    $file_name,
+			    $json_data["type"],
+			    $json_data["size"],
+			    $json_data["last_modified"],
+			    $json_data["webkit_relative_path"],
+			    $json_data["data"],
+			    $poster_id,
+			    $data_hash
+	    );
+
+	    return $file_name;
     }
 
     function deleteBox($local_id, $poster_id) {
