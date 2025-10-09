@@ -140,42 +140,68 @@
     // }
 
     function addImage($json_data, $poster_id) {
+	    $data_hash = hash("sha512", $json_data["data"]);
 
-        $result = insertQuery(
-            "INSERT INTO image (file_name, type, size, last_modified, webkit_relative_path, data, fk_poster)
-            VALUE (?, ?, ?, ?, ?, ?, ?)", "ssiissi",
-            $json_data["name"], $json_data["type"], $json_data["size"],
-            $json_data["last_modified"], $json_data["webkit_relative_path"], $json_data["data"], $poster_id
-        );
+	    $file_name = $json_data["name"];
 
-        $register = getterQuery(
-            "SELECT image_id, file_name, last_edit_date, data_hash,  COUNT(*) OVER (PARTITION BY data_hash) AS hash_count
-            FROM image
-            WHERE fk_poster=?
-            ORDER BY last_edit_date DESC;",
-            $poster_id
-        );
+	    // Hole die Info ob das Bild bereits existiert
+	    $image_already_exists_filename = getterQuery(
+		    "SELECT file_name, data_hash FROM image where (file_name = ? or data_hash = ?) and fk_poster = ?",
+		    $file_name, $data_hash, $poster_id
+	    );
 
-        $index = $register["hash_count"][0];
-        if ($index > 1) {
-            // duplicate detected
+	    if(!preg_match("/^\d+$/", $poster_id)) {
+		    die("Poster-ID is not an integer");
+	    }
 
-            // rename duplicate
-            if (in_array($json_data["name"], $register["file_name"])) { // if new_image.name already exists
+	    // Wenn es noch nicht existiert, füge es ein und returne einfach den Dateinamen
+	    // Wenn ein Bild mit diesem Dateinamen bereits existiert aber der Inhalt anders ist, ändere den Dateinamen mit einem Suffix
 
-                // give filename index
-                $new_name = str_replace(".", $index . ".", $json_data["name"]);
+	    if(count($image_already_exists_filename["file_name"]) == 0) {
+		    $result = insertQuery(
+			    "INSERT INTO image (file_name, type, size, last_modified, webkit_relative_path, data, fk_poster, data_hash)
+			    VALUE (?, ?, ?, ?, ?, ?, ?, ?)", "ssiissis",
+			    $json_data["name"], $json_data["type"], $json_data["size"],
+			    $json_data["last_modified"], $json_data["webkit_relative_path"], $json_data["data"], $poster_id, $data_hash
+		    );
+	    } else {
+		    // Wenn es unter dem Filename bereits existiert und der Inhalt anders ist, füge die Datei mit anderem Filename ein
 
-                $result = editQuery(
-                    "UPDATE image
-                    SET file_name = ?
-                    WHERE image_id=?",
-                    "si", $new_name, $register["image_id"][0]
-                );
-                return $new_name;
-            }
-        }
-        return $json_data["name"];
+		    if (in_array($data_hash, $existing_hashes)) {
+			    $index = 0;
+
+			    while (true) {
+				    $new_name = str_replace(".", $index++ . ".", $json_data["name"]);
+
+				    $image_already_exists_filename = getterQuery(
+					    "SELECT file_name FROM image where file_name = ? and fk_poster = ?",
+					    $new_name, $poster_id
+				    );
+
+				    if(count($image_already_exists_filename["file_name"]) == 0) {
+					    break;
+				    }
+			    }
+
+			    $result = insertQuery(
+				    "INSERT INTO image (file_name, type, size, last_modified, webkit_relative_path, data, fk_poster, data_hash)
+				    VALUE (?, ?, ?, ?, ?, ?, ?, ?)", "ssiissis",
+				    $new_name, $json_data["type"], $json_data["size"],
+				    $json_data["last_modified"], $json_data["webkit_relative_path"], $json_data["data"], $poster_id, $data_hash
+			    );
+		    }
+	    }
+
+	    $image_already_exists_filename = getterQuery(
+		    "SELECT file_name FROM image where data_hash = ? and fk_poster = ?",
+		    $data_hash, $poster_id
+	    );
+
+	    if(!count($image_already_exists_filename["file_name"])) {
+		    die("FEHLER!!!! War leer!!!!! Inserting war irgendwie kaputt");
+	    }
+
+	    return $image_already_exists_filename["file_name"][0];
     }
 
     function deleteBox($local_id, $poster_id) {
