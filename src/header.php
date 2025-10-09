@@ -54,4 +54,14 @@
     ?>
 
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<?php
+    print '<link rel="stylesheet" type="text/css" href="' . $root_path . '/src/css/style.css">';
+    print '<script src="' . $root_path . '/src/js//marked.min.js"></script>';
+    print '<script src="' . $root_path . '/src/js/' . $site_script . '"></script>';
+
+    if ($site_script == "index.js") {
+        print '<script src="' . $root_path . '/src/js/login.js"></script>';
+        print '<script src="' . $root_path . '/src/js/register.js"></script>';
+    }
+?>
 </head>
