@@ -20,7 +20,6 @@
             <input type="text" id="project-name">
             <button onclick="createProject()" >Create New Project</button>
         </div>
-        <br>
         <div id="filter" class="filter-container"></div>
     </div>
 

@@ -54,7 +54,7 @@
     order: 1;
 }
 
-@media (max-width: 1200px) {
+/* @media (max-width: 1200px) {
     .grid-container>.item {
         flex: 1 1 33.33%;
     }
@@ -70,7 +70,7 @@
     .grid-container>.item {
         flex: 1 1 100%;
     }
-}
+} */
 
 .large-div {
     grid-column: 1 / span 1;
@@ -597,6 +597,10 @@ input.vertical-marker[type="button"] {
     /* border: 1; */
 }
 
+.filter-container:has(table) table {
+    margin-top: 10px;
+}
+
 .filter-select {
     display: flex;
     flex-direction: row;
@@ -688,14 +692,16 @@ th {
 
 .menu {
     position: fixed;
-    left: 10px;
-    top: 15%;
+    left: 30%;
+    top: 0;
     border: 1px solid black;
     border-radius: 5px;
     padding: 10px;
     background-color: white;
 
     /* overscroll-behavior: ; */
+
+    z-index: 1;
 }
 
 .table {
@@ -704,15 +710,16 @@ th {
     /* width: 40%; */
     /* padding-top: 30px; */
     /* width: 70%; */
-    box-shadow: 5px 5px 50px 1px rgba(0, 128, 0, 0.1);
+    /* box-shadow: 5px 5px 50px 1px rgba(0, 128, 0, 0.1); */
 }
 
 .table>table {
-    width: 100%;
+    width: 80%;
     /* padding: 5px; */
     border-radius: 10px;
     background-color: white;
     /* border-collapse: collapse; */
+    box-shadow: 5px 5px 50px 1px rgba(0, 128, 0, 0.1);
 }
 
 .table>p {
@@ -735,6 +742,15 @@ th {
     /* margin-bottom: 250px; */
 }
 
+body:has(.filter-container>table) .tables {
+    margin-top: 90px !important;
+}
+
+body:not(:has(.filter-container>table)) .menu {
+    top: 20px !important;
+    left: 40% !important;
+}
+
 .tables>div {
 
     display: flex;
@@ -745,6 +761,8 @@ th {
     padding: 20px;
 
     opacity: 0.93;
+
+    width: 100%;
 }
 
 .tables>div>div {
@@ -757,6 +775,8 @@ th {
     display: block;
 
     font-weight: bold;
+
+    padding-left: 10%;
 }
 
 div:has(.table:empty)>h2 {
@@ -892,11 +912,12 @@ input[type="checkbox"]:checked {}
     text-align: right;
 }
 
+/*
 @media (max-width: 1800px) {
     .tables {
         position: absolute;
         top: 300px;
-        /* flex-direction: row; */
+        // flex-direction: row;
         justify-content: left;
     }
 
@@ -906,9 +927,9 @@ input[type="checkbox"]:checked {}
     }
 
     .filter-select {
-        /* flex-direction: column; */
+        // flex-direction: column;
     }
-}
+} */
 
 div#authors {
     display: flex;
