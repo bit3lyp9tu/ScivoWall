@@ -620,11 +620,15 @@ async function unselectEvent(index) {
             if (selected_editBox && selected_editBox.parentNode) {
                 selected_editBox.parentNode.replaceChild(element, selected_editBox);
             }
+
+            var is_title = false;
             if (selected_editBox.id != "title") {
                 element.appendChild(createMenu(element.id));
+
+                is_title = true;
             }
 
-            await renderBox(index);
+            await renderBox(index, is_title, is_title);
         }
 
         // forget old selected
