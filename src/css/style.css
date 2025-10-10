@@ -97,8 +97,15 @@
 }
 
 .container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: stretch;
+    /* justify-content: flex-start; */
+    justify-content: space-around;
+
+    /* display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); */
     grid-gap: 10px;
     margin: 20px;
     padding: 0;
@@ -133,6 +140,16 @@
 
 div#boxes>div {
     position: relative;
+
+    max-width: 685px;
+}
+
+div#boxes>textarea {
+    width: 30%;
+}
+
+textarea#title {
+    width: 100%;
 }
 
 h1 {
@@ -1022,9 +1039,19 @@ code {
     border-radius: 4px;
 }
 
+code:has(.js-plotly-plot) {
+    height: 100% !important;
+    width: 100% !important;
+}
+
 pre {
     border-radius: 6px;
     overflow-x: auto;
+}
+
+pre:has(.js-plotly-plot) {
+    width: 100%;
+    overflow: hidden;
 }
 
 pre:not(:has(code.js-plotly-plot)) {
@@ -1066,6 +1093,12 @@ div[data-content]>table td,
     padding: 6px 13px;
 }
 
+div[data-content]>p,
+div[data-content]>h1,
+div[data-content]>h2,
+div[data-content]>h3 {
+    word-wrap: break-word;
+}
 
 .prevent-pointer-events,
 .cursor-crosshair {

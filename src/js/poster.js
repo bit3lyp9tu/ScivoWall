@@ -900,6 +900,18 @@ function buttonEvents() {
 
 function drawChart(box_index, placeholders, local_index, content) {
     placeholders[local_index].id = "plotly-" + box_index + "-" + local_index;
+
+    // if (content["layout"]["autosize"]) {
+    // }
+    // content["layout"]["autosize"] = "true";
+    // "autosize": "true"
+    content["config"] = {
+        "resize": "true",
+        "scrollZoom": "true",
+        "staticPlot": "true",
+        "displayModeBar": "false"
+    };
+
     Plotly.newPlot(placeholders[local_index], content["data"], content["layout"], content["config"]);
     placeholders[local_index].innerHTML = placeholders[local_index].innerHTML.replace(/\{[\{,\},\[,\],\,\:,\",\',\-,\s,\w+]*\}/gm, "");
 }

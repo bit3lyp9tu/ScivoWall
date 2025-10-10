@@ -4,45 +4,31 @@
 ?>
 <!DOCTYPE html>
 <html lang='en'>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <div id="content"></div>
+    <script src="https://cdn.plot.ly/plotly-3.1.1.min.js" charset="utf-8"></script>
+
+    <div id="chart-wrapper" style="
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;    /* or any preferred height */
+    overflow: hidden; /* prevents scrolling */
+"><div id="myChart" style="width: 100%; max-width: 800px; height: 100%;"></div></div>
+
     <script>
-        fetch('README.md')
-            .then(response => response.text())
-            .then(text => {
-            document.getElementById('content').innerHTML = marked.parse(text);
-            });
+        var trace1 = {
+            x:['2020-10-04', '2021-11-04', '2023-12-04'],
+            y: [90, 40, 60],
+            type: 'scatter'
+        };
+        var data = [trace1];
+
+        var layout = {
+            autosize: true,
+            margin: { l: 40, r: 40, t: 40, b: 40 }
+        };
+
+        Plotly.newPlot('myChart', data, layout, {responsive: true});
     </script>
 
-    <style>
-
-        #content {
-            padding-left: 20px;
-            padding-right: 20px;
-        }
-
-        code {
-            background-color: #f5f5f5;
-            padding: 2px 4px;
-            border-radius: 4px;
-            font-family: monospace;
-        }
-
-        /* Block code (from triple backticks) */
-        pre {
-            background-color: #f5f5f5;
-            padding: 12px;
-            border-radius: 6px;
-            overflow-x: auto;
-            /* Horizontal scroll if long lines */
-        }
-
-        pre code {
-            background: none;
-            /* Prevent double background */
-            padding: 0;
-            font-size: 0.9em;
-            display: block;
-        }
-    </style>
 </html>
