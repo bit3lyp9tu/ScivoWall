@@ -224,9 +224,6 @@
 		'"title":["test1","test4","dxfgbfdffdbdfxbfbxbf","Climate Change Effects in the Arctic","AI in Modern Healthcare","The Future of Urban Farming","TestingTitle","new Project"],' .
 		'"user_id":[82,82,82,19,19,19,86,86],"visible":[1,1,1,1,1,1,1,0]}');
 
-	test_equal("fetch all projects", implode(",", json_decode(fetch_projects(19), true)["title"]), 'Climate Change Effects in the Arctic,AI in Modern Healthcare,The Future of Urban Farming');
-
-
 	$pre_delete = json_encode(getterQuery("SELECT poster_id FROM poster"), true);
 	delete_project_simple(108, 19);
 	test_equal("delete project simple - no change", json_encode(getterQuery("SELECT poster_id FROM poster"), true), $pre_delete);

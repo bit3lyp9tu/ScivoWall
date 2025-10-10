@@ -391,32 +391,6 @@
         }
     }
 
-    function fetch_projects($user_id, $priv_acc=true) {
-
-        if ($user_id != null) {
-
-            if ($user_id == "No results found") {
-                return "No results found";
-            }else{
-                if (!$priv_acc && isAdmin($user_id)) {
-                    return json_encode(getterQuery(
-                        "SELECT title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode FROM poster, view_modes WHERE fk_view_mode=? AND poster.fk_view_mode = view_modes.ID",
-                        1
-                    ), true);
-                }else{
-                    return json_encode(getterQuery(
-                        // TODO: feature needs js support as well
-                        "SELECT poster_id AS id, title, from_unixtime(last_edit_date) AS last_edit, visible, view_modes.name AS view_mode FROM poster, view_modes WHERE poster.user_id=? AND poster.fk_view_mode = view_modes.ID",
-                        $user_id
-                    ), true);
-                }
-            }
-
-        }else{
-            return "No or invalid session";
-        }
-    }
-
     function fetch_images_all($filter) {
 
         $filtered = filter_projects($filter);
