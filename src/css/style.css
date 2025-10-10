@@ -146,6 +146,7 @@ div#boxes>div {
 
 div#boxes>textarea {
     width: 30%;
+    /* height: 30%; */
 }
 
 textarea#title {
