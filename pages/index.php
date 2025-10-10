@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang='en'>
 <?php
-	//TODO:   box height changes between selected and unselected state
 	//TODO:   if cursor releases click outside of box, deleted text will return
 	//TODO:   storing project - might need a version id in json
 	//TODO:   if img pasted in box, only visible if box selected
