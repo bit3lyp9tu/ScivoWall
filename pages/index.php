@@ -4,7 +4,6 @@
 	//TODO:   box height changes between selected and unselected state
 	//TODO:   if cursor releases click outside of box, deleted text will return
 	//TODO:   storing project - might need a version id in json
-	//TODO:   img bgpattern has strange border
 	//TODO:   if img pasted in box, only visible if box selected
 	//                        - not visible in latex/md view mode except if other box with image is selected
 	//TODO:   error in address-link is constantly produced
