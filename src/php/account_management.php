@@ -167,7 +167,7 @@
                 if ($insertion) {
 			$isCLI = (php_sapi_name() == 'cli');
 			if(!$isCLI) {
-				setcookie("sessionID", $sid, time() + $session_time_h * 60 * 60, "/", "", false, true);   //TODO:   placing additional time in variable
+				setcookie("sessionID", $sid, time() + $session_time_h * 60 * 60, "/", "", false, true);
 			}
                     //TODO:   do the cookie settings need a rework? Update to PHP 7.3 and later might be required
                     //PHP 7.3 and later has additional parameter SameSide=Strict and SameSide=Lax
