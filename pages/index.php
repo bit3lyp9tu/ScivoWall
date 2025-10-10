@@ -6,7 +6,6 @@
 	//TODO:   storing project - might need a version id in json
 	//TODO:   if img pasted in box, only visible if box selected
 	//                        - not visible in latex/md view mode except if other box with image is selected
-	//TODO:   error in address-link is constantly produced
 	//TODO:   remove content redundancy in .box elements
 
     $site_script="index.js";
