@@ -9,8 +9,6 @@
     // TODO:   check for all functions using user_id if id exists
 
     function getTitle($poster_id) {
-        //TODO:   add test if id doesnt exists
-
         $title = getterQuery(
             "SELECT title
             FROM poster
