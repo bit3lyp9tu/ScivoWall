@@ -23,6 +23,8 @@ For further information please refer to the [User Manual](documentation/docu.md)
 
 # Copyright
 
+- ```/img/icons/instruction_manual.svg``` from ```[here](https://commons.wikimedia.org/wiki/File:ISO_7000_-_Ref-No_1641.svg)```
+
 Creative Commons Attribution-Share Alike 4.0 International license:
 - ```/img/icons/Loading_icon.gif``` from [here](https://commons.wikimedia.org/wiki/File:Loading_icon.gif#/media/File:Loading_icon.gif)
 
