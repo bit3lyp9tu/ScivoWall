@@ -1,5 +1,5 @@
 window.onload = function () {
-    const file = "README.md";
+    const file = "documentation/docu.md";
 
     console.info("Loading " + file + "...");
     fetch(file)
