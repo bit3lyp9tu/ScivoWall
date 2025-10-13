@@ -1064,6 +1064,11 @@ body.account h1 {
     padding-right: 20px;
 }
 
+#content>*:first-child {
+    text-align: center;
+    font-weight: bold;
+}
+
 #content>p>img {
     -webkit-user-drag: none;
     user-select: none;

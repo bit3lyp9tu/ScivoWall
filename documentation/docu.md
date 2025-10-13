@@ -54,7 +54,7 @@ In the unselected mode, the text content gets rendered (Markdown, LaTeX, Images,
 To change the the content the user has to click on the box and the mode gets switched to selected.
 To add a new Box, click on the <img src="/documentation/img/add_box.png" width="55" style="position: relative; top: 5px;"/> button.
 To remove a Box remove all text from the Box and deselect the textfield.
-To edit a Box, click on the Box, the user can now edit the textfield, deselect said textfield afterwards or press *Ctrl*+*Enter*. The poster-boxes support Markdown and LaTeX redering *(see below)* and file uploads *(see below)*.
+To edit a Box, click on the Box, the user can now edit the textfield, deselect said textfield afterwards or press *Ctrl*+*Enter* or *Esc*. The poster-boxes support Markdown and LaTeX redering *(see below)* and file uploads *(see below)*.
 
 ## Using Markdown
 <!-- ![Basic](documentation/img/markdown_basic.png) -->
