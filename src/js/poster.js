@@ -874,16 +874,16 @@ async function save_content() {
     }
 }
 
-function buttonEvents() {
+async function buttonEvents() {
     if (!document.getElementById("add-box")) {
         return;
     }
 
+    const content = await loadFile("/documentation/box_default_content.md");
+
     document.getElementById("add-box").onclick = async function () {
 
         const container = document.getElementById("boxes");
-
-        const content = "## *Content here* \n\n*For more information go to the [documentation](https://github.com/bit3lyp9tu/scientific_poster_generator/blob/main/README.md).*";
 
         const box = createArea("div", "editBox-" + (container.children.length), "", content);
         await typeset(box, () => marked.marked(content));
@@ -1034,6 +1034,12 @@ async function renderBox(index = -1, inclImg = true, inclPlotly = true) {
             renderSingleBox(url, boxes, i, inclImg, inclPlotly);
         }
     }
+}
+
+function loadFile(name) {
+    return fetch(name)
+        .then((res) => res.text())
+        .then((text) => text);
 }
 
 function loadJSON(file) {
