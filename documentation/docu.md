@@ -85,7 +85,9 @@ If not please check if the file content has the correct formating.
 The user can upload several types of content into a box. For images the supported file types are:
 - ```png```
 - ```jpg```
+- ```jpeg```
 - ```gif```
+- ```svg```
 
 Once uploaded, the Box will automatically display a placeholder,
 something like: ```![alt text](name.png)```. You can arrange this line in your Text Box however you like.

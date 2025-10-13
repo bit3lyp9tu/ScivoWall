@@ -218,7 +218,7 @@ function createMenu(parent_id) {
     // Input
     const input = document.createElement("input");
     input.type = "file";
-    input.accept = "image/png, image/jpeg, image/jpg, image/gif, .csv, text/csv, application/json, .json";
+    input.accept = "image/png, image/jpeg, image/jpg, image/gif, image/svg, .svg, .csv, text/csv, application/json, .json";
     input.classList.add("box-menu");
     input.style.display = "none";
 
@@ -954,11 +954,11 @@ async function renderSingleBox(url, boxes, index, inclImg, inclPlotly) {
 
     for (var j = 0; j < placeholders.length; j++) {
         if (inclImg && placeholders[j].parentNode.querySelector("img")) {
-            const img_info = placeholders[j].parentNode.innerHTML.match(/\<img\ssrc\=\"[^\"\.]*\.(png|jpg|gif)\"\salt\=\"[^\"]+\"\>/gm);
+            const img_info = placeholders[j].parentNode.innerHTML.match(/\<img\ssrc\=\"[^\"\.]*\.(png|jpg|jpeg|gif|svg)\"\salt\=\"[^\"]+\"\>/gm);
 
             if (img_info) {
                 if (img_info[0]) {
-                    var name = img_info[0].match(/[^\"\.]*\.(png|jpg|gif)/)[0];
+                    var name = img_info[0].match(/[^\"\.]*\.(png|jpg|jpeg|gif|svg)/)[0];
                     var loaded_img = await getLoadedImg(url["id"], name);
                     var img = loaded_img[1];
 

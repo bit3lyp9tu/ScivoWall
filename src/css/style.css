@@ -853,7 +853,8 @@ footer {
     bottom: 0;
 }
 
-body:has(#posters>ul) footer {
+body:has(#posters>ul) footer,
+body:has(#boxes) footer {
     position: unset;
 }
 
