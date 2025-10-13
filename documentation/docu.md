@@ -1,104 +1,144 @@
 # User Manual
 
 # Index-Page
-For a poster to be shown on the index-page, two requrments need to be meed:
-1. The poster needs to be set from ```private``` to ```public``` *(by admin, user)*
-2. The poster needs to be set to ```visible = true```, using the checkbox *(only by admin)*
+
+To have a poster appear on the **Index-Page** two conditions must be satisfied:
+
+1. **View Mode** - the posters privacy level has to be changed from `private` to `public`.
+   *Can be done by an admin **or** by the posters owner.*
+2. **Visibility** - the checkbox **Visible = true** must be ticked.
+   *Only an admin can set this flag.*
 
 # Projects-Page
-The projects-page is the page where all the posters are listed.
-There exists the following three tables:
-- Posters
-- Authors
-- Images
 
-To create a new Poster the user has to fill out the form with a new name and click on the <img src="/documentation/img/create_new_project.png" width="85" style="position: relative; top: 4px;"/> Button.
-Note: *By Default the poster title is automatically reformated into a Markdown headline by adding ```# ``` as a prefix.*
+| Table   | Purpose |
+|---------|--------|
+| **Posters** | Core information about each poster |
+| **Authors** | Individual author records |
+| **Images**  | Uploaded image files |
 
-![](documentation/img/projects_new.png)
+## Creating a new poster
 
-New Authors and Images are automaticaly added to the tables when they are included on the Poster-Page.
-Those tables can be used to manage e.g. excessive data.
+![](/documentation/img/projects_new.png)
+
+1. Fill in the **Title** field.
+2. Click the **Create New Project** button <img src="/documentation/img/create_new_project.png" width="85" style="position:relative; top:4px;">
+
+> **Note** - By default the title you type is turned into a Markdown heading by prefixing it with '# '.
+
+*When an author or an image is added on the **Poster-Page**, the corresponding rows are automatically inserted into the **Authors** and **Images** tables. Those tables can be used later for bulk-maintenance (e.g., deleting unused data).*
 
 The Admin hase some additional privileges to manage all existing Posters.
 
 ## Admin-User
 For the public poster to be depicted on the index-page the admin is requred to set the poster to visible (tick the checkbox).
 
-![](documentation/img/poster_visibility_small.png)
+![](/documentation/img/poster_visibility_small.png)
 
-The Admin has access to all posters and can modify them.
-On default all available posters will be shown on the Projects-Page. To limit the number of posters shown or to serach for a specific group of posters, the admin can use the filter menu:
+An admin can:
 
-![](documentation/img/poster_filter_menu.png)
+* See **all** posters, regardless of their privacy setting.
+* Change any poster (title, authors, images, visibility, …).
+* Filter the poster list (limit number of rows, search by keyword, etc.) using the filter menu:
 
-# Poster-Page
-The poster-page constists of the following elements:
+![](/documentation/img/poster_filter_menu.png)
 
-Title
-: The Poster Title, describes how the poster is named. Can be edited and supports Markdown and LaTeX *(see below)*.
+# Poster Page
 
-Authors
-: The Authors of the poster, to add a new author write in the textfield and deselect the textfield.
-If authors are already added, they will be shown in the autocomplete options.
-To remove an author, hover on the author element and click on the <img src="/img/icons/Icons8_flat_delete_generic.svg" width="25" style="position: relative; top: 10px;"/>-Button.
-The author order can be changed via drag and drop.
+A poster consists of the following elements:
 
-view_mode
-: Can be ```private```*(default)* or ```public```. If on ```private``` poster con not be shown on index-page.
+| Element | Description |
+|---------|-------------|
+| **Title** | The posters name. Editable; supports **Markdown** and **LaTeX** (see sections below). |
+| **Authors** | Add an author by typing a name and pressing **Enter**. Existing authors appear in the autocomplete list. To delete an author, hover over the author element and click the delete icon: <img src="/img/icons/Icons8_flat_delete_generic.svg" width="25" style="position:relative; top:10px;">. Authors can be reordered via drag-and-drop. |
+| **view_mode** | `private` *(default)* or `public`. A *private* poster never appears on the Index Page. |
+| **Boxes (text fields)** | Containers for the body content. Each box can be **selected** (editable) or **unselected** (rendered). In the unselected state the content is displayed as Markdown / LaTeX / images / charts. |
+| **Upload area** (in Box) | Allows you to attach images or chart files to a box (see “Upload”). |
 
-Boxes (Text fields)
-: Contain the actual text content of the poster.
-A Box can have two modes: Selected- or Unselected-Mode *(default)*.
-In the unselected mode, the text content gets rendered (Markdown, LaTeX, Images, Charts).
-To change the the content the user has to click on the box and the mode gets switched to selected.
-To add a new Box, click on the <img src="/documentation/img/add_box.png" width="55" style="position: relative; top: 5px;"/> button.
-To remove a Box remove all text from the Box and deselect the textfield.
-To edit a Box, click on the Box, the user can now edit the textfield, deselect said textfield afterwards or press *Ctrl*+*Enter* or *Esc*. The poster-boxes support Markdown and LaTeX redering *(see below)* and file uploads *(see below)*.
+## Working with Boxes
+
+* **Select / edit** - Click a box to switch it to *selected* mode.
+* **Add a new box** - Click the **Add Box** button <img src="/documentation/img/add_box.png" width="55" style="position:relative; top:5px;">
+* **Delete a box** - Remove all text from the box **and** click outside the field.
+* **Save changes/Escape Box** - Click elsewhere, press **Ctrl+Enter**, or press **Esc**.
+* **Supported rendering** - Markdown & LaTeX (see sections below).
+* **File uploads** - Use the folder icon (see “Upload”).
 
 ## Using Markdown
 <!-- ![Basic](documentation/img/markdown_basic.png) -->
 <!-- ![Extended](documentation/img/markdown_extended.png) -->
 
-Using [this Cheatsheet](https://www.markdownguide.org/cheat-sheet/) as a comparison.
-Markdown features that are not supported (yet):
-- Footnote
-- Heading ID
-- Definition List
-- Emoji
-- Highlight
-- Subscript
-- Superscript
+For a quick reference see the [Markdown Cheat Sheet](https://www.markdownguide.org/cheat-sheet/).
+
+**Not yet supported** (may be added later):
+
+| Feature |
+|---------|
+| Footnotes |
+| Heading IDs |
+| Definition lists |
+| Emoji |
+| Highlight |
+| Subscript |
+| Superscript |
 
 ## Using LaTeX
-TBD
 
-To align your LaTeX content, use ```$$ your content $$``` for display mode and ```\\( your content \\)``` for inline mode.
+*TBD*
+
+In the meantime you can embed LaTeX as follows:
+
+* **Display mode** - `$$ your-content $$`
+* **Inline mode** - `\\( your-content \\)`
 
 ## Upload
-To upload, hover over the Box you want add content to and click on the <img src="/img/icons/Icons8_flat_opened_folder.svg" width="25" style="position: relative; top: 7px;"/>-Button. Now select your file. Now the content of your file should be inside a placeholder, you can click outside of your selected Box.
 
-Now, the text with the placeholder should disappear and the content should be correctly redered.
-If not please check if the file content has the correct formating.
+### General upload workflow
 
-### Image-Upload
-The user can upload several types of content into a box. For images the supported file types are:
-- ```png```
-- ```jpg```
-- ```jpeg```
-- ```gif```
-- ```svg```
+1. Hover over the **Box** you want to add a file to.
+2. Click the **folder** icon <img src="/img/icons/Icons8_flat_opened_folder.svg" width="25" style="position:relative; top:7px;">
+3. Choose a file from the file-picker.
+4. The uploaded file is inserted as a **Markdown placeholder** inside the box.
+5. Click outside the box - the placeholder disappears and the content is rendered.
 
-Once uploaded, the Box will automatically display a placeholder,
-something like: ```![alt text](name.png)```. You can arrange this line in your Text Box however you like.
-To remove the image, simply delete the placeholder line. All images will be stored in cache. To view them, navigate to the Projects-page manage them.
-To restore your removed image, include the before mentioned placeholderline. Make sure you are using the correct file name of your image.
+If the rendering fails, verify that the file content follows the required format.
 
-### Chart-Upload
-Additionally the user can upload charts of the following file types:
-- ```csv``` (for rendering simple charts)
-After uploading the file it should look something like this:
-```console
+### Image upload
+
+Supported image formats:
+
+| Extension |
+|-----------|
+| `png` |
+| `jpg` |
+| `jpeg` |
+| `gif` |
+| `svg` |
+
+After a successful upload the box shows a **Markdown Image Element** such as:
+
+```
+![file not found](name.png)
+```
+
+You can move this line anywhere inside the box text.
+
+* To **remove** the image, simply delete the Markdown Image Element line.
+* All uploaded images are stored in the **cache**; you can manage them on the **Projects-Page**.
+* To **restore** a removed image, re-insert the Markdown Image Element with the correct file name.
+
+### Chart upload
+
+Two chart file types are recognised:
+
+| Type | Use case |
+|------|----------|
+| `csv` | Quick rendering of simple charts |
+| `json` | Complex, fullycustomisable charts (see examples in `/plotly/examples/*.json`) |
+
+#### CSV chart example
+
+```csv
 ```plotly-scatter
 x,y
 1,2
@@ -109,8 +149,12 @@ x,y
 3,3
 ```
 ```
-Valid chart types are: ```scatter```, ```line```, ```bar```, ```pie```
-To modify the chart type, replace the chart type with one of the other types e.g.: ```plotly-bar```
+```
 
-- ```json``` (for rendering more complex charts, high customization potential; see path: ```/plotly/examples/*.json```). All example charts are from the [Official Plotly documentation](https://plotly.com/javascript/plotly-fundamentals/) and converted into a workable ```json``` format.
+*Valid chart types*: `scatter`, `line`, `bar`, `pie`.
+To change the chart type, replace the word after `plotly-` (e.g., `plotly-bar`).
+
+#### JSON chart example
+
+Upload a JSON file that follows Plotlys schema. All example files are taken from the [official Plotly documentation](https://plotly.com/javascript/plotly-fundamentals/) and have been converted to a workable format.
 
