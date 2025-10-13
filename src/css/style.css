@@ -1136,6 +1136,11 @@ div[data-content]>table td,
     padding: 6px 13px;
 }
 
+#content>table tbody th,
+#content>table tbody td {
+    text-align: left;
+}
+
 div[data-content]>p,
 div[data-content]>h1,
 div[data-content]>h2,
