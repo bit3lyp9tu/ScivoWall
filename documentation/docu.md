@@ -12,9 +12,11 @@ There exists the following three tables:
 - Authors
 - Images
 
-To create a new Poster the user has to fill out the form with a new name and click on the ```[Create New Project]``` button.
+To create a new Poster the user has to fill out the form with a new name and click on the <img src="/documentation/img/create_new_project.png" width="85" style="position: relative; top: 4px;"/> Button.
 Note: *By Default the poster title is automatically reformated into a Markdown headline by adding ```# ``` as a prefix.*
+
 ![](documentation/img/projects_new.png)
+
 New Authors and Images are automaticaly added to the tables when they are included on the Poster-Page.
 Those tables can be used to manage e.g. excessive data.
 
@@ -22,10 +24,12 @@ The Admin hase some additional privileges to manage all existing Posters.
 
 ## Admin-User
 For the public poster to be depicted on the index-page the admin is requred to set the poster to visible (tick the checkbox).
+
 ![](documentation/img/poster_visibility_small.png)
 
 The Admin has access to all posters and can modify them.
 On default all available posters will be shown on the Projects-Page. To limit the number of posters shown or to serach for a specific group of posters, the admin can use the filter menu:
+
 ![](documentation/img/poster_filter_menu.png)
 
 # Poster-Page
@@ -106,5 +110,5 @@ x,y
 Valid chart types are: ```scatter```, ```line```, ```bar```, ```pie```
 To modify the chart type, replace the chart type with one of the other types e.g.: ```plotly-bar```
 
-- ```json``` (for rendering more complex charts, high customization potential; see path: ```/plotly/examples/*.json```, *For some reason some won't work Issue: #334*). All example charts are from the [Official Plotly documentation](https://plotly.com/javascript/plotly-fundamentals/) and converted into a workable ```json``` format.
+- ```json``` (for rendering more complex charts, high customization potential; see path: ```/plotly/examples/*.json```). All example charts are from the [Official Plotly documentation](https://plotly.com/javascript/plotly-fundamentals/) and converted into a workable ```json``` format.
 
