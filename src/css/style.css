@@ -848,8 +848,9 @@ html {
 
 footer {
     margin-top: 0px;
-    /* position: absolute;
-    bottom: 0; */
+
+    position: absolute;
+    bottom: 0;
 }
 
 input[type="button"],
