@@ -957,7 +957,13 @@ div#authors {
 div.account-status {}
 
 .slider-controls {
-    margin-left: 35px;
+    position: absolute;
+    top: 20px;
+    left: 40%;
+
+    display: flex;
+    flex-direction: row;
+    row-gap: 10px;
 
     -webkit-user-select: none;
     -ms-user-select: none;
@@ -965,6 +971,10 @@ div.account-status {}
 }
 
 .slider-controls>button {}
+
+.slider-controls #counter {
+    margin-left: 25px;
+}
 
 input[value="Delete"] {
     background-color: var(--deep-red);
