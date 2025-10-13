@@ -853,6 +853,10 @@ footer {
     bottom: 0;
 }
 
+body:has(#posters>ul) footer {
+    position: unset;
+}
+
 input[type="button"],
 button {
     background-color: var(--scads-green);

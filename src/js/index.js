@@ -191,8 +191,6 @@ window.addEventListener("load", async function () {
             restart();
         }
 
-        document.querySelector("footer").style.position = "";
-        document.querySelector("footer").style.bottom = "";
     } else {
         document.getElementsByClassName("slider-controls")[0].style.display = "none";
 
