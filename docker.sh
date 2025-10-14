@@ -304,4 +304,7 @@ if [[ "$run_tests" -eq "1" ]]; then
 	echo Finish Testing
 fi
 
+echo Load Showcase DB...
+docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/poster_lab.sql
+
 exit $CODE
