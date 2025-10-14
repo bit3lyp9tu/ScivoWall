@@ -70,26 +70,33 @@ A poster consists of the following elements:
 
 For a quick reference see the [Markdown Cheat Sheet](https://www.markdownguide.org/cheat-sheet/).
 
-**Not yet supported** (may be added later):
+**supported features:**
 
 | Feature |
 |---------|
-| Footnotes |
-| Heading IDs |
-| Definition lists |
-| Emoji |
-| Highlight |
-| Subscript |
-| Superscript |
+| Heading |
+| Bold |
+| Italic |
+| Blockquote |
+| Ordered List |
+| Unordered List |
+| Code |
+| Horizonal Rule |
+| Link |
+| Image |
+| Table |
+| Fenced Code Block |
+| Strikethrough |
+| Task List |
 
 ## Using LaTeX
-
-*TBD*
 
 In the meantime you can embed LaTeX as follows:
 
 * **Display mode** - `$$ your-content $$`
 * **Inline mode** - `\\( your-content \\)`
+
+> Note: To prevent conflict with Markdown Rendering, avoid using line breaks in your LaTeX.
 
 ## Upload
 
@@ -134,7 +141,7 @@ Two chart file types are recognised:
 | Type | Use case |
 |------|----------|
 | `csv` | Quick rendering of simple charts |
-| `json` | Complex, fullycustomisable charts (see examples in `/plotly/examples/*.json`) |
+| `json` | Complex, fullycustomisable charts (see examples [here](https://github.com/bit3lyp9tu/scientific_poster_generator/tree/main/plotly/examples)) |
 
 #### CSV chart example
 

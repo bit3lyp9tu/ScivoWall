@@ -141,7 +141,7 @@
 div#boxes>div {
     position: relative;
 
-    max-width: 685px;
+    max-width: 900px;
 }
 
 div#boxes>textarea {
@@ -274,6 +274,8 @@ table {
 
 mjx-container {
     pointer-events: none;
+
+    overflow: hidden;
 }
 
 .poster-slide {
