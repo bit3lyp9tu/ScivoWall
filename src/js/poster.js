@@ -565,7 +565,9 @@ window.onload = async function () {
         buttonEvents();
 
     } else {
-        toastr["warning"]("Not Logged in");
+        if (!isInIframe()) {
+            toastr["warning"]("Not Logged in");
+        }
     }
 
     if (!await hasValidUserSession()) {
@@ -574,7 +576,9 @@ window.onload = async function () {
         document.getElementById("titles").classList.add("prevent-pointer-events");
         document.getElementById("boxes").classList.add("prevent-pointer-events");
 
-        toastr["warning"]("Not Logged in");
+        if (!isInIframe()) {
+            toastr["warning"]("Not Logged in");
+        }
     }
 };
 
