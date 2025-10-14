@@ -986,12 +986,17 @@ async function renderSingleBox(url, boxes, index, inclImg, inclPlotly) {
         if (data) {
             if (inclPlotly && data["placeholder"] == "plotly") {
                 if (data["chart"] && ["scatter", "line", "bar", "pie"].includes(data["chart"])) {   // inport csv
-                    var content = simple_plot(data["chart"], placeholders[j].innerHTML);
-                    console.debug("template", content);
 
-                    if (content) {
-                        boxes.children[index].querySelectorAll("pre>code")[j].innerHTML = placeholders[j].innerHTML.replaceAll(/[\n]/gm, "");
-                        drawChart(index, placeholders, j, content);
+                    if (placeholders[j].innerHTML && !placeholders[j].innerHTML.includes("<")) {
+                        var content = simple_plot(data["chart"], placeholders[j].innerHTML);
+                        console.debug("template", content);
+
+                        if (content) {
+                            boxes.children[index].querySelectorAll("pre>code")[j].innerHTML = placeholders[j].innerHTML.replaceAll(/[\n]/gm, "");
+                            drawChart(index, placeholders, j, content);
+                        }
+                    } else {
+                        // warn_msg("File empty");
                     }
 
                 } else if (data["chart"] == "") {  // inport json
@@ -999,7 +1004,7 @@ async function renderSingleBox(url, boxes, index, inclImg, inclPlotly) {
                     console.info(placeholders[j].innerHTML);
                     console.groupEnd();
 
-                    if (placeholders[j].innerHTML) {
+                    if (placeholders[j].innerHTML && isJsonString(placeholders[j].innerHTML)) {
                         const regex = /<\/?\w+[^>]*>/g;
 
                         var content = json_parse(repairJson(placeholders[j].innerHTML.replaceAll(regex, "")));
@@ -1011,7 +1016,7 @@ async function renderSingleBox(url, boxes, index, inclImg, inclPlotly) {
                         }
 
                     } else {
-                        warn_msg("File empty");
+                        // warn_msg("File empty");
                     }
 
                 } else {    // error
@@ -1046,6 +1051,15 @@ function loadJSON(file) {
     return fetch(file)
         .then((response) => response.json())
         .then((json) => json);
+}
+
+function isJsonString(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
 }
 
 function json_parse(data) {
