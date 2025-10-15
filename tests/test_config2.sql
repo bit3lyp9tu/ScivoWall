@@ -1,4 +1,3 @@
-/*M!999999- enable the sandbox mode */
 -- MariaDB dump 10.19-11.8.1-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: poster_generator
