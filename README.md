@@ -10,13 +10,16 @@ To setup the container environment, you have to run the folowing command:
 ```console
 bash docker.sh --local-port 1112
 ```
-The ```--local-port``` parameter indicates which network port the server is using. This parameter is strictly required for the setup command to work.
+### Parameters
+| Parameters | Description | Required |
+|---|---|----|
+| ```--local-port <port>```  | Indicates which network port the server is using  |  Yes  |
+| ```--run-tests```    | Run Backend and Frontend tests to check if everything works correctly | No  |
+| ```--showcase```    | Load some example posters | No  |
+| ```--visibility-public```   | When a new poster is created, its visibility is set to public. *(Normally the admin is required to set the poster to public manually)*  | No  |
 
-Using the ```--showcase``` parameter will load a database with already preconfigured posters.
-
-If you want to know if everything is setup correctly, optionally you can use:
 ```console
-bash docker.sh --local-port 1112 --run-tests
+bash docker.sh --local-port 1112 --run-tests --showcase --visibility-public
 ```
 
 After executing the setup script you can access the page in a browser of your choice at ```http://localhost:1112/```.

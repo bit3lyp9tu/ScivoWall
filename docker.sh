@@ -30,6 +30,7 @@ help_message() {
 echo $GITHUB_ACTIONS
 
 SHOWCASE=0
+VISIBILITY_PUBLIC=0
 
 # Parse command-line arguments
 while [[ "$#" -gt 0 ]]; do
@@ -53,6 +54,10 @@ while [[ "$#" -gt 0 ]]; do
 			;;
 		--showcase)
 			SHOWCASE=1
+			shift
+			;;
+		--visibility-public)
+			VISIBILITY_PUBLIC=1
 			shift
 			;;
 		--help)
@@ -315,11 +320,13 @@ if [[ "$SHOWCASE" -eq 1 ]]; then
 	maria_db_exec "DROP DATABASE IF EXISTS poster_generator;"
 	maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
 	docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/poster_lab.sql
+	maria_db_exec "USE poster_generator; ALTER TABLE poster ALTER visible SET DEFAULT $VISIBILITY_PUBLIC;"
 else
 	echo Load Config DB...
 	maria_db_exec "DROP DATABASE IF EXISTS poster_generator;"
 	maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
 	docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./src/config.sql
+	maria_db_exec "USE poster_generator; ALTER TABLE poster ALTER visible SET DEFAULT $VISIBILITY_PUBLIC;"
 fi
 
 exit $CODE
