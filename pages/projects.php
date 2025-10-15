@@ -29,7 +29,7 @@
                 <input type="button" id="logout" value="Logout">
             </div>
             <div class="icon-btn">
-                <a href="/documentation.php">
+                <a target="_blank" rel="noopener noreferrer" href="/documentation.php">
                     <img src="img/icons/instruction_manual.svg" alt="">
                 </a>
             </div>

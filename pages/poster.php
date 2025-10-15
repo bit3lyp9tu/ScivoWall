@@ -22,7 +22,7 @@
                     <input type="button" id="projects" value="To Projects" onclick="window.location.href='projects.php'">
                 </div>
                 <div class="icon-btn">
-                    <a href="/documentation.php">
+                    <a target="_blank" rel="noopener noreferrer" href="/documentation.php">
                         <img src="img/icons/instruction_manual.svg" alt="">
                     </a>
                 </div>
