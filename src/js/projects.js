@@ -7,6 +7,7 @@ function createProject() {
     const prefix_name = "# ";
 
     if (project_name.value == "") {
+        toastr["warning"]("Project title cannot be empty")
         return;
     }
 
