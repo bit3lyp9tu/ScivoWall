@@ -938,6 +938,11 @@ function filter_to_json(users, posters, view_modes, last_edits, visiblitlies) {
 
     console.debug("request: ", json);
 
+    var visibilities = JSON.stringify(json["attributes"]["visible"]);
+    visibilities.replaceAll("No", "0");
+    visibilities.replaceAll("Yes", "1");
+    json["attributes"]["visible"] = JSON.parse(visibilities);
+
     return JSON.stringify(json);
 }
 
@@ -1075,7 +1080,13 @@ function createSelect(id, hasUndecided, list) {
     for (let j = 0; j < list.length; j++) {
         const option = document.createElement("option");
         option.value = j;
-        option.text = list[j];
+        if (list[j] == "0") {
+            option.text = "No";
+        }else if(list[j] == "1") {
+            option.text = "Yes";
+        }else{
+            option.text = list[j];
+        }
         select.appendChild(option);
     }
     select.onchange = function () {

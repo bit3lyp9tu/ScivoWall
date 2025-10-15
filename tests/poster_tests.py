@@ -1309,7 +1309,7 @@ class PythonOrgSearch(unittest.TestCase):
         )
 
         # check select visibility
-        self.check_selected("select#visibility", "-", ["-", "0", "1"])
+        self.check_selected("select#visibility", "-", ["-", "No", "Yes"])
 
         # check filter results posters change selector
         self.change_selector("select#select_user", "max5", "input#submit-filter")
