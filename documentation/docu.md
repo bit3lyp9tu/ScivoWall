@@ -37,6 +37,7 @@ For the public poster to be depicted on the index-page the admin is requred to s
 
 An admin can:
 
+* The first registered account will always become an admin.
 * See **all** posters, regardless of their privacy setting.
 * Change any poster (title, authors, images, visibility, …).
 * Filter the poster list (limit number of rows, search by keyword, etc.) using the filter menu:
