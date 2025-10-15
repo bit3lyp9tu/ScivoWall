@@ -586,7 +586,11 @@ function selectEvent(target) {
 
     // change box to editable
     const element = createArea("textarea", target.id, target.className, target.getAttribute("data-content"));
-    element.rows = 40;//Math.round((target.innerHTML.match(/(<br>|\n)/g) || []).length * 2) + 1;
+    if (target.id == "title") {
+        element.rows = 2;
+    }else{
+        element.rows = 40;//Math.round((target.innerHTML.match(/(<br>|\n)/g) || []).length * 2) + 1;
+    }
     element.style.resize = "none";
     element.value = target.getAttribute("data-content");
 
