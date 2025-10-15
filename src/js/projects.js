@@ -1259,7 +1259,7 @@ window.onload = async function () {
 }
 
 $(this).keydown(function (e) {
-    if (e.code == "Enter") {
+    if (e.code == "Enter" && $("#project-name").is(":focus")) {
         createProject();
     }
 });
