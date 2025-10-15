@@ -146,7 +146,7 @@ Two chart file types are recognised:
 
 #### CSV chart example
 
-```csv
+<pre>
 ```plotly-scatter
 x,y
 1,2
@@ -156,8 +156,7 @@ x,y
 -2,4
 3,3
 ```
-```
-```
+</pre>
 
 *Valid chart types*: `scatter`, `line`, `bar`, `pie`.
 To change the chart type, replace the word after `plotly-` (e.g., `plotly-bar`).
