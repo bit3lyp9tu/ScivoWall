@@ -158,17 +158,18 @@
                 $sid = session_create_id();
 
                 $insertion = insertQuery(
-                        "INSERT INTO session (user_id, sessionID, expiration_date)
-                        VALUE (?, ?, UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL ? HOUR)))",
-                        "isi", $user_id, $sid, $session_time_h);
+                    "INSERT INTO session (user_id, sessionID, expiration_date)
+                    VALUE (?, ?, UNIX_TIMESTAMP(DATE_ADD(NOW(), INTERVAL ? HOUR)))",
+                    "isi", $user_id, $sid, $session_time_h
+                );
 
                 // TODO:   is expiration_date for sql and cookie async??? Bug?
 
                 if ($insertion) {
-			$isCLI = (php_sapi_name() == 'cli');
-			if(!$isCLI) {
-				setcookie("sessionID", $sid, time() + $session_time_h * 60 * 60, "/", "", false, true);
-			}
+                    $isCLI = (php_sapi_name() == 'cli');
+                    if(!$isCLI) {
+                        setcookie("sessionID", $sid, time() + $session_time_h * 60 * 60, "/", "", false, true);
+                    }
                     //TODO:   do the cookie settings need a rework? Update to PHP 7.3 and later might be required
                     //PHP 7.3 and later has additional parameter SameSide=Strict and SameSide=Lax
 
