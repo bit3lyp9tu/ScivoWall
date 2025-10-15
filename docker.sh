@@ -29,6 +29,8 @@ help_message() {
 
 echo $GITHUB_ACTIONS
 
+SHOWCASE=0
+
 # Parse command-line arguments
 while [[ "$#" -gt 0 ]]; do
 	case "$1" in
@@ -48,6 +50,10 @@ while [[ "$#" -gt 0 ]]; do
 				echo "Error: --local-port requires a value."
 				exit 1
 			fi
+			;;
+		--showcase)
+			SHOWCASE=1
+			shift
 			;;
 		--help)
 			help_message
@@ -304,7 +310,16 @@ if [[ "$run_tests" -eq "1" ]]; then
 	echo Finish Testing
 fi
 
-echo Load Showcase DB...
-docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/poster_lab.sql
+if [[ "$SHOWCASE" -eq 1 ]]; then
+	echo Load Showcase DB...
+	maria_db_exec "DROP DATABASE IF EXISTS poster_generator;"
+	maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
+	docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./tests/poster_lab.sql
+else
+	echo Load Config DB...
+	maria_db_exec "DROP DATABASE IF EXISTS poster_generator;"
+	maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
+	docker_exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator < ./src/config.sql
+fi
 
 exit $CODE

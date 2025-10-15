@@ -12,6 +12,8 @@ bash docker.sh --local-port 1112
 ```
 The ```--local-port``` parameter indicates which network port the server is using. This parameter is strictly required for the setup command to work.
 
+Using the ```--showcase``` parameter will load a database with already preconfigured posters.
+
 If you want to know if everything is setup correctly, optionally you can use:
 ```console
 bash docker.sh --local-port 1112 --run-tests
