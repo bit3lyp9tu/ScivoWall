@@ -746,18 +746,4 @@
 	// TODO: test logout
 	//	- check if session cookie is expired
 	//	- check if session in db is expired
-
-
-
-	/*
-	name:	bug
-	pw:
-	A+a2d47c981889513c5e2ddbca71f414
-
-	max5	abc
-	Admin	PwScaDS-2025
-	Max Mustermann 		AbC123-98xy
-	Anne Beispielfrau	ghy23_ghjAA
-	*/
-
 ?>
