@@ -342,8 +342,17 @@ input#typeahead.tt-input {
     width: auto;
 }
 
+.author-item[in-iframe] {
+    border: none !important;
+}
+
 .author-item>p {
     margin-right: 10pt;
+}
+
+.author-item[in-iframe]>p {
+    font-size: 20px !important;
+    color: var(--scads-green) !important;
 }
 
 .author-item:hover:not([in-iframe]) {
