@@ -2,8 +2,6 @@
 <html lang='en'>
 <?php
 ?>
-<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -98,7 +96,6 @@
         </div>
 		<p>Just like Sisyphus, we're pushing to keep our website running, but sometimes it feels like the rock just rolls back down.</p>
 		<br>
-        <p>Try searching for what you're looking for or check back later.</p>
         <button onclick="window.location.href='/'">Back up the Hill</button>
     </div>
 </body>
