@@ -11,6 +11,12 @@ function createProject() {
         return;
     }
 
+    if (project_name.value.length * 4 >= 1024) {
+        console.warn("Too Much Text");
+        toastr["warning"]("Too Much Text");
+        return;
+    }
+
     $.ajax({
         type: "POST",
         url: "/api/post_traffic.php",
