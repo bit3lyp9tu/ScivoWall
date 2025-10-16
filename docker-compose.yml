@@ -14,16 +14,14 @@ services:
       context: .
     ports:
       - $LOCAL_PORT:8080
-    volumes:
-      - .:/var/www/html/:rw,delegated
+    #volumes:
+    #  - .:/var/www/html/:rw,delegated
     networks:
       - poster_generator_network
     tmpfs:
       - /tmp:rw
     environment:
       - IND=true
-      - APACHE_RUN_USER=1003
-      - APACHE_RUN_GROUP=1003
 
 networks:
   poster_generator_network:

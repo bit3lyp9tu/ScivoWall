@@ -42,6 +42,8 @@ RUN python3 -m venv /venv && \
 
 RUN docker-php-ext-install mysqli
 
+COPY . /var/www/html
+
 RUN sed -i -E 's|<VirtualHost \*:[0-9]+>|<VirtualHost *:8080>|' /etc/apache2/sites-enabled/000-default.conf \
     && sed -i -E 's|Listen [0-9]+|Listen 8080|' /etc/apache2/ports.conf
 
