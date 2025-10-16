@@ -22,6 +22,7 @@ services:
       - /tmp:rw
     environment:
       - IND=true
+    restart: always
 
 networks:
   poster_generator_network:
