@@ -22,9 +22,9 @@ services:
       - /tmp:rw
     environment:
       - IND=true
-    environment:
       - APACHE_RUN_USER=1003
       - APACHE_RUN_GROUP=1003
+
 networks:
   poster_generator_network:
     driver: bridge
