@@ -111,8 +111,8 @@ if ! command -v docker &>/dev/null; then
 	curl -fsSL https://get.docker.com | bash
 fi
 
-#if ! command -v docker-compose &>/dev/null; then
-#	echo "docker-compose not found. Installing it..."
+#if ! command -v docker compose &>/dev/null; then
+#	echo "docker compose not found. Installing it..."
 #
 #	sudo apt update
 
@@ -128,7 +128,7 @@ fi
 #	sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 #	sudo apt-get update
 #
-#	sudo apt install -y docker-compose
+#	sudo apt install -y docker compose
 #fi
 
 if ! command -v php >/dev/null; then
@@ -173,35 +173,35 @@ CURRENT_USER=$(whoami)
 if [ "$RESET_DB" = true ]; then
     echo "Resetting DB container and volume..."
     if groups "$CURRENT_USER" | grep -q "\bdocker\b"; then
-        docker-compose down -v --remove-orphans
+        docker compose down -v --remove-orphans
     else
-        sudo docker-compose down -v --remove-orphans
+        sudo docker compose down -v --remove-orphans
     fi
 fi
 
 # if groups "$CURRENT_USER" | grep -q "\bdocker\b"; then
 #     DOCKER="docker"
-#     DOCKER_COMPOSE="docker-compose"
+#     DOCKER_COMPOSE="docker compose"
 # else
 #     DOCKER="sudo docker"
-#     DOCKER_COMPOSE="sudo docker-compose"
+#     DOCKER_COMPOSE="sudo docker compose"
 # fi
 
 # echo "Checking if Docker image '$IMAGE_NAME' exists..."
 # if ! $DOCKER image inspect "$IMAGE_NAME" > /dev/null 2>&1; then
-#     echo "Image not found. Building with docker-compose..."
+#     echo "Image not found. Building with docker compose..."
 #     $DOCKER_COMPOSE build || { echo "❌ Failed to build container"; exit 1; }
 # else
 #     echo "✅ Image '$IMAGE_NAME' already exists. Skipping build."
 # fi
 
-# echo "Starting container using docker-compose..."
+# echo "Starting container using docker compose..."
 # $DOCKER_COMPOSE up -d || { echo "❌ Failed to start container"; exit 1; }
 
 if groups "$CURRENT_USER" | grep -q "\bdocker\b"; then
-    docker-compose build && docker-compose up -d || { echo "Failed to build container"; exit 1; }
+    docker compose build && docker compose up -d || { echo "Failed to build container"; exit 1; }
 else
-    sudo docker-compose build && sudo docker-compose up -d || { echo "Failed to build container"; exit 1; }
+    sudo docker compose build && sudo docker compose up -d || { echo "Failed to build container"; exit 1; }
 fi
 
 function docker_exec_env {
@@ -209,9 +209,9 @@ function docker_exec_env {
     shift
 
 	if [ -n "$GITHUB_ACTIONS" ]; then
-		docker-compose exec -T "$service" "$@"
+		docker compose exec -T "$service" "$@"
 	else
-		docker-compose exec "$service" "$@"
+		docker compose exec "$service" "$@"
 	fi
 }
 
@@ -219,7 +219,7 @@ function docker_exec {
     local service="$1"
     shift
 
-	docker-compose exec -T "$service" "$@"
+	docker compose exec -T "$service" "$@"
 }
 
 function maria_db_exec {
@@ -267,7 +267,7 @@ if [[ "$run_tests" -eq "1" ]]; then
 	echo -----------------
 	# sudo cat /var/log/apache2/error.log | grep servername
 
-	# docker-compose exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator > ./tests/results_backend_test.sql
+	# docker compose exec dockerdb mariadb -u$MYSQL_USERNAME -p$MYSQL_PASSWORD poster_generator > ./tests/results_backend_test.sql
 
 	maria_db_exec "DROP DATABASE IF EXISTS poster_generator;"
 	maria_db_exec "CREATE DATABASE IF NOT EXISTS poster_generator;"
