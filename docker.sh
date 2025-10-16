@@ -199,9 +199,9 @@ fi
 # $DOCKER_COMPOSE up -d || { echo "❌ Failed to start container"; exit 1; }
 
 if groups "$CURRENT_USER" | grep -q "\bdocker\b"; then
-    docker compose build && docker compose up -d || { echo "Failed to build container"; exit 1; }
+    DOCKER_BUILDKIT=1 docker compose build && docker compose up -d || { echo "Failed to build container"; exit 1; }
 else
-    sudo docker compose build && sudo docker compose up -d || { echo "Failed to build container"; exit 1; }
+    DOCKER_BUILDKIT=1 sudo docker compose build && sudo docker compose up -d || { echo "Failed to build container"; exit 1; }
 fi
 
 function docker_exec_env {
