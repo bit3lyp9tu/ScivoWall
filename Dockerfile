@@ -4,6 +4,12 @@ ENV APACHE_PORT=8080
 ENV APACHE_DOCUMENT_ROOT=/var/www/html
 ENV GECKO_VERSION=0.36.0
 
+ARG HOST_UID=1003
+ARG HOST_GID=1003
+
+RUN groupadd -g $HOST_GID hostgroup && \
+    useradd -u $HOST_UID -g $HOST_GID hostuser
+
 RUN apt update && \
     apt install -y mariadb-client \
     wget \
