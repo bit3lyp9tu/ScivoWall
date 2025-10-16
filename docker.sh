@@ -253,9 +253,11 @@ if [[ "$run_tests" -eq "1" ]]; then
 
 	docker_exec poster_generator apachectl configtest
 
-	docker_exec poster_generator curl http://${LOCAL_HOST}:${LOCAL_PORT}/login.php | grep title
+	# docker_exec poster_generator curl http://${LOCAL_HOST}:${LOCAL_PORT}/login.php | grep title
+	curl http://${LOCAL_HOST}:${LOCAL_PORT}/login.php | grep title
 	sleep 1
-	docker_exec poster_generator curl http://${LOCAL_HOST}:${LOCAL_PORT}/pages/login.php | grep title
+	# docker_exec poster_generator curl http://${LOCAL_HOST}:${LOCAL_PORT}/pages/login.php | grep title
+	curl http://${LOCAL_HOST}:${LOCAL_PORT}/pages/login.php | grep title
 
 	echo Running Backend-Tests...
 
