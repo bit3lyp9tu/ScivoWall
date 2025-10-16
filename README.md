@@ -3,7 +3,7 @@
 ![Current build status](https://github.com/bit3lyp9tu/ScivoWall/actions/workflows/main.yml/badge.svg?event=push)
 
 Idea is to have a centralized poster editor, which allows visual editing and visualizing of
-scientific poster with LaTeX, images, lists and so on (almost full markdown support).
+scientific posters with LaTeX, images, lists and so on (almost full markdown support).
 
 # Setup
 To setup the container environment, you have to run the folowing command:
@@ -26,9 +26,21 @@ After executing the setup script you can access the page in a browser of your ch
 
 For further information please refer to the [User Manual](documentation/docu.md).
 
+# Used Libraries
+
+- [Jquery](https://jquery.com/)
+- [to-markdown](https://www.npmjs.com/package/to-markdown)
+- [jsPDF](https://github.com/parallax/jsPDF)
+- [typeahead-standalone](https://typeahead.digitalfortress.tech/)
+- [marked](https://www.npmjs.com/package/marked)
+- [Jquery-UI](https://jqueryui.com/)
+- [Toastr](https://codeseven.github.io/toastr/)
+- [Plotly](https://plotly.com/javascript/)
+- [Mathjax](https://www.mathjax.org/)
+
 # Copyright
 
-- ```/img/icons/instruction_manual.svg``` from ```[here](https://commons.wikimedia.org/wiki/File:ISO_7000_-_Ref-No_1641.svg)```
+- ```/img/icons/instruction_manual.svg``` from [here](https://commons.wikimedia.org/wiki/File:ISO_7000_-_Ref-No_1641.svg)
 
 Creative Commons Attribution-Share Alike 4.0 International license:
 - ```/img/icons/Loading_icon.gif``` from [here](https://commons.wikimedia.org/wiki/File:Loading_icon.gif#/media/File:Loading_icon.gif)
