@@ -142,7 +142,7 @@ Two chart file types are recognised:
 | Type | Use case |
 |------|----------|
 | `csv` | Quick rendering of simple charts |
-| `json` | Complex, fullycustomisable charts (see examples [here](https://github.com/bit3lyp9tu/scientific_poster_generator/tree/main/plotly/examples)) |
+| `json` | Complex, fullycustomisable charts (see examples [here](https://github.com/bit3lyp9tu/ScivoWall/tree/main/plotly/examples)) |
 
 #### CSV chart example
 

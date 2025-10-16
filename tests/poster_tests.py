@@ -67,7 +67,7 @@ class PythonOrgSearch(unittest.TestCase):
         driver.get(f"http://{address}/{sub_path}login.php")
         time.sleep(self.wait_time)
         print("Testing Page: " + driver.title)
-        self.assertIn("Poster Generator", driver.title)
+        self.assertIn("ScivoWall", driver.title)
 
         self.login_page()
 
@@ -707,7 +707,7 @@ class PythonOrgSearch(unittest.TestCase):
         # TODO:   check box plotly render   ???
 
         # TODO: check image upload
-        # img_path = os.path.abspath("scientific_poster_generator/img/tudlogo-old.png")
+        # img_path = os.path.abspath("ScivoWall/img/tudlogo-old.png")
         # print(img_path)
 
         # self.assertTrue(os.path.isfile(img_path))

@@ -40,7 +40,7 @@ if [[ "$GITHUB_ACTIONS" != "true" ]]; then
 		sudo mariadb $DB_NAME < ./tests/test_config2.sql
 		sudo mariadb $DB_NAME < ./tests/test_img.sql
 
-		export root_path="/scientific_poster_generator";
+		export root_path="/ScivoWall";
 	fi
 else
 	mariadb -h 127.0.0.1 -P $DB_PORT -u root -ppassword -e 'GRANT ALL PRIVILEGES ON *.* TO "poster_generator"@"%" IDENTIFIED BY "password"; FLUSH PRIVILEGES;'

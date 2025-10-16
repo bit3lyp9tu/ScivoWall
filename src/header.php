@@ -1,7 +1,7 @@
 <!-- TODO: Scripte downloaden -->
 
 <head>
-    <title>Poster Generator</title>
+    <title>ScivoWall</title>
     <meta charset='utf-8'>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
