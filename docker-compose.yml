@@ -9,6 +9,8 @@ services:
       MARIADB_PASSWORD: 'password'
     networks:
       - poster_generator_network
+    volumes:
+      - db_data:/var/lib/mysql
   poster_generator:
     build:
       context: .
@@ -27,3 +29,6 @@ services:
 networks:
   poster_generator_network:
     driver: bridge
+
+volumes:
+  db_data:
