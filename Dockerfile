@@ -45,7 +45,9 @@ RUN docker-php-ext-install mysqli
 RUN sed -i -E 's|<VirtualHost \*:[0-9]+>|<VirtualHost *:8080>|' /etc/apache2/sites-enabled/000-default.conf \
     && sed -i -E 's|Listen [0-9]+|Listen 8080|' /etc/apache2/ports.conf
 
-RUN chown -R www-data:www-data /var/www/html
+RUN chown -R www-data:www-data /var/www/html && \
+    find /var/www/html -type d -exec chmod 755 {} \; && \
+    find /var/www/html -type f -exec chmod 644 {} \;
 
 RUN a2enmod rewrite
 
