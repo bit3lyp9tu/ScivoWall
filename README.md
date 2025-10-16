@@ -2,8 +2,8 @@
 
 ![Current build status](https://github.com/bit3lyp9tu/ScivoWall/actions/workflows/main.yml/badge.svg?event=push)
 
-Idea is to have a centralized poster editor, which allows visual editing and visualizing of
-scientific posters with LaTeX, images, lists and so on (almost full markdown support).
+Idea is to have a centralized poster editor, which allows editing and visualizing of
+scientific posters with Markdown, LaTeX, images, charts.
 
 # Setup
 To setup the container environment, you have to run the folowing command:
