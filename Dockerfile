@@ -3,8 +3,6 @@ FROM php:8.2-apache
 ENV APACHE_PORT=8080
 ENV APACHE_DOCUMENT_ROOT=/var/www/html
 ENV GECKO_VERSION=0.36.0
-ENV APACHE_RUN_USER=1003
-ENV APACHE_RUN_GROUP=1003
 
 RUN apt update && \
     apt install -y mariadb-client \
